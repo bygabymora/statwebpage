@@ -1,0 +1,194 @@
+.logo {
+  height: 6.5rem;
+  width: auto;
+}
+
+.header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-fixed);
+  background-color: var(--body-color);
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+}
+
+.nav {
+  height: 7rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.nav__logo,
+.nav__toggle {
+  color: var(--title-color);
+  font-weight: var(--font-medium);
+}
+
+.nav__logo {
+  display: flex;
+}
+.nav__logo_2 {
+  display: none;
+  gap: 10px;
+}
+.nav__list {
+  display: flex;
+  column-gap: 2rem;
+}
+
+.nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.09rem;
+  color: var(--title-color);
+  font-weight: var(--font-medium);
+  transition: 0.3s;
+}
+
+.nav__icon,
+.nav__close,
+.nav__toggle {
+  display: none;
+}
+.nav__search-icon {
+  display: block;
+}
+.search-title {
+  display: none;
+}
+.nav-reverse {
+  flex-direction: row-reverse;
+  color: var(--title-color);
+}
+
+/* Active link  */
+
+.active-link,
+.nav__link:hover {
+  color: var(--title-color-dark);
+}
+/* R logo  */
+.r__logo {
+  height: 6rem;
+  width: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For large devices */
+@media screen and (max-width: 800px) {
+  .header {
+    top: initial;
+    bottom: 4px;
+    background-color: var(--body-color);
+    width: 95%;
+    left: 13px;
+    border-radius: 13px;
+    margin-bottom: 9px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+  }
+  .search-bar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--z-fixed);
+    background-color: var(--body-color);
+  }
+
+  .nav {
+    height: var(--header-height);
+    width: 90%;
+  }
+  .nav-reverse {
+    flex-direction: row;
+  }
+
+  .nav__menu {
+    position: fixed;
+    bottom: -100%;
+    left: 12px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    width: 93%;
+    background-color: var(--body-color);
+    padding: 2rem 1.5rem 4rem;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
+    border-radius: 1.5rem 1.5rem 0 0;
+    transition: 0.3s;
+  }
+
+  /* Show menu  */
+
+  .show-menu {
+    bottom: 0;
+  }
+
+  .nav__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .nav-icon {
+    font-size: 1.2rem;
+  }
+
+  .nav__close {
+    position: absolute;
+    right: 1.3rem;
+    bottom: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--title-color);
+  }
+
+  .nav__close:hover {
+    color: var(--title-color-dark);
+  }
+
+  .nav__toggle {
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .nav__icon,
+  .nav__toggle,
+  .nav__close {
+    display: block;
+  }
+
+  /*  two logo  */
+  .nav__logo {
+    display: none;
+  }
+  .nav__logo_2 {
+    display: flex;
+    align-items: center;
+    min-height: 4.5rem;
+  }
+  .r__logo {
+    width: 80%;
+    height: auto;
+  }
+  .logo {
+    height: 4.5rem;
+    width: 100%;
+  }
+}
+
+/* For small devices */
+@media screen and (max-width: 350px) {
+  .nav__menu {
+    padding: 2rem 0.25rem 4rem;
+  }
+
+  .nav__list {
+    column-gap: 0;
+  }
+}
