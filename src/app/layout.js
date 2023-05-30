@@ -1,8 +1,5 @@
-import './App.css';
-
-import { Inter } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'] });
+import React from 'react';
+import Layout from '../app/components/Layout';
 
 export const metadata = {
   title: 'STAT SURGICAL SUPPLY',
@@ -10,9 +7,5 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  );
+  return <Layout title={metadata.title}>{children}</Layout>;
 }

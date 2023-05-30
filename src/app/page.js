@@ -1,4 +1,5 @@
-import data from '@/utils/data';
+'use client';
+import data from '../../utils/data';
 import Layout from './components/Layout';
 import { ProductItem } from './components/ProductItem';
 
