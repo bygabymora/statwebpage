@@ -294,7 +294,13 @@ img {
 .cart-badge {
   background-color: var(--title-color);
   color: var(--container-color);
-  @apply rounded-full px-2 py-1 text-xs font-bold;
+  font-size: xx-small;
+  margin-left: -20%;
+  @apply rounded-full px-1.5 py-0.5 text-xs font-bold;
+}
+.cart-badge:hover {
+  background-color: var(--title-color-dark);
+  cursor: pointer;
 }
 
 /*=============== BREAKPOINTS ===============*/

@@ -2,13 +2,16 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import data from '../../utils/data';
 import Link from 'next/link';
-import { BsBackspace } from 'react-icons/bs';
+import { BsBackspace, BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Store } from '../../utils/Store';
 
 export default function ProductScreen() {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
+  const [showPopup, setShowPopup] = useState(false);
+  const [isOutOfStock, setIsOutOfStock] = useState(false);
 
   const { query } = useRouter();
   const { slug } = query;
@@ -20,19 +23,34 @@ export default function ProductScreen() {
 
   const addToCartHandler = () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
-    const quantity = exisItem ? exisItem.quantity + 1 : 1;
+    let quantity = exisItem ? exisItem.quantity + 1 : 1;
+    if (product.countInStock < quantity) {
+      setIsOutOfStock(true);
+      return;
+    }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
 
     if (product.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
-      return;
+
+      return quantity;
     }
+    setShowPopup(true);
+  };
+
+  const continueShoppingHandler = () => {
+    setShowPopup(false);
+  };
+
+  const goToCartHandler = () => {
+    setShowPopup(false);
+    router.push('/cart');
   };
 
   return (
     <Layout title={product.manufacturer}>
       <div className="py-2">
-        <Link href="/" className="flex gap-4 items-center">
+        <Link href={{ pathname: '/' }} className="flex gap-4 items-center">
           <BsBackspace />
           Back to products...
         </Link>
@@ -67,17 +85,44 @@ export default function ProductScreen() {
             </div>
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
-              <div className="text-2xl ">
-                {product.countInStock > 0 ? 'In Stock' : 'Unavailable'}{' '}
+              &nbsp;
+              <div className="text-lg ">
+                {isOutOfStock || product.countInStock === 0
+                  ? 'Out of Stock'
+                  : 'In Stock'}
               </div>
             </div>
             <button
               className="primary-button cart-button"
               type="button"
               onClick={addToCartHandler}
+              disabled={product.countInStock === 0 || isOutOfStock}
             >
-              Add to Cart
+              {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </button>
+            {showPopup && (
+              <div className="popup">
+                <div className="popup-content">
+                  <p>Item added to cart.</p>
+                  <br />
+                  <div className="flex gap-1 justify-evenly">
+                    <button
+                      className="primary-button w-1/2 text-xs text-left"
+                      onClick={continueShoppingHandler}
+                    >
+                      Continue Shopping
+                    </button>
+                    <button
+                      className=" flex primary-button w-1/2 text-xs text-left items-center"
+                      onClick={goToCartHandler}
+                    >
+                      <p>Go to Cart</p> &nbsp;
+                      <BsCart2 className="text-2xl" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

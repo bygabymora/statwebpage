@@ -21,19 +21,19 @@ const Navbar = () => {
     <div>
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
-          <Link href="/" className="nav__link active-link">
+          <Link href={{ pathname: '/' }} className="nav__link active-link">
             <BiHomeHeart className="uil uil-estate nav__icon" />
             Home
           </Link>
-          <Link href="/about" className="nav__link">
+          <Link href={{ pathname: '/about' }} className="nav__link">
             <BiUser className="uil uil-user nav__icon" />
             About
           </Link>
-          <Link href="/products" className="nav__link">
+          <Link href={{ pathname: '/products' }} className="nav__link">
             <BiPhotoAlbum className="uil uil-scenery nav__icon" />
             Products
           </Link>
-          <Link href="/contact" className="nav__link">
+          <Link href={{ pathname: '/contact' }} className="nav__link">
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
           </Link>
