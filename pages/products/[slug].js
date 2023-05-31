@@ -40,6 +40,7 @@ export default function ProductScreen() {
 
   const continueShoppingHandler = () => {
     setShowPopup(false);
+    router.push('/');
   };
 
   const goToCartHandler = () => {
