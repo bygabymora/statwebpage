@@ -9,8 +9,10 @@ import {
   BiSearch,
 } from 'react-icons/bi';
 import { MdOutlineWavingHand } from 'react-icons/md';
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
+  const router = useRouter();
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const toggleMenuHandler = () => {
@@ -43,7 +45,10 @@ const Navbar = () => {
             className="bg-transparent border-b-2 border-blue-800 outline-none focus:bg-white focus:border-blue-800"
             placeholder="Search..."
           />
-          <button className="nav__search-button">
+          <button
+            className="nav__search-button"
+            onClick={() => router.push('/search')}
+          >
             <BiSearch className="nav__search-icon" />
           </button>
         </div>
