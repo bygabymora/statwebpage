@@ -5,7 +5,7 @@ on:
     branches: ['main']
 
 env:
-  NODE_AUTH_TOKEN: ${{ 12345678 }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
   contents: read
