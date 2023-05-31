@@ -4,11 +4,10 @@ import React, { useContext } from 'react';
 import Link from 'next/link';
 import { BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import Logo from '../../assets/logo2.png';
-import Logo2 from '../../assets/logo.png';
-import '../styles/header.css';
+import Logo from '../public/images/assets/logo2.png';
+import Logo2 from '../public/images/assets/logo.png';
 import Navbar from './Navbar';
-import { Store } from '../../../utils/Store';
+import { Store } from '../utils/Store';
 
 const Header = () => {
   const { state } = useContext(Store);
@@ -32,7 +31,7 @@ const Header = () => {
           </div>
 
           <div className="nav-reverse flex h-12 place-items-center gap-4">
-            <Link href="/cart" className="text-xl font-bold p-2">
+            <Link href="/cart" className="flex text-xl font-bold p-2">
               <BsCart2 />
               {cart.cartItems.length > 0 && (
                 <span className="cart-badge">

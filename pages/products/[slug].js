@@ -1,7 +1,6 @@
-import Layout from '../../src/app/components/Layout';
+import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import data from '../../utils/data';
-import '../../src/app/App.css';
 import Link from 'next/link';
 import { BsBackspace } from 'react-icons/bs';
 import Image from 'next/image';
@@ -9,7 +8,7 @@ import React, { useContext } from 'react';
 import { Store } from '../../utils/Store';
 
 export default function ProductScreen() {
-  const { dispatch } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
 
   const { query } = useRouter();
   const { slug } = query;
@@ -20,8 +19,16 @@ export default function ProductScreen() {
   }
 
   const addToCartHandler = () => {
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity: 1 } });
+    const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
+    const quantity = exisItem ? exisItem.quantity + 1 : 1;
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
+
+    if (product.countInStock < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
+      return;
+    }
   };
+
   return (
     <Layout title={product.manufacturer}>
       <div className="py-2">
@@ -42,13 +49,13 @@ export default function ProductScreen() {
         <div className="">
           <ul>
             <li>
-              <h1 className="text-2xl font-bold">{product.manufacturer}</h1>
+              <h1 className="text-xl font-bold">{product.manufacturer}</h1>
             </li>
             <li>
-              <h1 className="text-2xl font-bold">{product.reference}</h1>
+              <h1 className="text-xl font-bold">{product.reference}</h1>
             </li>
             <li>
-              <h1 className="text-2xl">{product.description}</h1>
+              <h1 className="text-xl">{product.description}</h1>
             </li>
           </ul>
         </div>

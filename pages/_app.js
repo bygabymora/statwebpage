@@ -1,15 +1,11 @@
 import React from 'react';
-import Layout from '../src/app/components/Layout';
-import { StoreProvider } from '../utils/Store';
+import '../styles/global.css';
+import StoreProvider from '../utils/Store';
 
-function MyApp({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }) {
   return (
     <StoreProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Component {...pageProps} />
     </StoreProvider>
   );
 }
-
-export default MyApp;

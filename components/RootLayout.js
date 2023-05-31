@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../app/components/Layout';
+import Layout from './Layout';
 
 export const metadata = {
   title: 'STAT SURGICAL SUPPLY',
@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return <Layout title={metadata.title}>{children}</Layout>;
+  return <Layout title="STAT">{children}</Layout>;
 }

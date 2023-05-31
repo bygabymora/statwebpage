@@ -1,9 +1,8 @@
 import Head from 'next/head';
 import React from 'react';
-import '../styles/header.css';
 import Header from './Header';
 
-const Layout = ({ title, children }) => {
+export default function Layout({ title, children }) {
   return (
     <>
       <Head>
@@ -20,6 +19,4 @@ const Layout = ({ title, children }) => {
       </div>
     </>
   );
-};
-
-export default Layout;
+}
