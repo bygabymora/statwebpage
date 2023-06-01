@@ -54,7 +54,7 @@ const data = {
     {
       manufacturer: 'STRYKER',
       slug: 'STRYKER5820-107-530C',
-      image: '.tree/main/public/images/5820-107-530C-WE1.png',
+      image: '/images/5820-107-530C-WE1.png',
       reference: '5820-107-530C',
       description: 'Head Drill, 3 x 3.8 mm, Neuro Carbide',
       price: 75,
