@@ -3,7 +3,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510400',
-      image: './public/images/7510400-WE1.png',
+      image: '.blob/main/public/images/7510400-WE1.png',
       reference: '7510400',
       description: 'Bone Graft Kit, Medium Size',
       price: 4240,
@@ -15,7 +15,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510200',
-      image: './public/images/7510200-WE1.png',
+      image: '.tree/main/public/images/7510200-WE1.png',
       reference: '7510200',
       description: 'Bone Graft Kit, Small Size',
       price: 3044,
@@ -28,7 +28,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510600',
-      image: './public/images/7510600-WE1.png',
+      image: '.blob/main/public/images/7510600-WE1.png',
       reference: '7510600',
       description: 'Bone Graft Kit, Large Size',
       price: 4500,
@@ -54,7 +54,7 @@ const data = {
     {
       manufacturer: 'STRYKER',
       slug: 'STRYKER5820-107-530C',
-      image: './public/images/5820-107-530C-WE1.png',
+      image: '.tree/main/public/images/5820-107-530C-WE1.png',
       reference: '5820-107-530C',
       description: 'Head Drill, 3 x 3.8 mm, Neuro Carbide',
       price: 75,
