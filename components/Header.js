@@ -25,12 +25,12 @@ const Header = () => {
       <nav className="nav container">
         <div className="flex h-12 items-center">
           <div className="flex h-12 items-center">
-            <Link href={{ pathname: '/' }} className="nav__logo logo">
+            <Link href="/" className="nav__logo logo">
               <div className="r__logo r__logo-1">
                 <Image src={Logo2} alt="logo" width={500} />
               </div>
             </Link>
-            <Link href={{ pathname: '/' }} className="nav__logo_2 logo">
+            <Link href="/" className="nav__logo_2 logo">
               <div className="r__logo r__logo-2">
                 <Image src={Logo} alt="logo" width={400} />
               </div>

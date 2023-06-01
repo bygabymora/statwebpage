@@ -23,7 +23,7 @@ const Navbar = () => {
     <div>
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
-          <Link href={{ pathname: '/' }} className="nav__link active-link">
+          <Link href="/" className="nav__link active-link">
             <BiHomeHeart className="uil uil-estate nav__icon" />
             Home
           </Link>
