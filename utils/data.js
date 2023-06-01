@@ -12,7 +12,6 @@ const data = {
       includes:
         '2) Vials of Sterile rhBMP-2 (4.2 mg), (1) Package of 4 Sterile Absorbable Collagen Sponges (ACS) 1 x 2 in., (2) Vials of Sterile Water for Injection (5 mL), (4) Sterile 5 mL Syringes with 20G 1.5 in. Needle',
     },
-
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510200',
