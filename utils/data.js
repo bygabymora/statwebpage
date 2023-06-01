@@ -3,7 +3,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510400',
-      image: '/public/images/7510400-WE1.png',
+      image: './public/images/7510400-WE1.png',
       reference: '7510400',
       description: 'Bone Graft Kit, Medium Size',
       price: 4240,
@@ -15,7 +15,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510200',
-      image: '/public/images/7510200-WE1.png',
+      image: './public/images/7510200-WE1.png',
       reference: '7510200',
       description: 'Bone Graft Kit, Small Size',
       price: 3044,
@@ -28,7 +28,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510600',
-      image: '/public/images/7510600-WE1.png',
+      image: './public/images/7510600-WE1.png',
       reference: '7510600',
       description: 'Bone Graft Kit, Large Size',
       price: 4500,
@@ -41,7 +41,7 @@ const data = {
     {
       manufacturer: 'COVIDIEN ENERGY',
       slug: 'COVIDIENENERGYLF1837',
-      image: '/public/images/LF1837-WE1.png',
+      image: './public/images/LF1837-WE1.png',
       reference: 'LF1837',
       description:
         'Sealer/Divider, 5 mm dia. x 37 cm Shaft Length, 17.8 mm Cut Length, 19.5 mm Seal Length, Blunt, Double-action Jaw Style, 180° Shaft Rotation, Sterile, Single-Use, For Compatible with ForceTriad SW v3.6 or Higher',
@@ -54,7 +54,7 @@ const data = {
     {
       manufacturer: 'STRYKER',
       slug: 'STRYKER5820-107-530C',
-      image: '/public/images/5820-107-530C-WE1.png',
+      image: './public/images/5820-107-530C-WE1.png',
       reference: '5820-107-530C',
       description: 'Head Drill, 3 x 3.8 mm, Neuro Carbide',
       price: 75,
