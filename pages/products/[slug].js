@@ -59,7 +59,7 @@ export default function ProductScreen() {
       <div className="product-grid gap-4">
         <div className="product-image">
           <Image
-            src={`pages/products/images/${product.image}`}
+            src={`${product.image}`}
             alt={product.reference}
             width={640}
             height={640}
