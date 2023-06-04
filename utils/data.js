@@ -15,7 +15,7 @@ const data = {
     {
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510200',
-      image: 'images/7510200-WE1.png',
+      image: 'products/images/7510200-WE1.png',
       reference: '7510200',
       description: 'Bone Graft Kit, Small Size',
       price: 3044,
