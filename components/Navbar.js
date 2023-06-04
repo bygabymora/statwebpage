@@ -23,7 +23,7 @@ const Navbar = () => {
     <div>
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
-          <Link href="/" className="nav__link active-link">
+          <Link href="/home" className="nav__link active-link">
             <BiHomeHeart className="uil uil-estate nav__icon" />
             Home
           </Link>
@@ -47,7 +47,7 @@ const Navbar = () => {
           />
           <button
             className="nav__search-button"
-            onClick={() => router.push('/search')}
+            onClick={() => router.push('/home')}
           >
             <BiSearch className="nav__search-icon" />
           </button>
