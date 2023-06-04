@@ -36,7 +36,7 @@ export const ProductItem = ({ product }) => {
         />
       </Link>
       <div className="flex flex-col justify-center items-center p-5">
-        <Link href={{ pathname: `/products/${product.slug}` }}>
+        <Link href={{ pathname: `products/${product.slug}` }}>
           <h2 className="text-lg font-bold">
             {product.manufacturer}
             <br />
