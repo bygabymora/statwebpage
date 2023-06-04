@@ -18,7 +18,7 @@ export const ProductItem = ({ product }) => {
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
 
     if (product.countInStock < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
+      alert("Sorry, we don't have enough of this item in stock.");
 
       return quantity;
     }

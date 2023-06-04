@@ -53,7 +53,7 @@ export default function ProductScreen() {
       <div className="py-2">
         <Link href={{ pathname: '/' }} className="flex gap-4 items-center">
           <BsBackspace />
-          Back to products...
+          Back to products.
         </Link>
       </div>
       <div className="product-grid gap-4">
