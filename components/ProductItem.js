@@ -28,7 +28,7 @@ export const ProductItem = ({ product }) => {
     <div className="card">
       <Link href={{ pathname: `${product.slug}` }}>
         <Image
-          src={`${product.image}`}
+          src={`products/images/${product.image}`}
           alt={product.description}
           className="rounded shadow product-image"
           width={300}
