@@ -26,7 +26,7 @@ export const ProductItem = ({ product }) => {
 
   return (
     <div className="card">
-      <Link href={{ pathname: `pages/products/${product.slug}` }}>
+      <Link href={{ pathname: `${product.slug}` }}>
         <Image
           src={`${product.image}`}
           alt={product.description}
