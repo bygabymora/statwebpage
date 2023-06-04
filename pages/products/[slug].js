@@ -51,7 +51,7 @@ export default function ProductScreen() {
   return (
     <Layout title={product.manufacturer}>
       <div className="py-2">
-        <Link href={{ pathname: '/index' }} className="flex gap-4 items-center">
+        <Link href={{ pathname: '/' }} className="flex gap-4 items-center">
           <BsBackspace />
           Back to products...
         </Link>
@@ -59,7 +59,7 @@ export default function ProductScreen() {
       <div className="product-grid gap-4">
         <div className="product-image">
           <Image
-            src={product.image}
+            src={`/product/${product.image}`}
             alt={product.reference}
             width={640}
             height={640}

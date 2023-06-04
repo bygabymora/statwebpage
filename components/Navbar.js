@@ -47,7 +47,7 @@ const Navbar = () => {
           />
           <button
             className="nav__search-button"
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/')}
           >
             <BiSearch className="nav__search-icon" />
           </button>
