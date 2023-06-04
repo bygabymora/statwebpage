@@ -61,8 +61,8 @@ export default function ProductScreen() {
           <Image
             src={`images/${product.image}`}
             alt={product.reference}
-            width={630}
-            height={630}
+            width={640}
+            height={640}
           />
         </div>
         <div className="">
