@@ -32,8 +32,8 @@ function CartScreen() {
           Cart is empty. <Link href={{ pathname: '/' }}>Go shopping!</Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
-          <div className="overflow-x-auto md:col-span-3">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 md:gap-5">
+          <div className=" md:col-span-3">
             <table className="table-auto min-w-full">
               <thead className="border-b">
                 <tr>
@@ -58,7 +58,9 @@ function CartScreen() {
                           height={50}
                         />
                         &nbsp;
-                        {item.manufacturer}&nbsp;{item.reference}
+                        {item.manufacturer}
+                        <br />
+                        &nbsp;{item.reference}
                       </Link>
                     </td>
                     <td className="p-5 text-right">
