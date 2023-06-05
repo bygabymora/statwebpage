@@ -39,18 +39,20 @@ const Navbar = () => {
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
           </Link>
-
-          <input
-            type="text"
-            className="bg-transparent border-b-2 border-blue-800 outline-none focus:bg-white focus:border-blue-800"
-            placeholder="Search..."
-          />
-          <button
-            className="nav__search-button"
-            onClick={() => router.push('/')}
-          >
-            <BiSearch className="nav__search-icon" />
-          </button>
+          <br className="break" />
+          <div className="flex col-span-2 text-center ml-4 mr-4">
+            <input
+              type="text"
+              className="bg-transparent border-b-2 border-blue-800 outline-none focus:bg-white focus:border-blue-800 md:ml-4 w-full"
+              placeholder="Search..."
+            />
+            <button
+              className="nav__search-button"
+              onClick={() => router.push('/')}
+            >
+              <BiSearch className="nav__search-icon" />
+            </button>
+          </div>
         </div>
         <BiXCircle
           className="uil uil-times nav__close"

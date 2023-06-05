@@ -302,6 +302,9 @@ img {
   background-color: var(--title-color-dark);
   cursor: pointer;
 }
+.break {
+  display: none;
+}
 
 /*=============== BREAKPOINTS ===============*/
 /* For large devices */
@@ -438,6 +441,12 @@ img {
   }
   .main {
     margin-top: 1rem;
+  }
+  .footer_1 {
+    display: none;
+  }
+  .break {
+    display: block;
   }
 }
 
