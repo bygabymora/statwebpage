@@ -27,7 +27,7 @@ const Banner = () => {
 
   return (
     <div className="text-title-color-dark text-center ">
-      <div className="grid grid-cols-2 banner-container mx-auto px-4 py-8 items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-1 banner-container mx-auto px-4 py-8 items-center">
         <div className="">
           <h1 className="text-4xl font-bold mb-4">
             Welcome to STAT Surgical Supplies
