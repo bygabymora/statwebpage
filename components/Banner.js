@@ -63,7 +63,7 @@ const Banner = () => {
               </button>
               <button
                 href="#contact"
-                className=" equal-button-size btn-contact sm:inline-block block text-title-color-dark hover:text-title-color px-6 py-3 rounded"
+                className=" equal-button-size btn-contact sm:inline-block block text-title-color-dark hover:text-title-color px-6 py-3 rounded "
               >
                 Contact Us
               </button>
@@ -76,13 +76,13 @@ const Banner = () => {
               <div className="grid grid-cols-2 cart-button items-center mb-8 text-center">
                 <button
                   onClick={() => handleAudienceSelection('hospital')}
-                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded"
+                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
-                  Hospital/Health Supplier
+                  Hospital or Health Supplier
                 </button>
                 <button
                   onClick={() => handleAudienceSelection('manufacturer')}
-                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded"
+                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
                   Surgical Supplies Manufacturer
                 </button>
