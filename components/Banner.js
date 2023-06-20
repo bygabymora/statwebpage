@@ -22,7 +22,7 @@ const Banner = () => {
   }, [audience]);
 
   const handleCallButtonClick = () => {
-    window.location.href = 'tel:+11234567890'; // Replace with your phone number
+    window.location.href = 'tel:8132520727'; // Replace with your phone number
   };
 
   return (
