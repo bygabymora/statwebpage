@@ -10,7 +10,7 @@ export default function Register() {
     formState: { errors },
   } = useForm();
 
-  const submitHandler = ({ email, password }) => {};
+  const submitHandler = () => {};
 
   return (
     <Layout title="Register">
