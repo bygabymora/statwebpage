@@ -3,11 +3,13 @@ import Layout from '../components/Layout.js';
 import { ProductItem } from '../components/ProductItem.js';
 import React from 'react';
 import Banner from '../components/Banner';
+import Contact from '../components/contact/Contact';
 
 export default function Home() {
   return (
     <Layout title="Home Page">
       <Banner />
+      <br id="products" />
       <h2 className="text-2xl font-semibold text-center mb-5">
         Latest Products
       </h2>
@@ -16,6 +18,7 @@ export default function Home() {
           <ProductItem product={product} key={product.slug}></ProductItem>
         ))}
       </div>
+      <Contact />
     </Layout>
   );
 }

@@ -31,11 +31,11 @@ const Navbar = () => {
             <BiUser className="uil uil-user nav__icon" />
             About
           </Link>
-          <Link href={{ pathname: '/products' }} className="nav__link">
+          <Link href="#products" className="nav__link">
             <BiPhotoAlbum className="uil uil-scenery nav__icon" />
             Products
           </Link>
-          <Link href={{ pathname: '/contact' }} className="nav__link">
+          <Link href="#contact" className="nav__link">
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
           </Link>

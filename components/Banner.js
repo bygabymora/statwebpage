@@ -55,7 +55,7 @@ const Banner = () => {
           {audience !== '' && (
             <div className="grid grid-cols-2 mt-8 w-full mb-8 text-center">
               <button
-                href="tel:+11234567890"
+                href="tel:8132520727"
                 onClick={handleCallButtonClick}
                 className="equal-button-size btn-call sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded"
               >

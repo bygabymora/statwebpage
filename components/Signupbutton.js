@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect, useRef } from 'react';
 import { BsPerson } from 'react-icons/bs';
 
@@ -48,18 +49,20 @@ const SignupButton = () => {
           aria-labelledby="options-menu"
         >
           <div className="py-1" role="none">
-            <div
+            <Link
+              href="/Login"
               className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
             >
-              Log in
-            </div>
-            <div
+              Login
+            </Link>
+            <Link
+              href="/Register"
               className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
             >
-              Sign in
-            </div>
+              Signin
+            </Link>
           </div>
         </div>
       )}
