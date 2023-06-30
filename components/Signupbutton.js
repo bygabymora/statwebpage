@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import React, { useState, useEffect, useRef } from 'react';
 import { BsPerson } from 'react-icons/bs';
+import { useSession } from 'next-auth/react';
 
 const SignupButton = () => {
+  const { status, data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -48,22 +50,30 @@ const SignupButton = () => {
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          <div className="py-1" role="none">
-            <Link
-              href="/Login"
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-              role="menuitem"
-            >
-              Login
-            </Link>
-            <Link
-              href="/Register"
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-              role="menuitem"
-            >
-              Signin
-            </Link>
-          </div>
+          {status === 'loading' ? (
+            'Loading'
+          ) : session?.user ? (
+            session.user.name
+          ) : (
+            <>
+              <div className="py-1" role="none">
+                <Link
+                  href="/Login"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/Register"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                >
+                  Signin
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

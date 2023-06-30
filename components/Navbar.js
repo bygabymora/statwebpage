@@ -19,23 +19,57 @@ const Navbar = () => {
     setToggleMenu(!toggleMenu);
   };
 
+  const handleLinkClick = (section) => {
+    if (window.innerWidth >= 800) {
+      const yOffsetLargeScreen = -170;
+      setTimeout(() => {
+        const element = document.getElementById(section);
+        const y =
+          element.getBoundingClientRect().top +
+          window.scrollY +
+          yOffsetLargeScreen;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 200);
+    } else {
+      const yOffsetSmallScreen = -50;
+      setTimeout(() => {
+        const path = `/#${section}`; // Construct anchor link with #
+        router.push(path);
+        const element = document.getElementById(section);
+        const y =
+          element.getBoundingClientRect().top +
+          window.scrollY +
+          yOffsetSmallScreen;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 200);
+    }
+  };
+
   return (
     <div>
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
-          <Link href="/" className="nav__link active-link">
+          <Link href="/" className="nav__link">
             <BiHomeHeart className="uil uil-estate nav__icon" />
             Home
           </Link>
-          <Link href={{ pathname: '/about' }} className="nav__link">
+          <Link href="/about" className="nav__link">
             <BiUser className="uil uil-user nav__icon" />
             About
           </Link>
-          <Link href="#products" className="nav__link">
+          <Link
+            href="/#products"
+            onClick={() => handleLinkClick('products')}
+            className="nav__link"
+          >
             <BiPhotoAlbum className="uil uil-scenery nav__icon" />
             Products
           </Link>
-          <Link href="#contact" className="nav__link">
+          <Link
+            href="/#contact"
+            onClick={() => handleLinkClick('contact')}
+            className="nav__link"
+          >
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
           </Link>

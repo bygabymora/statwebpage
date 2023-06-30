@@ -1,4 +1,20 @@
+import bcrypt from 'bcryptjs';
+
 const data = {
+  users: [
+    {
+      name: 'Admin User',
+      email: 'admin@statsurgicalsupply.com',
+      password: bcrypt.hashSync('Martineta1*'),
+      isAdmin: true,
+    },
+    {
+      name: 'Sebastian',
+      email: 'admin@surgicalsc.com',
+      password: bcrypt.hashSync('123456'),
+      isAdmin: false,
+    },
+  ],
   products: [
     {
       manufacturer: 'MEDTRONIC',

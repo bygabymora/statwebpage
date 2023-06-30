@@ -1,16 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../components/Layout';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { signIn } from 'next-auth/react';
+import { toast } from 'react-toastify';
+import { getError } from '../utils/error';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export default function Login() {
+  const { data: session } = useSession();
+
+  const router = useRouter();
+  const { redirect } = router.query;
+
+  useEffect(() => {
+    if (session?.user) {
+      router.push(redirect || '/');
+    }
+  }, [router, session, redirect]);
+
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm();
 
-  const submitHandler = () => {};
+  const submitHandler = async ({ email, password }) => {
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
 
   return (
     <Layout title="Login">
@@ -49,25 +78,23 @@ export default function Login() {
             Password
           </label>
           <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline "
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             autoFocus
             id="password"
             type="password"
             {...register('password', {
-              required: 'Please enter password',
+              required: 'Please enter a password',
               minLength: {
                 value: 8,
                 message: 'Password must have at least 8 characters',
               },
-              pattern: {
-                value:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                message:
-                  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-              },
+              validate: (value) =>
+                /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(value) ||
+                'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
             })}
             placeholder="Password"
-          ></input>
+          />
+
           {errors.password && (
             <div className="text-blue-950">{errors.password.message}</div>
           )}
