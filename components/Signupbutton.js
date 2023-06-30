@@ -1,10 +1,15 @@
 import Link from 'next/link';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { BsPerson } from 'react-icons/bs';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { Menu } from '@headlessui/react';
+import DropdownLink from './DropdownLink';
+import Cookies from 'js-cookie';
+import { Store } from '../utils/Store';
 
 const SignupButton = () => {
   const { status, data: session } = useSession();
+  const { dispatch } = useContext(Store);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -38,6 +43,12 @@ const SignupButton = () => {
     zIndex: 10,
   };
 
+  const logoutClickHandler = () => {
+    Cookies.remove('cart');
+    dispatch({ type: 'CART_RESET' });
+    signOut({ callbackUrl: '/Login' });
+  };
+
   return (
     <div className="relative">
       <BsPerson className="h-6 w-6 cursor-pointer" onClick={handleMenuToggle} />
@@ -53,7 +64,35 @@ const SignupButton = () => {
           {status === 'loading' ? (
             'Loading'
           ) : session?.user ? (
-            session.user.name
+            <Menu
+              as="div"
+              className="flex-col flex relative items-center w-fit h-full py-4"
+            >
+              <Menu.Button className="font-bold user-name">
+                {session.user.name}
+              </Menu.Button>
+              <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
+                <Menu.Item>
+                  <DropdownLink href="/profile" className="dropdown-link">
+                    Profile
+                  </DropdownLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <DropdownLink href="/order-history" className="dropdown-link">
+                    Order History
+                  </DropdownLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <DropdownLink
+                    href="/"
+                    className="dropdown-link"
+                    onClick={logoutClickHandler}
+                  >
+                    Log Out
+                  </DropdownLink>
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
           ) : (
             <>
               <div className="py-1" role="none">
