@@ -1,4 +1,3 @@
-import data from '../utils/data.js';
 import Layout from '../components/Layout.js';
 import { ProductItem } from '../components/ProductItem.js';
 import React from 'react';
@@ -7,8 +6,10 @@ import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Product from '../models/Product.js';
+import db from '../utils/db.js';
 
-export default function Home() {
+export default function Home({ products }) {
   const [carouselCenterSlidePercentage, setCarouselCenterSlidePercentage] =
     React.useState(33.33); // Set a default value for initial rendering
 
@@ -43,7 +44,7 @@ export default function Home() {
       <StaticBanner />
       <Banner />
       <h2 className="section__title" id="products">
-        Latest Products
+        Featured Products
       </h2>
       <Carousel
         showArrows={true}
@@ -57,11 +58,21 @@ export default function Home() {
         autoPlay={true}
         interval={1500}
       >
-        {data.products.map((product) => (
+        {products.map((product) => (
           <ProductItem product={product} key={product.slug}></ProductItem>
         ))}
       </Carousel>
       <Contact />
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  await db.connect();
+  const products = await Product.find().lean();
+  return {
+    props: {
+      products: products.map(db.convertDocToObj),
+    },
+  };
 }

@@ -59,26 +59,23 @@ const Banner = () => {
       <div className="grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 py-8 items-center">
         <div className="">
           <h1 className="text-4xl font-bold mb-4">
-            Welcome to STAT Surgical Supplies
+            Welcome to STAT Surgical Supply
           </h1>
           <p className="text-lg text-text-color">
             {audience === 'hospital' ? (
               <>
                 We provide high-quality surgical supplies to meet the needs of
-                healthcare professionals. Partner with us to ensure top-notch
-                care for your patients.
+                healthcare professionals. Partner with us to save thousands on
+                the same devices you purchase direct.
               </>
             ) : audience === 'manufacturer' ? (
               <>
-                Join forces with us to expand your market reach and deliver your
-                high-quality surgical supplies to hospitals and healthcare
-                providers.
+                Partner with us to expand your market reach in two ways. We
+                provide cost savings on the same devices you are purchasing
+                direct. Additionally, we will buy your excess inventory.
               </>
             ) : (
-              <>
-                Welcome to our Surgical Supplies store. Explore our wide range
-                of high-quality surgical supplies.
-              </>
+              <>Explore our wide range of high-end surgical disposables.</>
             )}
           </p>
           {audience !== '' && (
@@ -108,13 +105,13 @@ const Banner = () => {
                   onClick={() => handleAudienceSelection('hospital')}
                   className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
-                  Hospital or Health Supplier
+                  Hospital, ASC, or Medical Facility
                 </button>
                 <button
                   onClick={() => handleAudienceSelection('manufacturer')}
                   className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
-                  Surgical Supplies Manufacturer
+                  Distributor or Manufacturer
                 </button>
               </div>
             </div>

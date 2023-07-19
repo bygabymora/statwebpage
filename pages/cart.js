@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { BsTrash3 } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import axios from 'axios';
 
 function CartScreen() {
   const router = useRouter();
@@ -20,8 +21,12 @@ function CartScreen() {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
   };
 
-  const updateCartHandler = (item, qty) => {
+  const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+    const { data } = await axios.get(`/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
+    }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
   };
   return (

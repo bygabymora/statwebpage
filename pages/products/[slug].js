@@ -1,37 +1,43 @@
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
-import data from '../../utils/data';
 import Link from 'next/link';
 import { BsBackspace, BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
 import React, { useContext, useState } from 'react';
 import { Store } from '../../utils/Store';
+import db from '../../utils/db';
+import Product from '../../models/Product';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-export default function ProductScreen() {
+export default function ProductScreen(props) {
+  const { product } = props;
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
 
-  const { query } = useRouter();
-  const { slug } = query;
-  const product = data.products.find((x) => x.slug === slug);
-
   if (!product) {
-    return <div>Product Not Found</div>;
+    return (
+      <Layout title="Product Not found">
+        <div>Product Not Found</div>
+      </Layout>
+    );
   }
 
-  const addToCartHandler = () => {
+  const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     let quantity = exisItem ? exisItem.quantity + 1 : 1;
-    if (product.countInStock < quantity) {
+    const { data } = await axios.get(`/api/products/${product._id}`);
+
+    if (data.countInStock < quantity) {
       setIsOutOfStock(true);
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
 
     if (product.countInStock < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
+      toast.error("Sorry, we don't have enough of that item in stock.");
 
       return quantity;
     }
@@ -56,7 +62,7 @@ export default function ProductScreen() {
           Back to products.
         </Link>
       </div>
-      <div className="product-grid gap-4">
+      <div className="product-grid">
         <div className="product-image">
           <Image
             src={`${product.image}`}
@@ -129,4 +135,20 @@ export default function ProductScreen() {
       </div>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { slug } = params;
+
+  await db.connect();
+
+  const product = await Product.findOne({ slug }).lean();
+  await db.disconnect();
+
+  return {
+    props: {
+      product: product ? db.convertDocToObj(product) : null,
+    },
+  };
 }
