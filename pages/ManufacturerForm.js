@@ -38,10 +38,10 @@ export default function ManufacturerForm() {
         .then(
           (result) => {
             alert('Message sent, thank you for contacting us!');
-            console.log(result.text);
+            console.log('Email sent', result.text);
           },
           (error) => {
-            console.log(error.text);
+            console.log('Error sendingemail', error.text);
           }
         );
       setName('');
