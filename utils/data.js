@@ -9,6 +9,12 @@ const data = {
       isAdmin: true,
     },
     {
+      name: 'Admin User',
+      email: 'admin@statsurgicalsupply.com',
+      password: bcrypt.hashSync('Statsurgicalsupply1*'),
+      isAdmin: true,
+    },
+    {
       name: 'Sebastian',
       email: 'admin@surgicalsc.com',
       password: bcrypt.hashSync('Statsurgicalsupply1*'),
@@ -17,6 +23,7 @@ const data = {
   ],
   products: [
     {
+      name: 'Medtronic 7510400',
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510400',
       lot: 'WE1',
@@ -32,6 +39,7 @@ const data = {
         '2) Vials of Sterile rhBMP-2 (4.2 mg), (1) Package of 4 Sterile Absorbable Collagen Sponges (ACS) 1 x 2 in., (2) Vials of Sterile Water for Injection (5 mL), (4) Sterile 5 mL Syringes with 20G 1.5 in. Needle',
     },
     {
+      name: 'Medtronic 7510200',
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510200',
       lot: 'WE1',
@@ -48,6 +56,7 @@ const data = {
     },
 
     {
+      name: 'Medtronic 7510600',
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510600',
       lot: 'WE1',
@@ -64,6 +73,7 @@ const data = {
     },
 
     {
+      name: 'Medtronic 7510800',
       manufacturer: 'COVIDIEN ENERGY',
       slug: 'COVIDIENENERGYLF1837',
       lot: 'WE1',
@@ -80,6 +90,7 @@ const data = {
     },
 
     {
+      name: 'Medtronic 7510800',
       manufacturer: 'STRYKER',
       slug: 'STRYKER5820-107-530C',
       lot: 'WE1',

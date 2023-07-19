@@ -17,28 +17,12 @@ export default function PlaceOrderScreen() {
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
-  const itemsPriceWithDiscount = round2(
+  const itemsPrice = round2(
     cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
-  );
+  ); // 123.4567 => 123.46
 
-  const paymentMethodDiscount = 0.015; // 1.5% discount for Pay-by-wire
-  const isPayByWire =
-    paymentMethod ===
-    'Pay-by-wire (discount of 1.5% if the payment is done via bank wire transfer).';
-
-  const itemsPrice = isPayByWire
-    ? round2(itemsPriceWithDiscount * (1 - paymentMethodDiscount))
-    : itemsPriceWithDiscount;
-
-  const shippingPrice = itemsPrice > 200 ? 0 : 15;
-  const taxPrice = round2(itemsPrice * 0.15); // Tax is 15% of the items price
-
-  const totalDiscount = isPayByWire
-    ? round2(itemsPriceWithDiscount * paymentMethodDiscount)
-    : 0;
-  const totalPrice = round2(
-    itemsPrice + shippingPrice + taxPrice - totalDiscount
-  );
+  const taxPrice = round2(itemsPrice * 0.15);
+  const totalPrice = round2(itemsPrice + taxPrice);
 
   const router = useRouter();
   useEffect(() => {
@@ -57,7 +41,6 @@ export default function PlaceOrderScreen() {
         shippingAddress,
         paymentMethod,
         itemsPrice,
-        shippingPrice,
         taxPrice,
         totalPrice,
       });
@@ -96,24 +79,14 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.country}
               </div>
               <div>
-                <Link
-                  href="/shipping"
-                  className="to-blue-950 underline font-bold"
-                >
-                  Edit
-                </Link>
+                <Link href="/shipping">Edit</Link>
               </div>
             </div>
             <div className="card  p-5">
               <h2 className="mb-2 text-lg">Payment Method</h2>
               <div>{paymentMethod}</div>
               <div>
-                <Link
-                  href="/payment"
-                  className="to-blue-950 underline font-bold"
-                >
-                  Edit
-                </Link>
+                <Link href="/payment">Edit</Link>
               </div>
             </div>
             <div className="card overflow-x-auto p-5">
@@ -132,17 +105,20 @@ export default function PlaceOrderScreen() {
                     <tr key={item._id} className="border-b">
                       <td>
                         <Link
-                          href={`/product/${item.slug}`}
+                          href={`/products/${item.slug}`}
                           className="flex items-center"
                         >
                           <Image
                             src={item.image}
-                            alt={item.name}
+                            alt={item.slug}
                             width={50}
                             height={50}
+                            style={{
+                              maxWidth: '100%',
+                              height: 'auto',
+                            }}
                           ></Image>
-                          &nbsp;
-                          {item.name}
+                          {item.slug}
                         </Link>
                       </td>
                       <td className=" p-5 text-right">{item.quantity}</td>
@@ -155,9 +131,7 @@ export default function PlaceOrderScreen() {
                 </tbody>
               </table>
               <div>
-                <Link href="/cart" className="to-blue-950 underline font-bold">
-                  Edit
-                </Link>
+                <Link href="/cart">Edit</Link>
               </div>
             </div>
           </div>
@@ -177,18 +151,7 @@ export default function PlaceOrderScreen() {
                     <div>${taxPrice}</div>
                   </div>
                 </li>
-                <li>
-                  <div className="mb-2 flex justify-between">
-                    <div>Shipping</div>
-                    <div>${shippingPrice}</div>
-                  </div>
-                </li>
-                <li>
-                  <div className="mb-2 flex justify-between">
-                    <div>Discount ({isPayByWire ? '1.5%' : '0%'})</div>
-                    <div>${totalDiscount}</div>
-                  </div>
-                </li>
+
                 <li>
                   <div className="mb-2 flex justify-between">
                     <div>Total</div>
@@ -203,6 +166,15 @@ export default function PlaceOrderScreen() {
                   >
                     {loading ? 'Loading...' : 'Place Order'}
                   </button>
+                </li>
+                <li>
+                  <br />
+                  <div className="mb-2 flex justify-between">
+                    <div>
+                      Shipping is not defined yet, we will contact you to define
+                      the better way of shipping
+                    </div>
+                  </div>
                 </li>
               </ul>
             </div>

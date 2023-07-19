@@ -1,6 +1,7 @@
+// /api/orders/:id
 import { getToken } from 'next-auth/jwt';
-import Order from '../../../models/Order';
-import db from '../../../utils/db';
+import Order from '../../../../models/Order';
+import db from '../../../../utils/db';
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
@@ -9,12 +10,10 @@ const handler = async (req, res) => {
   }
 
   await db.connect();
-  const newOrder = new Order({
-    ...req.body,
-    user: user._id,
-  });
 
-  const order = await newOrder.save();
-  res.status(201).send(order);
+  const order = await Order.findById(req.query.id);
+  await db.disconnect();
+  res.send(order);
 };
+
 export default handler;
