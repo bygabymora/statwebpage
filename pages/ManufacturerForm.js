@@ -30,10 +30,10 @@ export default function ManufacturerForm() {
 
       emailjs
         .sendForm(
-          'service_6iczdrm',
-          'template_km5bld2',
+          'service_ej3pm1k',
+          'template_6uwfj0h',
           form.current,
-          '7AxUQOw9AB5tGREc1'
+          'cKdr3QndIv27-P67m'
         )
         .then(
           (result) => {
