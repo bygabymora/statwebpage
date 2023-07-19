@@ -23,7 +23,7 @@ const data = {
   ],
   products: [
     {
-      name: 'Medtronic 7510400',
+      name: 'Medtronic name 1',
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510400',
       lot: 'WE1',
@@ -56,7 +56,7 @@ const data = {
     },
 
     {
-      name: 'Medtronic 7510600',
+      name: 'Medtronic2',
       manufacturer: 'MEDTRONIC',
       slug: 'MEDTRONIC7510600',
       lot: 'WE1',

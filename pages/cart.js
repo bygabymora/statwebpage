@@ -66,6 +66,8 @@ function CartScreen() {
                         {item.manufacturer}
                         <br />
                         &nbsp;{item.reference}
+                        <br />
+                        &nbsp;{item.name}
                       </Link>
                     </td>
                     <td className="p-5 text-right">
