@@ -12,7 +12,7 @@ export default function ManufacturerForm() {
   const [company, setCompany] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState([]);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ export default function ManufacturerForm() {
       formData.append('company', company);
       formData.append('phone', phone);
       formData.append('message', message);
-      formData.append('file', fileInput);
+      formData.append('my_file', fileInput);
 
       emailjs
         .sendForm(
@@ -124,7 +124,7 @@ export default function ManufacturerForm() {
             <label className="manufacturer__form-tag">Upload File</label>
             <input
               type="file"
-              name="file"
+              name="my_file"
               onChange={(e) => setFile(e.target.value)}
               className="manufacturer__form-input"
               ref={fileInputRef}
