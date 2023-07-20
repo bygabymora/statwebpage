@@ -43,10 +43,12 @@ export default function PaymentScreen() {
       <CheckoutWizard activeStep={2} />
       <form className="mx-auto max-w-screen-md" onSubmit={submitHandler}>
         <h1 className="mb-4 text-xl">Payment Method</h1>
-        {[
-          'Stripe',
-          'Pay-by-wire (discount of 1.5% if the payment is done via bank wire transfer).',
-        ].map((payment) => (
+        <p>
+          You get a discount of 1.5% if the payment is done via bank wire
+          transfer.
+        </p>
+        <br />
+        {['Stripe', 'Paypal', 'Pay by Wire'].map((payment) => (
           <div key={payment} className="mb-4">
             <input
               name="paymentMethod"

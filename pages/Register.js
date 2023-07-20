@@ -1,21 +1,79 @@
-import React from 'react';
-import Layout from '../components/Layout';
 import Link from 'next/link';
+import React, { useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import Layout from '../components/Layout';
+import { getError } from '../utils/error';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
-export default function Register() {
+export default function LoginScreen() {
+  const { data: session } = useSession();
+
+  const router = useRouter();
+  const { redirect } = router.query;
+
+  useEffect(() => {
+    if (session?.user) {
+      router.push(redirect || '/');
+    }
+  }, [router, session, redirect]);
+
   const {
     handleSubmit,
     register,
+    getValues,
     formState: { errors },
   } = useForm();
+  const submitHandler = async ({ name, email, password }) => {
+    try {
+      await axios.post('/api/auth/signup', {
+        name,
+        email,
+        password,
+      });
 
-  const submitHandler = () => {};
-
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
   return (
-    <Layout title="Register">
-      <form className="mx-2 pr-5" onSubmit={handleSubmit(submitHandler)}>
-        <h1 className="mb-1 text-xl font-bold">Register</h1>
+    <Layout title="Create Account">
+      <form
+        className="mx-auto max-w-screen-md"
+        onSubmit={handleSubmit(submitHandler)}
+      >
+        <h1 className="mb-1 text-xl font-bold">Create Account</h1>
+        <div className="mb-4">
+          <label
+            className="block mb-2 text-sm font-bold text-gray-700"
+            htmlFor="name"
+          >
+            Name
+          </label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            id="name"
+            autoFocus
+            {...register('name', {
+              required: 'Please enter name',
+            })}
+          />
+          {errors.name && (
+            <div className="text-red-500">{errors.name.message}</div>
+          )}
+        </div>
+
         <div className="mb-4">
           <label
             className="block mb-2 text-sm font-bold text-gray-700"
@@ -24,21 +82,19 @@ export default function Register() {
             Email
           </label>
           <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            autoFocus
-            id="email"
             type="email"
             {...register('email', {
               required: 'Please enter email',
               pattern: {
-                value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
-                message: 'Invalid email',
+                value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
+                message: 'Please enter valid email',
               },
             })}
-            placeholder="Email"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            id="email"
           ></input>
           {errors.email && (
-            <div className="text-blue-950">{errors.email.message}</div>
+            <div className="text-red-500">{errors.email.message}</div>
           )}
         </div>
         <div className="mb-4">
@@ -49,42 +105,56 @@ export default function Register() {
             Password
           </label>
           <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline "
-            autoFocus
-            id="password"
             type="password"
             {...register('password', {
               required: 'Please enter password',
-              minLength: {
-                value: 8,
-                message: 'Password must have at least 8 characters',
-              },
-              pattern: {
-                value:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                message:
-                  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-              },
+              minLength: { value: 6, message: 'password is more than 5 chars' },
             })}
-            placeholder="Password"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            id="password"
+            autoFocus
           ></input>
           {errors.password && (
-            <div className="text-blue-950">{errors.password.message}</div>
+            <div className="text-red-500 ">{errors.password.message}</div>
           )}
         </div>
         <div className="mb-4">
-          <button className="primary-button" type="submit">
-            Register
-          </button>
-        </div>
-        <div className="mb-4">
-          Already have an account? &nbsp;
-          <Link
-            href="/Login"
-            className="font-bold underline active:text-gray-700"
+          <label
+            className="block mb-2 text-sm font-bold text-gray-700"
+            htmlFor="confirmPassword"
           >
-            Login
-          </Link>
+            Confirm Password
+          </label>
+          <input
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            type="password"
+            id="confirmPassword"
+            {...register('confirmPassword', {
+              required: 'Please enter confirm password',
+              validate: (value) => value === getValues('password'),
+              minLength: {
+                value: 6,
+                message: 'confirm password is more than 5 chars',
+              },
+            })}
+          />
+          {errors.confirmPassword && (
+            <div className="text-red-500 ">
+              {errors.confirmPassword.message}
+            </div>
+          )}
+          {errors.confirmPassword &&
+            errors.confirmPassword.type === 'validate' && (
+              <div className="text-red-500 ">Password do not match</div>
+            )}
+        </div>
+
+        <div className="mb-4 ">
+          <button className="primary-button">Register</button>
+        </div>
+        <div className="mb-4 ">
+          Don&apos;t have an account? &nbsp;
+          <Link href={`/register?redirect=${redirect || '/'}`}>Register</Link>
         </div>
       </form>
     </Layout>
