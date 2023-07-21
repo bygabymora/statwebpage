@@ -35,7 +35,7 @@ function CartScreen() {
       {cartItems.length === 0 ? (
         <div>
           Cart is empty.{' '}
-          <Link className="font-bold underline" href={{ pathname: '/' }}>
+          <Link className="font-bold underline" href="/products">
             Go shopping!
           </Link>
         </div>
