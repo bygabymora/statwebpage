@@ -5,6 +5,7 @@ import Banner2 from '../public/images/assets/banner2.png';
 import Banner3 from '../public/images/assets/banner3.png';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { AiOutlineSend } from 'react-icons/ai';
 
 const Banner = () => {
   const router = useRouter();
@@ -73,6 +74,15 @@ const Banner = () => {
                 Partner with us to expand your market reach in two ways. We
                 provide cost savings on the same devices you are purchasing
                 direct. Additionally, we will buy your excess inventory.
+                <br />
+                <Link
+                  href="/ManufacturerForm"
+                  className="flex justify-center items-center font-bold"
+                >
+                  <span className="underline ">Send us your list</span>
+                  <span>&nbsp;&nbsp;</span>
+                  <AiOutlineSend className="link-space-1" />
+                </Link>
               </>
             ) : (
               <>Explore our wide range of high-end surgical disposables.</>

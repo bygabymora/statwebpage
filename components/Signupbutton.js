@@ -98,14 +98,14 @@ const SignupButton = () => {
               <div className="py-1" role="none">
                 <Link
                   href="/Login"
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="px-4 w-5 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
                 >
                   Login
                 </Link>
                 <Link
                   href="/Register"
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="px-1 py-2 text-center text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
                 >
                   Register

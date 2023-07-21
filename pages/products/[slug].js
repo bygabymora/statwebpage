@@ -57,7 +57,7 @@ export default function ProductScreen(props) {
   return (
     <Layout title={product.manufacturer}>
       <div className="py-2">
-        <Link href={{ pathname: '/' }} className="flex gap-4 items-center">
+        <Link href={'/products'} className="flex gap-4 items-center">
           <BsBackspace />
           Back to products.
         </Link>

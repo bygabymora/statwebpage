@@ -433,6 +433,10 @@ img {
   text-decoration: none;
   color: var(--title-color-dark);
 }
+.link-space-1 {
+  text-decoration: none;
+  color: var(--text-color);
+}
 
 /* Animation keyframes */
 @keyframes moveUp {

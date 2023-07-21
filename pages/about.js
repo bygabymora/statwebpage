@@ -26,7 +26,7 @@ export default function AboutScreen() {
           <Image src={image} alt="About Us" className="about-image" />
         </animated.div>
         <animated.div className="content-container" style={contentAnimation}>
-          <h2>About Us</h2>
+          <h2 className="section__title"> About Us</h2>
           <p className="about-content">
             Stat Surgical was founded to combat the rising costs of healthcare
             supply chains. Our company targets the &quot;small&quot; portion of

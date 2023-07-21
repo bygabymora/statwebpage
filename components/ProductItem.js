@@ -53,7 +53,7 @@ export const ProductItem = ({ product }) => {
         <p className="text-sm text-gray-500 mb-2">{product.manufacturer}</p>
         <p className="text-sm text-gray-500">${product.price}</p>
         <button
-          className="primary-button"
+          className="primary-button align-middle mt-2"
           type="button"
           onClick={addToCartHandler}
           disabled={product.countInStock === 0 || isOutOfStock}

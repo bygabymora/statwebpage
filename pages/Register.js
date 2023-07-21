@@ -58,7 +58,7 @@ export default function LoginScreen() {
             className="block mb-2 text-sm font-bold text-gray-700"
             htmlFor="name"
           >
-            Name
+            Full Name
           </label>
           <input
             type="text"
