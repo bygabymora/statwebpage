@@ -60,6 +60,24 @@ export const ProductItem = ({ product }) => {
         >
           {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
+        {isOutOfStock && (
+          <form className="text-center ">
+            <label className="mt-3 font-bold ">Join our waiting List</label>
+            <input
+              type="text"
+              placeholder="Name"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <button className="primary-button mt-3" type="submit">
+              Submit
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
