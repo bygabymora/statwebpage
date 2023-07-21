@@ -38,7 +38,7 @@ const Header = () => {
           </div>
 
           <div className="nav-reverse flex h-12 place-items-center gap-4">
-            <div className="flex h-12 items-center">
+            <div className="flex h-12 items-center place-items-center">
               <Link
                 href={{ pathname: '/cart' }}
                 className="flex text-xl font-bold p-2"

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { BsPerson } from 'react-icons/bs';
 import { signOut, useSession } from 'next-auth/react';
@@ -51,79 +50,79 @@ const SignupButton = () => {
 
   return (
     <div className="relative">
-      <BsPerson className="h-6 w-6 cursor-pointer" onClick={handleMenuToggle} />
+      <Menu as="div" className="flex-col flex items-center w-fit h-full">
+        <Menu.Button className="font-bold">
+          <BsPerson
+            className="h-6 w-6  cursor-pointer place-self-center"
+            onClick={handleMenuToggle}
+          />
+        </Menu.Button>
 
-      {menuOpen && (
-        <div
-          ref={menuRef}
-          style={menuStyle}
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="options-menu"
-        >
-          {status === 'loading' ? (
-            'Loading'
-          ) : session?.user ? (
-            <Menu
-              as="div"
-              className="flex-col flex relative items-center w-fit h-full py-4"
-            >
-              <Menu.Button className="font-bold user-name">
-                {session.user.name}
-              </Menu.Button>
-              <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
-                <Menu.Item>
-                  <DropdownLink href="/profile" className="dropdown-link">
-                    Profile
-                  </DropdownLink>
-                </Menu.Item>
-                <Menu.Item className="dropdown-link">
-                  <DropdownLink href="/order-history">
-                    Order History
-                  </DropdownLink>
-                </Menu.Item>
-                {session.user.isAdmin && (
-                  <Menu.Item className="dropdown-link ">
-                    <div>
-                      <DropdownLink href="/admin/dashboard">
-                        Admin Dashboard
-                      </DropdownLink>
-                    </div>
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            style={menuStyle}
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
+            {status === 'loading' ? (
+              'Loading'
+            ) : session?.user ? (
+              <>
+                <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
+                  <div className="font-bold ml-2">
+                    Hello! {session.user.name}
+                  </div>
+                  <Menu.Item>
+                    <DropdownLink href="/profile" className="dropdown-link">
+                      Profile
+                    </DropdownLink>
                   </Menu.Item>
-                )}
-                <Menu.Item>
-                  <DropdownLink
-                    href="/"
-                    className="dropdown-link font-bold"
-                    onClick={logoutClickHandler}
-                  >
-                    Log Out
-                  </DropdownLink>
-                </Menu.Item>
-              </Menu.Items>
-            </Menu>
-          ) : (
-            <>
-              <div className="py-1" role="none">
-                <Link
-                  href="/Login"
-                  className="px-4 w-5 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  role="menuitem"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/Register"
-                  className="px-1 py-2 text-center text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  role="menuitem"
-                >
-                  Register
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+                  <Menu.Item className="dropdown-link">
+                    <DropdownLink href="/order-history">
+                      Order History
+                    </DropdownLink>
+                  </Menu.Item>
+                  {session.user.isAdmin && (
+                    <Menu.Item className="dropdown-link ">
+                      <div>
+                        <DropdownLink href="/admin/dashboard">
+                          Admin Dashboard
+                        </DropdownLink>
+                      </div>
+                    </Menu.Item>
+                  )}
+                  <Menu.Item>
+                    <DropdownLink
+                      href="/"
+                      className="dropdown-link font-bold"
+                      onClick={logoutClickHandler}
+                    >
+                      Log Out
+                    </DropdownLink>
+                  </Menu.Item>
+                </Menu.Items>
+              </>
+            ) : (
+              <>
+                <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
+                  <Menu.Item>
+                    <DropdownLink href="/Login" className="dropdown-link">
+                      Login
+                    </DropdownLink>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <DropdownLink href="/Register" className="dropdown-link">
+                      Register
+                    </DropdownLink>
+                  </Menu.Item>
+                </Menu.Items>
+              </>
+            )}
+          </div>
+        )}
+      </Menu>
     </div>
   );
 };
