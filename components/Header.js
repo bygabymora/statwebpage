@@ -20,17 +20,29 @@ const Header = () => {
   }),
     [cart.cartItems];
 
+  const handleHomeClick = () => {
+    // Check if the current route is the home page
+    if (router.pathname === '/') {
+      router.reload();
+    } else {
+      router.push('/');
+    }
+  };
   return (
     <header className="header">
       <nav className="nav container">
         <div className="flex h-12 items-center">
           <div className="flex h-12 items-center">
-            <Link href="/" className="nav__logo logo">
+            <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
               <div className="r__logo r__logo-1">
                 <Image src={Logo2} alt="logo" width={500} />
               </div>
             </Link>
-            <Link href="/" className="nav__logo_2 logo">
+            <Link
+              href="/"
+              className="nav__logo_2 logo"
+              onClick={handleHomeClick}
+            >
               <div className="r__logo r__logo-2">
                 <Image src={Logo} alt="logo" width={400} />
               </div>

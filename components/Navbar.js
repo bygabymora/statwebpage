@@ -44,12 +44,20 @@ const Navbar = () => {
       }, 200);
     }
   };
+  const handleHomeClick = () => {
+    // Check if the current route is the home page
+    if (router.pathname === '/') {
+      router.reload();
+    } else {
+      router.push('/');
+    }
+  };
 
   return (
     <div>
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
-          <Link href="/" className="nav__link">
+          <Link href="/" className="nav__link" onClick={handleHomeClick}>
             <BiHomeHeart className="uil uil-estate nav__icon" />
             Home
           </Link>
