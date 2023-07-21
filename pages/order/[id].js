@@ -2,7 +2,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Router, useRouter } from 'next/router'; // Removed unnecessary import for Router
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
@@ -28,6 +28,7 @@ function reducer(state, action) {
 }
 
 function OrderScreen() {
+  const [paymentComplete, setPaymentComplete] = useState(false);
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { query } = useRouter();
   const orderId = query.id;
@@ -128,6 +129,14 @@ function OrderScreen() {
         );
         dispatch({ type: 'PAY_SUCCESS', payload: data });
         toast.success('Order is paid successfully');
+
+        // Mark payment as complete and show success message
+        setPaymentComplete(true);
+
+        // Reload the page after a short delay (e.g., 2 seconds)
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } catch (error) {
         dispatch({ type: 'PAY_FAIL', payload: getError(error) });
         toast.error(getError(error));
@@ -147,6 +156,10 @@ function OrderScreen() {
         <div>Loading...</div>
       ) : error ? (
         <div className="alert-error">{error}</div>
+      ) : paymentComplete ? (
+        <div className="alert-success">
+          Payment completed successfully. Reloading...
+        </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
           <div className="overflow-x-auto md:col-span-3">
@@ -245,7 +258,7 @@ function OrderScreen() {
                   </div>
                 </li>
                 {!isPaid && (
-                  <li className="buttons-container place-items-center justify-self-center">
+                  <li className="buttons-container text-center mx-auto">
                     {paymentMethod === 'Stripe' ? (
                       <button
                         className="primary-button w-full"
@@ -265,7 +278,7 @@ function OrderScreen() {
                         <div>Loading...</div>
                       ) : (
                         <PayPalButtons
-                          className="fit-content mt-3"
+                          className="fit-content  mt-3"
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}

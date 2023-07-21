@@ -34,7 +34,10 @@ function CartScreen() {
       <h1 className="mb-4 text-xl">Shopping Cart</h1>
       {cartItems.length === 0 ? (
         <div>
-          Cart is empty. <Link href={{ pathname: '/' }}>Go shopping!</Link>
+          Cart is empty.{' '}
+          <Link className="font-bold underline" href={{ pathname: '/' }}>
+            Go shopping!
+          </Link>
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4">
