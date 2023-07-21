@@ -732,6 +732,11 @@ img {
 /*=============== BREAKPOINTS ===============*/
 /* For large devices */
 @media screen and (max-width: 992px) {
+  .image-container {
+    @apply order-first justify-self-center;
+    width: 50%;
+    height: auto;
+  }
   .container {
     margin-left: var(--mb-1-5);
     margin-right: var(--mb-1-5);
@@ -750,6 +755,11 @@ img {
 @media screen and (max-width: 800px) {
   .container {
     width: 95%;
+  }
+  .image-container {
+    @apply order-first;
+    width: 70%;
+    height: auto;
   }
   .header {
     top: initial;
