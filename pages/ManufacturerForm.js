@@ -44,6 +44,7 @@ export default function ManufacturerForm() {
             console.log('Error sendingemail', error.text);
           }
         );
+
       setName('');
       setEmail('');
       setCompany('');
