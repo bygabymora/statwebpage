@@ -68,6 +68,15 @@ const Banner = () => {
                 We provide high-quality surgical supplies to meet the needs of
                 healthcare professionals. Partner with us to save thousands on
                 the same devices you purchase direct.
+                <br />
+                <Link
+                  href="/products"
+                  className="flex justify-center items-center font-bold"
+                >
+                  <span className="underline ">Go Shopping!</span>
+                  <span>&nbsp;&nbsp;</span>
+                  <AiOutlineSend className="link-space-1" />
+                </Link>
               </>
             ) : audience === 'manufacturer' ? (
               <>
