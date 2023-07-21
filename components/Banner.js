@@ -130,7 +130,8 @@ const Banner = () => {
                   onClick={() => handleAudienceSelection('manufacturer')}
                   className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
-                  Distributor or Manufacturer
+                  Distributor
+                  <br /> or Manufacturer
                 </button>
               </div>
             </div>
