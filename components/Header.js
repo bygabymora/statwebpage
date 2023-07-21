@@ -21,10 +21,10 @@ const Header = () => {
     [cart.cartItems];
 
   return (
-    <header className="header ">
+    <header className="header">
       <nav className="nav container">
-        <div className="flex h-12 gap-32">
-          <div className="flex h-12 ml-9 items-center">
+        <div className="flex h-12 items-center">
+          <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo">
               <div className="r__logo r__logo-1">
                 <Image src={Logo2} alt="logo" width={500} />
@@ -37,8 +37,8 @@ const Header = () => {
             </Link>
           </div>
 
-          <div className="nav-reverse flex h-12 place-items-center gap-4 ">
-            <div className="flex h-12 items-center place-items-center">
+          <div className="nav-reverse flex h-12 place-items-center gap-4">
+            <div className="flex h-12 items-center">
               <Link
                 href={{ pathname: '/cart' }}
                 className="flex text-xl font-bold p-2"
