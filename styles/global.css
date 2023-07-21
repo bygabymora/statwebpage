@@ -347,7 +347,7 @@ img {
 }
 
 .product-image {
-  @apply w-full object-cover rounded-t-lg;
+  @apply object-cover rounded-t-lg;
 }
 
 .product-grid {
@@ -713,6 +713,9 @@ img {
   }
   .contact__form {
     margin: 0 auto;
+  }
+  .card {
+    @apply mt-3 block rounded-lg border-gray-200 shadow-md mx-3;
   }
 }
 

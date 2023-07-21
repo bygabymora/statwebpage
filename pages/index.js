@@ -48,8 +48,9 @@ export default function Home({ products }) {
       </h2>
       <Carousel
         showArrows={true}
-        showThumbs={true}
-        showStatus={true}
+        showThumbs={false}
+        showStatus={false}
+        showIndicators={false}
         infiniteLoop={true}
         centerMode={true}
         centerSlidePercentage={carouselCenterSlidePercentage}
@@ -62,7 +63,8 @@ export default function Home({ products }) {
           <ProductItem product={product} key={product.slug}></ProductItem>
         ))}
       </Carousel>
-      <Contact />
+
+      <Contact className="mt-2" />
     </Layout>
   );
 }

@@ -37,14 +37,14 @@ export const ProductItem = ({ product }) => {
         <Image
           src={`${product.image}`}
           alt={product.description}
-          className="rounded shadow product-image"
+          className="product-image"
           width={300}
           height={300}
         />
       </Link>
       <div className="flex flex-col justify-center items-center p-5">
         <Link href={{ pathname: `products/${product.slug}` }}>
-          <h2 className="text-lg font-bold">
+          <h2 className="font-bold">
             {product.manufacturer}
             <br />
             {product.reference}

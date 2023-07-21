@@ -98,6 +98,21 @@ const data = {
       notes: 'notes',
       includes: '1) Sealer/Divider',
     },
+    {
+      name: 'ARTHREX AR-2922D-24-3',
+      manufacturer: 'ARTHREX',
+      slug: 'AR-2922D-24-3',
+      lot: '10762361',
+      expiration: '2025-02-28',
+      image: '/images/5820-107-530C-WE1.png',
+      reference: '5820-107-530C',
+      description: 'No description',
+      price: 75,
+      size: '3 x 3.8 mm',
+      countInStock: 4,
+      notes: 'Sold Each',
+      includes: '1',
+    },
   ],
 };
 
