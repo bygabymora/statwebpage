@@ -329,7 +329,9 @@ img {
   }
 
   .image-container {
-    display: none;
+    @apply order-first;
+    width: 100%;
+    height: auto;
   }
 }
 

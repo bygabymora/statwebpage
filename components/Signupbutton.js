@@ -77,15 +77,24 @@ const SignupButton = () => {
                     Profile
                   </DropdownLink>
                 </Menu.Item>
-                <Menu.Item>
-                  <DropdownLink href="/order-history" className="dropdown-link">
+                <Menu.Item className="dropdown-link">
+                  <DropdownLink href="/order-history">
                     Order History
                   </DropdownLink>
                 </Menu.Item>
+                {session.user.isAdmin && (
+                  <Menu.Item className="dropdown-link ">
+                    <div>
+                      <DropdownLink href="/admin/dashboard">
+                        Admin Dashboard
+                      </DropdownLink>
+                    </div>
+                  </Menu.Item>
+                )}
                 <Menu.Item>
                   <DropdownLink
                     href="/"
-                    className="dropdown-link"
+                    className="dropdown-link font-bold"
                     onClick={logoutClickHandler}
                   >
                     Log Out
