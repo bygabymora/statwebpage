@@ -17,8 +17,7 @@ const Header = () => {
   const [cartItemsCount, setCarItemsCount] = useState(0);
   useEffect(() => {
     setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
-  }),
-    [cart.cartItems];
+  }, [cart.cartItems]);
 
   const handleHomeClick = () => {
     // Check if the current route is the home page
