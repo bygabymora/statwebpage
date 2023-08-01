@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import Order from '../../../models/Order';
 import Product from '../../../models/Product';
-import User from '../../../models/user';
+import User from '../../../models/User';
 import db from '../../../utils/db';
 
 const handler = async (req, res) => {

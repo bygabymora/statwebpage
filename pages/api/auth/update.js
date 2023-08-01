@@ -1,5 +1,5 @@
 import bcryptjs from 'bcryptjs';
-import User from '../../../models/user';
+import User from '../../../models/User';
 import db from '../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
