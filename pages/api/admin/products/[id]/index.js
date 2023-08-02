@@ -55,7 +55,7 @@ const deleteHandler = async (req, res) => {
   console.log('Product ID: ', req.query.id); // log the product id
   console.log('Found product: ', product); // log the found product
   if (product) {
-    await product.remove();
+    await Product.findByIdAndDelete(req.query.id);
     await db.disconnect();
     res.send({ message: 'Product deleted successfully' });
   } else {
@@ -63,4 +63,5 @@ const deleteHandler = async (req, res) => {
     res.status(404).send({ message: 'Product not found' });
   }
 };
+
 export default handler;
