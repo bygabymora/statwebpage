@@ -33,24 +33,22 @@ function reducer(state, action) {
       return { ...state, loadingDeliver: false };
     case 'DELIVER_RESET':
       return {
-          ...state,
-          loadingDeliver: false,
-          successDeliver: false,
-        };
+        ...state,
+        loadingDeliver: false,
+        successDeliver: false,
+      };
     default:
-      return state; 
+      return state;
   }
 }
 
 function OrderScreen() {
-
   const { data: session } = useSession();
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { query } = useRouter();
   const orderId = query.id;
 
-  
   const [
     {
       loading,
@@ -106,7 +104,7 @@ function OrderScreen() {
       };
       loadPaypalScript();
     }
-  }, [order, orderId, paypalDispatch, successDeliver,successPay]);
+  }, [order, orderId, paypalDispatch, successDeliver, successPay]);
 
   const {
     shippingAddress,
@@ -155,7 +153,7 @@ function OrderScreen() {
       });
   };
 
-  function onApprove (data, actions){
+  function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
         dispatch({ type: 'PAY_REQUEST' });
@@ -180,12 +178,9 @@ function OrderScreen() {
     });
   }
 
-  function onError (err) {
-     toast.error(getError(err));
+  function onError(err) {
+    toast.error(getError(err));
   }
-
-
-
 
   async function deliverOrderHandler() {
     try {
@@ -256,7 +251,7 @@ function OrderScreen() {
                     <tr key={item._id} className="border-b">
                       <td>
                         <Link
-                          href={`/product/${item.slug}`}
+                          href={`/products/${item.slug}`}
                           className="flex items-center"
                         >
                           <Image
@@ -355,12 +350,12 @@ function OrderScreen() {
                 <br />
                 <li>
                   <div className="mb-2 px-3 flex justify-between">
-                  {!session.user.isAdmin &&
-                    <div>
-                      Shipping is not defined yet, we will contact you to define
-                      the better way of shipping
-                    </div>
-                  }
+                    {!session.user.isAdmin && (
+                      <div>
+                        Shipping is not defined yet, we will contact you to
+                        define the better way of shipping
+                      </div>
+                    )}
                   </div>
                 </li>
               </ul>

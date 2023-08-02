@@ -41,7 +41,6 @@ const putHandler = async (req, res) => {
     product.countInStock = req.body.countInStock;
     product.notes = req.body.notes;
     product.includes = req.body.includes;
-        
     await product.save();
     await db.disconnect();
     res.send({ message: 'Product updated successfully' });
@@ -53,6 +52,8 @@ const putHandler = async (req, res) => {
 const deleteHandler = async (req, res) => {
   await db.connect();
   const product = await Product.findById(req.query.id);
+  console.log('Product ID: ', req.query.id); // log the product id
+  console.log('Found product: ', product); // log the found product
   if (product) {
     await product.remove();
     await db.disconnect();

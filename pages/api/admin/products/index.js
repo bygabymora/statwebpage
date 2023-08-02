@@ -19,15 +19,18 @@ const postHandler = async (req, res) => {
   await db.connect();
   const newProduct = new Product({
     name: 'sample name',
+    manufacturer: 'sample manufacturer',
     slug: 'sample-name-' + Math.random(),
-    image: '/images/shirt1.jpg',
-    price: 0,
-    category: 'sample category',
-    brand: 'sample brand',
-    countInStock: 0,
+    lot: 'sample lot',
+    expiration: 'sample expiration',
+    image: '/images/product.jpg',
+    reference: 'sample reference',
     description: 'sample description',
-    rating: 0,
-    numReviews: 0,
+    price: 0,
+    size: 'sample size',
+    countInStock: 0,
+    notes: 'sample notes',
+    includes: 'sample includes',
   });
 
   const product = await newProduct.save();

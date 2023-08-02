@@ -87,6 +87,7 @@ export default function AdminProdcutsScreen() {
     try {
       dispatch({ type: 'DELETE_REQUEST' });
       await axios.delete(`/api/admin/products/${productId}`);
+      console.log({ productId });
       dispatch({ type: 'DELETE_SUCCESS' });
       toast.success('Product deleted successfully');
     } catch (err) {
@@ -139,7 +140,7 @@ export default function AdminProdcutsScreen() {
                     <th className="px-5 text-left">ID</th>
                     <th className="p-5 text-left">NAME</th>
                     <th className="p-5 text-left">PRICE</th>
-                   
+
                     <th className="p-5 text-left">COUNT</th>
                     <th className="p-5 text-left">ACTIONS</th>
                   </tr>
@@ -152,20 +153,22 @@ export default function AdminProdcutsScreen() {
                       <td className=" p-5 ">${product.price}</td>
                       <td className=" p-5 ">{product.countInStock}</td>
                       <td className=" p-5 text-center ">
-                        <button 
-                          onClick={() => router.push(`/admin/product/${product._id}`)}
+                        <button
+                          onClick={() =>
+                            router.push(`/admin/product/${product._id}`)
+                          }
                           type="button"
                           className="primary-button font-bold underline mr-2 "
                         >
-                          <BiSolidEdit/>
+                          <BiSolidEdit />
                         </button>
-                       
+
                         <button
                           onClick={() => deleteHandler(product._id)}
-                          className="primary-button font-bold underline" 
+                          className="primary-button font-bold underline"
                           type="button"
                         >
-                          <BsTrash3/>
+                          <BsTrash3 />
                         </button>
                       </td>
                     </tr>

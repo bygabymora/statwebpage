@@ -63,7 +63,7 @@ export default function AdminProductEditScreen() {
         setValue('name', data.name);
         setValue('manufacturer', data.manufacturer);
         setValue('slug', data.slug);
-        setValue('lot', data.lot);  
+        setValue('lot', data.lot);
         setValue('expiration', data.expiration);
         setValue('image', data.image);
         setValue('reference', data.reference);
@@ -206,7 +206,9 @@ export default function AdminProductEditScreen() {
                   })}
                 />
                 {errors.manufacturer && (
-                  <div className="text-red-500">{errors.manufaturer.message}</div>
+                  <div className="text-red-500">
+                    {errors.manufaturer.message}
+                  </div>
                 )}
               </div>
               <div className="mb-4">
@@ -224,7 +226,7 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="image">image</label>
+                <label htmlFor="image">Image</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -273,7 +275,9 @@ export default function AdminProductEditScreen() {
                   })}
                 />
                 {errors.description && (
-                  <div className="text-red-500">{errors.description.message}</div>
+                  <div className="text-red-500">
+                    {errors.description.message}
+                  </div>
                 )}
               </div>
               <div className="mb-4">
@@ -303,7 +307,7 @@ export default function AdminProductEditScreen() {
                 {errors.price && (
                   <div className="text-red-500">{errors.size.message}</div>
                 )}
-              </div> 
+              </div>
               <div className="mb-4">
                 <label htmlFor="countInStock">Count In Stock</label>
                 <input
@@ -319,7 +323,7 @@ export default function AdminProductEditScreen() {
                     {errors.countInStock.message}
                   </div>
                 )}
-              </div>           
+              </div>
               <div className="mb-4">
                 <label htmlFor="category">Notes</label>
                 <input
@@ -348,17 +352,25 @@ export default function AdminProductEditScreen() {
                   <div className="text-red-500">{errors.includes.message}</div>
                 )}
               </div>
-              
-            <div className="flex flex-row">
-              <div className="mb-4">
-                <button disabled={loadingUpdate} className="primary-button mr-2">
-                  {loadingUpdate ? 'Loading' : 'Update'}
-                </button>
+
+              <div className="flex flex-row">
+                <div className="mb-4">
+                  <button
+                    disabled={loadingUpdate}
+                    className="primary-button mr-2"
+                  >
+                    {loadingUpdate ? 'Loading' : 'Update'}
+                  </button>
+                </div>
+                <div className="mb-4">
+                  <button
+                    onClick={() => router.push(`/`)}
+                    className="primary-button"
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
-              <div className="mb-4">
-                <button onClick={() => router.push(`/`)} className="primary-button">Back</button>
-              </div>
-            </div>
             </form>
           )}
         </div>
