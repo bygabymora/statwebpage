@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 export default function ShippingScreen() {
   const usStates = [
@@ -60,6 +61,9 @@ export default function ShippingScreen() {
     'Wisconsin',
     'Wyoming',
   ];
+
+  const [lastOrder, setLastOrder] = useState(null);
+  const [useLastAddress, setUseLastAddress] = useState(false);
 
   const [filteredStates, setFilteredStates] = useState(usStates);
 
@@ -150,6 +154,30 @@ export default function ShippingScreen() {
     router.push('/payment');
   };
 
+  useEffect(() => {
+    const fetchLastOrder = async () => {
+      try {
+        const { data } = await axios.get('/api/orders/lastOrder');
+        setLastOrder(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLastOrder();
+  }, []);
+
+  useEffect(() => {
+    if (useLastAddress && lastOrder) {
+      const { shippingAddress } = lastOrder;
+      setValue('fullName', shippingAddress.fullName);
+      setValue('address', shippingAddress.address);
+      setValue('state', shippingAddress.state);
+      setValue('city', shippingAddress.city);
+      setValue('postalCode', shippingAddress.postalCode);
+    }
+  }, [lastOrder, setValue, useLastAddress]);
+
   return (
     <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1}></CheckoutWizard>
@@ -159,8 +187,31 @@ export default function ShippingScreen() {
       >
         <div>
           <h1 className="text-2xl font-bold">Shipping Address</h1>
-          <br />
+          {lastOrder && (
+            <div className="mb-2 mt-2">
+              <label htmlFor="useLastAddress" className="font-bold">
+                Use last used address?
+              </label>{' '}
+              &nbsp;
+              <input
+                type="checkbox"
+                id="useLastAddress"
+                checked={useLastAddress}
+                onChange={(e) => setUseLastAddress(e.target.checked)}
+              />
+              <div className="mb-2">
+                <p className="text-sm">
+                  {lastOrder.shippingAddress.fullName},<br />{' '}
+                  {lastOrder.shippingAddress.address},<br />{' '}
+                  {lastOrder.shippingAddress.state},<br />{' '}
+                  {lastOrder.shippingAddress.city},<br />{' '}
+                  {lastOrder.shippingAddress.postalCode},<br />{' '}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
+
         <div className="mb-4 contact__form-div">
           <label htmlFor="fullName">Full Name</label>
           <input
