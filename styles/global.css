@@ -15,6 +15,7 @@
   --title-color: #144e8b;
   --title-color-dark: #03793d;
   --text-color: #788b9b;
+  --dark-text-color: #414b53;
   --body-color: white;
   --container-color: #fff;
   --yellow: #ffd700;
@@ -411,6 +412,8 @@ img {
 .banner-description {
   font-size: 18px;
   margin-bottom: 20px;
+  color: var(--dark-text-color);
+  font-weight: var(--font-semi-bold);
 }
 
 .banner-button {

@@ -196,13 +196,43 @@ function OrderScreen() {
       toast.error(getError(err));
     }
   }
+  const handleCallButtonClick = (event) => {
+    event.preventDefault();
+    if (window.innerWidth >= 400) {
+      alert('Our phone number: 813-252-0727');
+    } else {
+      window.location.href = 'tel:8132520727';
+    }
+  };
 
   return (
     <Layout title={`Order ${orderId}`}>
       <h1 className="mb-4 text-xl">{`Order ${orderId
         .substring(orderId.length - 8)
         .toUpperCase()}`}</h1>
-
+      <div>
+        <h2>Thank you for your order!</h2>
+        <p>
+          If you have any questions, please reach out to us at &nbsp;
+          <a
+            href="mailto:sales@statsurgicalsupply.com"
+            target="_blank"
+            className="font-bold underline"
+          >
+            sales@statsurgicalsupply.com
+          </a>{' '}
+          or call us at &nbsp;
+          <a
+            href="tel:8132520727"
+            onClick={handleCallButtonClick}
+            className="font-bold underline"
+            target="_blank"
+          >
+            813-252-0727
+          </a>
+          .
+        </p>
+      </div>
       {loading ? (
         <div>Loading...</div>
       ) : error ? (

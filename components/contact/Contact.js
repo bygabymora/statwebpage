@@ -16,9 +16,7 @@ const Contact = () => {
     <section className="contact" id="contact">
       <div className="contact__container">
         <h1 className="section__title">Contact us!</h1>
-        <span className="section__subtitle">
-          Let&apos;s get in touch see how we could work together.
-        </span>
+
         <div className="contact__container container grid">
           <div className="contact__content">
             <div className="contact__card">
