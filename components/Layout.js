@@ -3,6 +3,7 @@ import React from 'react';
 import Header from './Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Footer from './Footer';
 
 export default function Layout({ title, children }) {
   return (
@@ -18,9 +19,7 @@ export default function Layout({ title, children }) {
 
         <main className="main container  m-auto mt-11 px-4">{children}</main>
 
-        <footer className="footer_1 flex h-10 justify-center shadow-inner items-center footer ">
-          <p className="md:white">Copyrights 2023 STAT Surgical Supply</p>
-        </footer>
+        <Footer />
       </div>
     </>
   );

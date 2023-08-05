@@ -698,7 +698,38 @@ img {
   padding-left: 0%;
 }
 
+/*=============== FOOTER ===============*/
+.footer {
+  background-color: #f3f3f3;
+  color: var(--title-color);
+  padding: 20px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-linkGroup {
+  margin-right: 20px;
+}
+
+.footer-links {
+  display: flex;
+}
+
+.footer-contactInfo {
+  max-width: 300px;
+}
+
+.footer-copyright {
+  text-align: center;
+  padding: 10px;
+  font-size: 1rem;
+}
+
 /*=============== BREAKPOINTS ===============*/
+
 /* For large devices */
 @media screen and (max-width: 992px) {
   .contact__container {

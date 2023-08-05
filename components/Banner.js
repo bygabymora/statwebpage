@@ -119,12 +119,14 @@ const Banner = () => {
             <div>
               <h1 className="text-2xl">Who are you?</h1>
               <br />
-              <div className="grid grid-cols-2 cart-button items-center mb-8 text-center">
+              <div className="grid grid-cols-2 cart-button items-center mb-8 text-center sm:text-xs">
                 <button
                   onClick={() => handleAudienceSelection('hospital')}
                   className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center"
                 >
-                  Hospital, ASC, or Medical Facility
+                  Hospital, ASC, or
+                  <br />
+                  Medical Facility
                 </button>
                 <button
                   onClick={() => handleAudienceSelection('manufacturer')}
