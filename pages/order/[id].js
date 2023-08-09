@@ -8,6 +8,11 @@ import { getError } from '../../utils/error';
 import { useSession } from 'next-auth/react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -122,15 +127,25 @@ function OrderScreen() {
 
   const handleCheckout = async () => {
     try {
+      const stripe = await stripePromise;
       dispatch({ type: 'FETCH_REQUEST' });
-      const { data } = await axios.post('/api/checkout', {
+      const { data } = await axios.post('/api/checkout_sessions', {
         paymentMethod: paymentMethod,
+        totalPrice: totalPrice,
+        orderId: orderId,
+      });
+
+      const result = await stripe.redirectToCheckout({
+        sessionId: data.id,
       });
 
       if (data.sessionId) {
         window.location = `https://checkout.stripe.com/pay/${data.sessionId}`;
+      }
+      if (result.error) {
+        alert(result.error.message);
       } else if (data.redirectTo) {
-        Router.push(data.redirectTo); // Corrected Router to useRouter
+        Router.push(data.redirectTo);
       }
     } catch (err) {
       dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
