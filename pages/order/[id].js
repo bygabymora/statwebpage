@@ -130,7 +130,6 @@ function OrderScreen() {
       dispatch({ type: 'FETCH_REQUEST' });
       const stripe = await stripePromise;
       const { checkoutSession } = await axios.post('/api/checkout_sessions', {
-        paymentMethod: paymentMethod,
         totalPrice: totalPrice,
         orderId: orderId,
       });
