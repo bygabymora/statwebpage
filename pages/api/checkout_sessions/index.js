@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { totalPrice, orderID } = req.body;
+    const { totalPrice } = req.body;
 
     try {
       const session = await stripe.checkout.sessions.create({
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
           },
         ],
         mode: 'payment',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/${orderID}`, // Redirect back to the order page
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`, // Redirect back to the order page
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
       });
 

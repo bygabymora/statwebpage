@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Router, useRouter } from 'next/router'; // Removed unnecessary import for Router
+import { useRouter } from 'next/router';
 import { useEffect, useReducer, useState } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
@@ -127,28 +127,23 @@ function OrderScreen() {
 
   const handleCheckout = async () => {
     try {
-      const stripe = await stripePromise;
       dispatch({ type: 'FETCH_REQUEST' });
-      const { data } = await axios.post('/api/checkout_sessions', {
+      const stripe = await stripePromise;
+      const { checkoutSession } = await axios.post('/api/checkout_sessions', {
         paymentMethod: paymentMethod,
         totalPrice: totalPrice,
         orderId: orderId,
       });
 
       const result = await stripe.redirectToCheckout({
-        sessionId: data.id,
+        sessionId: checkoutSession.data.id,
       });
 
-      if (data.sessionId) {
-        window.location = `https://checkout.stripe.com/pay/${data.sessionId}`;
-      }
       if (result.error) {
         alert(result.error.message);
-      } else if (data.redirectTo) {
-        Router.push(data.redirectTo);
       }
-    } catch (err) {
-      dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+    } catch (error) {
+      console.log(error);
     }
   };
 
