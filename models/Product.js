@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema(
     bulk: { type: String, required: true },
     countInStock: { type: Number, default: 0, required: true },
     countInStockBulk: { type: Number, default: 0, required: true },
+    sentOvernight: { type: Boolean, default: false, required: true },
     notes: { type: String, required: false },
     includes: { type: String, required: true },
   },
