@@ -74,6 +74,7 @@ export default function AdminProductEditScreen() {
         setValue('each', data.each);
         setValue('countInStock', data.countInStock);
         setValue('countInStockBulk', data.countInStockBulk);
+        setValue('sentOverNight', data.sentOverNight);
         setValue('notes', data.notes);
         setValue('includes', data.includes);
       } catch (err) {
@@ -126,6 +127,7 @@ export default function AdminProductEditScreen() {
     bulk,
     countInStock,
     countInStockBulk,
+    sentOverNight,
     notes,
     includes,
   }) => {
@@ -147,6 +149,7 @@ export default function AdminProductEditScreen() {
         bulk,
         countInStock,
         countInStockBulk,
+        sentOverNight,
         notes,
         includes,
       });
@@ -275,109 +278,87 @@ export default function AdminProductEditScreen() {
                   <div className="text-red-500">{errors.reference.message}</div>
                 )}
               </div>
-              <div className="mb-4">
-                <label htmlFor="description">Description</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="description"
-                  {...register('description', {
-                    required: 'Please enter Description',
-                  })}
-                />
-                {errors.description && (
-                  <div className="text-red-500">
-                    {errors.description.message}
-                  </div>
-                )}
+              <div>
+                <h2>Each</h2>
+                <div className="mb-4">
+                  <label htmlFor="description">Description Each</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="description"
+                    {...register('description', {
+                      required: 'Please enter Description',
+                    })}
+                  />
+                  {errors.description && (
+                    <div className="text-red-500">
+                      {errors.description.message}
+                    </div>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="price">Price Each</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="price"
+                    {...register('price', {
+                      required: 'Please enter price',
+                    })}
+                  />
+                  {errors.price && (
+                    <div className="text-red-500">{errors.price.message}</div>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="countInStock">Count In Stock Each</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="countInStock"
+                    {...register('countInStock', {
+                      required: 'Please enter countInStock',
+                    })}
+                  />
+                  {errors.countInStock && (
+                    <div className="text-red-500">
+                      {errors.countInStock.message}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="mb-4">
-                <label htmlFor="descriptionBulk">Description Bulk</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="descriptionBulk"
-                  {...register('descriptionBulk', {
-                    required: 'Please enter Description Bulk',
-                  })}
-                />
-                {errors.description && (
-                  <div className="text-red-500">
-                    {errors.description.message}
-                  </div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="price">Price</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="price"
-                  {...register('price', {
-                    required: 'Please enter price',
-                  })}
-                />
-                {errors.price && (
-                  <div className="text-red-500">{errors.price.message}</div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="priceBulk">Price Bulk</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="priceBulk"
-                  {...register('priceBulk', {
-                    required: 'Please enter price Bulk',
-                  })}
-                />
-                {errors.price && (
-                  <div className="text-red-500">{errors.price.message}</div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="each">Each</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="each"
-                  {...register('each', {
-                    required: 'Please enter each',
-                  })}
-                />
-                {errors.price && (
-                  <div className="text-red-500">{errors.each.message}</div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="bulk">Bulk</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="bulk"
-                  {...register('bulk', {
-                    required: 'Please enter bulk',
-                  })}
-                />
-                {errors.price && (
-                  <div className="text-red-500">{errors.bulk.message}</div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label htmlFor="countInStock">Count In Stock</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="countInStock"
-                  {...register('countInStock', {
-                    required: 'Please enter countInStock',
-                  })}
-                />
-                {errors.countInStock && (
-                  <div className="text-red-500">
-                    {errors.countInStock.message}
-                  </div>
-                )}
+              <div>
+                <h2>Bulk</h2>
+                <div className="mb-4">
+                  <label htmlFor="descriptionBulk">Description Bulk</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="descriptionBulk"
+                    {...register('descriptionBulk', {
+                      required: 'Please enter Description Bulk',
+                    })}
+                  />
+                  {errors.description && (
+                    <div className="text-red-500">
+                      {errors.description.message}
+                    </div>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="priceBulk">Price Bulk</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="priceBulk"
+                    {...register('priceBulk', {
+                      required: 'Please enter price Bulk',
+                    })}
+                  />
+                  {errors.price && (
+                    <div className="text-red-500">{errors.price.message}</div>
+                  )}
+                </div>
                 <div className="mb-4">
                   <label htmlFor="countInStockBulk">Count In Stock Bulk</label>
                   <input
@@ -410,20 +391,21 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="brand">Includes</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="includes"
-                  {...register('includes', {
-                    required: 'Please enter includes',
-                  })}
-                />
-                {errors.includes && (
-                  <div className="text-red-500">{errors.includes.message}</div>
+                <label htmlFor="sentOverNight">
+                  <input
+                    type="checkbox"
+                    id="sentOverNight"
+                    {...register('sentOverNight')}
+                    defaultChecked={false}
+                  />
+                  Sent Over Night
+                </label>
+                {errors.sentOverNight && (
+                  <div className="text-red-500">
+                    {errors.sentOverNight.message}
+                  </div>
                 )}
               </div>
-
               <div className="flex flex-row">
                 <div className="mb-4">
                   <button
