@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
 import { loadStripe } from '@stripe/stripe-js';
+import Stripe from '../../public/images/assets/PBS.png';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -350,12 +351,20 @@ function OrderScreen() {
                 {!isPaid && (
                   <li className="buttons-container text-center mx-auto">
                     {paymentMethod === 'Stripe' ? (
-                      <button
-                        className="primary-button w-full"
-                        onClick={handleCheckout}
-                      >
-                        Checkout with Stripe
-                      </button>
+                      <form action="/api/checkout_sessions" method="POST">
+                        <section>
+                          <input hidden name="totalPrice" value={totalPrice} />
+                          <input hidden name="orderId" value={orderId} />
+                          <button type="submit" role="link">
+                            <Image
+                              src={Stripe}
+                              alt="Checkout with Stripe"
+                              height={80}
+                              width={150}
+                            />
+                          </button>
+                        </section>
+                      </form>
                     ) : paymentMethod === 'Pay by Wire' ? (
                       <button
                         className="primary-button w-full"
