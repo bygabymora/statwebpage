@@ -187,10 +187,47 @@ function OrderScreen() {
       }
     });
   }
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentSuccess = urlParams.get('paymentSuccess');
 
-  function onError(err) {
-    toast.error(getError(err));
-  }
+    if (paymentSuccess === 'true') {
+      const handleOnApprove = async () => {
+        try {
+          dispatch({ type: 'PAY_REQUEST' });
+          const { data } = await axios.put(
+            `/api/orders/${order._id}/pay`
+            // Include any necessary payload here
+          );
+          dispatch({ type: 'PAY_SUCCESS', payload: data });
+          toast.success('Order is paid successfully');
+
+          // Mark payment as complete and show success message
+          setPaymentComplete(true);
+
+          // Remove 'paymentSuccess' from the URL without reloading
+          urlParams.delete('paymentSuccess');
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname + '?' + urlParams.toString()
+          );
+
+          // If you still need to reload the page, you can do so
+          // It will not process payment again since the 'paymentSuccess' query parameter has been removed
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } catch (error) {
+          dispatch({ type: 'PAY_FAIL', payload: getError(error) });
+          toast.error(getError(error));
+        }
+      };
+
+      // Call handleOnApprove here
+      handleOnApprove();
+    }
+  }, [order._id]);
 
   async function deliverOrderHandler() {
     try {
@@ -355,12 +392,18 @@ function OrderScreen() {
                         <section>
                           <input hidden name="totalPrice" value={totalPrice} />
                           <input hidden name="orderId" value={orderId} />
-                          <button type="submit" role="link">
+                          <button
+                            type="submit"
+                            role="link"
+                            className="primary-button w-full"
+                          >
+                            Checkout
                             <Image
                               src={Stripe}
                               alt="Checkout with Stripe"
                               height={80}
-                              width={150}
+                              width={200}
+                              className="mt-2"
                             />
                           </button>
                         </section>
