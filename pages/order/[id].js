@@ -229,6 +229,10 @@ function OrderScreen() {
     }
   }, [order._id]);
 
+  function onError(err) {
+    toast.error(getError(err));
+  }
+
   async function deliverOrderHandler() {
     try {
       dispatch({ type: 'DELIVER_REQUEST' });
