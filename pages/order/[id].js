@@ -2,7 +2,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
 import { useSession } from 'next-auth/react';
@@ -54,6 +54,8 @@ function OrderScreen() {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { query } = useRouter();
   const orderId = query.id;
+  const trackUrlRef = useRef(null);
+  const trackNumberRef = useRef(null);
 
   const [
     {
@@ -123,6 +125,8 @@ function OrderScreen() {
     paidAt,
     isDelivered,
     deliveredAt,
+    trackNumber,
+    trackUrl,
   } = order;
   const discountAmount = itemsPrice * 0.015;
 
@@ -213,7 +217,6 @@ function OrderScreen() {
             window.location.pathname + '?' + urlParams.toString()
           );
 
-          // If you still need to reload the page, you can do so
           // It will not process payment again since the 'paymentSuccess' query parameter has been removed
           setTimeout(() => {
             window.location.reload();
@@ -233,13 +236,23 @@ function OrderScreen() {
     toast.error(getError(err));
   }
 
-  async function deliverOrderHandler() {
+  async function deliverOrderHandler(e) {
+    e.preventDefault(); // prevent default form submission
+    const trackUrl = trackUrlRef.current.value;
+    const trackNumber = trackNumberRef.current.value;
+
     try {
       dispatch({ type: 'DELIVER_REQUEST' });
+
+      // Send tracking URL and number with the axios request
       const { data } = await axios.put(
         `/api/admin/orders/${order._id}/deliver`,
-        {}
+        {
+          trackUrl: trackUrl,
+          trackNumber: trackNumber,
+        }
       );
+
       dispatch({ type: 'DELIVER_SUCCESS', payload: data });
       toast.success('Order is delivered');
     } catch (err) {
@@ -247,6 +260,7 @@ function OrderScreen() {
       toast.error(getError(err));
     }
   }
+
   const handleCallButtonClick = (event) => {
     event.preventDefault();
     if (window.innerWidth >= 400) {
@@ -303,7 +317,13 @@ function OrderScreen() {
                 {shippingAddress.state}
               </div>
               {isDelivered ? (
-                <div className="alert-success">Delivered at {deliveredAt}</div>
+                <div className="alert-success">
+                  Delivered at {deliveredAt} <br />
+                  You can track your order on this link &nbsp;
+                  <Link href={trackUrl} className="underline">
+                    {trackNumber}
+                  </Link>
+                </div>
               ) : (
                 <div className="alert-error">Not delivered</div>
               )}
@@ -437,12 +457,33 @@ function OrderScreen() {
                 {session.user.isAdmin && order.isPaid && !order.isDelivered && (
                   <li>
                     {loadingDeliver && <div>Loading...</div>}
-                    <button
-                      className="primary-button w-full"
-                      onClick={deliverOrderHandler}
+                    <form
+                      action={`/api/admin/orders/${order._id}/deliver`}
+                      method="POST"
                     >
-                      Deliver Order
-                    </button>
+                      <section>
+                        <input
+                          ref={trackUrlRef}
+                          name="trackUrl"
+                          placeholder="Tracking URL"
+                          className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline m-1"
+                        />
+                        <input
+                          ref={trackNumberRef}
+                          name="trackNumber"
+                          placeholder="Tracking Number"
+                          className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline m-1"
+                        />
+                        <button
+                          type="submit"
+                          role="link"
+                          className="primary-button w-full"
+                          onClick={deliverOrderHandler}
+                        >
+                          Deliver Order
+                        </button>
+                      </section>
+                    </form>
                   </li>
                 )}
                 <br />
