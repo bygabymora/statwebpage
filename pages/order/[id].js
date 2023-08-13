@@ -322,8 +322,13 @@ function OrderScreen() {
               {isDelivered ? (
                 <div className="alert-success">
                   Delivered at {deliveredAt} <br />
-                  You can track your order on this link &nbsp;
-                  <Link href={trackUrl} className="underline">
+                  You can track your order &nbsp;
+                  <Link href={trackUrl} className="underline font-bold">
+                    HERE.
+                  </Link>
+                  <br />
+                  Your tracking number is: &nbsp;
+                  <Link href={trackUrl} className="underline font-bold">
                     {trackNumber}
                   </Link>
                 </div>
