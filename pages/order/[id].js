@@ -321,14 +321,26 @@ function OrderScreen() {
               </div>
               {isDelivered ? (
                 <div className="alert-success">
-                  Delivered at {deliveredAt} <br />
+                  Delivered at{' '}
+                  <span className="font-bold">
+                    {new Date(deliveredAt).toLocaleDateString()}{' '}
+                  </span>
+                  <br />
                   You can track your order &nbsp;
-                  <Link href={trackUrl} className="underline font-bold">
+                  <Link
+                    href={trackUrl}
+                    target="_blank"
+                    className="underline font-bold"
+                  >
                     HERE.
                   </Link>
                   <br />
                   Your tracking number is: &nbsp;
-                  <Link href={trackUrl} className="underline font-bold">
+                  <Link
+                    href={trackUrl}
+                    target="_blank"
+                    className="underline font-bold"
+                  >
                     {trackNumber}
                   </Link>
                 </div>
@@ -341,7 +353,12 @@ function OrderScreen() {
               <h2 className="mb-2 text-lg">Payment Method</h2>
               <div>{paymentMethod}</div>
               {isPaid ? (
-                <div className="alert-success">Paid at {paidAt}</div>
+                <div className="alert-success">
+                  Paid at{' '}
+                  <span className="font-bold">
+                    {new Date(paidAt).toLocaleDateString()}{' '}
+                  </span>
+                </div>
               ) : (
                 <div className="alert-error">Not paid</div>
               )}
