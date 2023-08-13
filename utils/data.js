@@ -33,6 +33,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'notes',
       includes:
         '2) Vials of Sterile rhBMP-2 (4.2 mg), (1) Package of 4 Sterile Absorbable Collagen Sponges (ACS) 1 x 2 in., (2) Vials of Sterile Water for Injection (5 mL), (4) Sterile 5 mL Syringes with 20G 1.5 in. Needle',
@@ -53,6 +54,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'notes',
       includes:
         '(1) Vial of Sterile rhBMP-2 (4.2 mg), (1) Package of 2 Sterile Absorbable Collagen Sponge (ACS) 1 x 2 in., (1) Vial of Sterile Water for Injection (5 mL), (2) Sterile 5 mL Syringes with 20G 1.5 in. Needle',
@@ -74,6 +76,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'notes',
       includes:
         '(1) Vial of Sterile rhBMP-2 (12 mg), (1) Package of 6 Sterile Absorbable Collagen Sponge (ACS) 1 x 2 in., (1) Vial of Sterile Water for Injection (10 mL), (2) Sterile 10 mL Syringes with 20G 1.5 in. Needle',
@@ -95,6 +98,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'notes',
       includes: '1) Sealer/Divider',
     },
@@ -115,6 +119,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'notes',
       includes: '1) Sealer/Divider',
     },
@@ -134,6 +139,7 @@ const data = {
       bulk: 'Bulk',
       countInStock: 100,
       countInStockBulk: 100,
+      sentOverNight: true,
       notes: 'Sold Each',
       includes: '1',
     },
