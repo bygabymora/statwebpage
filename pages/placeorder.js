@@ -113,7 +113,9 @@ export default function PlaceOrderScreen() {
                 <thead className="border-b">
                   <tr>
                     <th className="px-5 text-left">Item</th>
+                    <th className="  p-5 text-right">Type</th>
                     <th className="    p-5 text-right">Quantity</th>
+
                     <th className="  p-5 text-right">Price</th>
                     <th className="p-5 text-right">Subtotal</th>
                   </tr>
@@ -139,6 +141,7 @@ export default function PlaceOrderScreen() {
                           {item.slug}
                         </Link>
                       </td>
+                      <td className="p-5 text-right">{item.purchaseType}</td>
                       <td className=" p-5 text-right">{item.quantity}</td>
                       <td className="p-5 text-right">${item.price}</td>
                       <td className="p-5 text-right">

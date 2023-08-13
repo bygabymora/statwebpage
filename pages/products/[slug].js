@@ -43,7 +43,17 @@ export default function ProductScreen(props) {
       setIsOutOfStock(true);
       return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      payload: {
+        ...product,
+        quantity,
+        purchaseType,
+        price: currentPrice,
+        description: currentDescription,
+        countInStock: currentCountInStock,
+      },
+    });
 
     if (product.countInStock < quantity) {
       toast.error("Sorry, we don't have enough of that item in stock.");

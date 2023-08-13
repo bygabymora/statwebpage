@@ -10,6 +10,7 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
+import { AiTwotoneLock } from 'react-icons/ai';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -348,6 +349,7 @@ function OrderScreen() {
                   <tr>
                     <th className="px-5 text-left">Item</th>
                     <th className="    p-5 text-right">Quantity</th>
+                    <th className="p-5 py-2 text-right">Type</th>
                     <th className="  p-5 text-right">Price</th>
                     <th className="p-5 text-right">Subtotal</th>
                   </tr>
@@ -371,6 +373,7 @@ function OrderScreen() {
                         </Link>
                       </td>
                       <td className=" p-5 text-right">{item.quantity}</td>
+                      <td className="p-5 text-right">{item.purchaseType}</td>
                       <td className="p-5 text-right">${item.price}</td>
                       <td className="p-5 text-right">
                         ${item.quantity * item.price}
@@ -423,7 +426,9 @@ function OrderScreen() {
                             role="link"
                             className="primary-button w-full"
                           >
-                            Checkout
+                            <div className="flex flex-row align-middle justify-center items-center ">
+                              Checkout &nbsp; <AiTwotoneLock className="" />
+                            </div>
                             <Image
                               src={Stripe}
                               alt="Checkout with Stripe"
