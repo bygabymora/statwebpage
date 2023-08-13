@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         ],
         mode: 'payment',
         success_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/${orderId}?paymentSuccess=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/${orderId}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/${orderId}?paymentSuccess=false`,
       });
       res.redirect(303, session.url);
     } catch (err) {

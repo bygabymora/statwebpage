@@ -229,6 +229,8 @@ function OrderScreen() {
 
       // Call handleOnApprove here
       handleOnApprove();
+    } else {
+      console.log('Payment failed');
     }
   }, [order._id]);
 
