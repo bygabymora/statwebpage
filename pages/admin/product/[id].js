@@ -68,9 +68,12 @@ export default function AdminProductEditScreen() {
         setValue('image', data.image);
         setValue('reference', data.reference);
         setValue('description', data.description);
+        setValue('descriptionBulk', data.descriptionBulk);
         setValue('price', data.price);
-        setValue('size', data.size);
+        setValue('priceBulk', data.priceBulk);
+        setValue('each', data.each);
         setValue('countInStock', data.countInStock);
+        setValue('countInStockBulk', data.countInStockBulk);
         setValue('notes', data.notes);
         setValue('includes', data.includes);
       } catch (err) {
@@ -116,9 +119,13 @@ export default function AdminProductEditScreen() {
     image,
     reference,
     description,
+    descriptionBulk,
     price,
-    size,
+    priceBulk,
+    each,
+    bulk,
     countInStock,
+    countInStockBulk,
     notes,
     includes,
   }) => {
@@ -126,16 +133,20 @@ export default function AdminProductEditScreen() {
       dispatch({ type: 'UPDATE_REQUEST' });
       await axios.put(`/api/admin/products/${productId}`, {
         name,
-        slug,
-        price,
         manufacturer,
+        slug,
         lot,
         expiration,
         image,
         reference,
         description,
-        size,
+        descriptionBulk,
+        price,
+        priceBulk,
+        each,
+        bulk,
         countInStock,
+        countInStockBulk,
         notes,
         includes,
       });
@@ -281,6 +292,22 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
+                <label htmlFor="descriptionBulk">Description Bulk</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="descriptionBulk"
+                  {...register('descriptionBulk', {
+                    required: 'Please enter Description Bulk',
+                  })}
+                />
+                {errors.description && (
+                  <div className="text-red-500">
+                    {errors.description.message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-4">
                 <label htmlFor="price">Price</label>
                 <input
                   type="text"
@@ -295,17 +322,45 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="size">Size</label>
+                <label htmlFor="priceBulk">Price Bulk</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="price"
-                  {...register('size', {
-                    required: 'Please enter size',
+                  id="priceBulk"
+                  {...register('priceBulk', {
+                    required: 'Please enter price Bulk',
                   })}
                 />
                 {errors.price && (
-                  <div className="text-red-500">{errors.size.message}</div>
+                  <div className="text-red-500">{errors.price.message}</div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="each">Each</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="each"
+                  {...register('each', {
+                    required: 'Please enter each',
+                  })}
+                />
+                {errors.price && (
+                  <div className="text-red-500">{errors.each.message}</div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="bulk">Bulk</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="bulk"
+                  {...register('bulk', {
+                    required: 'Please enter bulk',
+                  })}
+                />
+                {errors.price && (
+                  <div className="text-red-500">{errors.bulk.message}</div>
                 )}
               </div>
               <div className="mb-4">
@@ -323,6 +378,22 @@ export default function AdminProductEditScreen() {
                     {errors.countInStock.message}
                   </div>
                 )}
+                <div className="mb-4">
+                  <label htmlFor="countInStockBulk">Count In Stock Bulk</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                    id="countInStockBulk"
+                    {...register('countInStockBulk', {
+                      required: 'Please enter countInStock Bulk',
+                    })}
+                  />
+                  {errors.countInStock && (
+                    <div className="text-red-500">
+                      {errors.countInStock.message}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="mb-4">
                 <label htmlFor="category">Notes</label>

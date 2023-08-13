@@ -36,9 +36,13 @@ const putHandler = async (req, res) => {
     product.image = req.body.image;
     product.reference = req.body.reference;
     product.description = req.body.description;
+    product.descriptionBulk = req.body.descriptionBulk;
     product.price = req.body.price;
-    product.size = req.body.size;
+    product.priceBulk = req.body.priceBulk;
+    product.each = req.body.each;
+    product.bulk = req.body.bulk;
     product.countInStock = req.body.countInStock;
+    product.countInStockBulk = req.body.countInStockBulk;
     product.notes = req.body.notes;
     product.includes = req.body.includes;
     await product.save();

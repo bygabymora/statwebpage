@@ -16,6 +16,15 @@ export default function ProductScreen(props) {
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [qty, setQty] = useState(1);
+  const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
+  const [currentPrice, setCurrentPrice] = useState(product.price);
+  const [currentDescription, setCurrentDescription] = useState(
+    product.descriptionEach
+  );
+  const [currentCountInStock, setCurrentCountInStock] = useState(
+    product.countInStockEach
+  );
 
   if (!product) {
     return (
@@ -27,7 +36,7 @@ export default function ProductScreen(props) {
 
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
-    let quantity = exisItem ? exisItem.quantity + 1 : 1;
+    const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (data.countInStock < quantity) {
@@ -80,15 +89,56 @@ export default function ProductScreen(props) {
               <h1 className="text-xl font-bold">{product.reference}</h1>
             </li>
             <li>
-              <h1 className="text-xl">{product.description}</h1>
+              <h1 className="text-xl">{currentDescription}</h1>
             </li>
           </ul>
         </div>
         <div>
           <div className="card p-5">
             <div className="mb-2 flex justify-between">
+              <div className="font-bold">Quantity</div>
+              <div className="flex flex-row">
+                <button
+                  className="border px-2 py-1"
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  disabled={qty <= 1}
+                >
+                  -
+                </button>
+                <span className="px-3">{qty}</span>
+                <button
+                  className="border px-2 py-1"
+                  onClick={() => setQty(qty + 1)}
+                  disabled={currentCountInStock <= qty}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="mb-2 flex justify-between">
+              <div className="font-bold">Purchase Type</div>
+              <select
+                value={purchaseType}
+                onChange={(e) => {
+                  setPurchaseType(e.target.value);
+                  if (e.target.value === 'Bulk') {
+                    setCurrentPrice(product.priceBulk);
+                    setCurrentDescription(product.descriptionBulk);
+                    setCurrentCountInStock(product.countInStockBulk);
+                  } else {
+                    setCurrentPrice(product.price);
+                    setCurrentDescription(product.description);
+                    setCurrentCountInStock(product.countInStock);
+                  }
+                }}
+              >
+                <option value="Each">Each</option>
+                <option value="Bulk">Bulk</option>
+              </select>
+            </div>
+            <div className="mb-2 flex justify-between">
               <div className="font-bold">Price</div>
-              <div className="text-2xl">${product.price}</div>
+              <div className="text-2xl">${currentPrice}</div>
             </div>
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
@@ -110,7 +160,7 @@ export default function ProductScreen(props) {
             {showPopup && (
               <div className="popup">
                 <div className="popup-content">
-                  <p>Item added to cart.</p>
+                  <p>Items added to cart.</p>
                   <br />
                   <div className="flex gap-1 justify-evenly">
                     <button
