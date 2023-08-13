@@ -29,6 +29,8 @@ const orderSchema = new mongoose.Schema(
     paidAt: { type: Date },
     deliveredAt: { type: Date },
     discountAmount: { type: Number, required: true, default: 0 },
+    trackNumber: { type: String, required: true, default: false },
+    trackUrl: { type: String, required: true, default: false },
   },
   {
     timestamps: true,
