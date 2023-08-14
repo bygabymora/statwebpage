@@ -10,6 +10,15 @@ export const ProductItem = ({ product }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [qty, setQty] = useState(1);
+  const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
+  const [currentPrice, setCurrentPrice] = useState(product.price);
+  const [currentDescription, setCurrentDescription] = useState(
+    product.descriptionEach
+  );
+  const [currentCountInStock, setCurrentCountInStock] = useState(
+    product.countInStockEach
+  );
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find((x) => x.slug === product.slug);
@@ -20,7 +29,18 @@ export const ProductItem = ({ product }) => {
       setIsOutOfStock(true);
       return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      payload: {
+        ...product,
+        quantity,
+        purchaseType,
+        sentOverNight: product.sentOverNight,
+        price: currentPrice,
+        description: currentDescription,
+        countInStock: currentCountInStock,
+      },
+    });
 
     toast.success('Item added to cart');
 
@@ -45,13 +65,57 @@ export const ProductItem = ({ product }) => {
       <div className="flex flex-col justify-center items-center p-5">
         <Link href={{ pathname: `products/${product.slug}` }}>
           <h2 className="font-bold">
-            {product.manufacturer}
+            {product.reference}
             <br />
             {product.slug}
           </h2>
         </Link>
-        <p className="text-sm text-gray-500 mb-2">{product.manufacturer}</p>
-        <p className="text-sm text-gray-500">${product.price}</p>
+        <br />
+        <div className="mb-2 flex justify-between">
+          <div className="font-bold">Quantity &nbsp;</div>
+          <div className="flex flex-row">
+            <button
+              className="border px-2 py-1"
+              onClick={() => setQty(Math.max(1, qty - 1))}
+              disabled={qty <= 1}
+            >
+              -
+            </button>
+            <span className="px-3">{qty}</span>
+            <button
+              className="border px-2 py-1"
+              onClick={() => setQty(qty + 1)}
+              disabled={currentCountInStock <= qty}
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <div className="mb-2 flex justify-between">
+          <div className="font-bold">Purchase Type &nbsp;</div>
+          <select
+            value={purchaseType}
+            onChange={(e) => {
+              setPurchaseType(e.target.value);
+              if (e.target.value === 'Bulk') {
+                setCurrentPrice(product.priceBulk);
+                setCurrentDescription(product.descriptionBulk);
+                setCurrentCountInStock(product.countInStockBulk);
+              } else {
+                setCurrentPrice(product.price);
+                setCurrentDescription(product.description);
+                setCurrentCountInStock(product.countInStock);
+              }
+            }}
+          >
+            <option value="Each">Each</option>
+            <option value="Bulk">Bulk</option>
+          </select>
+        </div>
+        <div className="mb-2 flex justify-between">
+          <div className="font-bold">Price</div>
+          <div className="">&nbsp; ${currentPrice}</div>
+        </div>
         <button
           className="primary-button align-middle mt-2"
           type="button"

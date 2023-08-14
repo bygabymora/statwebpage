@@ -49,7 +49,6 @@ function CartScreen() {
                   <th className="p-5 py-2 text-right">Type</th>
                   <th className="p-5 py-2 text-right">Quantity</th>
                   <th className="p-5 py-2 text-right">Price</th>
-
                   <th className="p-5"></th>
                 </tr>
               </thead>
@@ -63,14 +62,14 @@ function CartScreen() {
                       >
                         <Image
                           src={item.image}
-                          alt={item.slug}
+                          alt={item.reference}
                           width={50}
                           height={50}
                         />
                         &nbsp;
                         {item.manufacturer}
                         <br />
-                        &nbsp;{item.slug}
+                        &nbsp;{item.reference}
                         <br />
                         &nbsp;{item.name}
                       </Link>

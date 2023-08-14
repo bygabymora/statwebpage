@@ -49,7 +49,6 @@ export default function ProductScreen(props) {
         ...product,
         quantity,
         purchaseType,
-        sentOverNight: product.sentOverNight,
         price: currentPrice,
         description: currentDescription,
         countInStock: currentCountInStock,
@@ -86,7 +85,7 @@ export default function ProductScreen(props) {
         <div className="product-image">
           <Image
             src={`${product.image}`}
-            alt={product.slug}
+            alt={product.reference}
             width={640}
             height={640}
           />
@@ -97,7 +96,7 @@ export default function ProductScreen(props) {
               <h1 className="text-xl font-bold">{product.manufacturer}</h1>
             </li>
             <li>
-              <h1 className="text-xl font-bold">{product.s}</h1>
+              <h1 className="text-xl font-bold">{product.reference}</h1>
             </li>
             <li>
               <h1 className="text-xl">{currentDescription}</h1>
@@ -105,7 +104,7 @@ export default function ProductScreen(props) {
             {product.sentOverNight && (
               <li>
                 <h1 className="text-xl font-extrabold">
-                  This product must be sent over night.
+                  This product must be sent over Night.
                 </h1>
               </li>
             )}
@@ -158,7 +157,6 @@ export default function ProductScreen(props) {
               <div className="font-bold">Price</div>
               <div className="text-2xl">${currentPrice}</div>
             </div>
-
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
               &nbsp;

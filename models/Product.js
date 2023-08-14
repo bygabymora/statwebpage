@@ -8,6 +8,7 @@ const productSchema = new mongoose.Schema(
     lot: { type: String, required: true },
     expiration: { type: String, required: true },
     image: { type: String, required: true },
+    reference: { type: String, required: true },
     description: { type: String, required: false },
     descriptionBulk: { type: String, required: false },
     price: { type: Number, default: 0, required: false },

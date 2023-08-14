@@ -34,7 +34,7 @@ const putHandler = async (req, res) => {
     product.lot = req.body.lot;
     product.expiration = req.body.expiration;
     product.image = req.body.image;
-
+    product.reference = req.body.reference;
     product.description = req.body.description;
     product.descriptionBulk = req.body.descriptionBulk;
     product.price = req.body.price;

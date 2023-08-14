@@ -24,6 +24,7 @@ const postHandler = async (req, res) => {
     lot: 'sample lot',
     expiration: 'sample expiration',
     image: '/images/product.jpg',
+    reference: 'sample reference',
     description: 'sample description',
     descriptionBulk: 'sample description bulk',
     price: 0,
