@@ -19,7 +19,7 @@ function reducer(state, action) {
 
       const cartItems = existItem
         ? state.cart.cartItems.map((item) =>
-            item.reference === existItem.reference ? newItem : item
+            item.slug === existItem.s ? newItem : item
           )
         : [...state.cart.cartItems, newItem];
 

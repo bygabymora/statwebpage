@@ -86,7 +86,7 @@ export default function ProductScreen(props) {
         <div className="product-image">
           <Image
             src={`${product.image}`}
-            alt={product.reference}
+            alt={product.slug}
             width={640}
             height={640}
           />
@@ -97,7 +97,7 @@ export default function ProductScreen(props) {
               <h1 className="text-xl font-bold">{product.manufacturer}</h1>
             </li>
             <li>
-              <h1 className="text-xl font-bold">{product.reference}</h1>
+              <h1 className="text-xl font-bold">{product.s}</h1>
             </li>
             <li>
               <h1 className="text-xl">{currentDescription}</h1>

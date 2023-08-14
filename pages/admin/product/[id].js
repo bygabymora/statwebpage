@@ -67,7 +67,6 @@ export default function AdminProductEditScreen() {
         setValue('lot', data.lot);
         setValue('expiration', data.expiration);
         setValue('image', data.image);
-        setValue('reference', data.reference);
         setValue('description', data.description);
         setValue('descriptionBulk', data.descriptionBulk);
         setValue('price', data.price);
@@ -120,7 +119,6 @@ export default function AdminProductEditScreen() {
     lot,
     expiration,
     image,
-    reference,
     description,
     descriptionBulk,
     price,
@@ -142,7 +140,6 @@ export default function AdminProductEditScreen() {
         lot,
         expiration,
         image,
-        reference,
         description,
         descriptionBulk,
         price,
@@ -228,7 +225,7 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="slug">Slug</label>
+                <label htmlFor="slug">Reference</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -266,20 +263,7 @@ export default function AdminProductEditScreen() {
 
                 {loadingUpload && <div>Uploading....</div>}
               </div>
-              <div className="mb-4">
-                <label htmlFor="reference">Reference</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="reference"
-                  {...register('reference', {
-                    required: 'Please enter reference',
-                  })}
-                />
-                {errors.reference && (
-                  <div className="text-red-500">{errors.reference.message}</div>
-                )}
-              </div>
+
               <div>
                 <h2>Each</h2>
                 <div className="mb-4">

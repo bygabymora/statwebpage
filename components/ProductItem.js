@@ -47,7 +47,7 @@ export const ProductItem = ({ product }) => {
           <h2 className="font-bold">
             {product.manufacturer}
             <br />
-            {product.reference}
+            {product.slug}
           </h2>
         </Link>
         <p className="text-sm text-gray-500 mb-2">{product.manufacturer}</p>
