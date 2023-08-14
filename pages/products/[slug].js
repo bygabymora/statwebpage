@@ -104,7 +104,7 @@ export default function ProductScreen(props) {
             {product.sentOverNight && (
               <li>
                 <h1 className="text-xl font-extrabold">
-                  This product must be sent over Night.
+                  This product must be sent over night.
                 </h1>
               </li>
             )}
@@ -157,6 +157,15 @@ export default function ProductScreen(props) {
               <div className="font-bold">Price</div>
               <div className="text-2xl">${currentPrice}</div>
             </div>
+            {product.sentOverNight === true && (
+              <div hidden>
+                <div
+                  name="sentOverNight"
+                  value={product.sentOverNight}
+                  className="font-bold"
+                />
+              </div>
+            )}
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
               &nbsp;

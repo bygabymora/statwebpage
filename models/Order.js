@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
         purchaseType: { type: String, required: true },
         image: { type: String, required: true },
         price: { type: Number, required: true },
+        sentOverNight: { type: Boolean, default: false, required: true },
       },
     ],
     shippingAddress: {
