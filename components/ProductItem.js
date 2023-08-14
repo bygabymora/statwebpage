@@ -58,8 +58,8 @@ export const ProductItem = ({ product }) => {
           src={`${product.image}`}
           alt={product.description}
           className="product-image"
-          width={300}
-          height={300}
+          width={400}
+          height={500}
         />
       </Link>
       <div className="flex flex-col justify-center items-center p-5">

@@ -23,7 +23,8 @@ const postHandler = async (req, res) => {
     slug: 'sample-name-' + Math.random(),
     lot: 'sample lot',
     expiration: 'sample expiration',
-    image: '/images/product.jpg',
+    image:
+      'https://res.cloudinary.com/dcjahs0jp/image/upload/v1692023846/q4yiwagfpidcdnumqljm.png',
     reference: 'sample reference',
     description: 'sample description',
     descriptionBulk: 'sample description bulk',

@@ -108,7 +108,15 @@ export default function LoginScreen() {
             type="password"
             {...register('password', {
               required: 'Please enter password',
-              minLength: { value: 6, message: 'password is more than 5 chars' },
+              minLength: {
+                value: 8,
+                message: 'Password must be at least 8 characters',
+              },
+              pattern: {
+                value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
+                message:
+                  'Password must contain 1 lowercase, 1 uppercase, 1 number, and 1 special character',
+              },
             })}
             className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             id="password"
