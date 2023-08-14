@@ -71,19 +71,19 @@ export const ProductItem = ({ product }) => {
           </h2>
         </Link>
         <br />
-        <div className="mb-2 flex justify-between">
-          <div className="font-bold">Quantity &nbsp;</div>
-          <div className="flex flex-row">
+        <div className="mb-2 flex items-center justify-center">
+          <div className="font-bold mt-4">Quantity &nbsp;</div>
+          <div className="flex items-center flex-row">
             <button
-              className="border px-2 py-1"
+              className="border px-2 py-1 card"
               onClick={() => setQty(Math.max(1, qty - 1))}
               disabled={qty <= 1}
             >
               -
             </button>
-            <span className="px-3">{qty}</span>
+            <span className="px-1 mt-4">{qty}</span>
             <button
-              className="border px-2 py-1"
+              className="border px-2 py-1 card"
               onClick={() => setQty(qty + 1)}
               disabled={currentCountInStock <= qty}
             >
@@ -91,6 +91,7 @@ export const ProductItem = ({ product }) => {
             </button>
           </div>
         </div>
+
         <div className="mb-2 flex justify-between">
           <div className="font-bold">Purchase Type &nbsp;</div>
           <select
