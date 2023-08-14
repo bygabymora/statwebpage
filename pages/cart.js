@@ -24,7 +24,10 @@ function CartScreen() {
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
     const { data } = await axios.get(`/api/products/${item._id}`);
-    if (data.countInStock < quantity) {
+    if (data.purchaseType === 'Each' && data.countInStock < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
+    }
+    if (data.purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
@@ -75,20 +78,38 @@ function CartScreen() {
                       </Link>
                     </td>
                     <td className="p-5 text-right">{item.purchaseType}</td>
-                    <td className="p-5 text-right">
-                      <select
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateCartHandler(item, e.target.value)
-                        }
-                      >
-                        {[...Array(item.countInStock).keys()].map((x) => (
-                          <option key={x + 1} value={x + 1}>
-                            {x + 1}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
+                    {item.purchaseType === 'Each' && (
+                      <td className="p-5 text-right">
+                        <select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
+                        >
+                          {[...Array(item.countInStockBulk).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    )}
+                    {item.purchaseType === 'Bulk' && (
+                      <td className="p-5 text-right">
+                        <select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
+                        >
+                          {[...Array(item.countInStockBulk).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    )}
                     <td className="p-5 text-right">${item.price}</td>
                     <td className="p-5 text-center">
                       <button onClick={() => removeItemHandler(item)}>

@@ -14,15 +14,15 @@ export const ProductItem = ({ product }) => {
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
-    product.descriptionEach
+    product.description
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.countInStockEach
+    product.countInStock
   );
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find((x) => x.slug === product.slug);
-    let quantity = exisItem ? exisItem.quantity + 1 : 1;
+    const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (data.countInStock < quantity) {
@@ -101,7 +101,7 @@ export const ProductItem = ({ product }) => {
                 setCurrentPrice(product.priceBulk);
                 setCurrentDescription(product.descriptionBulk);
                 setCurrentCountInStock(product.countInStockBulk);
-              } else {
+              } else if (e.target.value === 'Each') {
                 setCurrentPrice(product.price);
                 setCurrentDescription(product.description);
                 setCurrentCountInStock(product.countInStock);

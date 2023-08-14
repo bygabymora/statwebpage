@@ -17,15 +17,24 @@ export default function Footer() {
           <div className="footer-linkGroup flex flex-col m-5">
             <h4 className="font-bold">Company</h4>
             <Link href="/about">About Us</Link>
-            <Link href="/careers">Careers</Link>
+            <Link
+              href="/careers"
+              onClick={(e) => {
+                e.preventDefault();
+                alert(
+                  'Stat Surgical is not hiring at this time. Please check back with us periodically for updates - we will post positions as they become available'
+                );
+              }}
+            >
+              Careers
+            </Link>
             <Link href="/#contact">Contact</Link>
           </div>
           <div className="footer-linkGroup flex flex-col m-5">
             <h4 className="font-bold">Support</h4>
             <Link href="/faqs">FAQs</Link>
-            <Link href="/shipping-and-returns">Shipping & Returns</Link>
+            <Link href="/terms-and-conditions">Shipping & Returns</Link>
             <Link href="/terms-and-conditions">Terms & Conditions</Link>
-            <Link href="/documentation">Documentation</Link>
           </div>
         </section>
       </div>

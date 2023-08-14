@@ -23,7 +23,7 @@ export default function ProductScreen(props) {
     product.descriptionEach
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.countInStockEach
+    product.countInStock
   );
 
   if (!product) {
@@ -142,7 +142,7 @@ export default function ProductScreen(props) {
                     setCurrentPrice(product.priceBulk);
                     setCurrentDescription(product.descriptionBulk);
                     setCurrentCountInStock(product.countInStockBulk);
-                  } else {
+                  } else if (e.target.value === 'Each') {
                     setCurrentPrice(product.price);
                     setCurrentDescription(product.description);
                     setCurrentCountInStock(product.countInStock);
