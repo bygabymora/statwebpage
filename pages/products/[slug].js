@@ -101,6 +101,13 @@ export default function ProductScreen(props) {
             <li>
               <h1 className="text-xl">{currentDescription}</h1>
             </li>
+            {product.sendOverNight && (
+              <li>
+                <h1 className="text-xl font-extrabold">
+                  This product must be sent over Night.
+                </h1>
+              </li>
+            )}
           </ul>
         </div>
         <div>

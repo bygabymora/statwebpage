@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/Layout';
@@ -39,6 +39,7 @@ function reducer(state, action) {
   }
 }
 export default function AdminProductEditScreen() {
+  const [sentOverNight, setSentOverNight] = useState(false);
   const { query } = useRouter();
   const productId = query.id;
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
@@ -77,6 +78,7 @@ export default function AdminProductEditScreen() {
         setValue('sentOverNight', data.sentOverNight);
         setValue('notes', data.notes);
         setValue('includes', data.includes);
+        setSentOverNight(data.sentOverNight);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -391,20 +393,17 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="sentOverNight">
-                  <input
-                    type="checkbox"
-                    id="sentOverNight"
-                    {...register('sentOverNight')}
-                    defaultChecked={false}
-                  />
-                  Sent Over Night
-                </label>
-                {errors.sentOverNight && (
-                  <div className="text-red-500">
-                    {errors.sentOverNight.message}
-                  </div>
-                )}
+                <label htmlFor="sentOverNight">Sent Over Night</label>
+                <input
+                  type="checkbox"
+                  id="sentOverNight"
+                  {...register('sentOverNight')}
+                  checked={sentOverNight}
+                  onChange={(e) => {
+                    setValue('sentOverNight', e.target.checked);
+                    setSentOverNight(e.target.checked);
+                  }}
+                />
               </div>
               <div className="flex flex-row">
                 <div className="mb-4">
