@@ -122,7 +122,6 @@ function OrderScreen() {
     paymentMethod,
     orderItems,
     itemsPrice,
-    taxPrice,
     totalPrice,
     isPaid,
     paidAt,
@@ -440,12 +439,7 @@ function OrderScreen() {
                     <div>${itemsPrice}</div>
                   </div>
                 </li>
-                <li>
-                  <div className="mb-2 px-3 flex justify-between">
-                    <div>Tax</div>
-                    <div>${taxPrice}</div>
-                  </div>
-                </li>
+
                 {paymentMethod === 'Pay by Wire' ? (
                   <li>
                     <div className="mb-2 px-3 flex justify-between">

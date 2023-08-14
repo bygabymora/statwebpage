@@ -21,11 +21,10 @@ export default function PlaceOrderScreen() {
     cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
   ); // 123.4567 => 123.46
 
-  const taxPrice = round2(itemsPrice * 0.15);
   const isPayByWire = paymentMethod === 'Pay by Wire';
   const discountPercentage = isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE : 0;
   const discountAmount = round2(itemsPrice * (discountPercentage / 100));
-  const totalPrice = round2(itemsPrice - discountAmount + taxPrice);
+  const totalPrice = round2(itemsPrice - discountAmount);
 
   const router = useRouter();
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function PlaceOrderScreen() {
         shippingAddress,
         paymentMethod,
         itemsPrice,
-        taxPrice,
         totalPrice,
         discountAmount,
       });
@@ -67,7 +65,6 @@ export default function PlaceOrderScreen() {
       shippingAddress,
       paymentMethod,
       itemsPrice,
-      taxPrice,
     });
   };
 
@@ -168,12 +165,7 @@ export default function PlaceOrderScreen() {
                     <div>${itemsPrice}</div>
                   </div>
                 </li>
-                <li>
-                  <div className="mb-2 flex justify-between">
-                    <div>Tax</div>
-                    <div>${taxPrice}</div>
-                  </div>
-                </li>
+
                 {isPayByWire && (
                   <li>
                     <div className="mb-2 flex justify-between">
