@@ -47,7 +47,6 @@ function CartScreen() {
                 <tr>
                   <th className="px-5 text-left">Product</th>
                   <th className="p-5 py-2 text-right">Type</th>
-                  <th className="p-5 py-2 text-center">Over Night</th>
                   <th className="p-5 py-2 text-right">Quantity</th>
                   <th className="p-5 py-2 text-right">Price</th>
 
@@ -77,8 +76,6 @@ function CartScreen() {
                       </Link>
                     </td>
                     <td className="p-5 text-right">{item.purchaseType}</td>
-                    <td className="p-5 text-center">{item.sentOverNight}</td>
-
                     <td className="p-5 text-right">
                       <select
                         value={item.quantity}

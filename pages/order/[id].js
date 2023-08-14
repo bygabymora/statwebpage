@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
+import { BsFillArrowDownSquareFill } from 'react-icons/bs';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -57,6 +58,7 @@ function OrderScreen() {
   const orderId = query.id;
   const trackUrlRef = useRef(null);
   const trackNumberRef = useRef(null);
+  const [showItems, setShowItems] = useState(false);
 
   const [
     {
@@ -278,6 +280,8 @@ function OrderScreen() {
       <h1 className="mb-4 text-xl">{`Order ${orderId
         .substring(orderId.length - 8)
         .toUpperCase()}`}</h1>
+
+      <br />
       <div>
         <h2>Thank you for your order!</h2>
         <p>
@@ -301,6 +305,26 @@ function OrderScreen() {
           .
         </p>
       </div>
+      <br />
+      {orderItems && orderItems.some((item) => item.sentOverNight) && (
+        <div className="bg-red-500 text-white p-3">
+          This order has some products that must be sent overnight.
+          <div className="mt-2">
+            <button
+              onClick={() => setShowItems(!showItems)}
+              className="underline font-bold flex flex-row align-middle justify-center items-center"
+            >
+              Products for Overnight Delivery &nbsp;
+              <BsFillArrowDownSquareFill />
+            </button>
+            {showItems &&
+              orderItems
+                .filter((item) => item.sentOverNight)
+                .map((product, index) => <div key={index}>{product.name}</div>)}
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div>Loading...</div>
       ) : error ? (
@@ -364,7 +388,7 @@ function OrderScreen() {
               )}
             </div>
 
-            <div className="card overflow-x-auto p-5">
+            <div className="card overflow-x-auto p-5 mb-2">
               <h2 className="mb-2 text-lg">Order Items</h2>
               <table className="min-w-full">
                 <thead className="border-b">

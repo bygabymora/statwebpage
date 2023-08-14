@@ -49,6 +49,7 @@ export default function ProductScreen(props) {
         ...product,
         quantity,
         purchaseType,
+        sentOverNight: product.sentOverNight,
         price: currentPrice,
         description: currentDescription,
         countInStock: currentCountInStock,
@@ -157,15 +158,7 @@ export default function ProductScreen(props) {
               <div className="font-bold">Price</div>
               <div className="text-2xl">${currentPrice}</div>
             </div>
-            {product.sentOverNight === true && (
-              <div hidden>
-                <div
-                  name="sentOverNight"
-                  value={product.sentOverNight}
-                  className="font-bold"
-                />
-              </div>
-            )}
+
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
               &nbsp;
