@@ -6,7 +6,7 @@ export default function tracking() {
     <>
       <Layout title="Tracking">
         <h1 className="mb-4 text-xl">
-          This should lead to the delivery company
+          This should lead to the delivery company Website
         </h1>
       </Layout>
     </>
