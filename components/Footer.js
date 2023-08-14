@@ -9,10 +9,12 @@ export default function Footer() {
       <div className="footer-container">
         <section className="footer-links">
           <div className="footer-linkGroup flex flex-col m-5">
-            <h4 className="font-bold">Products</h4>
-            <Link href="/products">Surgical Instruments</Link>
-            <Link href="/products">Disposables</Link>
-            <Link href="/products">Orthopedic Supplies</Link>
+            <h4>
+              <Link className="font-bold" href="/products">
+                Products
+              </Link>
+            </h4>
+            <Link href="/products">All products</Link>
           </div>
           <div className="footer-linkGroup flex flex-col m-5">
             <h4 className="font-bold">Company</h4>
