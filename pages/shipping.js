@@ -126,16 +126,37 @@ export default function ShippingScreen() {
 
   useEffect(() => {
     setValue('fullName', shippingAddress.fullName);
+    setValue('company', shippingAddress.company);
+    setValue('phone', shippingAddress.phone);
     setValue('address', shippingAddress.address);
     setValue('state', shippingAddress.state);
     setValue('city', shippingAddress.city);
     setValue('postalCode', shippingAddress.postalCode);
+    setValue('notes', shippingAddress.notes);
   }, [setValue, shippingAddress]);
 
-  const submitHandler = ({ fullName, address, state, city, postalCode }) => {
+  const submitHandler = ({
+    fullName,
+    company,
+    phone,
+    address,
+    state,
+    city,
+    postalCode,
+    notes,
+  }) => {
     dispatch({
       type: 'SAVE_SHIPPING_ADDRESS',
-      payload: { fullName, address, state, city, postalCode },
+      payload: {
+        fullName,
+        company,
+        phone,
+        address,
+        state,
+        city,
+        postalCode,
+        notes,
+      },
     });
     Cookies.set(
       'cart',
@@ -143,10 +164,13 @@ export default function ShippingScreen() {
         ...cart,
         shippingAddress: {
           fullName,
+          company,
+          phone,
           address,
           state,
           city,
           postalCode,
+          notes,
         },
       })
     );
@@ -171,10 +195,13 @@ export default function ShippingScreen() {
     if (useLastAddress && lastOrder) {
       const { shippingAddress } = lastOrder;
       setValue('fullName', shippingAddress.fullName);
+      setValue('company', shippingAddress.company);
+      setValue('phone', shippingAddress.phone);
       setValue('address', shippingAddress.address);
       setValue('state', shippingAddress.state);
       setValue('city', shippingAddress.city);
       setValue('postalCode', shippingAddress.postalCode);
+      setValue('notes', shippingAddress.notes);
     }
   }, [lastOrder, setValue, useLastAddress]);
 
@@ -270,7 +297,6 @@ export default function ShippingScreen() {
             {...register('phone', { required: true, minLength: 3 })}
             autoFocus
             autoCapitalize="true"
-            required
           />
           {errors.phone && (
             <p className="text-red-500">Phone Number is required.</p>
