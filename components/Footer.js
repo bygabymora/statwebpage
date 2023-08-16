@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '../public/images/assets/logo2.png';
+import { AiOutlineSend } from 'react-icons/ai';
 
 export default function Footer() {
   return (
@@ -40,6 +41,16 @@ export default function Footer() {
           </div>
         </section>
       </div>
+      <h2 className="banner-title">Sell us your products today!</h2>
+
+      <Link
+        className="flex justify-center items-center"
+        href="/ManufacturerForm"
+      >
+        <span className="banner-link">Send us your list</span>
+        <span className="link-space">&nbsp;&nbsp;</span>
+        <AiOutlineSend className="link-space" />
+      </Link>
       <Image
         className="footer-logo sm:block hidden md:"
         src={Logo}

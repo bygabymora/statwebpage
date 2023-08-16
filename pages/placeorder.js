@@ -97,7 +97,11 @@ export default function PlaceOrderScreen() {
             </div>
             <div className="card  p-5">
               <h2 className="mb-2 text-lg">Payment Method</h2>
-              <div>{paymentMethod}</div>
+              {paymentMethod === 'Stripe' ? (
+                <div>Credit Card (Powered by Stripe)</div>
+              ) : (
+                <div>{paymentMethod}</div>
+              )}
               <div>
                 <Link className="underline font-bold" href="/payment">
                   Edit

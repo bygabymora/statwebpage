@@ -25,7 +25,7 @@ const data = {
       image: '/images/7510400-WE1.png',
       reference: '7510400',
       description: 'Bone Graft Kit, Medium Size',
-      descriptionBulk: 'Bulk description',
+      descriptionBulk: 'Box description',
       price: 4240,
       priceBulk: 4000,
       purchaseType: '',

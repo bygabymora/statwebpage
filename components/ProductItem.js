@@ -63,12 +63,18 @@ export const ProductItem = ({ product }) => {
         />
       </Link>
       <div className="flex flex-col justify-center items-center p-5">
-        <Link href={{ pathname: `products/${product.slug}` }}>
+        <Link
+          href={{ pathname: `products/${product.slug}` }}
+          className="justify-center items-center text-center"
+        >
           <h2 className="font-bold">
-            {product.reference}
-            <br />
             {product.slug}
+            <br />
+            {product.manufacturer}{' '}
           </h2>
+
+          <br />
+          {product.description}
         </Link>
         <br />
         <div className="mb-2 flex items-center justify-center">
@@ -93,7 +99,7 @@ export const ProductItem = ({ product }) => {
         </div>
 
         <div className="mb-2 flex justify-between">
-          <div className="font-bold">Purchase Type &nbsp;</div>
+          <div className="font-bold">U o M &nbsp;</div>
           <select
             value={purchaseType}
             onChange={(e) => {
@@ -110,7 +116,7 @@ export const ProductItem = ({ product }) => {
             }}
           >
             <option value="Each">Each</option>
-            <option value="Bulk">Bulk</option>
+            <option value="Bulk">Box</option>
           </select>
         </div>
         <div className="mb-2 flex justify-between">

@@ -330,9 +330,9 @@ export default function AdminProductEditScreen() {
                 </div>
               </div>
               <div>
-                <h2>Bulk</h2>
+                <h2>Box</h2>
                 <div className="mb-4">
-                  <label htmlFor="descriptionBulk">Description Bulk</label>
+                  <label htmlFor="descriptionBulk">Description Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -348,7 +348,7 @@ export default function AdminProductEditScreen() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="priceBulk">Price Bulk</label>
+                  <label htmlFor="priceBulk">Price Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -362,7 +362,7 @@ export default function AdminProductEditScreen() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="countInStockBulk">Count In Stock Bulk</label>
+                  <label htmlFor="countInStockBulk">Count In Stock Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -393,7 +393,7 @@ export default function AdminProductEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="sentOverNight">Sent Over Night</label>
+                <label htmlFor="sentOverNight">Sent Overnight</label>
                 <input
                   type="checkbox"
                   id="sentOverNight"

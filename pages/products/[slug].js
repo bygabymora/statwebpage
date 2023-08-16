@@ -20,7 +20,7 @@ export default function ProductScreen(props) {
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
-    product.descriptionEach
+    product.description
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.countInStock
@@ -74,7 +74,7 @@ export default function ProductScreen(props) {
   };
 
   return (
-    <Layout title={product.manufacturer}>
+    <Layout title={product.reference}>
       <div className="py-2">
         <Link href={'/products'} className="flex gap-4 items-center">
           <BsBackspace />
@@ -93,18 +93,19 @@ export default function ProductScreen(props) {
         <div className="">
           <ul>
             <li>
-              <h1 className="text-xl font-bold">{product.manufacturer}</h1>
-            </li>
-            <li>
               <h1 className="text-xl font-bold">{product.reference}</h1>
             </li>
+            <li>
+              <h1 className="text-xl font-bold">{product.manufacturer}</h1>
+            </li>
+
             <li>
               <h1 className="text-xl">{currentDescription}</h1>
             </li>
             {product.sentOverNight && (
               <li>
                 <h1 className="text-xl font-extrabold">
-                  This product must be sent over Night.
+                  This product must be sent overnight.
                 </h1>
               </li>
             )}
@@ -134,7 +135,7 @@ export default function ProductScreen(props) {
             </div>
 
             <div className="mb-2 flex justify-between">
-              <div className="font-bold">Purchase Type</div>
+              <div className="font-bold">U o M</div>
               <select
                 value={purchaseType}
                 onChange={(e) => {
@@ -151,7 +152,7 @@ export default function ProductScreen(props) {
                 }}
               >
                 <option value="Each">Each</option>
-                <option value="Bulk">Bulk</option>
+                <option value="Bulk">Box</option>
               </select>
             </div>
             <div className="mb-2 flex justify-between">

@@ -48,22 +48,47 @@ export default function PaymentScreen() {
           transfer.
         </p>
         <br />
-        {['Stripe', 'Paypal', 'Pay by Wire'].map((payment) => (
-          <div key={payment} className="mb-4">
-            <input
-              name="paymentMethod"
-              className="p-2 outline-none focus:ring-0"
-              id={payment}
-              type="radio"
-              checked={selectedPaymentMethod === payment}
-              onChange={() => setSelectedPaymentMethod(payment)}
-            />
+        <div className="mb-4">
+          <input
+            name="paymentMethod"
+            className="p-2 outline-none focus:ring-0"
+            id="Stripe"
+            type="radio"
+            checked={selectedPaymentMethod === 'Stripe'}
+            onChange={() => setSelectedPaymentMethod('Stripe')}
+          />
+          <label className="p-2" htmlFor="Stripe">
+            Credit Card (Powered by Stripe)
+          </label>
+        </div>
+        <div className="mb-4">
+          <input
+            name="paymentMethod"
+            className="p-2 outline-none focus:ring-0"
+            id="Paypal"
+            type="radio"
+            checked={selectedPaymentMethod === 'Paypal'}
+            onChange={() => setSelectedPaymentMethod('Paypal')}
+          />
+          <label className="p-2" htmlFor="Paypal">
+            Paypal
+          </label>
+        </div>
 
-            <label className="p-2" htmlFor={payment}>
-              {payment}
-            </label>
-          </div>
-        ))}
+        <div className="mb-4">
+          <input
+            name="paymentMethod"
+            className="p-2 outline-none focus:ring-0"
+            id="Pay by Wire"
+            type="radio"
+            checked={selectedPaymentMethod === 'Pay by Wire'}
+            onChange={() => setSelectedPaymentMethod('Pay by Wire')}
+          />
+          <label className="p-2" htmlFor="Pay by Wire">
+            Pay by Wire
+          </label>
+        </div>
+
         <div className="mb-4 flex justify-between">
           <button
             onClick={() => router.push('/shipping')}

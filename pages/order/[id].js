@@ -242,8 +242,15 @@ function OrderScreen() {
 
   async function deliverOrderHandler(e) {
     e.preventDefault(); // prevent default form submission
+
     const trackUrl = trackUrlRef.current.value;
     const trackNumber = trackNumberRef.current.value;
+
+    // Validation: Check for whitespace-only strings
+    if (!trackUrl.trim() || !trackNumber.trim()) {
+      toast.error('Please provide valid inputs.');
+      return; // exit function
+    }
 
     try {
       dispatch({ type: 'DELIVER_REQUEST' });
@@ -344,21 +351,21 @@ function OrderScreen() {
               </div>
               {isDelivered ? (
                 <div className="alert-success">
-                  Delivered at{' '}
+                  Processed at{' '}
                   <span className="font-bold">
                     {new Date(deliveredAt).toLocaleDateString()}{' '}
                   </span>
                   <br />
-                  You can track your order &nbsp;
+                  Track your order &nbsp;
                   <Link
                     href={trackUrl}
                     target="_blank"
                     className="underline font-bold"
                   >
-                    HERE.
+                    CLICK HERE.
                   </Link>
                   <br />
-                  Your tracking number is: &nbsp;
+                  Tracking number: &nbsp;
                   <Link
                     href={trackUrl}
                     target="_blank"
@@ -368,13 +375,17 @@ function OrderScreen() {
                   </Link>
                 </div>
               ) : (
-                <div className="alert-error">Not delivered</div>
+                <div className="alert-error">Not processed</div>
               )}
             </div>
 
             <div className="card p-5">
               <h2 className="mb-2 text-lg">Payment Method</h2>
-              <div>{paymentMethod}</div>
+              {paymentMethod === 'Stripe' ? (
+                <div>Credit Card (Powered by Stripe)</div>
+              ) : (
+                <div>{paymentMethod}</div>
+              )}
               {isPaid ? (
                 <div className="alert-success">
                   Paid at{' '}
@@ -514,12 +525,14 @@ function OrderScreen() {
                           name="trackUrl"
                           placeholder="Tracking URL"
                           className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline m-1"
+                          required
                         />
                         <input
                           ref={trackNumberRef}
                           name="trackNumber"
                           placeholder="Tracking Number"
                           className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline m-1"
+                          required
                         />
                         <button
                           type="submit"
