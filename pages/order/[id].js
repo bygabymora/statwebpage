@@ -345,9 +345,11 @@ function OrderScreen() {
             <div className="card  p-3">
               <h2 className="mb-2 text-lg">Shipping Address</h2>
               <div>
-                {shippingAddress.fullName}, {shippingAddress.address},{' '}
-                {shippingAddress.city}, {shippingAddress.postalCode},{' '}
-                {shippingAddress.state}
+                {shippingAddress.fullName},{' '}
+                {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
+                {shippingAddress.phone}, {shippingAddress.address},{' '}
+                {shippingAddress.city}, {shippingAddress.postalCode}{' '}
+                {shippingAddress.notes && <>,{shippingAddress.notes}</>}
               </div>
               {isDelivered ? (
                 <div className="alert-success">
