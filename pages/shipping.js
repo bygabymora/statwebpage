@@ -201,11 +201,28 @@ export default function ShippingScreen() {
               />
               <div className="mb-2">
                 <p className="text-sm">
-                  {lastOrder.shippingAddress.fullName},<br />{' '}
-                  {lastOrder.shippingAddress.address},<br />{' '}
-                  {lastOrder.shippingAddress.state},<br />{' '}
-                  {lastOrder.shippingAddress.city},<br />{' '}
-                  {lastOrder.shippingAddress.postalCode},<br />{' '}
+                  {lastOrder.shippingAddress.fullName}
+                  <br />{' '}
+                  {lastOrder.shippingAddress.company && (
+                    <>
+                      {lastOrder.shippingAddress.company}
+                      <br />{' '}
+                    </>
+                  )}
+                  {lastOrder.shippingAddress.phone && (
+                    <>
+                      {lastOrder.shippingAddress.phone} <br />{' '}
+                    </>
+                  )}
+                  {lastOrder.shippingAddress.address}
+                  <br /> {lastOrder.shippingAddress.state}
+                  <br /> {lastOrder.shippingAddress.city}
+                  <br /> {lastOrder.shippingAddress.postalCode}
+                  <br />{' '}
+                  {lastOrder.shippingAddress.notes && (
+                    <> {lastOrder.shippingAddress.notes} </>
+                  )}
+                  <br />{' '}
                 </p>
               </div>
             </div>
@@ -213,7 +230,7 @@ export default function ShippingScreen() {
         </div>
 
         <div className="mb-4 contact__form-div">
-          <label htmlFor="fullName">Full Name</label>
+          <label htmlFor="fullName">Full Name*</label>
           <input
             className="w-full contact__form-input"
             type="text"
@@ -229,7 +246,38 @@ export default function ShippingScreen() {
           )}
         </div>
         <div className="mb-4 contact__form-div">
-          <label htmlFor="address">Address</label>
+          <label htmlFor="company">Company</label>
+          <input
+            className="w-full contact__form-input"
+            type="text"
+            id="company"
+            placeholder="Company's Name"
+            {...register('company', { required: false, minLength: 3 })}
+            autoFocus
+            autoCapitalize="true"
+          />
+          {errors.company && (
+            <p className="text-red-500">Please check Company{"'"}s name.</p>
+          )}
+        </div>
+        <div className="mb-4 contact__form-div">
+          <label htmlFor="phone">Phone Number*</label>
+          <input
+            className="w-full contact__form-input"
+            type="text"
+            id="phone"
+            placeholder="Enter Phone Number"
+            {...register('phone', { required: true, minLength: 3 })}
+            autoFocus
+            autoCapitalize="true"
+            required
+          />
+          {errors.phone && (
+            <p className="text-red-500">Phone Number is required.</p>
+          )}
+        </div>
+        <div className="mb-4 contact__form-div">
+          <label htmlFor="address">Address*</label>
           <input
             className="w-full contact__form-input"
             type="text"
@@ -244,7 +292,7 @@ export default function ShippingScreen() {
           )}
         </div>
         <div className="mb-4 contact__form-div">
-          <label htmlFor="state">State</label>
+          <label htmlFor="state">State*</label>
           <input
             className="w-full contact__form-input"
             type="text"
@@ -277,7 +325,7 @@ export default function ShippingScreen() {
             )}
         </div>
         <div className="mb-4 contact__form-div">
-          <label htmlFor="city">City</label>
+          <label htmlFor="city">City*</label>
           <input
             className="w-full contact__form-input"
             type="text"
@@ -290,7 +338,7 @@ export default function ShippingScreen() {
           {errors.city && <p className="text-red-500">City is required.</p>}
         </div>
         <div className="mb-4 contact__form-div">
-          <label htmlFor="postalCode">Postal Code</label>
+          <label htmlFor="postalCode">Postal Code*</label>
           <input
             className="w-full contact__form-input"
             type="text"
@@ -302,6 +350,22 @@ export default function ShippingScreen() {
           />
           {errors.postalCode && (
             <p className="text-red-500">Postal Code is required.</p>
+          )}
+        </div>
+        <div className="mb-4 contact__form-div">
+          <label htmlFor="notes">Special shipping instructions</label>
+          <textarea
+            className="w-full contact__form-input contact__message"
+            type="text"
+            id="notes"
+            placeholder="Special Shipping instructions if needed"
+            {...register('notes', { required: false, minLength: 3 })}
+            autoCapitalize="true"
+          />
+          {errors.notes && (
+            <p className="text-red-500">
+              Please check the shipping instructions.
+            </p>
           )}
         </div>
         <div className="mb-4 contact__form-div">

@@ -41,7 +41,7 @@ export default function Footer() {
           </div>
         </section>
       </div>
-      <h2 className="banner-title">Sell us your products today!</h2>
+      <h3 className="font-bold">Sell us your products today!</h3>
 
       <Link
         className="flex justify-center items-center"
@@ -51,6 +51,7 @@ export default function Footer() {
         <span className="link-space">&nbsp;&nbsp;</span>
         <AiOutlineSend className="link-space" />
       </Link>
+      <br />
       <Image
         className="footer-logo sm:block hidden md:"
         src={Logo}

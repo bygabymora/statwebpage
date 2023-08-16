@@ -134,35 +134,49 @@ export default function AdminProdcutsScreen() {
             <div className="alert-error">{error}</div>
           ) : (
             <div className="overflow-x-auto">
+              <br />
               <table className="min-w-full">
                 <thead className="border-b">
                   <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="p-5 text-left">NAME</th>
-                    <th className="p-5 text-left">PRICE</th>
-
-                    <th className="p-5 text-left">COUNT</th>
-                    <th className="p-5 text-left">ACTIONS</th>
+                    <th className="p-2 text-left border-r border-gray-300">
+                      REF.
+                    </th>
+                    <th className="p-2 text-left">PRICE EACH</th>
+                    <th className="p-2 text-left  border-r border-gray-300">
+                      COUNT EACH
+                    </th>
+                    <th className="p-2 text-left">PRICE BOX</th>
+                    <th className="p-2 text-left  border-r border-gray-300">
+                      COUNT BOX
+                    </th>
+                    <th className="p-2 text-left">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {products.map((product) => (
                     <tr key={product._id} className="border-b">
-                      <td className=" p-5 ">{product._id.substring(20, 24)}</td>
-                      <td className=" p-5 ">{product.name}</td>
-                      <td className=" p-5 ">${product.price}</td>
-                      <td className=" p-5 ">{product.countInStock}</td>
-                      <td className=" p-5 text-center ">
+                      <td className=" p-2 border-r border-gray-300">
+                        {product.slug}
+                      </td>
+                      <td className=" p-2 ">${product.price}</td>
+                      <td className=" p-2 border-r border-gray-300">
+                        {product.countInStock}
+                      </td>
+                      <td className=" p-2 ">${product.priceBulk}</td>
+                      <td className=" p-2 border-r border-gray-300">
+                        {product.countInStockBulk}
+                      </td>
+                      <td className=" p-5 text-center flex flex-row">
                         <button
                           onClick={() =>
                             router.push(`/admin/product/${product._id}`)
                           }
                           type="button"
-                          className="primary-button font-bold underline mr-2 "
+                          className="primary-button font-bold underline "
                         >
                           <BiSolidEdit />
                         </button>
-
+                        &nbsp;
                         <button
                           onClick={() => deleteHandler(product._id)}
                           className="primary-button font-bold underline"
