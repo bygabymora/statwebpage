@@ -349,7 +349,13 @@ function OrderScreen() {
                 {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
                 {shippingAddress.phone}, {shippingAddress.address},{' '}
                 {shippingAddress.city}, {shippingAddress.postalCode}{' '}
-                {shippingAddress.notes && <>,{shippingAddress.notes}</>}
+                {shippingAddress.notes && (
+                  <>
+                    <br />
+                    <h1>Shipping instructions</h1>
+                    {shippingAddress.notes}
+                  </>
+                )}
               </div>
               {isDelivered ? (
                 <div className="alert-success">
