@@ -45,6 +45,13 @@ function reducer(state, action) {
         loadingDeliver: false,
         successDeliver: false,
       };
+    case 'AT_COSTUMERS_REQUEST':
+      return { ...state, loadingAtCostumers: true };
+    case 'AT_COSTUMERS_SUCCESS':
+      return { ...state, loadingAtCostumers: false, successAtCostumers: true };
+    case 'AT_COSTUMERS_FAIL':
+      return { ...state, loadingAtCostumers: false, successAtCostumers: false };
+
     default:
       return state;
   }
@@ -127,6 +134,8 @@ function OrderScreen() {
     paidAt,
     isDelivered,
     deliveredAt,
+    atCostumersDate,
+    isAtCostumers,
     trackNumber,
     trackUrl,
   } = order;
@@ -265,9 +274,23 @@ function OrderScreen() {
       );
 
       dispatch({ type: 'DELIVER_SUCCESS', payload: data });
-      toast.success('Order is delivered');
+      toast.success('Order is processed');
     } catch (err) {
       dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  }
+  async function atCostumersOrderHandler() {
+    try {
+      dispatch({ type: 'AT_COSTUMERS_REQUEST' });
+      const { data } = await axios.put(
+        `/api/admin/orders/${order._id}/atcostumers`,
+        {}
+      );
+      dispatch({ type: 'AT_COSTUMERS_SUCCESS', payload: data });
+      toast.success('Order is delivered');
+    } catch (err) {
+      dispatch({ type: 'AT_COSTUMERS_FAIL', payload: getError(err) });
       toast.error(getError(err));
     }
   }
@@ -314,7 +337,7 @@ function OrderScreen() {
       <br />
       {orderItems && orderItems.some((item) => item.sentOverNight) && (
         <div className="bg-red-500 text-white p-3">
-          This order has some products that must be sent overnight.
+          This order has some products that should be sent overnight.
           <div className="mt-2">
             <button
               onClick={() => setShowItems(!showItems)}
@@ -379,11 +402,18 @@ function OrderScreen() {
                     target="_blank"
                     className="underline font-bold"
                   >
-                    {trackNumber}
+                    {trackNumber}.
                   </Link>
                 </div>
               ) : (
                 <div className="alert-error">Not processed</div>
+              )}
+              {isAtCostumers ? (
+                <div className="alert-success">
+                  At costumers at {atCostumersDate}
+                </div>
+              ) : (
+                <div className="alert-error">Not at costumers yet</div>
               )}
             </div>
 
@@ -554,6 +584,20 @@ function OrderScreen() {
                     </form>
                   </li>
                 )}
+                {session.user.isAdmin &&
+                  order.isPaid &&
+                  order.isDelivered &&
+                  !order.isAtCostumers && (
+                    <li>
+                      {loadingDeliver && <div>Loading...</div>}
+                      <button
+                        className="primary-button w-full"
+                        onClick={atCostumersOrderHandler}
+                      >
+                        Order is at costumers
+                      </button>
+                    </li>
+                  )}
                 <br />
                 <li>
                   <div className="mb-2 px-3 flex justify-between">
