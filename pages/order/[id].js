@@ -410,7 +410,10 @@ function OrderScreen() {
               )}
               {isAtCostumers ? (
                 <div className="alert-success">
-                  At costumers at {atCostumersDate}
+                  At costumers at{' '}
+                  <span className="font-bold">
+                    {new Date(atCostumersDate).toLocaleDateString()}{' '}
+                  </span>
                 </div>
               ) : (
                 <div className="alert-error">Not at costumers yet</div>

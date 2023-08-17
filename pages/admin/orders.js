@@ -75,6 +75,7 @@ export default function AdminOrderScreen() {
                     <th className="p-5 text-left">DATE</th>
                     <th className="p-5 text-left">TOTAL</th>
                     <th className="p-5 text-left">PAID</th>
+                    <th className="p-5 text-left">PROCESSED</th>
                     <th className="p-5 text-left">DELIVERED</th>
                     <th className="p-5 text-left">ACTION</th>
                   </tr>
