@@ -42,12 +42,16 @@ const Contact = () => {
               </a>
             </div>
             <div className="contact__card">
+              <h3 className="contact__card-title">Fax</h3>
+              <span className="contact__card-data">813-607-4110 </span>
+            </div>
+            <div className="contact__card">
               <h3 className="contact__card-title">Email</h3>
               <span className="contact__card-data">
-                costumerservice@statsurgicalsupply.com
+                custumerservice@statsurgicalsupply.com
               </span>
               <a
-                href="mailto:costumerservice@statsurgicalsupply.com"
+                href="mailto:custumerservice@statsurgicalsupply.com"
                 className="contact__button"
                 target="_blank"
               >

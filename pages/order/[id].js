@@ -337,7 +337,9 @@ function OrderScreen() {
       <br />
       {orderItems && orderItems.some((item) => item.sentOverNight) && (
         <div className="bg-red-500 text-white p-3">
-          This order has some products that should be sent overnight.
+          It is recomended that this product ships overnight due to temperature
+          sensitivity. Stat Surgical Supply is not responsible for product
+          damage or failure if the customer chooses another shipping method.
           <div className="mt-2">
             <button
               onClick={() => setShowItems(!showItems)}
@@ -416,7 +418,7 @@ function OrderScreen() {
                   </span>
                 </div>
               ) : (
-                <div className="alert-error">Not at costumers yet</div>
+                <div className="alert-error">Not at custumers yet</div>
               )}
             </div>
 
@@ -597,7 +599,7 @@ function OrderScreen() {
                         className="primary-button w-full"
                         onClick={atCostumersOrderHandler}
                       >
-                        Order is at costumers
+                        Order is at custumers
                       </button>
                     </li>
                   )}

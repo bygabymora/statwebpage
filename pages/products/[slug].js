@@ -104,8 +104,9 @@ export default function ProductScreen(props) {
             </li>
             {product.sentOverNight && (
               <li>
-                <h1 className="text-xl font-extrabold">
-                  This product should be sent overnight.
+                <h1 className="text-xl">
+                  It is recomended that this product ships overnight due to
+                  temperature sensitivity.
                 </h1>
               </li>
             )}

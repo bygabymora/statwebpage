@@ -24,8 +24,7 @@ const postHandler = async (req, res) => {
     lot: 'sample lot',
     expiration: 'sample expiration',
     image:
-      'https://res.cloudinary.com/dcjahs0jp/image/upload/v1692023846/q4yiwagfpidcdnumqljm.png',
-    reference: 'sample reference',
+      'https://res.cloudinary.com/dcjahs0jp/image/upload/v1692308486/nrjysfip65cy1nh5jlc5.png',
     description: 'sample description',
     descriptionBulk: 'sample description box',
     price: 0,
