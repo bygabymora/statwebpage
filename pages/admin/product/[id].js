@@ -267,8 +267,12 @@ export default function AdminProductEditScreen() {
                 {loadingUpload && <div>Uploading....</div>}
               </div>
               <div className="mb-4">
-                <label htmlFor="reference">Reference</label>
+                <label hidden htmlFor="reference">
+                  Reference
+                </label>
                 <input
+                  hidden
+                  value={productId}
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="reference"
@@ -394,6 +398,7 @@ export default function AdminProductEditScreen() {
               </div>
               <div className="mb-4">
                 <label htmlFor="sentOverNight">Sent Overnight</label>
+                &nbsp;
                 <input
                   type="checkbox"
                   id="sentOverNight"

@@ -31,7 +31,7 @@ const putHandler = async (req, res) => {
 
     await db.disconnect();
     res.send({
-      message: 'Order updated and delivered successfully',
+      message: 'Order updated and processed successfully',
       order: updatedOrder,
     });
   } else {

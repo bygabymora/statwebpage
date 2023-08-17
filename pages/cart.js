@@ -65,16 +65,16 @@ function CartScreen() {
                       >
                         <Image
                           src={item.image}
-                          alt={item.reference}
+                          alt={item.slug}
                           width={50}
                           height={50}
                         />
                         &nbsp;
                         {item.manufacturer}
                         <br />
-                        &nbsp;{item.reference}
+                        &nbsp;{item.slug}
                         <br />
-                        &nbsp;{item.name}
+                        &nbsp;{item.description}
                       </Link>
                     </td>
                     <td className="p-5 text-right">{item.purchaseType}</td>

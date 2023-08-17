@@ -51,6 +51,7 @@ function OrderHistoryScreen() {
                 <th className="p-5 text-left">DATE</th>
                 <th className="p-5 text-left">TOTAL</th>
                 <th className="p-5 text-left">PAID</th>
+                <th className="p-5 text-left">PROCESSED</th>
                 <th className="p-5 text-left">DELIVERED</th>
                 <th className="p-5 text-left">ACTION</th>
               </tr>
@@ -69,6 +70,11 @@ function OrderHistoryScreen() {
                   <td className=" p-5 ">
                     {order.isDelivered
                       ? `${order.deliveredAt.substring(0, 10)}`
+                      : 'not processed'}
+                  </td>
+                  <td className=" p-5 ">
+                    {order.isAtCostumers
+                      ? `${order.atCostumersDate.substring(0, 10)}`
                       : 'not delivered'}
                   </td>
                   <td className=" p-5 ">

@@ -74,7 +74,7 @@ export default function ProductScreen(props) {
   };
 
   return (
-    <Layout title={product.reference}>
+    <Layout title={product.slug}>
       <div className="py-2">
         <Link href={'/products'} className="flex gap-4 items-center">
           <BsBackspace />
@@ -85,7 +85,7 @@ export default function ProductScreen(props) {
         <div className="product-image">
           <Image
             src={`${product.image}`}
-            alt={product.reference}
+            alt={product.slug}
             width={640}
             height={640}
           />
@@ -93,7 +93,7 @@ export default function ProductScreen(props) {
         <div className="">
           <ul>
             <li>
-              <h1 className="text-xl font-bold">{product.reference}</h1>
+              <h1 className="text-xl font-bold">{product.slug}</h1>
             </li>
             <li>
               <h1 className="text-xl font-bold">{product.manufacturer}</h1>
@@ -105,7 +105,7 @@ export default function ProductScreen(props) {
             {product.sentOverNight && (
               <li>
                 <h1 className="text-xl font-extrabold">
-                  This product must be sent overnight.
+                  This product should be sent overnight.
                 </h1>
               </li>
             )}
