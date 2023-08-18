@@ -349,7 +349,7 @@ function OrderScreen() {
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (
-                <div className="bg-red-500 text-white p-3">
+                <div className="alert-error">
                   It is recomended that this product ships overnight due to
                   temperature sensitivity. Stat Surgical Supply is not
                   responsible for product damage or failure if the customer
@@ -524,7 +524,8 @@ function OrderScreen() {
                             className="primary-button w-full"
                           >
                             <div className="flex flex-row align-middle justify-center items-center ">
-                              Checkout &nbsp; <AiTwotoneLock className="" />
+                              Secure Checkout &nbsp;{' '}
+                              <AiTwotoneLock className="" />
                             </div>
                             <Image
                               src={Stripe}

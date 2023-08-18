@@ -379,7 +379,7 @@ export default function ShippingScreen() {
           )}
         </div>
         <div className="mb-4 contact__form-div">
-          <label htmlFor="notes">Special shipping instructions</label>
+          <label htmlFor="notes">Special Shipping Instructions</label>
           <textarea
             className="w-full contact__form-input contact__message"
             type="text"
