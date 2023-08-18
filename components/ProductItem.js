@@ -25,7 +25,7 @@ export const ProductItem = ({ product }) => {
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (data.countInStock < quantity) {
+    if (data.currentCountInStock < quantity) {
       setIsOutOfStock(true);
       return;
     }
