@@ -74,7 +74,7 @@ function CartScreen() {
                         &nbsp;
                         {item.manufacturer}
                         <br />
-                        &nbsp;{item.reference}
+                        &nbsp;{item.slug}
                         <br />
                         &nbsp;{item.name}
                       </Link>
