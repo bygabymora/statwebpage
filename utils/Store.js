@@ -13,27 +13,43 @@ function reducer(state, action) {
   switch (action.type) {
     case 'CART_ADD_ITEM': {
       const newItem = action.payload;
-      const existItem = state.cart.cartItems.find(
+      const existingItem = state.cart.cartItems.find(
         (item) => item.slug === newItem.slug
       );
 
-      const cartItems = existItem
-        ? state.cart.cartItems.map((item) =>
-            item.slug === existItem.slug ? newItem : item
-          )
-        : [...state.cart.cartItems, newItem];
-
-      Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
-
-      return { ...state, cart: { ...state.cart, cartItems } };
+      if (existingItem) {
+        if (existingItem.purchaseType !== newItem.purchaseType) {
+          // Create a new line in the cart
+          const cartItems = [...state.cart.cartItems, newItem];
+          Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
+          return { ...state, cart: { ...state.cart, cartItems } };
+        } else {
+          // Update the existing item's quantity
+          const cartItems = state.cart.cartItems.map((item) =>
+            item.slug === existingItem.slug ? newItem : item
+          );
+          Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
+          return { ...state, cart: { ...state.cart, cartItems } };
+        }
+      } else {
+        // Item doesn't exist in the cart, add it
+        const cartItems = [...state.cart.cartItems, newItem];
+        Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
+        return { ...state, cart: { ...state.cart, cartItems } };
+      }
     }
+
     case 'CART_REMOVE_ITEM': {
       const cartItems = state.cart.cartItems.filter(
-        (item) => item.slug !== action.payload.slug
+        (item) =>
+          item.slug !== action.payload.slug ||
+          (item.slug === action.payload.slug &&
+            item.purchaseType !== action.payload.purchaseType)
       );
       Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
       return { ...state, cart: { ...state.cart, cartItems } };
     }
+
     case 'CART_RESET':
       return {
         ...state,

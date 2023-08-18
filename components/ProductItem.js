@@ -38,7 +38,9 @@ export const ProductItem = ({ product }) => {
   ]);
 
   const addToCartHandler = async () => {
-    const exisItem = cart.cartItems.find((x) => x.slug === product.slug);
+    const exisItem = cart.cartItems.find(
+      (x) => x.slug === product.slug && x.purchaseType === purchaseType
+    );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 

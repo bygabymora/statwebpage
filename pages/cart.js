@@ -23,6 +23,7 @@ function CartScreen() {
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+    const purchaseType = item.purchaseType;
 
     const { data } = await axios.get(`/api/products/${item._id}`);
 
@@ -32,7 +33,10 @@ function CartScreen() {
     if (data.purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      payload: { ...item, quantity, purchaseType },
+    });
   };
   return (
     <Layout title="Cart">
