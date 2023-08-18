@@ -98,7 +98,7 @@ export default function ShippingScreen() {
   };
 
   const handleShippingInstructions = () => {
-    const instructions = `Shipping Preferences: ${specialNotes}\nShipping Speed: ${shippingSpeed}\nShipping Company: ${shippingCompany}\nPayment Method: ${shippingPaymentMethod}${
+    const instructions = `Shipping Preferences: ${specialNotes}, \nShipping Speed: ${shippingSpeed}, \nShipping Company: ${shippingCompany}, \nPayment Method: ${shippingPaymentMethod}, ${
       shippingPaymentMethod === 'use my account'
         ? ` (Account Number: ${accountNumber})`
         : ''
@@ -280,10 +280,6 @@ export default function ShippingScreen() {
                   <br /> {lastOrder.shippingAddress.state}
                   <br /> {lastOrder.shippingAddress.city}
                   <br /> {lastOrder.shippingAddress.postalCode}
-                  <br />{' '}
-                  {lastOrder.shippingAddress.notes && (
-                    <> {lastOrder.shippingAddress.notes} </>
-                  )}
                   <br />{' '}
                 </p>
               </div>
