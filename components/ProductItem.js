@@ -111,7 +111,12 @@ export const ProductItem = ({ product }) => {
             >
               -
             </button>
-            <span className="px-1 mt-4">{qty}</span>
+            <span className="px-1 mt-4">
+              {(purchaseType === 'Each' && isOutOfStock) ||
+              (purchaseType === 'Bulk' && isOutOfStockBulk)
+                ? 0
+                : qty}
+            </span>
             <button
               className="border px-2 py-1 card"
               onClick={() => {
@@ -119,10 +124,18 @@ export const ProductItem = ({ product }) => {
                   setQty(qty + 1);
                 } else {
                   alert(
-                    `Sorry, we only have ${currentCountInStock} of ${product.manufacturer} ${product.slug} at this moment`
+                    `Sorry, we only have ${
+                      purchaseType === 'Each'
+                        ? product.countInStock
+                        : product.countInStockBulk
+                    } of ${product.manufacturer} ${product.slug} at this moment`
                   );
                 }
               }}
+              disabled={
+                (purchaseType === 'Each' && isOutOfStock) ||
+                (purchaseType === 'Bulk' && isOutOfStockBulk)
+              }
             >
               +
             </button>

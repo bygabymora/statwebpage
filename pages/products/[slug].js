@@ -145,7 +145,12 @@ export default function ProductScreen(props) {
                 >
                   -
                 </button>
-                <span className="px-1 mt-4 ">{qty}</span>
+                <span className="px-1 mt-4">
+                  {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk)
+                    ? 0
+                    : qty}
+                </span>
                 <button
                   className="border px-2 py-1 card"
                   onClick={() => {
