@@ -346,31 +346,31 @@ function OrderScreen() {
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
-          {orderItems && orderItems.some((item) => item.sentOverNight) && (
-            <div className="bg-red-500 text-white p-3">
-              It is recomended that this product ships overnight due to
-              temperature sensitivity. Stat Surgical Supply is not responsible
-              for product damage or failure if the customer chooses another
-              shipping method.
-              <div className="mt-2">
-                <button
-                  onClick={() => setShowItems(!showItems)}
-                  className="underline font-bold flex flex-row align-middle justify-center items-center"
-                >
-                  Products for Overnight Delivery &nbsp;
-                  <BsFillArrowDownSquareFill />
-                </button>
-                {showItems &&
-                  orderItems
-                    .filter((item) => item.sentOverNight)
-                    .map((product, index) => (
-                      <div key={index}>{product.name}</div>
-                    ))}
-              </div>
-            </div>
-          )}
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
+              {orderItems && orderItems.some((item) => item.sentOverNight) && (
+                <div className="bg-red-500 text-white p-3">
+                  It is recomended that this product ships overnight due to
+                  temperature sensitivity. Stat Surgical Supply is not
+                  responsible for product damage or failure if the customer
+                  chooses another shipping method.
+                  <div className="mt-2">
+                    <button
+                      onClick={() => setShowItems(!showItems)}
+                      className="underline font-bold flex flex-row align-middle justify-center items-center"
+                    >
+                      Products for Overnight Delivery &nbsp;
+                      <BsFillArrowDownSquareFill />
+                    </button>
+                    {showItems &&
+                      orderItems
+                        .filter((item) => item.sentOverNight)
+                        .map((product, index) => (
+                          <div key={index}>{product.name}</div>
+                        ))}
+                  </div>
+                </div>
+              )}
               <h2 className="mb-2 text-lg">Shipping Address</h2>
               <div>
                 {shippingAddress.fullName},{' '}

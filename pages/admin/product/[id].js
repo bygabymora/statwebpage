@@ -276,9 +276,7 @@ export default function AdminProductEditScreen() {
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="reference"
-                  {...register('reference', {
-                    required: 'Please enter reference',
-                  })}
+                  {...register('reference', {})}
                 />
                 {errors.reference && (
                   <div className="text-red-500">{errors.reference.message}</div>
