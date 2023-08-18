@@ -71,6 +71,41 @@ export default function ShippingScreen() {
   const [showSuggestions, setShowSuggestions] = useState(false); // Add state for tracking the visibility of suggestions
 
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1); // Initialize to -1, meaning no suggestion is selected
+  const [shippingSpeed, setShippingSpeed] = useState('');
+  const [shippingCompany, setShippingCompany] = useState('');
+  const [shippingPaymentMethod, setPaymentMethod] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [specialNotes, setSpecialNotes] = useState('');
+
+  const handleShippingSpeedChange = (event) => {
+    setShippingSpeed(event.target.value);
+  };
+
+  const handleShippingCompanyChange = (event) => {
+    setShippingCompany(event.target.value);
+  };
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
+  const handleAccountNumberChange = (event) => {
+    setAccountNumber(event.target.value);
+  };
+
+  const handleSpecialNotesChange = (event) => {
+    setSpecialNotes(event.target.value);
+  };
+
+  const handleShippingInstructions = () => {
+    const instructions = `Shipping Preferences: ${specialNotes}\nShipping Speed: ${shippingSpeed}\nShipping Company: ${shippingCompany}\nPayment Method: ${shippingPaymentMethod}${
+      shippingPaymentMethod === 'use my account'
+        ? ` (Account Number: ${accountNumber})`
+        : ''
+    }`;
+
+    setValue('notes', instructions); // Update the form value for 'notes' field
+  };
 
   const handleStateChange = (event) => {
     const inputValue = event.target.value.toLowerCase();
@@ -378,24 +413,134 @@ export default function ShippingScreen() {
             <p className="text-red-500">Postal Code is required.</p>
           )}
         </div>
-        <div className="mb-4 contact__form-div">
-          <label htmlFor="notes">Special Shipping Instructions</label>
-          <textarea
-            className="w-full contact__form-input contact__message"
-            type="text"
-            id="notes"
-            placeholder="Special Shipping instructions if needed"
-            {...register('notes', { required: false, minLength: 3 })}
-            autoCapitalize="true"
-          />
-          {errors.notes && (
-            <p className="text-red-500">
-              Please check the shipping instructions.
-            </p>
-          )}
+        <div className="mx-auto max-w-screen-md">
+          <h1 className="mb-4 text-xl">Shipping preferences</h1>
+          <div className="mb-4 ">
+            <h2 className="">Shipping Speed:</h2>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingSpeed"
+                value="Overnight"
+                checked={shippingSpeed === 'Overnight'}
+                onChange={handleShippingSpeedChange}
+              />
+              &nbsp;
+              <label className="p-2">Overnight</label>
+            </div>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingSpeed"
+                value="1 day"
+                checked={shippingSpeed === '1 day'}
+                onChange={handleShippingSpeedChange}
+              />
+              &nbsp;
+              <label className="p-2">1 day</label>
+            </div>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingSpeed"
+                value="2 days"
+                checked={shippingSpeed === '2 days'}
+                onChange={handleShippingSpeedChange}
+              />
+              &nbsp;
+              <label className="p-2">2 days</label>
+            </div>
+          </div>
+
+          <div className="mb-4 contact__form-div mt-4 flex flex-col">
+            <h1 className="mb-4 ">Shipping Company:</h1>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingCompany"
+                value="FedEx"
+                checked={shippingCompany === 'FedEx'}
+                onChange={handleShippingCompanyChange}
+              />
+              <label className="p-2">FedEx</label>
+            </div>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingCompany"
+                value="UPS"
+                checked={shippingCompany === 'UPS'}
+                onChange={handleShippingCompanyChange}
+              />
+              <label className="p-2">UPS</label>
+            </div>
+          </div>
+          <div className="mb-4 contact__form-div flex flex-col">
+            <h1 className="mb-4 ">Payment:</h1>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingPaymentMethod"
+                value="Bill me"
+                checked={shippingPaymentMethod === 'Bill me'}
+                onChange={handlePaymentMethodChange}
+              />
+              <label>Bill me</label>
+            </div>
+            <div>
+              <input
+                className="p-2 outline-none focus:ring-0"
+                type="radio"
+                name="shippingPaymentMethod"
+                value="use my account"
+                checked={shippingPaymentMethod === 'use my account'}
+                onChange={handlePaymentMethodChange}
+              />
+              <label>Use my account</label>
+
+              {shippingPaymentMethod === 'use my account' && (
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  placeholder="Please enter your account number"
+                  value={accountNumber}
+                  onChange={handleAccountNumberChange}
+                />
+              )}
+            </div>
+            <div>
+              <h1 className="mb-4 my-4">Aditional notes</h1>
+              <textarea
+                className="w-full contact__form-input contact__message"
+                value={specialNotes}
+                onChange={handleSpecialNotesChange}
+              />
+            </div>
+          </div>
+          <div className="mb-4 contact__form-div" hidden>
+            <label htmlFor="notes">Shipping Instructions</label>
+            <textarea
+              className="w-full contact__form-input contact__message"
+              id="notes"
+              placeholder="Shipping instructions"
+              {...register('notes', { required: true, minLength: 3 })}
+              autoCapitalize="true"
+            />
+          </div>
         </div>
+        <br />
         <div className="mb-4 contact__form-div">
-          <button className="primary-button w-full" type="submit">
+          <button
+            className="primary-button w-full"
+            type="submit"
+            onClick={handleShippingInstructions}
+          >
             Continue
           </button>
         </div>
