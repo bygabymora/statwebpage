@@ -63,23 +63,29 @@ export default function ProductScreen(props) {
       setIsOutOfStockBulk(true);
       return;
     }
-
     dispatch({
       type: 'CART_ADD_ITEM',
       payload: {
         ...product,
         quantity,
         purchaseType,
-        price: currentPrice,
-        description: currentDescription,
-        countInStock: currentCountInStock,
+        sentOverNight: product.sentOverNight,
+        price: purchaseType === 'Each' ? product.price : product.priceBulk,
+        description:
+          purchaseType === 'Each'
+            ? product.description
+            : product.descriptionBulk,
+        countInStock:
+          purchaseType === 'Each' ? data.countInStock : data.countInStockBulk,
       },
     });
 
-    if (product.currentCountInStock < quantity) {
-      toast.error("Sorry, we don't have enough of that item in stock.");
+    toast.success('Item added to cart');
 
-      return quantity;
+    if (purchaseType === 'Each' && data.countInStock < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
+    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
     }
     setShowPopup(true);
   };
