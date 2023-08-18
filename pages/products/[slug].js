@@ -164,7 +164,7 @@ export default function ProductScreen(props) {
               <div className="font-bold">Status</div>
               &nbsp;
               <div className="text-lg ">
-                {isOutOfStock || product.countInStock === 0
+                {isOutOfStock || currentCountInStock === 0
                   ? 'Out of Stock'
                   : 'In Stock'}
               </div>
@@ -173,7 +173,7 @@ export default function ProductScreen(props) {
               className="primary-button cart-button"
               type="button"
               onClick={addToCartHandler}
-              disabled={product.countInStock === 0 || isOutOfStock}
+              disabled={currentCountInStock === 0 || isOutOfStock}
             >
               {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </button>

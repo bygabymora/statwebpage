@@ -418,7 +418,7 @@ function OrderScreen() {
                   </span>
                 </div>
               ) : (
-                <div className="alert-error">Not at custumers yet</div>
+                <div className="alert-error">Not at customers yet</div>
               )}
             </div>
 
@@ -599,7 +599,7 @@ function OrderScreen() {
                         className="primary-button w-full"
                         onClick={atCostumersOrderHandler}
                       >
-                        Order is at custumers
+                        Order is at customers
                       </button>
                     </li>
                   )}

@@ -23,7 +23,9 @@ function CartScreen() {
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+
     const { data } = await axios.get(`/api/products/${item._id}`);
+
     if (data.purchaseType === 'Each' && data.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
@@ -65,16 +67,16 @@ function CartScreen() {
                       >
                         <Image
                           src={item.image}
-                          alt={item.slug}
+                          alt={item.reference}
                           width={50}
                           height={50}
                         />
                         &nbsp;
                         {item.manufacturer}
                         <br />
-                        &nbsp;{item.slug}
+                        &nbsp;{item.reference}
                         <br />
-                        &nbsp;{item.description}
+                        &nbsp;{item.name}
                       </Link>
                     </td>
                     <td className="p-5 text-right">{item.purchaseType}</td>
@@ -86,7 +88,7 @@ function CartScreen() {
                             updateCartHandler(item, e.target.value)
                           }
                         >
-                          {[...Array(item.countInStockBulk).keys()].map((x) => (
+                          {[...Array(item.countInStock).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
                               {x + 1}
                             </option>

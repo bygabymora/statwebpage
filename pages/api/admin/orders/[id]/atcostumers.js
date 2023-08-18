@@ -17,7 +17,7 @@ const handler = async (req, res) => {
     const atCostumersOrder = await order.save();
     await db.disconnect();
     res.send({
-      message: 'Order is registered as at custumers',
+      message: 'Order is registered as at customers',
       order: atCostumersOrder,
     });
   } else {

@@ -103,15 +103,12 @@ export const ProductItem = ({ product }) => {
           <select
             value={purchaseType}
             onChange={(e) => {
-              console.log('Selected Value:', e.target.value);
               setPurchaseType(e.target.value);
               if (e.target.value === 'Bulk') {
-                console.log('Setting to Bulk values');
                 setCurrentPrice(product.priceBulk);
                 setCurrentDescription(product.descriptionBulk);
                 setCurrentCountInStock(product.countInStockBulk);
               } else if (e.target.value === 'Each') {
-                console.log('Setting to Each values');
                 setCurrentPrice(product.price);
                 setCurrentDescription(product.description);
                 setCurrentCountInStock(product.countInStock);
@@ -130,7 +127,7 @@ export const ProductItem = ({ product }) => {
           className="primary-button align-middle mt-2"
           type="button"
           onClick={addToCartHandler}
-          disabled={product.countInStock === 0 || isOutOfStock}
+          disabled={currentCountInStock === 0 || isOutOfStock}
         >
           {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
