@@ -175,7 +175,7 @@ export default function ProductScreen(props) {
             </div>
 
             <div className="mb-2 flex justify-between">
-              <div className="font-bold">U o M</div>
+              <div className="font-bold">U o M &nbsp;</div>
               <select
                 value={purchaseType}
                 onChange={(e) => {
@@ -191,8 +191,10 @@ export default function ProductScreen(props) {
                   }
                 }}
               >
-                <option value="Each">Each</option>
-                <option value="Bulk">Box</option>
+                {product.countInStock > 0 && <option value="Each">Each</option>}
+                {product.countInStockBulk > 0 && (
+                  <option value="Bulk">Box</option>
+                )}
               </select>
             </div>
             <div className="mb-2 flex justify-between">
