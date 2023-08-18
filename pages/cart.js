@@ -67,7 +67,7 @@ function CartScreen() {
                       >
                         <Image
                           src={item.image}
-                          alt={item.reference}
+                          alt={item.slug}
                           width={50}
                           height={50}
                         />
