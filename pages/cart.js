@@ -75,11 +75,11 @@ function CartScreen() {
                         {item.manufacturer}
                         <br />
                         &nbsp;{item.slug}
-                        <br />
-                        &nbsp;{item.name}
                       </Link>
                     </td>
-                    <td className="p-5 text-right">{item.purchaseType}</td>
+                    <td className="p-5 text-right">
+                      {item.purchaseType === 'Bulk' ? 'Box' : item.purchaseType}
+                    </td>
                     {item.purchaseType === 'Each' && (
                       <td className="p-5 text-right">
                         <select

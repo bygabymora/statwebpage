@@ -27,6 +27,7 @@ export const ProductItem = ({ product }) => {
 
     if (data.currentCountInStock < quantity) {
       setIsOutOfStock(true);
+      alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
     dispatch({
@@ -90,8 +91,15 @@ export const ProductItem = ({ product }) => {
             <span className="px-1 mt-4">{qty}</span>
             <button
               className="border px-2 py-1 card"
-              onClick={() => setQty(qty + 1)}
-              disabled={currentCountInStock <= qty}
+              onClick={() => {
+                if (qty < currentCountInStock) {
+                  setQty(qty + 1);
+                } else {
+                  alert(
+                    `Sorry, we only have ${currentCountInStock} of ${product.manufacturer} ${product.slug} at this moment`
+                  );
+                }
+              }}
             >
               +
             </button>
@@ -127,10 +135,11 @@ export const ProductItem = ({ product }) => {
           className="primary-button align-middle mt-2"
           type="button"
           onClick={addToCartHandler}
-          disabled={currentCountInStock === 0 || isOutOfStock}
+          disabled={currentCountInStock < qty || isOutOfStock}
         >
-          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+          {!isOutOfStock ? 'Add to Cart' : 'Out of Stock'}
         </button>
+
         {isOutOfStock && (
           <form className="text-center ">
             <label className="mt-3 font-bold ">Join our waiting List</label>
