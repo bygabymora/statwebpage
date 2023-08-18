@@ -245,6 +245,27 @@ function OrderScreen() {
     }
   }, [order._id]);
 
+  const handlePayment = async () => {
+    try {
+      dispatch({ type: 'PAY_REQUEST' });
+      const { data } = await axios.put(
+        `/api/orders/${order._id}/pay`
+        // Include any necessary payload here
+      );
+      dispatch({ type: 'PAY_SUCCESS', payload: data });
+      toast.success('Order is paid successfully');
+
+      // Mark payment as complete and show success message
+      setPaymentComplete(true);
+
+      // Reload the page after payment success
+      window.location.reload();
+    } catch (error) {
+      dispatch({ type: 'PAY_FAIL', payload: getError(error) });
+      toast.error(getError(error));
+    }
+  };
+
   function onError(err) {
     toast.error(getError(err));
   }
@@ -434,7 +455,9 @@ function OrderScreen() {
               )}
               {isPaid ? (
                 <div className="alert-success">
-                  Paid at{' '}
+                  {paymentMethod === 'Pay by Wire'
+                    ? 'Payment processed at'
+                    : 'Paid at'}{' '}
                   <span className="font-bold">
                     {new Date(paidAt).toLocaleDateString()}{' '}
                   </span>
@@ -538,12 +561,33 @@ function OrderScreen() {
                         </section>
                       </form>
                     ) : paymentMethod === 'Pay by Wire' ? (
-                      <button
-                        className="primary-button w-full"
-                        onClick={handleCheckout}
-                      >
-                        Pay by Wire
-                      </button>
+                      <div>
+                        {session.user.isAdmin && (
+                          <button
+                            className="primary-button w-full"
+                            onClick={handlePayment}
+                          >
+                            Mark as paid
+                          </button>
+                        )}
+                        {!session.user.isAdmin && (
+                          <div>
+                            <button
+                              onClick={
+                                paymentMethod !== 'Pay by Wire' &&
+                                handleCheckout
+                              }
+                              hidden
+                            >
+                              ...
+                            </button>
+                            Thank you for taking advantage of our Pay by Wire
+                            discount. We will contact you via email with our
+                            account information so you can initiate the
+                            transfer.
+                          </div>
+                        )}
+                      </div>
                     ) : paymentMethod === 'Paypal' ? (
                       isPending ? (
                         <div>Loading...</div>
