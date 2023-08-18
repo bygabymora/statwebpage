@@ -55,7 +55,7 @@ export default function ProductScreen(props) {
       },
     });
 
-    if (product.countInStock < quantity) {
+    if (product.currentCountInStock < quantity) {
       toast.error("Sorry, we don't have enough of that item in stock.");
 
       return quantity;

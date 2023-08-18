@@ -44,7 +44,7 @@ export const ProductItem = ({ product }) => {
 
     toast.success('Item added to cart');
 
-    if (product.countInStock < quantity) {
+    if (product.currentCountInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
 
       return quantity;
