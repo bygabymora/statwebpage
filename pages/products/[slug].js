@@ -131,10 +131,11 @@ export default function ProductScreen(props) {
             </li>
             {product.sentOverNight && (
               <li>
-                <h1 className="text-xl">
+                <h1 className="text-xl">Shipping recomendations:</h1>
+                <p>
                   It is recomended that this product ships overnight due to
                   temperature sensitivity.
-                </h1>
+                </p>
               </li>
             )}
           </ul>
