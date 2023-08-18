@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Store } from '../utils/Store';
 import { useContext } from 'react';
@@ -10,8 +10,9 @@ export const ProductItem = ({ product }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
   const [qty, setQty] = useState(1);
-  const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
+  const [purchaseType, setPurchaseType] = useState('Each');
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
     product.description
@@ -20,14 +21,32 @@ export const ProductItem = ({ product }) => {
     product.countInStock
   );
 
+  useEffect(() => {
+    if (product.countInStock === 0) {
+      setPurchaseType('Bulk');
+      setCurrentPrice(product.priceBulk);
+      setCurrentDescription(product.descriptionBulk);
+      setCurrentCountInStock(product.countInStockBulk);
+    } else {
+      setPurchaseType('Each');
+    }
+  }, [
+    product.countInStock,
+    product.countInStockBulk,
+    product.descriptionBulk,
+    product.priceBulk,
+  ]);
+
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (data.currentCountInStock < quantity) {
+    if (purchaseType === 'Each' && data.countInStock < quantity) {
       setIsOutOfStock(true);
-      alert("Sorry, we don't have enough of that item in stock.");
+      return;
+    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+      setIsOutOfStockBulk(true);
       return;
     }
     dispatch({
@@ -37,18 +56,22 @@ export const ProductItem = ({ product }) => {
         quantity,
         purchaseType,
         sentOverNight: product.sentOverNight,
-        price: currentPrice,
-        description: currentDescription,
-        countInStock: currentCountInStock,
+        price: purchaseType === 'Each' ? product.price : product.priceBulk,
+        description:
+          purchaseType === 'Each'
+            ? product.description
+            : product.descriptionBulk,
+        countInStock:
+          purchaseType === 'Each' ? data.countInStock : data.countInStockBulk,
       },
     });
 
     toast.success('Item added to cart');
 
-    if (product.currentCountInStock < quantity) {
+    if (purchaseType === 'Each' && data.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
-
-      return quantity;
+    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
     }
   };
 
@@ -123,41 +146,58 @@ export const ProductItem = ({ product }) => {
               }
             }}
           >
-            <option value="Each">Each</option>
-            <option value="Bulk">Box</option>
+            {product.countInStock > 0 && <option value="Each">Each</option>}
+            {product.countInStockBulk > 0 && <option value="Bulk">Box</option>}
           </select>
         </div>
         <div className="mb-2 flex justify-between">
           <div className="font-bold">Price</div>
           <div className="">&nbsp; ${currentPrice}</div>
         </div>
+        <div className="mb-2 flex justify-between">
+          <div className="font-bold">Status</div>
+          &nbsp;
+          <div className="text-lg ">
+            {(purchaseType === 'Each' && isOutOfStock) ||
+            (purchaseType === 'Bulk' && isOutOfStockBulk)
+              ? 'Out of Stock'
+              : 'In Stock'}
+          </div>
+        </div>
         <button
           className="primary-button align-middle mt-2"
           type="button"
           onClick={addToCartHandler}
-          disabled={currentCountInStock < qty || isOutOfStock}
+          disabled={
+            (purchaseType === 'Each' && isOutOfStock) ||
+            (purchaseType === 'Bulk' && isOutOfStockBulk)
+          }
         >
-          {!isOutOfStock ? 'Add to Cart' : 'Out of Stock'}
+          {(purchaseType === 'Each' && isOutOfStock) ||
+          (purchaseType === 'Bulk' && isOutOfStockBulk)
+            ? 'Out of Stock'
+            : 'Add to Cart'}
         </button>
 
-        {isOutOfStock && (
-          <form className="text-center ">
-            <label className="mt-3 font-bold ">Join our waiting List</label>
-            <input
-              type="text"
-              placeholder="Name"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <button className="primary-button mt-3" type="submit">
-              Submit
-            </button>
-          </form>
-        )}
+        {(purchaseType === 'Each' && isOutOfStock) ||
+          (purchaseType === 'Bulk' && isOutOfStockBulk && (
+            <form className="text-center ">
+              <label className="mt-3 font-bold ">Join our waiting List</label>
+              <input
+                type="text"
+                placeholder="Name"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              />
+              <button className="primary-button mt-3" type="submit">
+                Submit
+              </button>
+            </form>
+          ))}
       </div>
     </div>
   );

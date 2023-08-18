@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { BsBackspace, BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Store } from '../../utils/Store';
 import db from '../../utils/db';
 import Product from '../../models/Product';
@@ -16,6 +16,7 @@ export default function ProductScreen(props) {
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
   const [currentPrice, setCurrentPrice] = useState(product.price);
@@ -25,6 +26,22 @@ export default function ProductScreen(props) {
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.countInStock
   );
+
+  useEffect(() => {
+    if (product.countInStock === 0) {
+      setPurchaseType('Bulk');
+      setCurrentPrice(product.priceBulk);
+      setCurrentDescription(product.descriptionBulk);
+      setCurrentCountInStock(product.countInStockBulk);
+    } else {
+      setPurchaseType('Each');
+    }
+  }, [
+    product.countInStock,
+    product.countInStockBulk,
+    product.descriptionBulk,
+    product.priceBulk,
+  ]);
 
   if (!product) {
     return (
@@ -39,10 +56,14 @@ export default function ProductScreen(props) {
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (data.countInStock < quantity) {
+    if (purchaseType === 'Each' && data.countInStock < quantity) {
       setIsOutOfStock(true);
       return;
+    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+      setIsOutOfStockBulk(true);
+      return;
     }
+
     dispatch({
       type: 'CART_ADD_ITEM',
       payload: {
@@ -127,8 +148,15 @@ export default function ProductScreen(props) {
                 <span className="px-1 mt-4 ">{qty}</span>
                 <button
                   className="border px-2 py-1 card"
-                  onClick={() => setQty(qty + 1)}
-                  disabled={currentCountInStock <= qty}
+                  onClick={() => {
+                    if (qty < currentCountInStock) {
+                      setQty(qty + 1);
+                    } else {
+                      alert(
+                        `Sorry, we only have ${currentCountInStock} of ${product.manufacturer} ${product.slug} at this moment`
+                      );
+                    }
+                  }}
                 >
                   +
                 </button>
@@ -164,18 +192,23 @@ export default function ProductScreen(props) {
               <div className="font-bold">Status</div>
               &nbsp;
               <div className="text-lg ">
-                {isOutOfStock || currentCountInStock === 0
-                  ? 'Out of Stock'
-                  : 'In Stock'}
+                {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk)}
               </div>
             </div>
             <button
               className="primary-button cart-button"
               type="button"
               onClick={addToCartHandler}
-              disabled={currentCountInStock === 0 || isOutOfStock}
+              disabled={
+                (purchaseType === 'Each' && isOutOfStock) ||
+                (purchaseType === 'Bulk' && isOutOfStockBulk)
+              }
             >
-              {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+              {(purchaseType === 'Each' && isOutOfStock) ||
+              (purchaseType === 'Bulk' && isOutOfStockBulk)
+                ? 'Out of Stock'
+                : 'Add to Cart'}
             </button>
             {showPopup && (
               <div className="popup">
