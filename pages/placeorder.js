@@ -182,7 +182,7 @@ export default function PlaceOrderScreen() {
                   <li>
                     <div className="mb-2 flex justify-between">
                       <div>Discount ({discountPercentage}%)</div>
-                      <div>- ${discountAmount}</div>
+                      <div>- ${discountAmount.toFixed(2)}</div>
                     </div>
                   </li>
                 )}

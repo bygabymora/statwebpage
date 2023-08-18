@@ -524,7 +524,7 @@ function OrderScreen() {
                   <li>
                     <div className="mb-2 px-3 flex justify-between">
                       <div>Discount</div>
-                      <div>- ${discountAmount}</div>
+                      <div>- ${discountAmount.toFixed(2)}</div>
                     </div>
                   </li>
                 ) : null}
