@@ -39,6 +39,20 @@ function reducer(state, action) {
       }
     }
 
+    case 'CART_UPDATE_ITEM': {
+      const updatedItem = action.payload;
+      const cartItems = state.cart.cartItems.map((item) =>
+        item.slug === updatedItem.slug &&
+        item.purchaseType === updatedItem.purchaseType
+          ? { ...item, quantity: updatedItem.quantity }
+          : item
+      );
+
+      Cookies.set('cart', JSON.stringify({ ...state.cart, cartItems }));
+
+      return { ...state, cart: { ...state.cart, cartItems } };
+    }
+
     case 'CART_REMOVE_ITEM': {
       const cartItems = state.cart.cartItems.filter(
         (item) =>

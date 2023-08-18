@@ -350,10 +350,10 @@ function OrderScreen() {
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (
                 <div className="alert-error">
-                  It is recomended that this product ships overnight due to
-                  temperature sensitivity. Stat Surgical Supply is not
-                  responsible for product damage or failure if the customer
-                  chooses another shipping method.
+                  It is recomended some of the products on this order are
+                  shipped overnight due to temperature sensitivity. Stat
+                  Surgical Supply is not responsible for product damage or
+                  failure if the customer chooses another shipping method.
                   <div className="mt-2">
                     <button
                       onClick={() => setShowItems(!showItems)}

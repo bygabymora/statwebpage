@@ -34,10 +34,11 @@ function CartScreen() {
       alert("Sorry, we don't have enough of that item in stock.");
     }
     dispatch({
-      type: 'CART_ADD_ITEM',
+      type: 'CART_UPDATE_ITEM', // Change to a new action type
       payload: { ...item, quantity, purchaseType },
     });
   };
+
   return (
     <Layout title="Cart">
       <h1 className="mb-4 text-xl">Shopping Cart</h1>
