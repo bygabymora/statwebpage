@@ -57,7 +57,7 @@ export default function Home({ products }) {
         emulateTouch={true}
         swipeable={true}
         autoPlay={true}
-        interval={1500}
+        interval={3000}
       >
         {products.map((product) => (
           <ProductItem product={product} key={product.slug}></ProductItem>

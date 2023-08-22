@@ -10,7 +10,7 @@ export default function Products({ products }) {
       <h2 className="section__title" id="products">
         Products
       </h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 mb-3">
         {products.map((product) => (
           <ProductItem product={product} key={product.slug}></ProductItem>
         ))}

@@ -16,6 +16,8 @@ const Header = () => {
   const { state } = useContext(Store);
   const { cart } = state;
   const [cartItemsCount, setCarItemsCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, [cart.cartItems]);
@@ -28,19 +30,26 @@ const Header = () => {
       router.push('/');
     }
   };
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/search?query=${searchQuery}`);
+    }
+  };
   return (
     <header className="header">
       <nav className="nav container text-center flex-row-reverse ">
         <div className="search-field flex col-span-2 text-center ml-4 mr-4">
           <input
+            value={searchQuery}
+            onChange={handleSearchInputChange}
             type="text"
             className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
             placeholder="Search..."
           />
-          <button
-            className="nav__search-button"
-            onClick={() => router.push('/')}
-          >
+          <button className="nav__search-button" onClick={handleSearch}>
             <BiSearch className="nav__search-icon" />
           </button>
         </div>
