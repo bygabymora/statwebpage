@@ -6,7 +6,7 @@ import { AiOutlineSend } from 'react-icons/ai';
 
 export default function Footer() {
   return (
-    <footer className="footer_1 flex h-30 justify-center shadow-inner items-center footer flex-col">
+    <footer className="flex h-30 justify-center shadow-inner items-center footer flex-col">
       <div className="footer-container">
         <section className="footer-links">
           <div className="footer-linkGroup flex flex-col m-5">

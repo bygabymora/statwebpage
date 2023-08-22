@@ -706,6 +706,7 @@ img {
   background-color: #f3f3f3;
   color: var(--title-color);
   padding: 20px;
+  width: 100%;
 }
 
 .footer-container {
@@ -818,6 +819,7 @@ img {
     left: 0;
     z-index: var(--z-fixed);
     background-color: var(--body-color);
+    margin-bottom: 2%;
   }
 
   .nav {
@@ -828,8 +830,13 @@ img {
     gap: 1rem;
   }
   .search-field {
-    width: 100%;
-    margin-bottom: 1%;
+    width: 80%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+  }
+  .nav-field {
+    margin-bottom: 2%;
+    width: 90%;
   }
   .nav-reverse {
     flex-direction: row;

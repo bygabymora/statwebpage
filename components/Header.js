@@ -44,7 +44,7 @@ const Header = () => {
             <BiSearch className="nav__search-icon" />
           </button>
         </div>
-        <div className="flex h-12 items-center">
+        <div className="flex h-12 items-center nav-field">
           <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
               <div className="r__logo r__logo-1">
