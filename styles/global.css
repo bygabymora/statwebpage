@@ -8,7 +8,7 @@
 @tailwind utilities;
 /*=============== VARIABLES CSS ===============*/
 :root {
-  --header-height: 5rem;
+  --header-height: 7rem;
 
   /*========== Colors ==========*/
 
@@ -194,6 +194,7 @@ img {
   z-index: var(--z-fixed);
   background-color: var(--body-color);
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+  justify-content: space-between;
 }
 
 .nav {
@@ -941,6 +942,7 @@ img {
 }
 
 /* For small devices */
+
 @media screen and (max-width: 400px) {
   :root {
     --big-font-size: 2.25rem;
@@ -950,6 +952,7 @@ img {
     margin-left: var(--mb-1);
     margin-right: var(--mb-1);
   }
+
   .nav__menu {
     padding: 2rem 0.25rem 4rem;
   }
