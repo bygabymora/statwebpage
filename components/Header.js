@@ -10,6 +10,7 @@ import Navbar from './Navbar';
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import { BiSearch } from 'react-icons/bi';
+import axios from 'axios';
 
 const Header = () => {
   const router = useRouter();
@@ -30,20 +31,34 @@ const Header = () => {
       router.push('/');
     }
   };
+
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
-  const handleSearch = () => {
+
+  const handleSearch = async () => {
+    await axios.post('/api/searched', {
+      searchedWord: searchQuery.trim(),
+      slug: 'slug',
+      quantity: 0,
+      manufacturer: 'manufacturer',
+      fullName: 'fullName',
+      email: 'email',
+      phone: 'phone',
+      message: 'message',
+    });
+
     if (searchQuery.trim()) {
       router.push(`/search?query=${searchQuery}`);
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
+
   return (
     <header className="header">
       <nav className="nav container text-center flex-row-reverse ">
@@ -51,7 +66,7 @@ const Header = () => {
           <input
             value={searchQuery}
             onChange={handleSearchInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             type="text"
             className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
             placeholder="Search..."

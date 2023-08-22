@@ -24,6 +24,9 @@ const SearchPage = ({ query }) => {
     const fetchSearchResults = async () => {
       const { data } = await axios.get(`/api/search?keyword=${query}`);
       setProducts(data);
+      if (data.length === 0) {
+        setSlug(query);
+      }
     };
 
     fetchSearchResults();
@@ -32,7 +35,7 @@ const SearchPage = ({ query }) => {
   const submitHandler = async () => {
     try {
       await axios.post('/api/searched', {
-        searchedWord: 'searchedWord',
+        searchedWord: 'searched word',
         slug,
         quantity,
         manufacturer,

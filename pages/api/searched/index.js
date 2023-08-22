@@ -12,6 +12,7 @@ const handler = async (req, res) => {
     const searched = await newSearched.save();
     res.status(201).send(searched);
   } catch (error) {
+    console.error(error);
     res.status(500).send({ message: 'Error saving search query.' });
   }
 };
