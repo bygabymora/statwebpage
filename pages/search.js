@@ -17,6 +17,7 @@ const SearchPage = ({ query }) => {
   const [quantity, setQuantity] = useState('');
   const [manufacturer, setManufacturer] = useState('');
   const [phone, setPhone] = useState('');
+  const [searchedWord, setSearchedWord] = useState('');
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -26,6 +27,7 @@ const SearchPage = ({ query }) => {
       setProducts(data);
       if (data.length === 0) {
         setSlug(query);
+        setSearchedWord(query);
       }
     };
 
@@ -35,7 +37,7 @@ const SearchPage = ({ query }) => {
   const submitHandler = async () => {
     try {
       await axios.post('/api/searched', {
-        searchedWord: 'searched word',
+        searchedWord,
         slug,
         quantity,
         manufacturer,

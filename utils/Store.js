@@ -95,6 +95,10 @@ function reducer(state, action) {
         },
       };
 
+    case 'ACCEPT_COOKIES':
+      Cookies.set('cookieAccepted', true);
+      return { ...state, cookieAccepted: true };
+
     default:
       return state;
   }

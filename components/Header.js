@@ -39,13 +39,10 @@ const Header = () => {
   const handleSearch = async () => {
     await axios.post('/api/searched', {
       searchedWord: searchQuery.trim(),
-      slug: 'slug',
-      quantity: 0,
-      manufacturer: 'manufacturer',
-      fullName: 'fullName',
-      email: 'email',
-      phone: 'phone',
-      message: 'message',
+      slug: 'raw-search',
+      manufacturer: 'raw-search',
+      fullName: 'raw-search',
+      email: 'raw-search',
     });
 
     if (searchQuery.trim()) {
