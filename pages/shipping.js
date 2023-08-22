@@ -243,12 +243,19 @@ export default function ShippingScreen() {
   return (
     <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1}></CheckoutWizard>
+
       <form
         className="mx-auto max-w-screen-md w-full "
         onSubmit={handleSubmit(submitHandler)}
       >
         <div>
           <h1 className="text-2xl font-bold">Shipping Address</h1>
+          <p className="text-center font-semibold m-5 ">
+            Shipping charges are not included. We can either bill your shipping
+            account, or ship on our account for an additional fee. If you would
+            like us to bill you shipping, please understand that your order will
+            not ship until shipping fees are paid.
+          </p>
           {lastOrder && (
             <div className="mb-2 mt-2">
               <label htmlFor="useLastAddress" className="font-bold">
