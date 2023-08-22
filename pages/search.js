@@ -62,9 +62,9 @@ const SearchPage = ({ query }) => {
           <>
             <div>
               <h2 className="section__subtitle">No products found</h2>
-              <p className="section__text">
-                Please leave us your information and we will contact you if we
-                get the product
+              <p className="section__text text-center font-semibold">
+                Kindly provide your contact details, and we will reach out to
+                you once the product becomes available.
               </p>{' '}
             </div>
             <form
@@ -152,9 +152,9 @@ const SearchPage = ({ query }) => {
                   required
                 />
               </div>
-              <button className="button button--flex btn-contact">
-                <span className=" text-white">Send Message {tab} </span>
-                <BiMessageAdd className=" text-white" />
+              <button className="button button--flex btn-contact w-full flex items-center justify-center">
+                <span className="text-white">Send Your Request {tab} </span>
+                <BiMessageAdd className="text-white ml-2" />
               </button>
             </form>
           </>
