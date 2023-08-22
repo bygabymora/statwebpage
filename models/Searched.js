@@ -18,5 +18,5 @@ const searchedSchema = new mongoose.Schema(
 );
 
 const Searched =
-  mongoose.models.searched || mongoose.model('Searched', searchedSchema);
+  mongoose.models.Searched || mongoose.model('Searched', searchedSchema);
 export default Searched;
