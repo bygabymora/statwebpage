@@ -10,6 +10,9 @@ import Navbar from './Navbar';
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import { BiSearch } from 'react-icons/bi';
+import axios from 'axios';
+import { getError } from '../utils/error';
+import { toast } from 'react-toastify';
 
 const Header = () => {
   const router = useRouter();
@@ -33,9 +36,33 @@ const Header = () => {
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
-  const handleSearch = () => {
+
+  const submitHandler = async () => {
+    try {
+      await axios.post('/api/searched', {
+        searchedWord: searchQuery,
+        slug: 'default_slug',
+        quantity: 0,
+        manufacturer: 'default_manufacturer',
+        fullName: 'default_fullName',
+        email: 'default_email',
+        phone: 'default_phone',
+        message: 'default_message',
+      });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+    router.push(`/search?query=${searchQuery}`);
+  };
+
+  const handleSearch = async () => {
     if (searchQuery.trim()) {
-      router.push(`/search?query=${searchQuery}`);
+      // First, save the search query to the database.
+      await axios.post('/api/searched', {});
+
+      // Then, redirect to the desired page.
+
+      // Lastly, clear the searchQuery.
       setSearchQuery('');
     }
   };
@@ -57,7 +84,7 @@ const Header = () => {
             className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
             placeholder="Search..."
           />
-          <button className="nav__search-button" onClick={handleSearch}>
+          <button className="nav__search-button" onClick={submitHandler}>
             <BiSearch className="nav__search-icon" />
           </button>
         </div>

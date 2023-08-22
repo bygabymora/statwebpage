@@ -35,6 +35,7 @@ const SearchPage = ({ query }) => {
   const submitHandler = async () => {
     try {
       await axios.post('/api/searched', {
+        searchedWord: query,
         slug,
         quantity,
         manufacturer,
