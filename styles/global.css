@@ -340,6 +340,12 @@ img {
 }
 
 /*=============== PRODUCT ITEM ===============*/
+.manufacturer-item {
+  @apply flex flex-col items-center justify-center text-center;
+}
+.selected-manufactured {
+  @apply bg-gray-200;
+}
 .card {
   @apply mt-3 block rounded-lg border-gray-200 shadow-md mx-3;
 }
