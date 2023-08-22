@@ -32,8 +32,10 @@ export default function Products({ products }) {
           <ul>
             <div
               onClick={handleShowAll}
-              className={`manufacturer-item  ${
-                selectedManufacturer === null ? 'bg-slate-200' : ''
+              className={`manufacturer-item cursor-pointer ${
+                selectedManufacturer === null
+                  ? 'bg-slate-200 cursor-pointer'
+                  : ''
               }`}
             >
               ALL PRODUCTS
@@ -45,8 +47,10 @@ export default function Products({ products }) {
               <div
                 key={index}
                 onClick={() => handleManufacturerClick(manufacturer)}
-                className={`manufacturer-item ${
-                  selectedManufacturer === manufacturer ? 'bg-slate-200' : ''
+                className={`manufacturer-item cursor-pointer ${
+                  selectedManufacturer === manufacturer
+                    ? 'bg-slate-200 cursor-pointer'
+                    : ''
                 }`}
               >
                 {manufacturer}
