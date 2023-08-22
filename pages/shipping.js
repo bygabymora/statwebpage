@@ -256,6 +256,9 @@ export default function ShippingScreen() {
             like us to bill you shipping, please understand that your order will
             not ship until shipping fees are paid.
           </p>
+          <p className="text-xl text-center font-bold mb-5">
+            Please select your preferences bellow
+          </p>
           {lastOrder && (
             <div className="mb-2 mt-2">
               <label htmlFor="useLastAddress" className="font-bold">
