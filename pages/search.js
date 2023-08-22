@@ -24,6 +24,9 @@ const SearchPage = ({ query }) => {
     const fetchSearchResults = async () => {
       const { data } = await axios.get(`/api/search?keyword=${query}`);
       setProducts(data);
+      if (data.length === 0) {
+        setSlug(query);
+      }
     };
 
     fetchSearchResults();
@@ -77,6 +80,7 @@ const SearchPage = ({ query }) => {
                 <label className="contact__form-tag">Reference*</label>
                 <input
                   type="text"
+                  placeholder="Please enter the product reference"
                   name="slug"
                   className="contact__form-input"
                   onChange={(e) => setSlug(e.target.value)}
@@ -88,6 +92,7 @@ const SearchPage = ({ query }) => {
                 <label className="contact__form-tag">Manufacturer*</label>
                 <input
                   type="text"
+                  placeholder="Please enter the manufacturer"
                   name="manufacturer"
                   className="contact__form-input"
                   onChange={(e) => setManufacturer(e.target.value)}
@@ -97,14 +102,14 @@ const SearchPage = ({ query }) => {
               </div>
               <div className="contact__form-div">
                 <div className="contact__form-div">
-                  <label className="contact__form-tag">Quantity Needed*</label>
+                  <label className="contact__form-tag">Quantity Needed</label>
                   <input
                     type="text"
+                    placeholder="Please enter the quantity needed"
                     name="quantity"
                     className="contact__form-input"
                     onChange={(e) => setQuantity(e.target.value)}
                     value={quantity}
-                    required
                   />
                 </div>
               </div>
@@ -112,6 +117,7 @@ const SearchPage = ({ query }) => {
                 <label className="contact__form-tag">Name*</label>
                 <input
                   type="text"
+                  placeholder="Please enter your name"
                   name="fullName"
                   className="contact__form-input"
                   onChange={(e) => setFullName(e.target.value)}
@@ -123,6 +129,7 @@ const SearchPage = ({ query }) => {
                 <label className="contact__form-tag">Email*</label>
                 <input
                   type="email"
+                  placeholder="Please enter your email"
                   name="email"
                   className="contact__form-input"
                   onChange={(e) => setEmail(e.target.value)}
@@ -134,6 +141,7 @@ const SearchPage = ({ query }) => {
                 <label className="contact__form-tag">Phone</label>
                 <input
                   type="phone"
+                  placeholder="Please enter your phone number"
                   name="phone"
                   className="contact__form-input"
                   onChange={(e) => setPhone(e.target.value)}
