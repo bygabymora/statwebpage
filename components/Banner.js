@@ -94,7 +94,9 @@ const Banner = () => {
                 </Link>
               </>
             ) : (
-              <>Explore our wide range of high-end surgical disposables.</>
+              <div className="mb-10">
+                Explore our wide range of high-end surgical disposables.
+              </div>
             )}
           </p>
           {audience !== '' && (

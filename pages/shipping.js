@@ -500,7 +500,7 @@ export default function ShippingScreen() {
                 checked={shippingPaymentMethod === 'Bill me'}
                 onChange={handlePaymentMethodChange}
               />
-              <label>Bill me</label>
+              <label className="p-2">Bill me</label>
             </div>
             <div>
               <input
@@ -511,7 +511,7 @@ export default function ShippingScreen() {
                 checked={shippingPaymentMethod === 'use my account'}
                 onChange={handlePaymentMethodChange}
               />
-              <label>Use my account</label>
+              <label className="p-2">Use my account</label>
 
               {shippingPaymentMethod === 'use my account' && (
                 <input

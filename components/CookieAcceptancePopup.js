@@ -1,17 +1,27 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Store } from '../utils/Store';
 
 const CookieAcceptancePopup = () => {
   const { state, dispatch } = useContext(Store);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // once the component mounts (client side), this will be true
+  }, []);
+  if (!isClient || state.cookieAccepted) {
+    return null; // If we're server-side or if cookie is accepted, don't render anything
+  }
+
+  if (typeof window === 'undefined' || state.cookieAccepted) {
+    return null;
+  }
 
   if (state.cookieAccepted) {
-    return null; // Do not show the popup if cookies have been accepted
+    return null;
   }
 
   const declineCookies = () => {
-    // Here, you can handle the cookie decline logic, like redirecting users or showing a message
-    // For now, we're simply hiding the popup
-    dispatch({ type: 'ACCEPT_COOKIES' }); // This line should be modified based on your needs
+    dispatch({ type: 'ACCEPT_COOKIES' });
   };
 
   return (

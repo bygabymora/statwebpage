@@ -7,6 +7,7 @@ const initialState = {
   cart: Cookies.get('cart')
     ? JSON.parse(Cookies.get('cart'))
     : { cartItems: [], shippingAddress: {} },
+  cookieAccepted: Cookies.get('cookieAccepted') || false,
 };
 
 function reducer(state, action) {

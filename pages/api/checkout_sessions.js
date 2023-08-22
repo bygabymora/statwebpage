@@ -21,7 +21,7 @@ export default async function handler(req, res) {
               currency: 'USD',
               product_data: {
                 name: 'Order Total',
-                description: 'test',
+                description: 'Your order total',
               },
               unit_amount: totalPrice * 100,
             },
