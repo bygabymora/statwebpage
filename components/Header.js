@@ -38,6 +38,12 @@ const Header = () => {
       router.push(`/search?query=${searchQuery}`);
     }
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
   return (
     <header className="header">
       <nav className="nav container text-center flex-row-reverse ">
@@ -45,6 +51,7 @@ const Header = () => {
           <input
             value={searchQuery}
             onChange={handleSearchInputChange}
+            onKeyDown={handleKeyDown}
             type="text"
             className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
             placeholder="Search..."
