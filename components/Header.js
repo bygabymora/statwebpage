@@ -9,6 +9,7 @@ import Logo2 from '../public/images/assets/logo.png';
 import Navbar from './Navbar';
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
+import { BiSearch } from 'react-icons/bi';
 
 const Header = () => {
   const router = useRouter();
@@ -29,7 +30,20 @@ const Header = () => {
   };
   return (
     <header className="header">
-      <nav className="nav container">
+      <nav className="nav container text-center flex-row-reverse ">
+        <div className="search-field flex col-span-2 text-center ml-4 mr-4">
+          <input
+            type="text"
+            className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
+            placeholder="Search..."
+          />
+          <button
+            className="nav__search-button"
+            onClick={() => router.push('/')}
+          >
+            <BiSearch className="nav__search-icon" />
+          </button>
+        </div>
         <div className="flex h-12 items-center">
           <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
