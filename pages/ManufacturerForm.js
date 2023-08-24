@@ -5,7 +5,7 @@ import Layout from '../components/Layout';
 
 export default function ManufacturerForm() {
   const form = useRef();
-  const fileInputRef = useRef(); // Add a separate ref for the file input
+  const fileInputRef = useRef();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -134,11 +134,11 @@ export default function ManufacturerForm() {
           </div>
 
           <button
-            className="button button-flex rounded py-2 px-4 shadow outline-none hover:bg-gray-400 active:bg-gray-500 text-white w-full"
+            className="button button-flex rounded py-2 px-4 shadow outline-none hover:bg-gray-400 active:bg-gray-500 text-white w-full mb-3"
             type="submit"
             value="Send"
           >
-            <span className="flex items-center justify-center text-white">
+            <span className="flex items-center justify-center text-white ">
               Send {tab}
               <BiMessageAdd className="ml-2" />
             </span>
