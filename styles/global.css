@@ -367,6 +367,13 @@ img {
 }
 .product-image {
   grid-column: span 2;
+  margin-bottom: 3%;
+}
+.product-description {
+  overflow-wrap: initial;
+  text-overflow: ellipsis;
+  overflow-y: hidden;
+  height: 3em;
 }
 .myBtn:hover {
   background-color: var(--title-color);
@@ -934,6 +941,7 @@ img {
   }
   .product-image {
     grid-column: span 1;
+    justify-self: center;
   }
   body {
     margin: 0 0 var(--header-height) 0;

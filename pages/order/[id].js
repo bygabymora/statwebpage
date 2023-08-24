@@ -371,7 +371,7 @@ function OrderScreen() {
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (
                 <div className="alert-error">
-                  It is recomended some of the products on this order are
+                  It is recommended some of the products on this order are
                   shipped overnight due to temperature sensitivity. Stat
                   Surgical Supply is not responsible for product damage or
                   failure if the customer chooses another shipping method.

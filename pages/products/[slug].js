@@ -131,10 +131,16 @@ export default function ProductScreen(props) {
             </li>
             {product.sentOverNight && (
               <li>
+                <br />
+                <br />
+                <br />
+                <br />
                 <h1 className="text-xl">Shipping recomendations:</h1>
                 <p>
-                  It is recomended that this product ships overnight due to
-                  temperature sensitivity.
+                  It is recommended that this product ships overnight due to
+                  temperature sensitivity. Stat Surgical Supply is not
+                  responsible for product damage or failure if the customer
+                  chooses another shipping method.
                 </p>
               </li>
             )}

@@ -78,14 +78,17 @@ export const ProductItem = ({ product }) => {
   };
 
   return (
-    <div className="card">
-      <Link href={{ pathname: `products/${product.slug}` }}>
+    <div className="card justify-center items-center text-center">
+      <Link
+        href={{ pathname: `products/${product.slug}` }}
+        className="justify-center items-center text-center"
+      >
         <Image
           src={`${product.image}`}
           alt={currentDescription}
           className="product-image"
-          width={400}
-          height={500}
+          width={800}
+          height={1000}
         />
       </Link>
       <div className="flex flex-col justify-center items-center p-5">
@@ -100,9 +103,13 @@ export const ProductItem = ({ product }) => {
           </h2>
 
           <br />
-          {currentDescription}
+          <div className="max-w-full">
+            <div className="h-[3em] overflow-hidden relative flex ">
+              <span className="flex-1 ">{currentDescription}</span>
+            </div>
+          </div>
         </Link>
-        <br />
+
         <div className="mb-2 flex items-center justify-center">
           <div className="font-bold mt-4">Quantity &nbsp;</div>
           <div className="flex items-center flex-row">

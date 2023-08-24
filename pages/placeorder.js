@@ -9,6 +9,7 @@ import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/Layout';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
+import { BsFillArrowDownSquareFill } from 'react-icons/bs';
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -25,6 +26,7 @@ export default function PlaceOrderScreen() {
   const discountPercentage = isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE : 0;
   const discountAmount = round2(itemsPrice * (discountPercentage / 100));
   const totalPrice = round2(itemsPrice - discountAmount);
+  const [showItems, setShowItems] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
@@ -83,6 +85,29 @@ export default function PlaceOrderScreen() {
         <div className="grid md:grid-cols-4 md:gap-5">
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-5">
+              {cartItems && cartItems.some((item) => item.sentOverNight) && (
+                <div className="alert-error">
+                  It is recommended some of the products on this order are
+                  shipped overnight due to temperature sensitivity. Stat
+                  Surgical Supply is not responsible for product damage or
+                  failure if the customer chooses another shipping method.
+                  <div className="mt-2">
+                    <button
+                      onClick={() => setShowItems(!showItems)}
+                      className="underline font-bold flex flex-row align-middle justify-center items-center"
+                    >
+                      Products for Overnight Delivery &nbsp;
+                      <BsFillArrowDownSquareFill />
+                    </button>
+                    {showItems &&
+                      cartItems
+                        .filter((item) => item.sentOverNight)
+                        .map((product, index) => (
+                          <div key={index}>{product.name}</div>
+                        ))}
+                  </div>
+                </div>
+              )}
               <h2 className="mb-2 text-lg">Shipping Address</h2>
               <div>
                 {shippingAddress.fullName},{' '}
