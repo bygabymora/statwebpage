@@ -440,24 +440,24 @@ export default function ShippingScreen() {
                 className="p-2 outline-none focus:ring-0"
                 type="radio"
                 name="shippingSpeed"
-                value="2 day"
-                checked={shippingSpeed === '2 day'}
+                value="2-day"
+                checked={shippingSpeed === '2-day'}
                 onChange={handleShippingSpeedChange}
               />
               &nbsp;
-              <label className="p-2">2 days</label>
+              <label className="p-2">2-day</label>
             </div>
             <div>
               <input
                 className="p-2 outline-none focus:ring-0"
                 type="radio"
                 name="shippingSpeed"
-                value="2 days"
-                checked={shippingSpeed === '2 days'}
+                value="3-day"
+                checked={shippingSpeed === '3-day'}
                 onChange={handleShippingSpeedChange}
               />
               &nbsp;
-              <label className="p-2">3 days</label>
+              <label className="p-2">3-day</label>
             </div>
 
             <div>

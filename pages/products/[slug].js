@@ -79,7 +79,7 @@ export default function ProductScreen(props) {
           purchaseType === 'Each' ? data.countInStock : data.countInStockBulk,
       },
     });
-
+    setQty(1);
     toast.success('Item added to cart');
 
     if (purchaseType === 'Each' && data.countInStock < quantity) {

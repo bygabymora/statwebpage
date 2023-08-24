@@ -88,9 +88,10 @@ export default function PlaceOrderScreen() {
               {cartItems && cartItems.some((item) => item.sentOverNight) && (
                 <div className="alert-error">
                   It is recommended some of the products on this order are
-                  shipped overnight due to temperature sensitivity. Stat
-                  Surgical Supply is not responsible for product damage or
-                  failure if the customer chooses another shipping method.
+                  shipped overnight due to temperature sensitivity, please make
+                  sure you selected that option. Stat Surgical Supply is not
+                  responsible for product damage or failure if the customer
+                  chooses another shipping method.
                   <div className="mt-2">
                     <button
                       onClick={() => setShowItems(!showItems)}
