@@ -172,7 +172,7 @@ export const ProductItem = ({ product }) => {
         <div className="mb-2 flex justify-between">
           <div className="font-bold">Status</div>
           &nbsp;
-          <div className="text-lg ">
+          <div className="">
             {(purchaseType === 'Each' && isOutOfStock) ||
             (purchaseType === 'Bulk' && isOutOfStockBulk)
               ? 'Out of Stock'
@@ -180,7 +180,7 @@ export const ProductItem = ({ product }) => {
           </div>
         </div>
         <button
-          className="primary-button align-middle mt-2"
+          className="primary-button align-middle mt-2 mb-2"
           type="button"
           onClick={addToCartHandler}
           disabled={
@@ -196,7 +196,7 @@ export const ProductItem = ({ product }) => {
 
         {purchaseType === 'Bulk' && isOutOfStockBulk && (
           <form className="text-center ">
-            <label className="mt-3 font-bold ">Join our waiting List</label>
+            <label className="mt-3 font-bold ">Join our wait List</label>
             <input
               type="text"
               placeholder="Name"
@@ -214,7 +214,7 @@ export const ProductItem = ({ product }) => {
         )}
         {purchaseType === 'Each' && isOutOfStock && (
           <form className="text-center ">
-            <label className="mt-3 font-bold ">Join our waiting List</label>
+            <label className="mt-3 font-bold ">Join our wait List</label>
             <input
               type="text"
               placeholder="Name"

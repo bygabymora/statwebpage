@@ -581,10 +581,12 @@ function OrderScreen() {
                             >
                               ...
                             </button>
-                            Thank you for taking advantage of our Pay by Wire
-                            discount. We will contact you via email with our
-                            account information so you can initiate the
-                            transfer.
+                            <div className="font-bold">
+                              Thank you for taking advantage of our Pay by Wire
+                              discount. We will contact you via email with our
+                              account information so you can initiate the
+                              transfer.
+                            </div>
                           </div>
                         )}
                       </div>
@@ -656,8 +658,8 @@ function OrderScreen() {
                   <div className="mb-2 px-3 flex justify-between">
                     {!session.user.isAdmin && (
                       <div>
-                        Shipping is not defined yet, we will contact you to
-                        define the better way of shipping
+                        We will contact you to define your shipment according to
+                        your shipping preferences.
                       </div>
                     )}
                   </div>

@@ -211,7 +211,7 @@ export default function ProductScreen(props) {
               </div>
             </div>
             <button
-              className="primary-button cart-button"
+              className="primary-button cart-button my-2"
               type="button"
               onClick={addToCartHandler}
               disabled={
@@ -249,7 +249,7 @@ export default function ProductScreen(props) {
             )}
             {purchaseType === 'Bulk' && isOutOfStockBulk && (
               <form className="text-center ">
-                <label className="mt-3 font-bold ">Join our waiting List</label>
+                <label className="mt-3 font-bold ">Join our wait List</label>
                 <input
                   type="text"
                   placeholder="Name"
@@ -267,7 +267,7 @@ export default function ProductScreen(props) {
             )}
             {purchaseType === 'Each' && isOutOfStock && (
               <form className="text-center ">
-                <label className="mt-3 font-bold ">Join our waiting List</label>
+                <label className="mt-3 font-bold ">Join our wait List</label>
                 <input
                   type="text"
                   placeholder="Name"
