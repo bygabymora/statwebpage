@@ -14,14 +14,14 @@ const ContactUs = () => {
 
     emailjs
       .sendForm(
-        'service_6iczdrm',
-        'template_km5bld2',
+        'service_ej3pm1k',
+        'template_ml8ohai',
         form.current,
-        '7AxUQOw9AB5tGREc1'
+        'cKdr3QndIv27-P67m'
       )
       .then(
         (result) => {
-          alert('Message sent, thank you for contacting me');
+          alert('Message sent, thank you for contacting us');
           console.log(result.text);
         },
         (error) => {

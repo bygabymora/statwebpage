@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Store } from '../utils/Store';
 import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import emailjs from '@emailjs/browser';
 
 export const ProductItem = ({ product }) => {
   const { state, dispatch } = useContext(Store);
@@ -76,6 +77,45 @@ export const ProductItem = ({ product }) => {
       alert("Sorry, we don't have enough of that item in stock.");
     }
   };
+  //-----------------EmailJS-----------------//
+
+  const form = useRef();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailSlug, setEmailSlug] = useState('');
+  const [emailManufacturer, setEmailManufacturer] = useState('');
+
+  useEffect(() => {
+    setEmailSlug(product.slug);
+    setEmailManufacturer(product.manufacturer);
+  }, [product.slug, product.manufacturer]);
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        'service_ej3pm1k',
+        'template_5bjn7js',
+        form.current,
+        'cKdr3QndIv27-P67m'
+      )
+      .then(
+        (result) => {
+          alert('Thank you for joining the wait list!');
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+    setName('');
+    setEmail('');
+    setEmailSlug('');
+    setEmailManufacturer('');
+  };
+  //-----------//
 
   return (
     <div className="card justify-center items-center text-center mb-3">
@@ -202,37 +242,97 @@ export const ProductItem = ({ product }) => {
         </button>
 
         {purchaseType === 'Bulk' && isOutOfStockBulk && (
-          <form className="text-center ">
+          <form className="text-center " ref={form} onSubmit={sendEmail}>
             <label className="mt-3 font-bold ">Join our wait List</label>
             <input
               type="text"
+              name="user_name"
+              className="contact__form-input"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
               placeholder="Name"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              required
             />
             <input
               type="email"
+              name="user_email"
+              className="contact__form-input"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               placeholder="Email"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              required
             />
-            <button className="primary-button mt-3" type="submit">
+            <input
+              type="text"
+              name="emailSlug"
+              className="contact__form-input"
+              onChange={(e) => setEmailSlug(e.target.value)}
+              value={emailSlug}
+              hidden
+              required
+            />
+            <input
+              type="text"
+              name="emailManufacturer"
+              className="contact__form-input"
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button
+              className="primary-button mt-3"
+              type="submit"
+              onClick={sendEmail}
+            >
               Submit
             </button>
           </form>
         )}
         {purchaseType === 'Each' && isOutOfStock && (
-          <form className="text-center ">
+          <form className="text-center " ref={form} onSubmit={sendEmail}>
             <label className="mt-3 font-bold ">Join our wait List</label>
             <input
               type="text"
+              name="user_name"
+              className="contact__form-input"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
               placeholder="Name"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              required
             />
             <input
               type="email"
+              name="user_email"
+              className="contact__form-input"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               placeholder="Email"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              required
             />
-            <button className="primary-button mt-3" type="submit">
+            <input
+              type="text"
+              name="emailSlug"
+              className="contact__form-input"
+              onChange={(e) => setEmailSlug(e.target.value)}
+              value={emailSlug}
+              hidden
+              required
+            />
+            <input
+              type="text"
+              name="emailManufacturer"
+              className="contact__form-input"
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button
+              className="primary-button mt-3"
+              type="submit"
+              onClick={sendEmail}
+            >
               Submit
             </button>
           </form>

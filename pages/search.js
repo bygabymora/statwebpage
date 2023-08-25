@@ -35,7 +35,8 @@ const SearchPage = ({ query }) => {
     fetchSearchResults();
   }, [query]);
 
-  const submitHandler = async () => {
+  const submitHandler = async (e) => {
+    e.preventDefault();
     try {
       await axios.post('/api/searched', {
         searchedWord,
@@ -47,19 +48,16 @@ const SearchPage = ({ query }) => {
         phone,
         message,
       });
-
+      sendEmail();
       form.current.reset();
       toast.success('Message sent successfully');
-      sendEmail();
     } catch (err) {
       toast.error(getError(err));
     }
   };
   //----- EmailJS-----//
 
-  const sendEmail = (e) => {
-    e.preventDefault();
-
+  const sendEmail = () => {
     const formData = new FormData();
     formData.append('searchedWord', searchedWord);
     formData.append('slug', slug);
@@ -87,6 +85,7 @@ const SearchPage = ({ query }) => {
         }
       );
 
+    setSlug('');
     setFullName('');
     setEmail('');
     setPhone('');
@@ -122,6 +121,16 @@ const SearchPage = ({ query }) => {
               onSubmit={submitHandler}
             >
               <h1 className="mb-3">Product Needed</h1>
+              <div className="contact__form-div" hidden>
+                <label className="contact__form-tag">Searched Word</label>
+                <input
+                  type="text"
+                  name="searchedWord"
+                  className="contact__form-input"
+                  onChange={(e) => setSearchedWord(e.target.value)}
+                  value={searchedWord}
+                />
+              </div>
               <div className="contact__form-div">
                 <label className="contact__form-tag">Reference*</label>
                 <input
