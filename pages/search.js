@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import { BiMessageAdd } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error.js';
+import emailjs from '@emailjs/browser';
 
 const SearchPage = ({ query }) => {
   const form = useRef();
@@ -49,10 +50,52 @@ const SearchPage = ({ query }) => {
 
       form.current.reset();
       toast.success('Message sent successfully');
+      sendEmail();
     } catch (err) {
       toast.error(getError(err));
     }
   };
+  //----- EmailJS-----//
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('searchedWord', searchedWord);
+    formData.append('slug', slug);
+    formData.append('manufacturer', manufacturer);
+    formData.append('quantity', quantity);
+    formData.append('fullName', fullName);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('message', message);
+
+    emailjs
+      .sendForm(
+        'service_ej3pm1k',
+        'template_yd7qkvf',
+        form.current,
+        'cKdr3QndIv27-P67m'
+      )
+      .then(
+        (result) => {
+          alert('Message sent, thank you for contacting us!');
+          console.log('Email sent', result.text);
+        },
+        (error) => {
+          console.log('Error sendingemail', error.text);
+        }
+      );
+
+    setFullName('');
+    setEmail('');
+    setPhone('');
+    setManufacturer('');
+    setPhone('');
+    setMessage('');
+  };
+
+  //----------//
 
   return (
     <Layout title="Search Results">
