@@ -243,7 +243,7 @@ export const ProductItem = ({ product }) => {
 
         {purchaseType === 'Bulk' && isOutOfStockBulk && (
           <form className="text-center " ref={form} onSubmit={sendEmail}>
-            <label className="mt-3 font-bold ">Join our wait List</label>
+            <label className="mt-3 font-bold ">Join Our Wait List</label>
             <input
               type="text"
               name="user_name"
@@ -291,7 +291,7 @@ export const ProductItem = ({ product }) => {
         )}
         {purchaseType === 'Each' && isOutOfStock && (
           <form className="text-center " ref={form} onSubmit={sendEmail}>
-            <label className="mt-3 font-bold ">Join our wait List</label>
+            <label className="mt-3 font-bold ">Join Our Wait List</label>
             <input
               type="text"
               name="user_name"

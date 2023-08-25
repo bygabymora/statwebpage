@@ -48,10 +48,10 @@ const Contact = () => {
             <div className="contact__card">
               <h3 className="contact__card-title">Email</h3>
               <span className="contact__card-data">
-                customerservice@statsurgicalsupply.com
+                sales@statsurgicalsupply.com
               </span>
               <a
-                href="mailto:customerservice@statsurgicalsupply.com"
+                href="mailto:sales@statsurgicalsupply.com"
                 className="contact__button"
                 target="_blank"
               >

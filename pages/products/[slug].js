@@ -297,7 +297,7 @@ export default function ProductScreen(props) {
             )}
             {purchaseType === 'Bulk' && isOutOfStockBulk && (
               <form className="text-center " ref={form} onSubmit={sendEmail}>
-                <label className="mt-3 font-bold ">Join our wait List</label>
+                <label className="mt-3 font-bold ">Join Our Wait List</label>
                 <input
                   type="text"
                   name="user_name"
@@ -345,7 +345,7 @@ export default function ProductScreen(props) {
             )}
             {purchaseType === 'Each' && isOutOfStock && (
               <form className="text-center " ref={form} onSubmit={sendEmail}>
-                <label className="mt-3 font-bold ">Join our wait List</label>
+                <label className="mt-3 font-bold ">Join Our Wait List</label>
                 <input
                   type="text"
                   name="user_name"
