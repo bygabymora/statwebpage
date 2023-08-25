@@ -99,7 +99,7 @@ export default function AdminOrderScreen() {
                       <td className="p-5">
                         {order.isDelivered
                           ? `${order.deliveredAt.substring(0, 10)}`
-                          : 'not processed'}
+                          : 'Not Processed'}
                       </td>
                       <td className="p-5">
                         {order.isAtCostumers

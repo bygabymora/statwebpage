@@ -163,11 +163,7 @@ export default function PlaceOrderScreen() {
                     {cartItems
                       .filter((item) => item.sentOverNight)
                       .map((product, index) => (
-                        <div key={index}>
-                          {product.name}
-                          &nbsp;|&nbsp;
-                          {product.manufacturer}
-                        </div>
+                        <div key={index}>{product.name}</div>
                       ))}
                   </div>
                 </div>
@@ -294,8 +290,8 @@ export default function PlaceOrderScreen() {
                   <br />
                   <div className="mb-2 flex justify-between">
                     <div>
-                      We will contact you to define your shipment according to
-                      your shipping preferences.
+                      We will contact you for more information depending on your
+                      shipping preference selection.
                     </div>
                   </div>
                 </li>

@@ -70,12 +70,12 @@ function OrderHistoryScreen() {
                   <td className=" p-5 ">
                     {order.isDelivered
                       ? `${order.deliveredAt.substring(0, 10)}`
-                      : 'not processed'}
+                      : 'Not Processed'}
                   </td>
                   <td className=" p-5 ">
                     {order.isAtCostumers
                       ? `${order.atCostumersDate.substring(0, 10)}`
-                      : 'not delivered'}
+                      : 'Not Delivered'}
                   </td>
                   <td className=" p-5 ">
                     <Link

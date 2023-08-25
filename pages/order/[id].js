@@ -322,7 +322,6 @@ function OrderScreen() {
       window.location.href = 'tel:8132520727';
     }
   };
-  console.log(order);
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -357,7 +356,7 @@ function OrderScreen() {
       <br />
 
       {loading ? (
-        <div>Loading...</div>
+        <div>Loading... </div>
       ) : error ? (
         <div className="alert-error">{error}</div>
       ) : paymentComplete ? (
@@ -381,9 +380,7 @@ function OrderScreen() {
                     {orderItems
                       .filter((item) => item.sentOverNight)
                       .map((product, index) => (
-                        <div key={index}>
-                          {product.name} &nbsp; | &nbsp; {product.manufacturer}{' '}
-                        </div>
+                        <div key={index}>{product.name} &nbsp;</div>
                       ))}
                   </div>
                 </div>
@@ -428,7 +425,7 @@ function OrderScreen() {
                   </Link>
                 </div>
               ) : (
-                <div className="alert-error">Not processed</div>
+                <div className="alert-error">Not Processed</div>
               )}
               {isAtCostumers ? (
                 <div className="alert-success">
@@ -438,7 +435,7 @@ function OrderScreen() {
                   </span>
                 </div>
               ) : (
-                <div className="alert-error">Not at customers yet</div>
+                <div className="alert-error">Delivery Pending</div>
               )}
             </div>
 
@@ -452,7 +449,7 @@ function OrderScreen() {
               {isPaid ? (
                 <div className="alert-success">
                   {paymentMethod === 'Pay by Wire'
-                    ? 'Payment processed at'
+                    ? 'Payment Processed At'
                     : 'Paid at'}{' '}
                   <span className="font-bold">
                     {new Date(paidAt).toLocaleDateString()}{' '}
@@ -664,8 +661,8 @@ function OrderScreen() {
                   <div className="mb-2 px-3 flex justify-between">
                     {!session.user.isAdmin && (
                       <div>
-                        We will contact you to define your shipment according to
-                        your shipping preferences.
+                        We will contact you for more information depending on
+                        your shipping preference selection.
                       </div>
                     )}
                   </div>
