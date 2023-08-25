@@ -251,9 +251,11 @@ export default function ProductScreen(props) {
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
               &nbsp;
-              <div className="text-lg ">
+              <div className="">
                 {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk)}
+                (purchaseType === 'Bulk' && isOutOfStockBulk)
+                  ? 'Out of Stock'
+                  : 'In Stock'}
               </div>
             </div>
             <button
