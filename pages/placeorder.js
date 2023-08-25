@@ -9,7 +9,6 @@ import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/Layout';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
-import { BsFillArrowDownSquareFill } from 'react-icons/bs';
 import emailjs from '@emailjs/browser';
 
 export default function PlaceOrderScreen() {
@@ -27,7 +26,6 @@ export default function PlaceOrderScreen() {
   const discountPercentage = isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE : 0;
   const discountAmount = round2(itemsPrice * (discountPercentage / 100));
   const totalPrice = round2(itemsPrice - discountAmount);
-  const [showItems, setShowItems] = useState(false);
 
   //----EmailJS----//
 
@@ -154,25 +152,23 @@ export default function PlaceOrderScreen() {
             <div className="card  p-5">
               {cartItems && cartItems.some((item) => item.sentOverNight) && (
                 <div className="alert-error">
-                  It is recommended some of the products on this order are
-                  shipped overnight due to temperature sensitivity, please make
-                  sure you selected that option. Stat Surgical Supply is not
-                  responsible for product damage or failure if the customer
-                  chooses another shipping method.
+                  It is recommended that some of the products on this order ship
+                  overnight due to temperature sensitivity. Stat Surgical Supply
+                  is not responsible for product damage or failure if you choose
+                  another shipping method.
                   <div className="mt-2">
-                    <button
-                      onClick={() => setShowItems(!showItems)}
-                      className="underline font-bold flex flex-row align-middle justify-center items-center"
-                    >
-                      Products for Overnight Delivery &nbsp;
-                      <BsFillArrowDownSquareFill />
+                    <button className="underline font-bold flex flex-row align-middle justify-center items-center">
+                      Products for Overnight Delivery
                     </button>
-                    {showItems &&
-                      cartItems
-                        .filter((item) => item.sentOverNight)
-                        .map((product, index) => (
-                          <div key={index}>{product.name}</div>
-                        ))}
+                    {cartItems
+                      .filter((item) => item.sentOverNight)
+                      .map((product, index) => (
+                        <div key={index}>
+                          {product.name}
+                          &nbsp;|&nbsp;
+                          {product.manufacturer}
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
@@ -209,7 +205,7 @@ export default function PlaceOrderScreen() {
                 </Link>
               </div>
             </div>
-            <div className="card overflow-x-auto p-5">
+            <div className="card overflow-x-auto p-5 mb-3">
               <h2 className="mb-2 text-lg">Order Items</h2>
               <table className="min-w-full">
                 <thead className="border-b">

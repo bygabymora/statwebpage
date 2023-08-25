@@ -11,7 +11,6 @@ import { toast } from 'react-toastify';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
-import { BsFillArrowDownSquareFill } from 'react-icons/bs';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -65,7 +64,6 @@ function OrderScreen() {
   const orderId = query.id;
   const trackUrlRef = useRef(null);
   const trackNumberRef = useRef(null);
-  const [showItems, setShowItems] = useState(false);
 
   const [
     {
@@ -324,6 +322,7 @@ function OrderScreen() {
       window.location.href = 'tel:8132520727';
     }
   };
+  console.log(order);
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -371,24 +370,21 @@ function OrderScreen() {
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (
                 <div className="alert-error">
-                  It is recommended some of the products on this order are
-                  shipped overnight due to temperature sensitivity. Stat
-                  Surgical Supply is not responsible for product damage or
-                  failure if the customer chooses another shipping method.
+                  It is recommended that some of the products on this order ship
+                  overnight due to temperature sensitivity. Stat Surgical Supply
+                  is not responsible for product damage or failure if you choose
+                  another shipping method.
                   <div className="mt-2">
-                    <button
-                      onClick={() => setShowItems(!showItems)}
-                      className="underline font-bold flex flex-row align-middle justify-center items-center"
-                    >
+                    <button className="underline font-bold flex flex-row align-middle justify-center items-center">
                       Products for Overnight Delivery &nbsp;
-                      <BsFillArrowDownSquareFill />
                     </button>
-                    {showItems &&
-                      orderItems
-                        .filter((item) => item.sentOverNight)
-                        .map((product, index) => (
-                          <div key={index}>{product.name}</div>
-                        ))}
+                    {orderItems
+                      .filter((item) => item.sentOverNight)
+                      .map((product, index) => (
+                        <div key={index}>
+                          {product.name} &nbsp; | &nbsp; {product.manufacturer}{' '}
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
@@ -539,8 +535,18 @@ function OrderScreen() {
                     {paymentMethod === 'Stripe' ? (
                       <form action="/api/checkout_sessions" method="POST">
                         <section>
-                          <input hidden name="totalPrice" value={totalPrice} />
-                          <input hidden name="orderId" value={orderId} />
+                          <input
+                            hidden
+                            name="totalPrice"
+                            value={totalPrice}
+                            readOnly
+                          />
+                          <input
+                            hidden
+                            name="orderId"
+                            value={orderId}
+                            readOnly
+                          />
                           <button
                             type="submit"
                             role="link"
