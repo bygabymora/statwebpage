@@ -78,7 +78,7 @@ export const ProductItem = ({ product }) => {
   };
 
   return (
-    <div className="card justify-center items-center text-center">
+    <div className="card justify-center items-center text-center mb-3">
       <Link
         href={{ pathname: `products/${product.slug}` }}
         className="justify-center items-center text-center"

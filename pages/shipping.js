@@ -98,11 +98,13 @@ export default function ShippingScreen() {
   };
 
   const handleShippingInstructions = () => {
-    const instructions = `Shipping Preferences: ${specialNotes}, \nShipping Speed: ${shippingSpeed}, \nShipping Company: ${shippingCompany}, \nPayment Method: ${shippingPaymentMethod}, ${
+    const instructions = `Shipping Speed: ${shippingSpeed}, \nShipping Company: ${shippingCompany}, \nPayment Method: ${shippingPaymentMethod},  
+    \n${
       shippingPaymentMethod === 'use my account'
         ? ` (Account Number: ${accountNumber})`
         : ''
-    }`;
+    } 
+     \n${specialNotes !== '' ? ` Specific Instructions: ${specialNotes}` : ''}`;
 
     setValue('notes', instructions); // Update the form value for 'notes' field
   };
@@ -534,7 +536,9 @@ export default function ShippingScreen() {
               )}
             </div>
             <div>
-              <h1 className="mb-4 my-4">Aditional notes</h1>
+              <h1 className="mb-4 my-4">
+                Aditional notes (Specific Instructions)
+              </h1>
               <textarea
                 className="w-full contact__form-input contact__message"
                 value={specialNotes}

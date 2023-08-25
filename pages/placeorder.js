@@ -3,13 +3,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/Layout';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
 import { BsFillArrowDownSquareFill } from 'react-icons/bs';
+import emailjs from '@emailjs/browser';
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -28,6 +29,71 @@ export default function PlaceOrderScreen() {
   const totalPrice = round2(itemsPrice - discountAmount);
   const [showItems, setShowItems] = useState(false);
 
+  //----EmailJS----//
+
+  const form = useRef();
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get('/api/orders/placeOrder');
+      const userData = response.data;
+
+      setEmail(userData.email);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const [email, setEmail] = useState('');
+  const [emailName, setEmailName] = useState('');
+  const [emailPhone, setEmailPhone] = useState('');
+  const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
+  const [emailTotalOrder, setEmailTotalOrder] = useState('');
+  const [emailShippingPreference, setEmailShippingPreference] = useState('');
+
+  useEffect(() => {
+    fetchUserData();
+    setEmailName(shippingAddress.fullName);
+    setEmailPhone(shippingAddress.phone);
+    setEmailPaymentMethod(paymentMethod);
+    setEmailTotalOrder(totalPrice);
+    setEmailShippingPreference(shippingAddress.notes);
+  }, [
+    paymentMethod,
+    shippingAddress.fullName,
+    shippingAddress.phone,
+    totalPrice,
+    shippingAddress.notes,
+  ]);
+
+  function sendEmail() {
+    const formData = new FormData();
+
+    formData.append('user_name', emailName);
+    formData.append('user_phone', emailPhone);
+    formData.append('user_email', email);
+    formData.append('total_order', emailTotalOrder);
+    formData.append('payment_method', emailPaymentMethod);
+    formData.append('shipping_preference', emailShippingPreference);
+
+    emailjs
+      .sendForm(
+        'service_ej3pm1k',
+        'template_6z4vqi6',
+        form.current,
+        'cKdr3QndIv27-P67m'
+      )
+      .then(
+        (result) => {
+          console.log('Email sent', result.text);
+        },
+        (error) => {
+          console.log('Error sendingemail', error.text);
+        }
+      );
+  }
+
+  //-----------//
   const router = useRouter();
   useEffect(() => {
     if (!paymentMethod) {
@@ -38,6 +104,7 @@ export default function PlaceOrderScreen() {
   const [loading, setLoading] = useState(false);
 
   const placeOrderHandler = async () => {
+    sendEmail();
     try {
       setLoading(true);
       const { data } = await axios.post('/api/orders', {
@@ -71,9 +138,9 @@ export default function PlaceOrderScreen() {
   };
 
   return (
-    <Layout title="Place Order">
+    <Layout title="Confirm Order">
       <CheckoutWizard activeStep={3} />
-      <h1 className="mb-4 text-xl">Place Order</h1>
+      <h1 className="mb-4 text-xl">Confirm Order</h1>
       {cartItems.length === 0 ? (
         <div>
           Cart is empty.{' '}
@@ -224,21 +291,42 @@ export default function PlaceOrderScreen() {
                     onClick={placeOrderHandler}
                     className="primary-button w-full"
                   >
-                    {loading ? 'Loading...' : 'Place Order'}
+                    {loading ? 'Loading...' : 'Confirm Order'}
                   </button>
                 </li>
                 <li>
                   <br />
                   <div className="mb-2 flex justify-between">
                     <div>
-                      Shipping is not defined yet, we will contact you to define
-                      the better way of shipping
+                      We will contact you to define your shipment according to
+                      your shipping preferences.
                     </div>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
+          <form ref={form} hidden>
+            <input type="text" name="user_name" value={emailName} />
+            <input type="text" name="user_phone" value={emailPhone} />
+            <input type="text" name="total_order" value={emailTotalOrder} />
+            <input
+              type="text"
+              name="payment_method"
+              value={
+                emailPaymentMethod === 'Stripe'
+                  ? 'Credit Card (Powered by Stripe)'
+                  : emailPaymentMethod
+              }
+            />
+
+            <input
+              type="text"
+              name="shipping_preference"
+              value={emailShippingPreference}
+            />
+            <input type="text" name="user_email" value={email} />
+          </form>
         </div>
       )}
     </Layout>
