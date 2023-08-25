@@ -4,19 +4,26 @@ import { Store } from '../utils/Store';
 const CookieAcceptancePopup = () => {
   const { state, dispatch } = useContext(Store);
   const [isClient, setIsClient] = useState(false);
+  const [isTop, setIsTop] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // once the component mounts (client side), this will be true
+    setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      setIsTop(window.innerWidth <= 640); // example breakpoint for "small devices"
+      const handleResize = () => {
+        setIsTop(window.innerWidth <= 640);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [isClient]);
+
   if (!isClient || state.cookieAccepted) {
-    return null; // If we're server-side or if cookie is accepted, don't render anything
-  }
-
-  if (typeof window === 'undefined' || state.cookieAccepted) {
-    return null;
-  }
-
-  if (state.cookieAccepted) {
     return null;
   }
 
@@ -25,7 +32,11 @@ const CookieAcceptancePopup = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full p-4 bg-gray-500 text-white shadow-md z-50">
+    <div
+      className={`${
+        isTop ? 'top-0' : 'bottom-0'
+      } fixed left-0 w-full p-4 bg-gray-500 text-white shadow-md z-50`}
+    >
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <p className="text-sm">
