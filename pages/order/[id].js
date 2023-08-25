@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
+import emailjs from '@emailjs/browser';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -186,6 +187,7 @@ function OrderScreen() {
         );
         dispatch({ type: 'PAY_SUCCESS', payload: data });
         toast.success('Order is paid successfully');
+        sendEmail();
 
         // Mark payment as complete and show success message
         setPaymentComplete(true);
@@ -216,6 +218,7 @@ function OrderScreen() {
           toast.success('Order is paid successfully');
 
           // Mark payment as complete and show success message
+          sendEmail();
           setPaymentComplete(true);
 
           // Remove 'paymentSuccess' from the URL without reloading
@@ -252,6 +255,7 @@ function OrderScreen() {
       );
       dispatch({ type: 'PAY_SUCCESS', payload: data });
       toast.success('Order is paid successfully');
+      sendEmail();
 
       // Mark payment as complete and show success message
       setPaymentComplete(true);
@@ -322,6 +326,55 @@ function OrderScreen() {
       window.location.href = 'tel:8132520727';
     }
   };
+  //----EmailJS----//
+
+  const form = useRef();
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get('/api/orders/placeOrder');
+      const userData = response.data;
+
+      setEmail(userData.email);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  function sendEmail() {
+    const formData = new FormData();
+
+    formData.append('user_name', shippingAddress.fullName);
+    formData.append('user_phone', shippingAddress.phone);
+    formData.append('user_email', email);
+    formData.append('total_order', totalPrice);
+    formData.append('payment_method', paymentMethod);
+    formData.append('shipping_preference', shippingAddress.notes);
+
+    emailjs
+      .sendForm(
+        'service_ej3pm1k',
+        'template_5fwanh4',
+        form.current,
+        'cKdr3QndIv27-P67m'
+      )
+      .then(
+        (result) => {
+          console.log('Email sent', result.text);
+        },
+        (error) => {
+          console.log('Error sendingemail', error.text);
+        }
+      );
+  }
+
+  //-----------//
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -365,6 +418,8 @@ function OrderScreen() {
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
+          {console.log({ shippingAddress: shippingAddress.fullName })}
+
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (
@@ -670,6 +725,45 @@ function OrderScreen() {
               </ul>
             </div>
           </div>
+          <form ref={form} hidden>
+            <input
+              type="hidden"
+              name="order_id"
+              value={orderId.substring(orderId.length - 8).toUpperCase()}
+              readOnly
+            />
+            <input
+              type="hidden"
+              name="user_name"
+              value={shippingAddress.fullName}
+              readOnly
+            />
+            <input
+              type="hidden"
+              name="user_phone"
+              value={shippingAddress.phone}
+              readOnly
+            />
+            <input type="hidden" name="user_email" value={email} readOnly />
+            <input
+              type="hidden"
+              name="total_order"
+              value={totalPrice}
+              readOnly
+            />
+            <input
+              type="hidden"
+              name="payment_method"
+              value={paymentMethod}
+              readOnly
+            />
+            <input
+              type="hidden"
+              name="shipping_preference"
+              value={shippingAddress.notes}
+              readOnly
+            />
+          </form>
         </div>
       )}
     </Layout>
