@@ -61,8 +61,9 @@ export default function ManufacturerForm() {
     <Layout title="Manufacturer Form">
       <div className="manufacturer__content">
         <h3 className="manufacturer__title">
-          Please provide us with your inventory list along with the
-          corresponding prices for each item.
+          For the most accurate quote, please provide us with a list that
+          includes reference numbers, quantities(each/box), and expiration
+          dating.
         </h3>
 
         <form className="manufacturer__form" ref={form} onSubmit={sendEmail}>
