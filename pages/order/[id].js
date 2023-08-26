@@ -202,6 +202,28 @@ function OrderScreen() {
       }
     });
   }
+  const handlePayment = async () => {
+    try {
+      dispatch({ type: 'PAY_REQUEST' });
+      const { data } = await axios.put(
+        `/api/orders/${order._id}/pay`
+        // Include any necessary payload here
+      );
+      dispatch({ type: 'PAY_SUCCESS', payload: data });
+      toast.success('Order is paid successfully');
+      sendEmail();
+
+      // Mark payment as complete and show success message
+      setPaymentComplete(true);
+
+      // Reload the page after payment success
+      window.location.reload();
+    } catch (error) {
+      dispatch({ type: 'PAY_FAIL', payload: getError(error) });
+      toast.error(getError(error));
+    }
+  };
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentSuccess = urlParams.get('paymentSuccess');
@@ -245,28 +267,6 @@ function OrderScreen() {
       console.log('Payment failed');
     }
   }, [order._id]);
-
-  const handlePayment = async () => {
-    try {
-      dispatch({ type: 'PAY_REQUEST' });
-      const { data } = await axios.put(
-        `/api/orders/${order._id}/pay`
-        // Include any necessary payload here
-      );
-      dispatch({ type: 'PAY_SUCCESS', payload: data });
-      toast.success('Order is paid successfully');
-      sendEmail();
-
-      // Mark payment as complete and show success message
-      setPaymentComplete(true);
-
-      // Reload the page after payment success
-      window.location.reload();
-    } catch (error) {
-      dispatch({ type: 'PAY_FAIL', payload: getError(error) });
-      toast.error(getError(error));
-    }
-  };
 
   function onError(err) {
     toast.error(getError(err));
@@ -375,6 +375,11 @@ function OrderScreen() {
   }
 
   //-----------//
+
+  const handleButtonClick = () => {
+    handlePayment();
+    sendEmail();
+  };
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -623,7 +628,7 @@ function OrderScreen() {
                         {session.user.isAdmin && (
                           <button
                             className="primary-button w-full"
-                            onClick={handlePayment}
+                            onClick={handleButtonClick}
                           >
                             Mark as paid
                           </button>
