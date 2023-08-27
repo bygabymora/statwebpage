@@ -98,17 +98,17 @@ export default function AdminUserEditScreen() {
         <div>
           <ul>
             <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
+              <Link href="/admin/dashboard">Pánel</Link>
             </li>
             <li>
-              <Link href="/admin/orders">Órders</Link>
+              <Link href="/admin/orders">Órdenes</Link>
             </li>
             <li>
-              <Link href="/admin/products">Products</Link>
+              <Link href="/admin/products">Productos</Link>
             </li>
             <li>
               <Link href="/admin/users" className="font-bold">
-                Users
+                Usuarios
               </Link>
             </li>
           </ul>
@@ -127,7 +127,7 @@ export default function AdminUserEditScreen() {
                 .substring(userId.length - 8)
                 .toUpperCase()}`}</h1>
               <div className="mb-4">
-                <label htmlFor="name">Name</label>
+                <label htmlFor="name">Nombre</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -157,7 +157,7 @@ export default function AdminUserEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="isAdmin">Is Admin?</label>
+                <label htmlFor="isAdmin">Es Administrador?</label>
                 &nbsp;
                 <input
                   type="checkbox"
