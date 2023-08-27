@@ -7,7 +7,7 @@ const handler = async (req, res) => {
   if (!user || !user.isAdmin) {
     return res
       .status(401)
-      .send('Requerido Inicio de sesión como Administrador');
+      .send('Login required as an admin');
   }
 
   if (req.method === 'GET') {
@@ -17,7 +17,7 @@ const handler = async (req, res) => {
   } else if (req.method === 'DELETE') {
     return deleteHandler(req, res, user);
   } else {
-    return res.status(400).send({ message: 'Metodo no permitido' });
+    return res.status(400).send({ message: 'Method not allowed' });
   }
 };
 
