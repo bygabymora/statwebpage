@@ -84,7 +84,7 @@ export default function AdminUserEditScreen() {
         isAdmin,
       });
       dispatch({ type: 'UPDATE_SUCCESS' });
-      toast.success('Usuario actualizado exitosamente');
+      toast.success('User updated successfully');
       router.push('/admin/users');
     } catch (err) {
       dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
@@ -98,13 +98,13 @@ export default function AdminUserEditScreen() {
         <div>
           <ul>
             <li>
-              <Link href="/admin/dashboard">Pánel</Link>
+              <Link href="/admin/dashboard">Dashboard</Link>
             </li>
             <li>
-              <Link href="/admin/orders">Órdenes</Link>
+              <Link href="/admin/orders">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products">Productos</Link>
+              <Link href="/admin/products">Products</Link>
             </li>
             <li>
               <Link href="/admin/users" className="font-bold">
@@ -115,7 +115,7 @@ export default function AdminUserEditScreen() {
         </div>
         <div className="md:col-span-3">
           {loading ? (
-            <div>Cargando...</div>
+            <div>Loading...</div>
           ) : error ? (
             <div className="alert-error">{error}</div>
           ) : (
@@ -127,7 +127,7 @@ export default function AdminUserEditScreen() {
                 .substring(userId.length - 8)
                 .toUpperCase()}`}</h1>
               <div className="mb-4">
-                <label htmlFor="name">Nombre</label>
+                <label htmlFor="name">Name</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"

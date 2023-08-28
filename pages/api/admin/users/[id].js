@@ -38,7 +38,7 @@ const putHandler = async (req, res) => {
     await user.save();
 
     await db.disconnect();
-    res.send({ message: 'Usuario actualizado exiosamente' });
+    res.send({ message: 'User updated successfully' });
   } else {
     await db.disconnect();
     res.status(404).send({ message: 'Usuario no encontrado' });
@@ -53,14 +53,14 @@ const deleteHandler = async (req, res) => {
       await db.disconnect();
       return res
         .status(400)
-        .send({ message: 'No se puede eliminar al administrador' });
+        .send({ message: 'Cant delete admin' });
     }
     await User.findByIdAndDelete(req.query.id);
     await db.disconnect();
-    res.send({ message: 'Usuario borrado' });
+    res.send({ message: 'User deleted' });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: 'Usuario no encontrado' });
+    res.status(404).send({ message: 'User not found' });
   }
 };
 
