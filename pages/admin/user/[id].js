@@ -123,7 +123,7 @@ export default function AdminUserEditScreen() {
               className="mx-auto max-w-screen-md"
               onSubmit={handleSubmit(submitHandler)}
             >
-              <h1 className="mb-4 text-xl">{`Editar Usuario ${userId
+              <h1 className="mb-4 text-xl">{`Edit User ${userId
                 .substring(userId.length - 8)
                 .toUpperCase()}`}</h1>
               <div className="mb-4">
@@ -134,7 +134,7 @@ export default function AdminUserEditScreen() {
                   id="name"
                   autoFocus
                   {...register('name', {
-                    required: 'Por favor ingrese un nombre',
+                    required: 'Please insert name',
                   })}
                 />
                 {errors.name && (
@@ -149,7 +149,7 @@ export default function AdminUserEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="email"
                   {...register('email', {
-                    required: 'Por favor ingrese el email',
+                    required: 'Please insert email',
                   })}
                 />
                 {errors.email && (
@@ -157,7 +157,7 @@ export default function AdminUserEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label htmlFor="isAdmin">Es Administrador?</label>
+                <label htmlFor="isAdmin">Is Admin?</label>
                 &nbsp;
                 <input
                   type="checkbox"
@@ -177,7 +177,7 @@ export default function AdminUserEditScreen() {
                     disabled={loadingUpdate}
                     className="primary-button mr-2"
                   >
-                    {loadingUpdate ? 'Cargando' : 'Actualizar'}
+                    {loadingUpdate ? 'Cargando' : 'Update'}
                   </button>
                 </div>
                 <div className="mb-4">
@@ -185,7 +185,7 @@ export default function AdminUserEditScreen() {
                     onClick={() => router.push(`/`)}
                     className="primary-button"
                   >
-                    Atrás
+                    Back
                   </button>
                 </div>
               </div>
