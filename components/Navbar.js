@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Link from 'next/link';
 import {
   BiHomeSmile,
@@ -9,14 +10,29 @@ import {
 } from 'react-icons/bi';
 import { MdOutlineWavingHand } from 'react-icons/md';
 import { useRouter } from 'next/router';
+import { TbShoppingCartDiscount } from 'react-icons/tb';
 
 const Navbar = () => {
+  const [hasClearanceProducts, setHasClearanceProducts] = useState(false);
   const router = useRouter();
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const toggleMenuHandler = () => {
     setToggleMenu(!toggleMenu);
   };
+
+  useEffect(() => {
+    const fetchClearanceProducts = async () => {
+      try {
+        const response = await axios.get('/api/clearance');
+        setHasClearanceProducts(response.data.hasClearanceProducts);
+      } catch (error) {
+        console.error('Failed to fetch clearance products:', error);
+      }
+    };
+
+    fetchClearanceProducts();
+  }, []);
 
   const handleLinkClick = (section) => {
     if (window.innerWidth >= 800) {
@@ -75,6 +91,23 @@ const Navbar = () => {
           >
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
+          </Link>
+          <Link
+            href="/clearance"
+            className={
+              hasClearanceProducts ? 'nav__link text-red-500' : 'hidden'
+            }
+          >
+            <TbShoppingCartDiscount
+              className={
+                hasClearanceProducts
+                  ? 'uil uil-scenery nav__icon text-red-500'
+                  : 'hidden'
+              }
+            />
+            <span className={hasClearanceProducts ? 'text-red-500' : ''}>
+              Clearance
+            </span>
           </Link>
 
           <br className="break" />
