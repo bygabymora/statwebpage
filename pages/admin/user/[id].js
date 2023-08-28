@@ -177,7 +177,7 @@ export default function AdminUserEditScreen() {
                     disabled={loadingUpdate}
                     className="primary-button mr-2"
                   >
-                    {loadingUpdate ? 'Cargando' : 'Update'}
+                    {loadingUpdate ? 'Loading' : 'Update'}
                   </button>
                 </div>
                 <div className="mb-4">
