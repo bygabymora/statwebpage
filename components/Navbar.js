@@ -76,6 +76,7 @@ const Navbar = () => {
             <MdOutlineWavingHand className="uil uil-message nav__icon" />
             Contact
           </Link>
+
           <br className="break" />
         </div>
         <BiXCircle

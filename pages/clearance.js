@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Layout from '../../components/Layout';
-import { ProductItem } from '../../components/ProductItem';
-import Product from '../../models/Product.js';
-import db from '../../utils/db';
+import Layout from '../components/Layout';
+import { ProductItem } from '../components/ProductItem';
+import Product from '../models/Product.js';
+import db from '../utils/db';
 
 export default function Products({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
