@@ -22,6 +22,8 @@ const SearchPage = ({ query }) => {
 
   const tab = <>&nbsp;&nbsp;</>;
 
+  
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       const { data } = await axios.get(`/api/search?keyword=${query}`);
