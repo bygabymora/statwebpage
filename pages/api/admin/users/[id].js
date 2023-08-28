@@ -1,4 +1,4 @@
-import User from '../../../../../models/user';
+import User from '../../../../models/user';
 import db from '../../../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
