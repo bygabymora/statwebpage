@@ -40,6 +40,7 @@ function reducer(state, action) {
 }
 export default function AdminProductEditScreen() {
   const [sentOverNight, setSentOverNight] = useState(false);
+  const [isInClearance, setisInClearance] = useState(false);
   const { query } = useRouter();
   const productId = query.id;
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
@@ -79,6 +80,10 @@ export default function AdminProductEditScreen() {
         setValue('notes', data.notes);
         setValue('includes', data.includes);
         setSentOverNight(data.sentOverNight);
+        setisInClearance(data.isInClearance);
+        setValue('isInClearance', data.isInClearance);
+        setValue('countInStockClearance', data.countInStockClearance);
+        setValue('priceClearance', data.priceClearance);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -130,6 +135,9 @@ export default function AdminProductEditScreen() {
     countInStock,
     countInStockBulk,
     sentOverNight,
+    isInClearance,
+    countInStockClearance,
+    priceClearance,
     notes,
     includes,
   }) => {
@@ -152,6 +160,9 @@ export default function AdminProductEditScreen() {
         countInStock,
         countInStockBulk,
         sentOverNight,
+        isInClearance,
+        countInStockClearance,
+        priceClearance,
         notes,
         includes,
       });
@@ -392,6 +403,72 @@ export default function AdminProductEditScreen() {
                 />
                 {errors.notes && (
                   <div className="text-red-500">{errors.notes.message}</div>
+                )}
+              </div>
+              <h2>Clearance</h2>
+              <div className="mb-4">
+                <label htmlFor="isInClearance">Is in Clearance</label>
+                &nbsp;
+                <input
+                  type="checkbox"
+                  id="isInClearance"
+                  {...register('isInClearance')}
+                  checked={isInClearance}
+                  onChange={(e) => {
+                    setValue('isInClearance', e.target.checked);
+                    setisInClearance(e.target.checked);
+                  }}
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="descriptionBulk">Description Clearance</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="descriptionClearance"
+                  {...register('descriptionClearance', {
+                    required: 'Please enter Description Clearance',
+                  })}
+                />
+                {errors.description && (
+                  <div className="text-red-500">
+                    {errors.description.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="priceClearance">Price Clearance</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="priceClearance"
+                  {...register('priceClearance', {
+                    required: 'Please enter price Clearance',
+                  })}
+                />
+                {errors.priceClearance && (
+                  <div className="text-red-500">
+                    {errors.priceClearance.message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="countInStockClearance">
+                  Count In Stock Clearance
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="countInStockClearance"
+                  {...register('countInStockClearance', {
+                    required: 'Please enter countInStock Clearance',
+                  })}
+                />
+                {errors.countInStockClearance && (
+                  <div className="text-red-500">
+                    {errors.countInStockClearance.message}
+                  </div>
                 )}
               </div>
               <div className="mb-4">

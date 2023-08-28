@@ -8,26 +8,35 @@ export default function Products({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
 
   const manufacturers = [
-    ...new Set(products.map((product) => product.manufacturer)),
+    ...new Set(
+      products
+        .filter((product) => product.isInClearance === true)
+        .map((product) => product.manufacturer)
+    ),
   ];
 
   const filteredProducts = selectedManufacturer
     ? products.filter(
-        (product) => product.manufacturer === selectedManufacturer
+        (product) =>
+          product.manufacturer === selectedManufacturer &&
+          product.isInClearance === true
       )
-    : products;
+    : products.filter((product) => product.isInClearance === true);
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
   };
 
   const handleShowAll = () => {
-    setSelectedManufacturer(null);
+    if (manufacturers.includes(selectedManufacturer)) {
+      setSelectedManufacturer(null);
+    }
   };
 
   return (
-    <Layout title="Products">
+    <Layout title="Clearance Products">
       <div className="grid grid-cols-1 md:grid-cols-4">
+        {/* Left Sidebar */}
         <div className="md:col-span-1 p-4">
           <ul>
             <div
@@ -58,9 +67,10 @@ export default function Products({ products }) {
             ))}
           </ul>
         </div>
+        {/* Right Product Display */}
         <div className="md:col-span-3">
           <h2 className="section__title" id="products">
-            Products
+            Clearance Products
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
             {filteredProducts.map((product) => (
