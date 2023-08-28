@@ -13,6 +13,7 @@ import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
 import emailjs from '@emailjs/browser';
 
+
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -330,29 +331,15 @@ function OrderScreen() {
 
   const form = useRef();
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get('/api/orders/placeOrder');
-      const userData = response.data;
-
-      setEmail(userData.email);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
+  
+  const userEmail = order.user?.email || '';
+  
   function sendEmail() {
     const formData = new FormData();
 
     formData.append('user_name', shippingAddress.fullName);
     formData.append('user_phone', shippingAddress.phone);
-    formData.append('user_email', email);
+    formData.append('user_email', userEmail);
     formData.append('total_order', totalPrice);
     formData.append('payment_method', paymentMethod);
     formData.append('shipping_preference', shippingAddress.notes);
@@ -369,7 +356,7 @@ function OrderScreen() {
           console.log('Email sent', result.text);
         },
         (error) => {
-          console.log('Error sendingemail', error.text);
+          console.log('Error sending email', error.text);
         }
       );
   }
@@ -378,7 +365,7 @@ function OrderScreen() {
 
   const handleButtonClick = () => {
     handlePayment();
-    sendEmail();
+
   };
 
   return (
@@ -424,6 +411,7 @@ function OrderScreen() {
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
           {console.log({ shippingAddress: shippingAddress.fullName })}
+          {console.log({ userEmail: userEmail }) }
 
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
@@ -749,7 +737,7 @@ function OrderScreen() {
               value={shippingAddress.phone}
               readOnly
             />
-            <input type="hidden" name="user_email" value={email} readOnly />
+            <input type="hidden" name="user_email" value={userEmail} readOnly />
             <input
               type="hidden"
               name="total_order"
