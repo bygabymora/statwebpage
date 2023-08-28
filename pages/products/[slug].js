@@ -18,6 +18,7 @@ export default function ProductScreen(props) {
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false); // Add Clearance state
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
   const [currentPrice, setCurrentPrice] = useState(product.price);
@@ -28,7 +29,6 @@ export default function ProductScreen(props) {
     product.countInStock
   );
   const form = useRef();
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailSlug, setEmailSlug] = useState('');
@@ -45,23 +45,26 @@ export default function ProductScreen(props) {
       setCurrentPrice(product.priceBulk);
       setCurrentDescription(product.descriptionBulk);
       setCurrentCountInStock(product.countInStockBulk);
+    } else if (
+      product.countInStockBulk === 0 &&
+      product.countInStockClearance > 0
+    ) {
+      setPurchaseType('Clearance');
+      setCurrentPrice(product.priceClearance);
+      setCurrentDescription(product.descriptionClearance);
+      setCurrentCountInStock(product.countInStockClearance);
     } else {
       setPurchaseType('Each');
     }
   }, [
     product.countInStock,
     product.countInStockBulk,
+    product.countInStockClearance,
     product.descriptionBulk,
     product.priceBulk,
+    product.descriptionClearance,
+    product.priceClearance,
   ]);
-
-  if (!product) {
-    return (
-      <Layout title="Product Not found">
-        <div>Product Not Found</div>
-      </Layout>
-    );
-  }
 
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
@@ -73,6 +76,12 @@ export default function ProductScreen(props) {
       return;
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       setIsOutOfStockBulk(true);
+      return;
+    } else if (
+      purchaseType === 'Clearance' &&
+      data.countInStockClearance < quantity
+    ) {
+      setIsOutOfStockClearance(true);
       return;
     }
     dispatch({
@@ -200,7 +209,8 @@ export default function ProductScreen(props) {
                 </button>
                 <span className="px-1 mt-4">
                   {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk)
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
                     ? 0
                     : qty}
                 </span>
@@ -253,7 +263,8 @@ export default function ProductScreen(props) {
               &nbsp;
               <div className="">
                 {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk)
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
                   ? 'Out of Stock'
                   : 'In Stock'}
               </div>
@@ -264,11 +275,13 @@ export default function ProductScreen(props) {
               onClick={addToCartHandler}
               disabled={
                 (purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk)
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
               }
             >
               {(purchaseType === 'Each' && isOutOfStock) ||
-              (purchaseType === 'Bulk' && isOutOfStockBulk)
+              (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+              (purchaseType === 'Clearance' && isOutOfStockClearance)
                 ? 'Out of Stock'
                 : 'Add to Cart'}
             </button>
@@ -344,6 +357,54 @@ export default function ProductScreen(props) {
               </form>
             )}
             {purchaseType === 'Each' && isOutOfStock && (
+              <form className="text-center " ref={form} onSubmit={sendEmail}>
+                <label className="mt-3 font-bold ">Join Our Wait List</label>
+                <input
+                  type="text"
+                  name="user_name"
+                  className="contact__form-input"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  placeholder="Name"
+                  required
+                />
+                <input
+                  type="email"
+                  name="user_email"
+                  className="contact__form-input"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  placeholder="Email"
+                  required
+                />
+                <input
+                  type="text"
+                  name="emailSlug"
+                  className="contact__form-input"
+                  onChange={(e) => setEmailSlug(e.target.value)}
+                  value={emailSlug}
+                  hidden
+                  required
+                />
+                <input
+                  type="text"
+                  name="emailManufacturer"
+                  className="contact__form-input"
+                  onChange={(e) => setEmailManufacturer(e.target.value)}
+                  value={emailManufacturer}
+                  hidden
+                  required
+                />
+                <button
+                  className="primary-button mt-3"
+                  type="submit"
+                  onClick={sendEmail}
+                >
+                  Submit
+                </button>
+              </form>
+            )}
+            {purchaseType === 'Clearance' && isOutOfStockClearance && (
               <form className="text-center " ref={form} onSubmit={sendEmail}>
                 <label className="mt-3 font-bold ">Join Our Wait List</label>
                 <input

@@ -12,6 +12,7 @@ export const ProductItem = ({ product }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState(false);
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each');
   const [currentPrice, setCurrentPrice] = useState(product.price);
@@ -28,14 +29,30 @@ export const ProductItem = ({ product }) => {
       setCurrentPrice(product.priceBulk);
       setCurrentDescription(product.descriptionBulk);
       setCurrentCountInStock(product.countInStockBulk);
+    } else if (
+      product.countInStockBulk === 0 &&
+      product.countInStockClearance > 0
+    ) {
+      setPurchaseType('Clearance');
+      setCurrentPrice(product.priceClearance);
+      setCurrentDescription(product.descriptionClearance);
+      setCurrentCountInStock(product.countInStockClearance);
     } else {
       setPurchaseType('Each');
+      setCurrentPrice(product.price);
+      setCurrentDescription(product.description);
+      setCurrentCountInStock(product.countInStock);
     }
   }, [
     product.countInStock,
     product.countInStockBulk,
+    product.countInStockClearance,
     product.descriptionBulk,
     product.priceBulk,
+    product.descriptionClearance,
+    product.priceClearance,
+    product.price,
+    product.description,
   ]);
 
   const addToCartHandler = async () => {
@@ -50,6 +67,12 @@ export const ProductItem = ({ product }) => {
       return;
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       setIsOutOfStockBulk(true);
+      return;
+    } else if (
+      purchaseType === 'Clearance' &&
+      data.countInStockClearance < quantity
+    ) {
+      setIsOutOfStockClearance(true);
       return;
     }
     dispatch({
@@ -74,6 +97,11 @@ export const ProductItem = ({ product }) => {
     if (purchaseType === 'Each' && data.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+      alert("Sorry, we don't have enough of that item in stock.");
+    } else if (
+      purchaseType === 'Clearance' &&
+      data.countInStockClearance < quantity
+    ) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
   };
@@ -162,7 +190,8 @@ export const ProductItem = ({ product }) => {
             </button>
             <span className="px-1 mt-4">
               {(purchaseType === 'Each' && isOutOfStock) ||
-              (purchaseType === 'Bulk' && isOutOfStockBulk)
+              (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+              (purchaseType === 'Clearance' && isOutOfStockClearance)
                 ? 0
                 : qty}
             </span>
@@ -175,15 +204,18 @@ export const ProductItem = ({ product }) => {
                   alert(
                     `Sorry, we only have ${
                       purchaseType === 'Each'
-                        ? product.countInStock
-                        : product.countInStockBulk
+                        ? purchaseType === 'Clearance'
+                          ? product.countInStockClearance
+                          : product.countInStockBulk
+                        : product.countInStock
                     } of ${product.manufacturer} ${product.slug} at this moment`
                   );
                 }
               }}
               disabled={
                 (purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk)
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
               }
             >
               +
@@ -205,11 +237,19 @@ export const ProductItem = ({ product }) => {
                 setCurrentPrice(product.price);
                 setCurrentDescription(product.description);
                 setCurrentCountInStock(product.countInStock);
+              } else if (e.target.value === 'Clearance') {
+                // Handle Clearance option
+                setCurrentPrice(product.priceClearance);
+                setCurrentDescription(product.descriptionClearance);
+                setCurrentCountInStock(product.countInStockClearance);
               }
             }}
           >
             {product.countInStock > 0 && <option value="Each">Each</option>}
             {product.countInStockBulk > 0 && <option value="Bulk">Box</option>}
+            {product.countInStockClearance > 0 && (
+              <option value="Clearance">Clearance</option>
+            )}
           </select>
         </div>
         <div className="mb-2 flex justify-between">
@@ -221,7 +261,8 @@ export const ProductItem = ({ product }) => {
           &nbsp;
           <div className="">
             {(purchaseType === 'Each' && isOutOfStock) ||
-            (purchaseType === 'Bulk' && isOutOfStockBulk)
+            (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+            (purchaseType === 'Clearance' && isOutOfStockClearance)
               ? 'Out of Stock'
               : 'In Stock'}
           </div>
@@ -232,11 +273,13 @@ export const ProductItem = ({ product }) => {
           onClick={addToCartHandler}
           disabled={
             (purchaseType === 'Each' && isOutOfStock) ||
-            (purchaseType === 'Bulk' && isOutOfStockBulk)
+            (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+            (purchaseType === 'Clearance' && isOutOfStockClearance)
           }
         >
           {(purchaseType === 'Each' && isOutOfStock) ||
-          (purchaseType === 'Bulk' && isOutOfStockBulk)
+          (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+          (purchaseType === 'Clearance' && isOutOfStockClearance)
             ? 'Out of Stock'
             : 'Add to Cart'}
         </button>
@@ -290,6 +333,54 @@ export const ProductItem = ({ product }) => {
           </form>
         )}
         {purchaseType === 'Each' && isOutOfStock && (
+          <form className="text-center " ref={form} onSubmit={sendEmail}>
+            <label className="mt-3 font-bold ">Join Our Wait List</label>
+            <input
+              type="text"
+              name="user_name"
+              className="contact__form-input"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="Name"
+              required
+            />
+            <input
+              type="email"
+              name="user_email"
+              className="contact__form-input"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              placeholder="Email"
+              required
+            />
+            <input
+              type="text"
+              name="emailSlug"
+              className="contact__form-input"
+              onChange={(e) => setEmailSlug(e.target.value)}
+              value={emailSlug}
+              hidden
+              required
+            />
+            <input
+              type="text"
+              name="emailManufacturer"
+              className="contact__form-input"
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button
+              className="primary-button mt-3"
+              type="submit"
+              onClick={sendEmail}
+            >
+              Submit
+            </button>
+          </form>
+        )}
+        {purchaseType === 'Clearance' && isOutOfStockClearance && (
           <form className="text-center " ref={form} onSubmit={sendEmail}>
             <label className="mt-3 font-bold ">Join Our Wait List</label>
             <input

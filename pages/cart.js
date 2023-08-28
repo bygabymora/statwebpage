@@ -117,6 +117,24 @@ function CartScreen() {
                         </select>
                       </td>
                     )}
+                    {item.purchaseType === 'Clearance' && (
+                      <td className="p-5 text-right">
+                        <select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
+                        >
+                          {[...Array(item.countInStockClearance).keys()].map(
+                            (x) => (
+                              <option key={x + 1} value={x + 1}>
+                                {x + 1}
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </td>
+                    )}
                     <td className="p-5 text-right">${item.price}</td>
                     <td className="p-5 text-center">
                       <button onClick={() => removeItemHandler(item)}>
