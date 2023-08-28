@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  BiHomeHeart,
+  BiHomeSmile,
   BiUser,
   BiPhotoAlbum,
   BiGridVertical,
@@ -57,7 +57,7 @@ const Navbar = () => {
       <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
         <div className="nav__list grid">
           <Link href="/" className="nav__link" onClick={handleHomeClick}>
-            <BiHomeHeart className="uil uil-estate nav__icon" />
+            <BiHomeSmile className="uil uil-estate nav__icon" />
             Home
           </Link>
           <Link href="/about" className="nav__link">
