@@ -4,7 +4,7 @@ import { ProductItem } from '../components/ProductItem';
 import Product from '../models/Product.js';
 import db from '../utils/db';
 
-export default function Products({ products }) {
+export default function Clearance({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
 
   const manufacturers = [
@@ -34,7 +34,7 @@ export default function Products({ products }) {
   };
 
   return (
-    <Layout title="Clearance Products">
+    <Layout title="Clearance Products" products={products}>
       <div className="grid grid-cols-1 md:grid-cols-4">
         {/* Left Sidebar */}
         <div className="md:col-span-1 p-4">
