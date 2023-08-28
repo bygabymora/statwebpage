@@ -86,9 +86,15 @@ export const ProductItem = ({ product }) => {
         description:
           purchaseType === 'Each'
             ? product.description
-            : product.descriptionBulk,
+            : purchaseType === 'Bulk'
+            ? product.descriptionBulk
+            : product.descriptionClearance,
         countInStock:
-          purchaseType === 'Each' ? data.countInStock : data.countInStockBulk,
+          purchaseType === 'Each'
+            ? data.countInStock
+            : purchaseType === 'Bulk'
+            ? data.countInStockBulk
+            : data.countInStockClearance,
       },
     });
     setQty(1);

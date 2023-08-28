@@ -84,6 +84,7 @@ export default function AdminProductEditScreen() {
         setValue('isInClearance', data.isInClearance);
         setValue('countInStockClearance', data.countInStockClearance);
         setValue('priceClearance', data.priceClearance);
+        setValue('descriptionClearance', data.descriptionClearance);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -138,6 +139,7 @@ export default function AdminProductEditScreen() {
     isInClearance,
     countInStockClearance,
     priceClearance,
+    descriptionClearance,
     notes,
     includes,
   }) => {
@@ -163,6 +165,7 @@ export default function AdminProductEditScreen() {
         isInClearance,
         countInStockClearance,
         priceClearance,
+        descriptionClearance,
         notes,
         includes,
       });
