@@ -1,6 +1,5 @@
 import React from 'react';
 import Layout from './Layout';
-import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
   title: 'STAT SURGICAL SUPPLY',
@@ -8,10 +7,5 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <Layout title="STAT">
-      {children}
-      <Analytics />
-    </Layout>
-  );
+  return <Layout title="STAT">{children}</Layout>;
 }
