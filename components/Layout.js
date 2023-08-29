@@ -4,7 +4,6 @@ import Header from './Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
-import { Analytics } from '@vercel/analytics/react';
 
 export default function Layout({ title, children }) {
   return (
@@ -16,13 +15,11 @@ export default function Layout({ title, children }) {
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
-        <Analytics>
-          <Header />
+        <Header />
 
-          <main className="main container  m-auto mt-11 px-4">{children}</main>
+        <main className="main container  m-auto mt-11 px-4">{children}</main>
 
-          <Footer />
-        </Analytics>
+        <Footer />
       </div>
     </div>
   );
