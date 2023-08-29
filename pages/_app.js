@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../styles/global.css';
 import StoreProvider from '../utils/Store';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
+import ReactGA from 'react-ga';
+
+// Initialize Google Analytics with your tracking ID
+ReactGA.initialize('G-DZ8WE2HZH9', {
+  gaOptions: {
+    anonymizeIp: true, // Optional: Mask user IPs for GDPR compliance
+  },
+});
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  useEffect(() => {
+    // Track page views
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
+
   return (
     <SessionProvider session={session}>
       <StoreProvider>
