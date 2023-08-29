@@ -5,7 +5,6 @@ import { SessionProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
-import { Analytics } from '@vercel/analytics/react';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -16,7 +15,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           {Component.auth ? (
             <Auth adminOnly={Component.auth.adminOnly}>
               <Component {...pageProps} />
-              <Analytics />
             </Auth>
           ) : (
             <Component {...pageProps} />
