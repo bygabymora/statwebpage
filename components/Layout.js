@@ -11,19 +11,18 @@ export default function Layout({ title, children }) {
     <div className="w-full">
       <Head>
         <title>{title ? title : 'STAT'}</title>
-        <meta name="description" content="STAT" />
+        <meta name="surgical supplies" content="Surgical Supplies" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
-        <Header />
+        <Analytics>
+          <Header />
 
-        <main className="main container  m-auto mt-11 px-4">
-          {children}
-          <Analytics />
-        </main>
+          <main className="main container  m-auto mt-11 px-4">{children}</main>
 
-        <Footer />
+          <Footer />
+        </Analytics>
       </div>
     </div>
   );
