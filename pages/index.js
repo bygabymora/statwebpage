@@ -40,7 +40,7 @@ export default function Home({ products }) {
   }, []);
 
   return (
-    <Layout title="Home Page">
+    <Layout title="STAT Surgical Supplies">
       <StaticBanner />
       <Banner />
       <h2 className="section__title" id="products">
