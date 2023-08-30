@@ -37,14 +37,6 @@ export const ProductItem = ({ product }) => {
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
-    } else if (product.countInStockClearance === 0) {
-      setPurchaseType('Each');
-      setCurrentPrice(product.price);
-      setCurrentDescription(product.description);
-      setCurrentCountInStock(product.countInStock);
-      setIsOutOfStock(true);
-      setIsOutOfStockBulk(true);
-      setIsOutOfStockClearance(true);
     }
   }, [
     product.countInStock,
@@ -211,9 +203,7 @@ export const ProductItem = ({ product }) => {
                   setQty(qty + 1);
                 } else {
                   alert(
-                    `Sorry, we do not have any additional units of ${
-                      product.manufacturer
-                    } ${''} ${product.slug} at this moment`
+                    `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
                   );
                 }
               }}

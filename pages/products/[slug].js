@@ -35,6 +35,11 @@ export default function ProductScreen(props) {
   const [emailManufacturer, setEmailManufacturer] = useState('');
 
   useEffect(() => {
+    setEmailSlug(product.slug);
+    setEmailManufacturer(product.manufacturer);
+  }, [product.slug, product.manufacturer]);
+
+  useEffect(() => {
     if (product.countInStock === 0) {
       setPurchaseType('Bulk');
       setCurrentPrice(product.priceBulk);
@@ -48,14 +53,8 @@ export default function ProductScreen(props) {
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
-    } else if (product.countInStockClearance === 0) {
+    } else {
       setPurchaseType('Each');
-      setCurrentPrice(product.price);
-      setCurrentDescription(product.description);
-      setCurrentCountInStock(product.countInStock);
-      setIsOutOfStock(true);
-      setIsOutOfStockBulk(true);
-      setIsOutOfStockClearance(true);
     }
   }, [
     product.countInStock,
@@ -65,8 +64,6 @@ export default function ProductScreen(props) {
     product.priceBulk,
     product.descriptionClearance,
     product.priceClearance,
-    product.price,
-    product.description,
   ]);
 
   const addToCartHandler = async () => {
@@ -224,7 +221,7 @@ export default function ProductScreen(props) {
                       setQty(qty + 1);
                     } else {
                       alert(
-                        `Sorry, we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
+                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
                       );
                     }
                   }}
