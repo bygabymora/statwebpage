@@ -66,6 +66,29 @@ export default function ProductScreen(props) {
     product.priceClearance,
   ]);
 
+  useEffect(() => {
+    if (
+      product.countInStock === 0 &&
+      product.countInStockBulk === 0 &&
+      product.countInStockClearance === 0
+    ) {
+      setPurchaseType('Each');
+      setCurrentPrice(product.price);
+      setCurrentDescription(product.description);
+      setIsOutOfStock(true);
+    }
+  }, [
+    product.countInStock,
+    product.countInStockBulk,
+    product.countInStockClearance,
+    product.descriptionBulk,
+    product.priceBulk,
+    product.descriptionClearance,
+    product.priceClearance,
+    product.price,
+    product.description,
+  ]);
+
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = exisItem ? exisItem.quantity + qty : qty;

@@ -50,6 +50,29 @@ export const ProductItem = ({ product }) => {
     product.description,
   ]);
 
+  useEffect(() => {
+    if (
+      product.countInStock === 0 &&
+      product.countInStockBulk === 0 &&
+      product.countInStockClearance === 0
+    ) {
+      setPurchaseType('Each');
+      setCurrentPrice(product.price);
+      setCurrentDescription(product.description);
+      setIsOutOfStock(true);
+    }
+  }, [
+    product.countInStock,
+    product.countInStockBulk,
+    product.countInStockClearance,
+    product.descriptionBulk,
+    product.priceBulk,
+    product.descriptionClearance,
+    product.priceClearance,
+    product.price,
+    product.description,
+  ]);
+
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
       (x) => x.slug === product.slug && x.purchaseType === purchaseType
