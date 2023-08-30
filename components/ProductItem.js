@@ -37,11 +37,14 @@ export const ProductItem = ({ product }) => {
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
-    } else {
+    } else if (product.countInStockClearance === 0) {
       setPurchaseType('Each');
       setCurrentPrice(product.price);
       setCurrentDescription(product.description);
       setCurrentCountInStock(product.countInStock);
+      setIsOutOfStock(true);
+      setIsOutOfStockBulk(true);
+      setIsOutOfStockClearance(true);
     }
   }, [
     product.countInStock,
