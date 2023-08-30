@@ -62,7 +62,7 @@ const Banner = () => {
           <h1 className="text-4xl font-bold mb-4">
             Welcome to STAT Surgical Supply
           </h1>
-          <p className="text-lg text-text-color">
+          <div className="text-lg text-text-color">
             {audience === 'hospital' ? (
               <>
                 We provide high-quality surgical supplies to meet the needs of
@@ -98,7 +98,7 @@ const Banner = () => {
                 Explore our wide range of high-end surgical disposables.
               </div>
             )}
-          </p>
+          </div>
           {audience !== '' && (
             <div className="grid grid-cols-2 mt-8 w-full mb-8 text-center">
               <button
