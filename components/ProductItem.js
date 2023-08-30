@@ -211,7 +211,9 @@ export const ProductItem = ({ product }) => {
                   setQty(qty + 1);
                 } else {
                   alert(
-                    `Sorry, we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
+                    `Sorry, we do not have any additional units of ${
+                      product.manufacturer
+                    } ${''} ${product.slug} at this moment`
                   );
                 }
               }}
