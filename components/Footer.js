@@ -2,11 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '../public/images/assets/logo2.png';
+import Payment from '../public/images/assets/payments.png';
 import { AiOutlineSend } from 'react-icons/ai';
 
 export default function Footer() {
   return (
-    <footer className="flex h-30 justify-center shadow-inner items-center footer flex-col">
+    <footer className="flex h-30 justify-center shadow-inner items-center footer flex-col relative">
       <div className="footer-container">
         <section className="footer-links">
           <div className="footer-linkGroup flex flex-col m-5">
@@ -52,15 +53,28 @@ export default function Footer() {
         <AiOutlineSend className="link-space" />
       </Link>
       <br />
-      <Image
-        className="footer-logo sm:block hidden md:"
-        src={Logo}
-        alt="STAT Logo"
-        width={300}
-        height={100}
-      />
-      <div className="font-bold footer-copyright">
-        <p>&copy; 2023 STAT Surgical Supply. All rights reserved.</p>
+
+      <div className="flex flex-col sm:flex-row justify-between w-full items-center mt-5 sm:mt-0">
+        <div className="flex items-center">
+          <Image
+            className="footer-logo sm:block hidden md:"
+            src={Logo}
+            alt="STAT Logo"
+            width={300}
+            height={100}
+          />
+          <div className="font-bold footer-copyright ml-4">
+            <p>&copy; 2023 STAT Surgical Supply. All rights reserved.</p>
+          </div>
+        </div>
+
+        <Image
+          className="footer-logo self-end sm:mr-3 sm:mb-3"
+          src={Payment}
+          alt="Payment Methods"
+          width={300}
+          height={100}
+        />
       </div>
     </footer>
   );
