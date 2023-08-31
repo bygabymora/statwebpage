@@ -57,7 +57,7 @@ export default function Footer() {
       <div className="flex flex-col sm:flex-row justify-between w-full items-center mt-5 sm:mt-0">
         <div className="flex items-center">
           <Image
-            className="footer-logo sm:block hidden md:"
+            className="footer-logo hidden lg:block"
             src={Logo}
             alt="STAT Logo"
             width={300}
