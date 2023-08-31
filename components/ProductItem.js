@@ -170,18 +170,20 @@ export const ProductItem = ({ product }) => {
   //-----------//
 
   return (
-    <div className="card justify-center items-center text-center mb-3">
+    <div className="card justify-center items-center text-center mb-3 text-xs lg:text-lg">
       <Link
         href={{ pathname: `products/${product.slug}` }}
         className="justify-center items-center text-center"
       >
-        <Image
-          src={`${product.image}`}
-          alt={currentDescription}
-          className="product-image"
-          width={800}
-          height={1000}
-        />
+        <div className="">
+          <Image
+            src={`${product.image}`}
+            alt={currentDescription}
+            className="product-image"
+            width={800}
+            height={1000}
+          />
+        </div>
       </Link>
       <div className="flex flex-col justify-center items-center p-5">
         <Link
@@ -202,7 +204,7 @@ export const ProductItem = ({ product }) => {
           </div>
         </Link>
 
-        <div className="mb-2 flex items-center justify-center">
+        <div className="mb-2 flex items-center justify-center hidden lg:block">
           <div className="font-bold mt-4">Quantity &nbsp;</div>
           <div className="flex items-center flex-row">
             <button

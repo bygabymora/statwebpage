@@ -48,7 +48,7 @@ export default function Home({ products }) {
       </h2>
       <Carousel
         showArrows={true}
-        showThumbs={false}
+        showThumbs={true}
         showStatus={false}
         showIndicators={false}
         infiniteLoop={true}
@@ -58,10 +58,18 @@ export default function Home({ products }) {
         swipeable={true}
         autoPlay={true}
         interval={3000}
+        stopOnHover={true}
       >
-        {products.map((product) => (
-          <ProductItem product={product} key={product.slug}></ProductItem>
-        ))}
+        {products
+          .filter(
+            (product) =>
+              product.countInStock > 0 ||
+              product.countInStockBulk > 0 ||
+              product.countInStockClearance > 0
+          )
+          .map((product) => (
+            <ProductItem product={product} key={product.slug}></ProductItem>
+          ))}
       </Carousel>
 
       <Contact className="mt-2" />
