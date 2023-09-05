@@ -144,15 +144,15 @@ export default function AdminNewsEditScreen() {
               <Link href="/admin/orders">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products" className="font-bold">
-                Products
-              </Link>
+              <Link href="/admin/products">Products</Link>
             </li>
             <li>
               <Link href="/admin/users">Users</Link>
             </li>
             <li>
-              <Link href="/admin/news">News</Link>
+              <Link href="/admin/news" className="font-bold">
+                News
+              </Link>
             </li>
           </ul>
         </div>
