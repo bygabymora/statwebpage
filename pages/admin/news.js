@@ -13,7 +13,12 @@ function reducer(state, action) {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error: '' };
     case 'FETCH_SUCCESS':
-      return { ...state, loading: false, products: action.payload, error: '' };
+      return {
+        ...state,
+        loading: false,
+        newsEntries: action.payload,
+        error: '',
+      };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     case 'CREATE_REQUEST':
@@ -30,20 +35,27 @@ function reducer(state, action) {
       return { ...state, loadingDelete: false };
     case 'DELETE_RESET':
       return { ...state, loadingDelete: false, successDelete: false };
-
     default:
-      state;
+      return state;
   }
 }
-export default function AdminProdcutsScreen() {
+
+export default function AdminNewsScreen() {
   const router = useRouter();
 
   const [
-    { loading, error, products, loadingCreate, successDelete, loadingDelete },
+    {
+      loading,
+      error,
+      newsEntries,
+      loadingCreate,
+      successDelete,
+      loadingDelete,
+    },
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
-    products: [],
+    newsEntries: [],
     error: '',
   });
 
@@ -53,20 +65,21 @@ export default function AdminProdcutsScreen() {
     }
     try {
       dispatch({ type: 'CREATE_REQUEST' });
-      const { data } = await axios.post(`/api/admin/products`);
+      const { data } = await axios.post(`/api/admin/news`);
       dispatch({ type: 'CREATE_SUCCESS' });
-      toast.success('Product created successfully');
-      router.push(`/admin/product/${data.product._id}`);
+      toast.success('News created successfully');
+      router.push(`/admin/news/${data.news._id}`);
     } catch (err) {
       dispatch({ type: 'CREATE_FAIL' });
       toast.error(getError(err));
     }
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/products`);
+        const { data } = await axios.get(`/api/admin/news`);
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
@@ -80,23 +93,23 @@ export default function AdminProdcutsScreen() {
     }
   }, [successDelete]);
 
-  const deleteHandler = async (productId) => {
+  const deleteHandler = async (newsId) => {
     if (!window.confirm('Are you sure?')) {
       return;
     }
     try {
       dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/products/${productId}`);
-      console.log({ productId });
+      await axios.delete(`/api/admin/news/${newsId}`);
       dispatch({ type: 'DELETE_SUCCESS' });
-      toast.success('Product deleted successfully');
+      toast.success('News deleted successfully');
     } catch (err) {
       dispatch({ type: 'DELETE_FAIL' });
       toast.error(getError(err));
     }
   };
+
   return (
-    <Layout title="Admin Products">
+    <Layout title="Admin News">
       <div className="grid md:grid-cols-4 md:gap-5">
         <div>
           <ul>
@@ -107,21 +120,21 @@ export default function AdminProdcutsScreen() {
               <Link href="/admin/orders">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products" className="font-bold">
-                Products
-              </Link>
+              <Link href="/admin/products">Products</Link>
             </li>
             <li>
               <Link href="/admin/users">Users</Link>
             </li>
             <li>
-              <Link href="/admin/news">News</Link>
+              <Link href="/admin/news" className="font-bold">
+                News
+              </Link>
             </li>
           </ul>
         </div>
         <div className="overflow-x-auto md:col-span-3">
           <div className="flex justify-between">
-            <h1 className="mb-4 text-xl">Products</h1>
+            <h1 className="mb-4 text-xl">News</h1>
             {loadingDelete && <div>Deleting item...</div>}
             <button
               disabled={loadingCreate}
@@ -142,46 +155,33 @@ export default function AdminProdcutsScreen() {
                 <thead className="border-b">
                   <tr>
                     <th className="p-2 text-left border-r border-gray-300">
-                      REF.
+                      Title
                     </th>
-                    <th className="p-2 text-left">PRICE EACH</th>
-                    <th className="p-2 text-left  border-r border-gray-300">
-                      COUNT EACH
-                    </th>
-                    <th className="p-2 text-left">PRICE BOX</th>
-                    <th className="p-2 text-left  border-r border-gray-300">
-                      COUNT BOX
-                    </th>
-                    <th className="p-2 text-left">ACTIONS</th>
+                    <th className="p-2 text-left">Category</th>
+                    <th className="p-2 text-left">Tags</th>
+                    <th className="p-2 text-left">Author</th>
+                    <th className="p-2 text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id} className="border-b">
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.slug}
+                  {newsEntries.map((news) => (
+                    <tr key={news._id} className="border-b">
+                      <td className="p-2 border-r border-gray-300">
+                        {news.title}
                       </td>
-                      <td className=" p-2 ">${product.price}</td>
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.countInStock}
-                      </td>
-                      <td className=" p-2 ">${product.priceBulk}</td>
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.countInStockBulk}
-                      </td>
-                      <td className=" p-5 text-center flex flex-row">
-                        <button
-                          onClick={() =>
-                            router.push(`/admin/product/${product._id}`)
-                          }
-                          type="button"
-                          className="primary-button font-bold underline "
+                      <td className="p-2">{news.category}</td>
+                      <td className="p-2">{news.tags.join(', ')}</td>
+                      <td className="p-2">{news.author}</td>
+                      <td className="p-5 text-center flex flex-row">
+                        <Link
+                          href={`/admin/news/${news._id}`}
+                          className="primary-button font-bold underline"
                         >
                           <BiSolidEdit />
-                        </button>
+                        </Link>
                         &nbsp;
                         <button
-                          onClick={() => deleteHandler(product._id)}
+                          onClick={() => deleteHandler(news._id)}
                           className="primary-button font-bold underline"
                           type="button"
                         >
@@ -200,4 +200,4 @@ export default function AdminProdcutsScreen() {
   );
 }
 
-AdminProdcutsScreen.auth = { adminOnly: true };
+AdminNewsScreen.auth = { adminOnly: true };

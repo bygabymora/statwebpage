@@ -91,6 +91,9 @@ function AdminUsersScreen() {
                 Users
               </Link>
             </li>
+            <li>
+              <Link href="/admin/news">News</Link>
+            </li>
           </ul>
         </div>
         <div className="overflow-x-auto md:col-span-3">

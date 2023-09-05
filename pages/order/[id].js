@@ -13,7 +13,6 @@ import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
 import emailjs from '@emailjs/browser';
 
-
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -331,9 +330,8 @@ function OrderScreen() {
 
   const form = useRef();
 
-  
   const userEmail = order.user?.email || '';
-  
+
   function sendEmail() {
     const formData = new FormData();
 
@@ -365,11 +363,12 @@ function OrderScreen() {
 
   const handleButtonClick = () => {
     handlePayment();
-
   };
 
   return (
-    <Layout title={`Order ${orderId}`}>
+    <Layout
+      title={`Order ${orderId.substring(orderId.length - 8).toUpperCase()}`}
+    >
       <h1 className="mb-4 text-xl">{`Order ${orderId
         .substring(orderId.length - 8)
         .toUpperCase()}`}</h1>
@@ -411,7 +410,7 @@ function OrderScreen() {
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
           {console.log({ shippingAddress: shippingAddress.fullName })}
-          {console.log({ userEmail: userEmail }) }
+          {console.log({ userEmail: userEmail })}
 
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
