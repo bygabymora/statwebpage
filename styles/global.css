@@ -1020,3 +1020,7 @@ img {
 /* For small devices */
 @media screen and (max-width: 350px) {
 }
+.text-wrap-image {
+  float: left; /* Float the image to the left */
+  margin-right: 20px; /* Adjust the margin to create the wrap effect */
+}

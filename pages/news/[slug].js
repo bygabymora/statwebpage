@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { BsBackspace } from 'react-icons/bs';
 import db from '../../utils/db';
 import News from '../../models/News';
+import Image from 'next/image';
 
 export default function Newscreen(props) {
   const { news } = props;
@@ -12,12 +13,39 @@ export default function Newscreen(props) {
   }
 
   return (
-    <Layout title={news.slug}>
+    <Layout title={news.slug} news={news}>
       <div className="py-2">
         <Link href={'/news'} className="flex gap-4 items-center">
           <BsBackspace />
           Back to news.
         </Link>
+      </div>
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="text-2xl mb-6">{news.title}</h1>
+        <div className="flex flex-row justify-between items-center gap-4">
+          <Image src={news.imageUrl} alt={news.slug} width={600} height={400} />
+          <div className="flex flex-col justify-center items-center">
+            <div
+              className="news-content"
+              style={{
+                whiteSpace: 'pre-line',
+              }}
+            >
+              {news.content.split('\n').map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph.startsWith('#') ? (
+                    <span className="font-bold">{paragraph.substring(1)}</span>
+                  ) : (
+                    paragraph
+                  )}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-row justify-between items-center gap-4 font-bold mt-6">
+          {news.author}
+        </div>
       </div>
     </Layout>
   );
