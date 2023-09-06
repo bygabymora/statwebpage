@@ -25,7 +25,8 @@ const postHandler = async (req, res) => {
     content: 'Sample content',
     category: 'Sample category',
     tags: ['tag1', 'tag2'],
-    imageUrl: 'https://example.com/sample-image.jpg',
+    imageUrl:
+      'https://res.cloudinary.com/dcjahs0jp/image/upload/v1694037866/arpshiwxqjzhv7edkhuy.png',
     author: 'Sample Author',
   });
 

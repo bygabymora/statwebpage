@@ -77,7 +77,7 @@ export default function AdminNewsEditScreen() {
 
   const router = useRouter();
 
-  const uploadHandler = async (e, imageField = 'image') => {
+  const uploadHandler = async (e, imageField = 'imageUrl') => {
     const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
     try {
       dispatch({ type: 'UPLOAD_REQUEST' });
@@ -218,7 +218,7 @@ export default function AdminNewsEditScreen() {
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="imageUrl"
-                  {...register('image', {
+                  {...register('imageUrl', {
                     required: 'Please enter image',
                   })}
                 />
