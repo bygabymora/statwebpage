@@ -69,8 +69,14 @@ export default function Newscreen(props) {
       </div>
       <div className="flex flex-col justify-center items-center">
         <h1 className="text-2xl mb-6">{news.title}</h1>
-        <div className="flex flex-row justify-between items-center gap-4">
-          <Image src={news.imageUrl} alt={news.slug} width={600} height={400} />
+        <div className="flex flex-row justify-between gap-4 items-start">
+          <Image
+            src={news.imageUrl}
+            alt={news.slug}
+            width={600}
+            height={400}
+            className="rounded-lg"
+          />
           <div className="flex flex-col justify-center items-center">
             <div
               className="news-content"
