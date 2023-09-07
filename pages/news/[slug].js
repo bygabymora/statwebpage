@@ -6,11 +6,59 @@ import db from '../../utils/db';
 import News from '../../models/News';
 import Image from 'next/image';
 
+function parseContentWithImages(content) {
+  // Use a regular expression to find image tags in the content
+  const imageTagRegex = /\[([^\]]+)\]/g;
+  const matches = content.match(imageTagRegex);
+
+  if (!matches) {
+    return content;
+  }
+
+  // Replace image tags with actual image elements
+  let parsedContent = content;
+  matches.forEach((match) => {
+    const imageUrl = match.slice(1, -1); // Remove brackets [ and ]
+    const imgElement = `<Image src="${imageUrl}" alt="${content}" />`;
+    parsedContent = parsedContent.replace(match, imgElement);
+  });
+
+  return parsedContent;
+}
+
+function formatContentWithParagraphTitles(content) {
+  // Split the content into paragraphs
+  const paragraphs = content.split('\n');
+
+  // Process each paragraph
+  const formattedContent = paragraphs
+    .map((paragraph) => {
+      if (paragraph.startsWith('#')) {
+        // If the paragraph starts with '#', make it bold
+        return `<p className="font-bold">${paragraph.substring(1)}</p>`;
+      } else {
+        // Otherwise, keep the paragraph as is
+        return `<p >${paragraph}</p>`;
+      }
+    })
+    .join('');
+
+  return formattedContent;
+}
+
 export default function Newscreen(props) {
   const { news } = props;
   if (!news) {
     return <p>News not found</p>;
   }
+
+  // Parse news.content to display embedded images
+  const parsedContentWithImages = parseContentWithImages(news.content);
+
+  // Format content with paragraph titles in bold
+  const formattedContent = formatContentWithParagraphTitles(
+    parsedContentWithImages
+  );
 
   return (
     <Layout title={news.slug} news={news}>
@@ -30,17 +78,8 @@ export default function Newscreen(props) {
               style={{
                 whiteSpace: 'pre-line',
               }}
-            >
-              {news.content.split('\n').map((paragraph, index) => (
-                <p key={index}>
-                  {paragraph.startsWith('#') ? (
-                    <span className="font-bold">{paragraph.substring(1)}</span>
-                  ) : (
-                    paragraph
-                  )}
-                </p>
-              ))}
-            </div>
+              dangerouslySetInnerHTML={{ __html: formattedContent }}
+            ></div>
           </div>
         </div>
         <div className="flex flex-row justify-between items-center gap-4 font-bold mt-6">
