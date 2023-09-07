@@ -87,7 +87,7 @@ export default function Newscreen(props) {
             ></div>
           </div>
         </div>
-        <div className="flex flex-row justify-between items-center gap-4 font-bold mt-6">
+        <div className="flex flex-row justify-between items-center gap-4 font-bold my-6 ">
           {news.author}
         </div>
       </div>
