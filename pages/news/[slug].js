@@ -19,7 +19,7 @@ function parseContentWithImages(content) {
   let parsedContent = content;
   matches.forEach((match) => {
     const imageUrl = match.slice(1, -1); // Remove brackets [ and ]
-    const imgElement = `<Image src="${imageUrl}" alt="${content}" width=${300} height=${200}/>`;
+    const imgElement = `<Image src="${imageUrl}" alt="${content}" width=${300} height=${200} class="mx-auto my-auto rounded-lg"/>`;
     parsedContent = parsedContent.replace(match, imgElement);
   });
 
