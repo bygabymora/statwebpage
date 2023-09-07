@@ -19,7 +19,7 @@ function parseContentWithImages(content) {
   let parsedContent = content;
   matches.forEach((match) => {
     const imageUrl = match.slice(1, -1); // Remove brackets [ and ]
-    const imgElement = `<Image src="${imageUrl}" alt="${content}" />`;
+    const imgElement = `<Image src="${imageUrl}" alt="${content}" width=${300} height=${200}/>`;
     parsedContent = parsedContent.replace(match, imgElement);
   });
 
@@ -34,8 +34,7 @@ function formatContentWithParagraphTitles(content) {
   const formattedContent = paragraphs
     .map((paragraph) => {
       if (paragraph.startsWith('#')) {
-        // If the paragraph starts with '#', make it bold
-        return `<p className="font-bold">${paragraph.substring(1)}</p>`;
+        return `<p><strong>${paragraph.substring(1)}</strong></p>`;
       } else {
         // Otherwise, keep the paragraph as is
         return `<p >${paragraph}</p>`;
