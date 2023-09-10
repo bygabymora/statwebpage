@@ -942,7 +942,6 @@ img {
   .product-image {
     grid-column: span 1;
     justify-self: center;
-    display: none;
   }
   body {
     margin: 0 0 var(--header-height) 0;
