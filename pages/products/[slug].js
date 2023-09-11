@@ -35,11 +35,7 @@ export default function ProductScreen(props) {
   const [emailManufacturer, setEmailManufacturer] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [startDistance, setStartDistance] = useState(null);
-  const imageRef = useRef(null);
-  const MAX_SCALE = 2; // 200%
-  const MIN_SCALE = 1; // 100%
+  const [touchTimeout, setTouchTimeout] = useState(null);
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -180,33 +176,24 @@ export default function ProductScreen(props) {
   //-----------//
 
   const handleTouchStart = (e) => {
-    if (e.touches.length === 2) {
-      const distance = Math.hypot(
-        e.touches[0].pageX - e.touches[1].pageX,
-        e.touches[0].pageY - e.touches[1].pageY
-      );
-      setStartDistance(distance);
-    }
-  };
+    if (e.touches.length === 1) {
+      const rect = e.target.getBoundingClientRect();
+      setCursorPos({
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      });
 
-  const handleTouchMove = (e) => {
-    if (e.touches.length === 2 && startDistance) {
-      const distance = Math.hypot(
-        e.touches[0].pageX - e.touches[1].pageX,
-        e.touches[0].pageY - e.touches[1].pageY
-      );
-      let newScale = (distance / startDistance) * scale;
+      const timeout = setTimeout(() => {
+        setIsHovered(true);
+      }, 500); // half a second
 
-      // Ensure the new scale respects the maximum and minimum bounds
-      newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
-
-      setScale(newScale);
-      imageRef.current.style.transform = `scale(${newScale})`;
+      setTouchTimeout(timeout);
     }
   };
 
   const handleTouchEnd = () => {
-    setStartDistance(null);
+    clearTimeout(touchTimeout);
+    setIsHovered(false);
   };
 
   const handleMouseMove = (e) => {
@@ -233,20 +220,14 @@ export default function ProductScreen(props) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
             <Image
-              ref={imageRef}
               src={product.image}
               alt={product.slug}
               width={640}
               height={640}
               className="rounded-lg hover:cursor-zoom-in"
-              style={{
-                transformOrigin: 'center center',
-                transform: `scale(${scale})`,
-              }}
             />
             {isHovered && (
               <div
