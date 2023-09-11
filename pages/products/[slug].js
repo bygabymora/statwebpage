@@ -38,6 +38,8 @@ export default function ProductScreen(props) {
   const [scale, setScale] = useState(1);
   const [startDistance, setStartDistance] = useState(null);
   const imageRef = useRef(null);
+  const MAX_SCALE = 2; // 200%
+  const MIN_SCALE = 1; // 100%
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -193,7 +195,11 @@ export default function ProductScreen(props) {
         e.touches[0].pageX - e.touches[1].pageX,
         e.touches[0].pageY - e.touches[1].pageY
       );
-      const newScale = (distance / startDistance) * scale;
+      let newScale = (distance / startDistance) * scale;
+
+      // Ensure the new scale respects the maximum and minimum bounds
+      newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+
       setScale(newScale);
       imageRef.current.style.transform = `scale(${newScale})`;
     }
@@ -237,7 +243,10 @@ export default function ProductScreen(props) {
               width={640}
               height={640}
               className="rounded-lg hover:cursor-zoom-in"
-              style={{ transformOrigin: 'center center' }}
+              style={{
+                transformOrigin: 'center center',
+                transform: `scale(${scale})`,
+              }}
             />
             {isHovered && (
               <div
