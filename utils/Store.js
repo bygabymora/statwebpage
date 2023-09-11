@@ -85,6 +85,10 @@ function reducer(state, action) {
             ...state.cart.shippingAddress,
             ...action.payload,
           },
+          billingAddress: {
+            ...state.cart.billingAddress,
+            ...action.payload,
+          },
         },
       };
     case 'SAVE_PAYMENT_METHOD':

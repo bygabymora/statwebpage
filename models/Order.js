@@ -32,7 +32,6 @@ const orderSchema = new mongoose.Schema(
       stateB: { type: String, required: true },
       cityB: { type: String, required: true },
       postalCodeB: { type: String, required: true },
-      notesB: { type: String, required: false },
     },
     paymentMethod: { type: String, required: true },
     paymentResult: { id: String, status: String, email_address: String },

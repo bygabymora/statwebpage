@@ -76,6 +76,7 @@ export default function ShippingScreen() {
   const [shippingPaymentMethod, setPaymentMethod] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
+  const [sameAddress, setSameAddress] = useState(true);
 
   const handleShippingSpeedChange = (event) => {
     setShippingSpeed(event.target.value);
@@ -180,6 +181,13 @@ export default function ShippingScreen() {
     state,
     city,
     postalCode,
+    fullNameB,
+    companyB,
+    phoneB,
+    addressB,
+    stateB,
+    cityB,
+    postalCodeB,
     notes,
   }) => {
     dispatch({
@@ -192,6 +200,13 @@ export default function ShippingScreen() {
         state,
         city,
         postalCode,
+        fullNameB,
+        companyB,
+        phoneB,
+        addressB,
+        stateB,
+        cityB,
+        postalCodeB,
         notes,
       },
     });
@@ -208,6 +223,15 @@ export default function ShippingScreen() {
           city,
           postalCode,
           notes,
+        },
+        billingAddress: {
+          fullNameB,
+          companyB,
+          phoneB,
+          addressB,
+          stateB,
+          cityB,
+          postalCodeB,
         },
       })
     );
@@ -242,6 +266,22 @@ export default function ShippingScreen() {
     }
   }, [lastOrder, setValue, useLastAddress]);
 
+  useEffect(() => {
+    if (sameAddress) {
+      setValue('fullNameB', shippingAddress.fullName);
+      setValue('companyB', shippingAddress.company);
+      setValue('phoneB', shippingAddress.phone);
+      setValue('addressB', shippingAddress.address);
+      setValue('stateB', shippingAddress.state);
+      setValue('cityB', shippingAddress.city);
+      setValue('postalCodeB', shippingAddress.postalCode);
+    }
+  }, [sameAddress, setValue, shippingAddress]);
+
+  const handleSameAddressChange = () => {
+    setSameAddress(!sameAddress);
+  };
+
   return (
     <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1}></CheckoutWizard>
@@ -251,7 +291,9 @@ export default function ShippingScreen() {
         onSubmit={handleSubmit(submitHandler)}
       >
         <div>
-          <h1 className="text-2xl font-bold">Shipping Address</h1>
+          <h1 className="text-2xl font-bold section__title">
+            Shipping & Billing Addresses
+          </h1>
           <p className="text-center font-semibold m-5 ">
             Shipping charges are not included. We can either bill your shipping
             account, or ship on our account for an additional fee. If you would
@@ -423,130 +465,151 @@ export default function ShippingScreen() {
             )}
           </div>
         </div>
-        <div>
+        <div className="mx-auto max-w-screen-md">
           <h1 className="text-2xl font-bold">Billing Address</h1>
           <div className="mb-4 contact__form-div">
-            <label htmlFor="fullName">Full Name*</label>
+            {/* Checkbox to toggle billing address same as shipping address */}
+            <label htmlFor="sameAddress">Same as Shipping Address</label> &nbsp;
             <input
-              className="w-full contact__form-input"
-              type="text"
-              id="fullName"
-              placeholder="Enter Full Name"
-              {...register('fullName', { required: true, minLength: 3 })}
-              autoFocus
-              autoCapitalize="true"
-              required
+              type="checkbox"
+              id="sameAddress"
+              checked={sameAddress}
+              onChange={handleSameAddressChange}
             />
-            {errors.fullName && (
-              <p className="text-red-500">Full Name is required.</p>
-            )}
           </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="company">Company</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="company"
-              placeholder="Company's Name"
-              {...register('company', { required: false, minLength: 3 })}
-              autoFocus
-              autoCapitalize="true"
-            />
-            {errors.company && (
-              <p className="text-red-500">Please check Company{"'"}s name.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="phone">Phone Number*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="phone"
-              placeholder="Enter Phone Number"
-              {...register('phone', { required: true, minLength: 3 })}
-              autoFocus
-              autoCapitalize="true"
-            />
-            {errors.phone && (
-              <p className="text-red-500">Phone Number is required.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="address">Address*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="adress"
-              placeholder="Enter address"
-              {...register('address', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.address && (
-              <p className="text-red-500">Address is required.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="state">State*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="state"
-              placeholder="Enter state"
-              {...register('state', { required: true, minLength: 3 })}
-              onChange={handleStateChange}
-              onFocus={() => setShowSuggestions(true)}
-              onKeyDown={handleKeyDown} // Add the onKeyDown event handler
-              autoCapitalize="true"
-              required
-            />
-            {errors.state && <p className="text-red-500">State is required.</p>}
-            {filteredStates.length > 0 &&
-              inputValue.length >= 3 &&
-              showSuggestions && (
-                <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
-                  {filteredStates.map((state, index) => (
-                    <div
-                      key={index}
-                      className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
-                        index === selectedSuggestion ? 'bg-gray-200' : ''
-                      }`} // Highlight the selected suggestion
-                      onClick={() => handleSelectState(state)}
-                    >
-                      {state}
+
+          {!sameAddress && (
+            <>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="fullNameB">Full Name*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="fullNameB"
+                  placeholder="Enter Full Name"
+                  {...register('fullNameB', { required: true, minLength: 3 })}
+                  autoFocus
+                  autoCapitalize="true"
+                  required
+                />
+                {errors.fullNameB && (
+                  <p className="text-red-500">Full Name is required.</p>
+                )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="companyB">Company</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="companyB"
+                  placeholder="Company's Name"
+                  {...register('companyB', { required: false, minLength: 3 })}
+                  autoFocus
+                  autoCapitalize="true"
+                />
+                {errors.companyB && (
+                  <p className="text-red-500">
+                    Please check Company{"'"}s name.
+                  </p>
+                )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="phoneB">Phone Number*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="phoneB"
+                  placeholder="Enter Phone Number"
+                  {...register('phoneB', { required: true, minLength: 3 })}
+                  autoFocus
+                  autoCapitalize="true"
+                />
+                {errors.phoneB && (
+                  <p className="text-red-500">Phone Number is required.</p>
+                )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="addressB">Address*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="adressB"
+                  placeholder="Enter address"
+                  {...register('addressB', { required: true, minLength: 3 })}
+                  autoCapitalize="true"
+                  required
+                />
+                {errors.addressB && (
+                  <p className="text-red-500">Address is required.</p>
+                )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="stateB">State*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="stateB"
+                  placeholder="Enter state"
+                  {...register('stateB', { required: true, minLength: 3 })}
+                  onChange={handleStateChange}
+                  onFocus={() => setShowSuggestions(true)}
+                  onKeyDown={handleKeyDown} // Add the onKeyDown event handler
+                  autoCapitalize="true"
+                  required
+                />
+                {errors.stateB && (
+                  <p className="text-red-500">State is required.</p>
+                )}
+                {filteredStates.length > 0 &&
+                  inputValue.length >= 3 &&
+                  showSuggestions && (
+                    <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
+                      {filteredStates.map((state, index) => (
+                        <div
+                          key={index}
+                          className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
+                            index === selectedSuggestion ? 'bg-gray-200' : ''
+                          }`} // Highlight the selected suggestion
+                          onClick={() => handleSelectState(state)}
+                        >
+                          {state}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="city">City*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="city"
-              placeholder="Enter city"
-              {...register('city', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.city && <p className="text-red-500">City is required.</p>}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="postalCode">Postal Code*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="postalCode"
-              placeholder="Enter postal code"
-              {...register('postalCode', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.postalCode && (
-              <p className="text-red-500">Postal Code is required.</p>
-            )}
-          </div>
+                  )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="cityB">City*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="cityB"
+                  placeholder="Enter city"
+                  {...register('cityB', { required: true, minLength: 3 })}
+                  autoCapitalize="true"
+                  required
+                />
+                {errors.cityB && (
+                  <p className="text-red-500">City is required.</p>
+                )}
+              </div>
+              <div className="mb-4 contact__form-div">
+                <label htmlFor="postalCodeB">Postal Code*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="postalCodeB"
+                  placeholder="Enter postal code"
+                  {...register('postalCodeB', { required: true, minLength: 3 })}
+                  autoCapitalize="true"
+                  required
+                />
+                {errors.postalCodeB && (
+                  <p className="text-red-500">Postal Code is required.</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
         <div className="mx-auto max-w-screen-md">
           <h1 className="mb-4 text-xl">Shipping preferences</h1>
