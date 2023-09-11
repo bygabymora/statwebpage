@@ -169,43 +169,8 @@ export const ProductItem = ({ product }) => {
   };
   //-----------//
 
-  const handleContextMenu = (e) => {
-    e.preventDefault(); // Prevent the default context menu
-
-    const menu = document.getElementById('customContextMenu');
-
-    // Set the position of the custom context menu and display it
-    menu.style.top = `${e.pageY}px`;
-    menu.style.left = `${e.pageX}px`;
-    menu.style.display = 'block';
-
-    // Handle click outside the menu to close it
-    window.addEventListener('click', () => {
-      menu.style.display = 'none';
-    });
-  };
-
-  const handleMenuItemClick = (e) => {
-    e.stopPropagation();
-    const menu = document.getElementById('customContextMenu');
-    menu.style.display = 'none';
-  };
-
   return (
     <div className="card justify-center items-center text-center mb-3 text-xs lg:text-lg">
-      <div
-        id="customContextMenu"
-        className="custom-context-menu"
-        onClick={(e) => handleMenuItemClick(e)}
-      >
-        <Link
-          href={{ pathname: `products/${product.slug}` }}
-          className="menu-item"
-          target="_blank"
-        >
-          Open Link in New Tab
-        </Link>
-      </div>
       <Link
         href={{ pathname: `products/${product.slug}` }}
         className="justify-center items-center text-center"
@@ -217,7 +182,7 @@ export const ProductItem = ({ product }) => {
             className="product-image no-drag"
             width={800}
             height={1000}
-            onContextMenu={handleContextMenu}
+            onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
           />
         </div>
