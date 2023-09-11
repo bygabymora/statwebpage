@@ -35,7 +35,6 @@ export default function ProductScreen(props) {
   const [emailManufacturer, setEmailManufacturer] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-  const [touchTimeout, setTouchTimeout] = useState(null);
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -175,35 +174,6 @@ export default function ProductScreen(props) {
   };
   //-----------//
 
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      const rect = e.target.getBoundingClientRect();
-      setCursorPos({
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top,
-      });
-
-      const timeout = setTimeout(() => {
-        setIsHovered(true);
-      }, 500); // half a second
-
-      setTouchTimeout(timeout);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    clearTimeout(touchTimeout);
-    setIsHovered(false);
-  };
-
-  const handleMouseMove = (e) => {
-    const rect = e.target.getBoundingClientRect();
-    setCursorPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
   return (
     <Layout title={product.slug}>
       <div className="py-2">
@@ -215,15 +185,19 @@ export default function ProductScreen(props) {
       <div className="product-grid">
         <div className="product-image">
           <div
-            className="relative"
-            onMouseMove={handleMouseMove}
+            onMouseMove={(e) => {
+              const rect = e.target.getBoundingClientRect();
+              setCursorPos({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+              });
+            }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
+            className="relative"
           >
             <Image
-              src={product.image}
+              src={`${product.image}`}
               alt={product.slug}
               width={640}
               height={640}
@@ -237,20 +211,31 @@ export default function ProductScreen(props) {
                   height: '100px',
                   borderRadius: '50%',
                   position: 'absolute',
-                  top: cursorPos.y - 50,
+                  top: cursorPos.y - 50, // center it around the cursor
                   left: cursorPos.x - 50,
                   backgroundImage: `url(${product.image})`,
                   backgroundPosition: `-${(cursorPos.x - 50) * 2}px -${
                     (cursorPos.y - 80) * 2
                   }px`,
-                  backgroundSize: '1280px 1280px',
+                  backgroundSize: '1280px 1280px', // this should be 2x the original image dimensions
                   border: '2px solid gray',
-                  transform: 'scale(2)',
-                  pointerEvents: 'none',
+                  transform: 'scale(2)', // magnifying effect
+                  pointerEvents: 'none', // to prevent mouse events on this element
                 }}
               ></div>
             )}
           </div>
+
+          <style jsx global>{`
+            .no-drag {
+              -webkit-user-drag: none;
+              user-drag: none;
+              -webkit-user-select: none;
+              user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+            }
+          `}</style>
         </div>
 
         <div className="">
