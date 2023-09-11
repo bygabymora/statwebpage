@@ -33,6 +33,11 @@ export default function ProductScreen(props) {
   const [email, setEmail] = useState('');
   const [emailSlug, setEmailSlug] = useState('');
   const [emailManufacturer, setEmailManufacturer] = useState('');
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [startDistance, setStartDistance] = useState(null);
+  const imageRef = useRef(null);
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -172,6 +177,40 @@ export default function ProductScreen(props) {
   };
   //-----------//
 
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      const distance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+      setStartDistance(distance);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2 && startDistance) {
+      const distance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+      const newScale = (distance / startDistance) * scale;
+      setScale(newScale);
+      imageRef.current.style.transform = `scale(${newScale})`;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setStartDistance(null);
+  };
+
+  const handleMouseMove = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    setCursorPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   return (
     <Layout title={product.slug}>
       <div className="py-2">
@@ -182,13 +221,48 @@ export default function ProductScreen(props) {
       </div>
       <div className="product-grid">
         <div className="product-image">
-          <Image
-            src={`${product.image}`}
-            alt={product.slug}
-            width={640}
-            height={640}
-          />
+          <div
+            className="relative"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <Image
+              ref={imageRef}
+              src={product.image}
+              alt={product.slug}
+              width={640}
+              height={640}
+              className="rounded-lg hover:cursor-zoom-in"
+              style={{ transformOrigin: 'center center' }}
+            />
+            {isHovered && (
+              <div
+                className="hidden md:block"
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: cursorPos.y - 50,
+                  left: cursorPos.x - 50,
+                  backgroundImage: `url(${product.image})`,
+                  backgroundPosition: `-${(cursorPos.x - 50) * 2}px -${
+                    (cursorPos.y - 80) * 2
+                  }px`,
+                  backgroundSize: '1280px 1280px',
+                  border: '2px solid gray',
+                  transform: 'scale(2)',
+                  pointerEvents: 'none',
+                }}
+              ></div>
+            )}
+          </div>
         </div>
+
         <div className="">
           <ul>
             <li>
