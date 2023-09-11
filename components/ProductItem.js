@@ -193,24 +193,23 @@ export const ProductItem = ({ product }) => {
 
   return (
     <div className="card justify-center items-center text-center mb-3 text-xs lg:text-lg">
+      <div
+        id="customContextMenu"
+        className="custom-context-menu"
+        onClick={(e) => handleMenuItemClick(e)}
+      >
+        <Link
+          href={{ pathname: `products/${product.slug}` }}
+          className="menu-item"
+          target="_blank"
+        >
+          Open Link in New Tab
+        </Link>
+      </div>
       <Link
         href={{ pathname: `products/${product.slug}` }}
         className="justify-center items-center text-center"
       >
-        <div
-          id="customContextMenu"
-          className="custom-context-menu"
-          onClick={(e) => handleMenuItemClick(e)}
-        >
-          <Link
-            href={{ pathname: `products/${product.slug}` }}
-            className="menu-item"
-            target="_blank"
-          >
-            Open Link in New Tab
-          </Link>
-        </div>
-
         <div className="">
           <Image
             src={`${product.image}`}
