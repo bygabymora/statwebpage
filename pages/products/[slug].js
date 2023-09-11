@@ -197,7 +197,7 @@ export default function ProductScreen(props) {
             className="relative"
           >
             <Image
-              src={`${product.image}`}
+              src={product.image}
               alt={product.slug}
               width={640}
               height={640}
