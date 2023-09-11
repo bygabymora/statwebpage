@@ -201,7 +201,9 @@ export default function ProductScreen(props) {
               alt={product.slug}
               width={640}
               height={640}
-              className="rounded-lg hover:cursor-zoom-in"
+              className="rounded-lg hover:cursor-zoom-in no-drag" // <-- Added no-drag class here
+              onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
+              onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
             />
             {isHovered && (
               <div
@@ -211,16 +213,16 @@ export default function ProductScreen(props) {
                   height: '100px',
                   borderRadius: '50%',
                   position: 'absolute',
-                  top: cursorPos.y - 50, // center it around the cursor
+                  top: cursorPos.y - 50,
                   left: cursorPos.x - 50,
                   backgroundImage: `url(${product.image})`,
                   backgroundPosition: `-${(cursorPos.x - 50) * 2}px -${
                     (cursorPos.y - 80) * 2
                   }px`,
-                  backgroundSize: '1280px 1280px', // this should be 2x the original image dimensions
+                  backgroundSize: '1280px 1280px',
                   border: '2px solid gray',
-                  transform: 'scale(2)', // magnifying effect
-                  pointerEvents: 'none', // to prevent mouse events on this element
+                  transform: 'scale(2)',
+                  pointerEvents: 'none',
                 }}
               ></div>
             )}
