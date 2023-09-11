@@ -392,6 +392,29 @@ img {
   background-color: var(--title-color-dark);
   cursor: pointer;
 }
+.no-drag {
+  -webkit-user-select: none; /* Safari, Chrome, and Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, should be the last one */
+}
+.custom-context-menu {
+  display: none;
+  position: absolute;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  z-index: 1000;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #e6e6e6;
+}
 
 /*=============== SING UP/SING IN ===============*/
 .user-name {

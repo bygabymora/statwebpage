@@ -169,22 +169,61 @@ export const ProductItem = ({ product }) => {
   };
   //-----------//
 
+  const handleContextMenu = (e) => {
+    e.preventDefault(); // Prevent the default context menu
+
+    const menu = document.getElementById('customContextMenu');
+
+    // Set the position of the custom context menu and display it
+    menu.style.top = `${e.pageY}px`;
+    menu.style.left = `${e.pageX}px`;
+    menu.style.display = 'block';
+
+    // Handle click outside the menu to close it
+    window.addEventListener('click', () => {
+      menu.style.display = 'none';
+    });
+  };
+
+  const handleMenuItemClick = (e) => {
+    e.stopPropagation();
+    const menu = document.getElementById('customContextMenu');
+    menu.style.display = 'none';
+  };
+
   return (
     <div className="card justify-center items-center text-center mb-3 text-xs lg:text-lg">
       <Link
         href={{ pathname: `products/${product.slug}` }}
         className="justify-center items-center text-center"
       >
+        <div
+          id="customContextMenu"
+          className="custom-context-menu"
+          onClick={(e) => handleMenuItemClick(e)}
+        >
+          <Link
+            href={{ pathname: `products/${product.slug}` }}
+            className="menu-item"
+            target="_blank"
+          >
+            Open Link in New Tab
+          </Link>
+        </div>
+
         <div className="">
           <Image
             src={`${product.image}`}
             alt={currentDescription}
-            className="product-image"
+            className="product-image no-drag"
             width={800}
             height={1000}
+            onContextMenu={handleContextMenu}
+            onDragStart={(e) => e.preventDefault()}
           />
         </div>
       </Link>
+
       <div className="flex flex-col justify-center items-center p-5">
         <Link
           href={{ pathname: `products/${product.slug}` }}
@@ -204,7 +243,10 @@ export const ProductItem = ({ product }) => {
           </div>
         </Link>
 
-        <div className="mb-2 flex items-center justify-center hidden lg:block">
+        <div
+          className="mb-2 flex items-center justify-center 
+         lg:block"
+        >
           <div className="font-bold mt-4">Quantity &nbsp;</div>
           <div className="flex items-center flex-row">
             <button
