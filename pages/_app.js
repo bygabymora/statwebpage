@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'YOUR_ADS_TAG_ID');
+        gtag('config', 'G-3JJZVPL0B5');
     `}
         </Script>
 
