@@ -161,7 +161,6 @@ export default function ShippingScreen() {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const { shippingAddress } = cart;
-  const { billingAddress } = cart;
 
   useEffect(() => {
     setValue('fullName', shippingAddress.fullName);
@@ -173,16 +172,6 @@ export default function ShippingScreen() {
     setValue('postalCode', shippingAddress.postalCode);
     setValue('notes', shippingAddress.notes);
   }, [setValue, shippingAddress]);
-
-  useEffect(() => {
-    setValue('fullNameB', billingAddress.fullNameB);
-    setValue('companyB', billingAddress.companyB);
-    setValue('phoneB', billingAddress.phoneB);
-    setValue('addressB', billingAddress.addressB);
-    setValue('stateB', billingAddress.stateB);
-    setValue('cityB', billingAddress.cityB);
-    setValue('postalCodeB', billingAddress.postalCodeB);
-  }, [setValue, billingAddress]);
 
   const submitHandler = ({
     fullName,
