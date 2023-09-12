@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <CookieAcceptancePopup />
         <Script
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=YOUR_ADS_TAG_ID"
+          src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
         />
         <Script id="gtag-init" strategy="afterInteractive">
           {`
