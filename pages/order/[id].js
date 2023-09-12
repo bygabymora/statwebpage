@@ -125,6 +125,7 @@ function OrderScreen() {
 
   const {
     shippingAddress,
+    billingAddress,
     paymentMethod,
     orderItems,
     itemsPrice,
@@ -409,8 +410,9 @@ function OrderScreen() {
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
-          {console.log({ shippingAddress: shippingAddress.fullName })}
+          {console.log({ shippingAddress: shippingAddress })}
           {console.log({ userEmail: userEmail })}
+          {console.log({ billingAddress: billingAddress.fullNameB })}
 
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
@@ -438,6 +440,13 @@ function OrderScreen() {
                 {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
                 {shippingAddress.phone}, {shippingAddress.address},{' '}
                 {shippingAddress.city}, {shippingAddress.postalCode}{' '}
+                <h2 className="mb-2 text-lg">Billing Address</h2>
+                <div>
+                  {billingAddress.fullNameB},{' '}
+                  {billingAddress.companyB && <>{billingAddress.companyB},</>}{' '}
+                  {billingAddress.phoneB}, {billingAddress.addressB},{' '}
+                  {billingAddress.cityB}, {billingAddress.postalCodeB}{' '}
+                </div>
                 {shippingAddress.notes && (
                   <>
                     <br />

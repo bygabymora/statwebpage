@@ -14,7 +14,7 @@ import emailjs from '@emailjs/browser';
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const { cartItems, shippingAddress, paymentMethod } = cart;
+  const { cartItems, shippingAddress, billingAddress, paymentMethod } = cart;
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -108,6 +108,7 @@ export default function PlaceOrderScreen() {
       const { data } = await axios.post('/api/orders', {
         orderItems: cartItems,
         shippingAddress,
+        billingAddress,
         paymentMethod,
         itemsPrice,
         totalPrice,
@@ -130,6 +131,7 @@ export default function PlaceOrderScreen() {
     console.log({
       cartItems,
       shippingAddress,
+      billingAddress,
       paymentMethod,
       itemsPrice,
     });
@@ -174,6 +176,13 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
                 {shippingAddress.phone}, {shippingAddress.address},{' '}
                 {shippingAddress.city}, {shippingAddress.postalCode}{' '}
+                <h2 className="mb-2 text-lg">Billing Address</h2>
+                <div>
+                  {billingAddress.fullName},{' '}
+                  {billingAddress.company && <>{billingAddress.company},</>}{' '}
+                  {billingAddress.phone}, {billingAddress.address},{' '}
+                  {billingAddress.city}, {billingAddress.postalCode}{' '}
+                </div>
                 {shippingAddress.notes && (
                   <>
                     <br />
@@ -182,6 +191,7 @@ export default function PlaceOrderScreen() {
                   </>
                 )}
               </div>
+
               <div>
                 <Link className="underline font-bold" href="/shipping">
                   Edit
