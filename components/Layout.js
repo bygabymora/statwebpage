@@ -14,6 +14,11 @@ export default function Layout({ title, children, news, product }) {
         <title>{title ? title : 'STAT'}</title>
         <meta name="surgical supplies" content="Surgical Supplies" />
         <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="alternate"
+          type="application/ld+json"
+          href="/api/featuredProductsJSONLD"
+        />
         {news && (
           <>
             <meta name="description" content={news.content.substring(0, 160)} />
