@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
 import { Analytics } from '@vercel/analytics/react';
+import { generateJSONLD } from '../utils/seo';
 
 export default function Layout({ title, children, news }) {
   return (
@@ -32,6 +33,9 @@ export default function Layout({ title, children, news }) {
               rel="canonical"
               href={`https://www.statsurgicalsupply.com/news/${news.slug}`}
             />
+            <script type="application/ld+json">
+              {JSON.stringify(generateJSONLD(news))}
+            </script>
           </>
         )}
       </Head>
