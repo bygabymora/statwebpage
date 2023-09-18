@@ -26,4 +26,28 @@ function generateJSONLD(news) {
   };
 }
 
-export { generateJSONLD };
+function generateProductJSONLD(product) {
+  return {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image,
+    description: product.description || '',
+    sku: product.slug || '',
+    mpn: product.slug || '',
+    brand: {
+      '@type': 'Thing',
+      name: product.manufacturer,
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'USD',
+      price: product.price,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: 'https://schema.org/InStock',
+      url: `https://www.statsurgicalsupply.com/products/${product.slug}`,
+    },
+  };
+}
+
+export { generateJSONLD, generateProductJSONLD };

@@ -5,9 +5,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
 import { Analytics } from '@vercel/analytics/react';
-import { generateJSONLD } from '../utils/seo';
+import { generateJSONLD, generateProductJSONLD } from '../utils/seo';
 
-export default function Layout({ title, children, news }) {
+export default function Layout({ title, children, news, product }) {
   return (
     <div className="w-full">
       <Head>
@@ -37,6 +37,14 @@ export default function Layout({ title, children, news }) {
               {JSON.stringify(generateJSONLD(news))}
             </script>
           </>
+        )}
+        {product && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(generateProductJSONLD(product)),
+            }}
+          />
         )}
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
