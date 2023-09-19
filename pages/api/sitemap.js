@@ -16,9 +16,9 @@ export default async function sitemap(req, res) {
   await db.disconnect();
 
   // Create the XML sitemap format
-  const sitemap = `
-    <?xml version="1.0" encoding="UTF-8"?>
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
       ${newsArticles
         .map(
           (news) => `
