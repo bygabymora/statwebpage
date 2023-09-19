@@ -6,13 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
 import { Analytics } from '@vercel/analytics/react';
 import { generateJSONLD, generateProductJSONLD } from '../utils/seo';
+import Logo from '../public/images/assets/logo2.png';
 
 export default function Layout({ title, children, news, product }) {
   return (
     <div className="w-full">
+      <Analytics />
       <Head>
         <title>{title ? title : 'STAT'}</title>
-        <meta name="surgical supplies" content="Surgical Supplies" />
+        <meta name="description" content="Surgical Supplies at low price" />
         <link rel="icon" href="/favicon.ico" />
         <link
           rel="alternate"
@@ -51,15 +53,20 @@ export default function Layout({ title, children, news, product }) {
             }}
           />
         )}
+        <meta property="og:title" content="Stat Surgical Supply" />
+        <meta
+          property="og:description"
+          content="Surgical supplies with low price"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={Logo} />
+        <meta property="og:url" content="https://www.statsurgicalsupply.com/" />
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
         <Header />
 
-        <main className="main container  m-auto mt-11 px-4">
-          <Analytics />
-          {children}
-        </main>
+        <main className="main container  m-auto mt-11 px-4">{children}</main>
 
         <Footer />
       </div>
