@@ -61,6 +61,14 @@ export default function Layout({ title, children, news, product }) {
         <meta property="og:type" content="website" />
         <meta property="og:image" content={Logo} />
         <meta property="og:url" content="https://www.statsurgicalsupply.com/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@statsurgicalsupply" />
+        <meta name="twitter:title" content="Stat Surgical Supply" />
+        <meta
+          name="twitter:description"
+          content="Surgical supplies with low price"
+        />
+        <meta name="twitter:image" content={Logo} />
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
