@@ -37,7 +37,7 @@ export default async function sitemap(req, res) {
             <loc>${BASE_URL}/products/${product.slug}</loc>
             <changefreq>hourly</changefreq>
             <priority>0.9</priority>
-            <data>${product.slug}</data>
+            
           </url>
         `
         )
