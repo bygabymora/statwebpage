@@ -47,46 +47,47 @@ export default function ProductScreen(props) {
       setCurrentPrice(product.priceBulk);
       setCurrentDescription(product.descriptionBulk);
       setCurrentCountInStock(product.countInStockBulk);
-    } else if (
-      product.countInStockBulk === 0 &&
-      product.countInStockClearance > 0
-    ) {
+    }
+  }, [
+    product.countInStock,
+    product.priceBulk,
+    product.descriptionBulk,
+    product.countInStockBulk,
+  ]);
+
+  useEffect(() => {
+    if (product.countInStockBulk === 0 && product.countInStock === 0) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
-    } else {
-      setPurchaseType('Each');
     }
   }, [
-    product.countInStock,
     product.countInStockBulk,
-    product.countInStockClearance,
-    product.descriptionBulk,
-    product.priceBulk,
-    product.descriptionClearance,
+    product.countInStock,
     product.priceClearance,
+    product.descriptionClearance,
+    product.countInStockClearance,
   ]);
 
   useEffect(() => {
     if (
-      product.countInStock === 0 &&
+      product.countInStockClearance === 0 &&
       product.countInStockBulk === 0 &&
-      product.countInStockClearance === 0
+      product.countInStock === 0
     ) {
       setPurchaseType('Each');
       setCurrentPrice(product.price);
       setCurrentDescription(product.description);
+      setCurrentCountInStock(product.countInStock);
       setIsOutOfStock(true);
+      setIsOutOfStockBulk(true);
+      setIsOutOfStockClearance(true);
     }
   }, [
-    product.countInStock,
-    product.countInStockBulk,
     product.countInStockClearance,
-    product.descriptionBulk,
-    product.priceBulk,
-    product.descriptionClearance,
-    product.priceClearance,
+    product.countInStockBulk,
+    product.countInStock,
     product.price,
     product.description,
   ]);
@@ -252,6 +253,12 @@ export default function ProductScreen(props) {
             <li>
               <h1 className="text-xl">{currentDescription}</h1>
             </li>
+            {purchaseType === 'Clearance' && (
+              <li>
+                <h1 className="text-xl text-red-400">Product on Clearance!</h1>
+                <p>{product.notes}</p>
+              </li>
+            )}
             {product.sentOverNight && (
               <li>
                 <br />
@@ -319,12 +326,20 @@ export default function ProductScreen(props) {
                     setCurrentPrice(product.price);
                     setCurrentDescription(product.description);
                     setCurrentCountInStock(product.countInStock);
+                  } else if (e.target.value === 'Clearance') {
+                    // Handle Clearance option
+                    setCurrentPrice(product.priceClearance);
+                    setCurrentDescription(product.descriptionClearance);
+                    setCurrentCountInStock(product.countInStockClearance);
                   }
                 }}
               >
                 {product.countInStock > 0 && <option value="Each">Each</option>}
                 {product.countInStockBulk > 0 && (
                   <option value="Bulk">Box</option>
+                )}
+                {product.countInStockClearance > 0 && (
+                  <option value="Clearance">Clearance</option>
                 )}
               </select>
             </div>

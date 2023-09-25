@@ -394,20 +394,7 @@ export default function AdminProductEditScreen() {
                   )}
                 </div>
               </div>
-              <div className="mb-4">
-                <label htmlFor="category">Notes</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="notes"
-                  {...register('notes', {
-                    required: 'Please enter notes',
-                  })}
-                />
-                {errors.notes && (
-                  <div className="text-red-500">{errors.notes.message}</div>
-                )}
-              </div>
+
               <h2>Clearance</h2>
               <div className="mb-4">
                 <label htmlFor="isInClearance">Is in Clearance</label>
@@ -472,6 +459,20 @@ export default function AdminProductEditScreen() {
                   <div className="text-red-500">
                     {errors.countInStockClearance.message}
                   </div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="category">Notes</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="notes"
+                  {...register('notes', {
+                    required: 'Please enter notes',
+                  })}
+                />
+                {errors.notes && (
+                  <div className="text-red-500">{errors.notes.message}</div>
                 )}
               </div>
               <div className="mb-4">
