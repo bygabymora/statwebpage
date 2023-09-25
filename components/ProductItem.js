@@ -63,6 +63,8 @@ export const ProductItem = ({ product }) => {
       setCurrentDescription(product.description);
       setCurrentCountInStock(product.countInStock);
       setIsOutOfStock(true);
+      setIsOutOfStockBulk(true);
+      setIsOutOfStockClearance(true);
     }
   }, [
     product.countInStockClearance,
