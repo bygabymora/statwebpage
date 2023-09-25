@@ -29,50 +29,50 @@ export const ProductItem = ({ product }) => {
       setCurrentPrice(product.priceBulk);
       setCurrentDescription(product.descriptionBulk);
       setCurrentCountInStock(product.countInStockBulk);
-    } else if (
-      product.countInStockBulk === 0 &&
-      product.countInStockClearance > 0
-    ) {
+    }
+  }, [
+    product.countInStock,
+    product.priceBulk,
+    product.descriptionBulk,
+    product.countInStockBulk,
+  ]);
+
+  useEffect(() => {
+    if (product.countInStockBulk === 0 && product.countInStock === 0) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
     }
   }, [
-    product.countInStock,
     product.countInStockBulk,
-    product.countInStockClearance,
-    product.descriptionBulk,
-    product.priceBulk,
-    product.descriptionClearance,
+    product.countInStock,
     product.priceClearance,
-    product.price,
-    product.description,
+    product.descriptionClearance,
+    product.countInStockClearance,
   ]);
 
   useEffect(() => {
     if (
-      product.countInStock === 0 &&
+      product.countInStockClearance === 0 &&
       product.countInStockBulk === 0 &&
-      product.countInStockClearance === 0
+      product.countInStock === 0
     ) {
       setPurchaseType('Each');
       setCurrentPrice(product.price);
       setCurrentDescription(product.description);
+      setCurrentCountInStock(product.countInStock);
       setIsOutOfStock(true);
     }
   }, [
-    product.countInStock,
-    product.countInStockBulk,
     product.countInStockClearance,
-    product.descriptionBulk,
-    product.priceBulk,
-    product.descriptionClearance,
-    product.priceClearance,
+    product.countInStockBulk,
+    product.countInStock,
     product.price,
     product.description,
   ]);
 
+  console.log(currentDescription);
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
       (x) => x.slug === product.slug && x.purchaseType === purchaseType
@@ -106,13 +106,17 @@ export const ProductItem = ({ product }) => {
             ? product.description
             : purchaseType === 'Bulk'
             ? product.descriptionBulk
-            : product.descriptionClearance,
+            : purchaseType === 'Clearance'
+            ? product.descriptionClearance
+            : product.description,
         countInStock:
           purchaseType === 'Each'
             ? data.countInStock
             : purchaseType === 'Bulk'
             ? data.countInStockBulk
-            : data.countInStockClearance,
+            : purchaseType === 'Clearance'
+            ? data.countInStockClearance
+            : data.countInStock,
       },
     });
     setQty(1);
