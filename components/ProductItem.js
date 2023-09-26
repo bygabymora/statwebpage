@@ -7,7 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
 
-export const ProductItem = ({ product }) => {
+export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState(false);
@@ -73,6 +73,15 @@ export const ProductItem = ({ product }) => {
     product.price,
     product.description,
   ]);
+
+  useEffect(() => {
+    if (clearancePurchaseType) {
+      setPurchaseType('Clearance');
+      setCurrentPrice(product.priceClearance);
+      setCurrentDescription(product.descriptionClearance);
+      setCurrentCountInStock(product.countInStockClearance);
+    }
+  }, [clearancePurchaseType, product]);
 
   console.log(currentDescription);
   const addToCartHandler = async () => {

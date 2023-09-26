@@ -74,7 +74,11 @@ export default function Clearance({ products }) {
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
             {filteredProducts.map((product) => (
-              <ProductItem product={product} key={product.slug}></ProductItem>
+              <ProductItem
+                product={product}
+                key={product.slug}
+                clearancePurchaseType={true}
+              ></ProductItem>
             ))}
           </div>
         </div>
