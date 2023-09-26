@@ -211,6 +211,12 @@ export const ProductItem = ({ product }) => {
               <span className="flex-1 ">{currentDescription}</span>
             </div>
           </div>
+          {purchaseType === 'Clearance' && (
+            <div className="border border-gray-200 mt-2">
+              <h1 className="text-red-500">Clearance</h1>
+              <p className="text-gray-500">{product.notes}</p>
+            </div>
+          )}
         </Link>
 
         <div
