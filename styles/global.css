@@ -416,6 +416,29 @@ img {
   background-color: #e6e6e6;
 }
 
+/*=============== CAROUSEL ===============*/
+.carousel-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-items {
+  display: flex;
+  transition: all 0.5s ease-in-out;
+}
+
+/* Assuming each ProductItem has a fixed width */
+.carousel-item {
+  flex: 0 0 auto;
+  width: calc(100% / 3); /* default to 3 items visible */
+}
+
+@media (max-width: 768px) {
+  .carousel-item {
+    width: 100%; /* for mobile */
+  }
+}
+
 /*=============== SING UP/SING IN ===============*/
 .user-name {
   @apply ml-4 mb-2;

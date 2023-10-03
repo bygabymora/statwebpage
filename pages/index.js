@@ -4,40 +4,124 @@ import React from 'react';
 import Banner from '../components/Banner';
 import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Product from '../models/Product.js';
 import db from '../utils/db.js';
 
-export default function Home({ products }) {
-  const [carouselCenterSlidePercentage, setCarouselCenterSlidePercentage] =
-    React.useState(33.33); // Set a default value for initial rendering
+function Carousel({ products }) {
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [visibleItems, setVisibleItems] = React.useState(3);
+  const [totalSlides, setTotalSlides] = React.useState(7); // default to a larger screen size
+  const [touchStartX, setTouchStartX] = React.useState(0);
+  const [touchEndX, setTouchEndX] = React.useState(0);
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX - touchEndX > 75) {
+      // if swipe left for over 75px
+      nextSlide();
+    }
+
+    if (touchEndX - touchStartX > 75) {
+      // if swipe right for over 75px
+      prevSlide();
+    }
+  };
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth < 768) {
+        setTotalSlides(9);
+      } else {
+        setTotalSlides(7);
+      }
+    }
+  }, []);
+
+  const prevSlide = () => {
+    setCurrentSlide((oldSlide) => Math.max(oldSlide - 1, 0));
+  };
+
+  const nextSlide = React.useCallback(() => {
+    setCurrentSlide((oldSlide) => {
+      if (oldSlide + 1 < totalSlides) {
+        return oldSlide + 1;
+      } else {
+        return 0; // Return to the first slide when you reach the end
+      }
+    });
+  }, [totalSlides]);
 
   React.useEffect(() => {
     const handleResize = () => {
-      // Calculate the centerSlidePercentage based on the window size
       if (window.innerWidth < 768) {
-        // Small screens, show one item at a time
-        setCarouselCenterSlidePercentage(100);
-      } else if (window.innerWidth < 1024) {
-        // Medium screens, show two items at a time
-        setCarouselCenterSlidePercentage(50);
+        setVisibleItems(1);
       } else {
-        // Larger screens, show three items at a time
-        setCarouselCenterSlidePercentage(33.33);
+        setVisibleItems(3);
       }
     };
 
-    handleResize(); // Call the handleResize function on initial load
-
-    // Add a window resize event listener
+    handleResize(); // Call on initial render
     window.addEventListener('resize', handleResize);
 
-    // Clean up the event listener on component unmount
+    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  // Auto-play
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 3000); // 3 seconds interval
+
+    return () => clearInterval(interval); // Clear the interval when the component unmounts
+  }, [nextSlide]);
+
+  return (
+    <div className="carousel-container">
+      <button onClick={prevSlide} disabled={currentSlide === 0}>
+        Prev
+      </button>
+      <div
+        className="carousel-items"
+        style={{
+          transform: `translateX(-${currentSlide * (100 / visibleItems)}%)`,
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {products.map((product) => (
+          <div className="carousel-item px-3 lg:px-0" key={product.slug}>
+            <ProductItem product={product} />
+          </div>
+        ))}
+      </div>
+
+      <button onClick={nextSlide} disabled={currentSlide >= totalSlides - 1}>
+        Next
+      </button>
+    </div>
+  );
+}
+
+export default function Home({ products }) {
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.countInStock > 0 ||
+        product.countInStockBulk > 0 ||
+        product.countInStockClearance > 0
+    )
+    .slice(0, 9);
 
   return (
     <Layout title="STAT Surgical Supply">
@@ -46,32 +130,7 @@ export default function Home({ products }) {
       <h2 className="section__title" id="products">
         Featured Products
       </h2>
-      <Carousel
-        showArrows={true}
-        showThumbs={true}
-        showStatus={false}
-        showIndicators={false}
-        infiniteLoop={true}
-        centerMode={true}
-        centerSlidePercentage={carouselCenterSlidePercentage}
-        emulateTouch={true}
-        swipeable={true}
-        autoPlay={true}
-        interval={3000}
-        stopOnHover={true}
-      >
-        {products
-          .filter(
-            (product) =>
-              product.countInStock > 0 ||
-              product.countInStockBulk > 0 ||
-              product.countInStockClearance > 0
-          )
-          .map((product) => (
-            <ProductItem product={product} key={product.slug}></ProductItem>
-          ))}
-      </Carousel>
-
+      <Carousel products={filteredProducts} />
       <Contact className="mt-2" />
     </Layout>
   );
