@@ -6,6 +6,7 @@ import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
 import Product from '../models/Product.js';
 import db from '../utils/db.js';
+import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -86,9 +87,14 @@ function Carousel({ products }) {
   }, [nextSlide]);
 
   return (
-    <div className="carousel-container">
-      <button onClick={prevSlide} disabled={currentSlide === 0}>
-        Prev
+    <div className="carousel-container ">
+      <button
+        onClick={prevSlide}
+        disabled={currentSlide === 0}
+        className="w-full mt-3 flex flex-row items-center justify-center primary-button text-white"
+      >
+        <BiSkipPreviousCircle className="text-lg" />
+        &nbsp;Prev
       </button>
       <div
         className="carousel-items"
@@ -106,8 +112,12 @@ function Carousel({ products }) {
         ))}
       </div>
 
-      <button onClick={nextSlide} disabled={currentSlide >= totalSlides - 1}>
-        Next
+      <button
+        onClick={nextSlide}
+        disabled={currentSlide >= totalSlides - 1}
+        className="w-full mt-3 flex flex-row items-center justify-center primary-button"
+      >
+        Next &nbsp; <BiSkipNextCircle className="text-lg" />
       </button>
     </div>
   );
