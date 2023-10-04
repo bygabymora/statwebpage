@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
-import { ProductItem } from '../../components/ProductItem';
+import { ProductItemPage } from '../../components/ProductItemPage';
 import Product from '../../models/Product.js';
 import db from '../../utils/db';
 
@@ -64,7 +64,10 @@ export default function Products({ products }) {
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
             {filteredProducts.map((product) => (
-              <ProductItem product={product} key={product.slug}></ProductItem>
+              <ProductItemPage
+                product={product}
+                key={product.slug}
+              ></ProductItemPage>
             ))}
           </div>
         </div>

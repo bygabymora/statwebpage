@@ -347,7 +347,7 @@ img {
   @apply bg-gray-200;
 }
 .card {
-  @apply mt-3 block rounded-lg border-gray-200 shadow-md mx-3;
+  @apply mt-3  rounded-lg border-gray-200 shadow-md mx-3;
 }
 
 .primary-button {
@@ -648,7 +648,7 @@ img {
   color: var(--text-color);
   outline: none;
   border-radius: 0.75rem;
-  padding: 1.5rem;
+  padding: 0.5rem;
   z-index: 1;
 }
 .contact__message {
@@ -819,7 +819,7 @@ img {
     margin: 0 auto;
   }
   .card {
-    @apply mt-3 block rounded-lg border-gray-200 shadow-md mx-3;
+    @apply mt-3 rounded-lg border-gray-200 shadow-md mx-3;
   }
 }
 

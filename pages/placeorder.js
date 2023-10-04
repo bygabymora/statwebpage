@@ -128,13 +128,6 @@ export default function PlaceOrderScreen() {
       setLoading(false);
       toast.error(getError(err));
     }
-    console.log({
-      cartItems,
-      shippingAddress,
-      billingAddress,
-      paymentMethod,
-      itemsPrice,
-    });
   };
 
   return (

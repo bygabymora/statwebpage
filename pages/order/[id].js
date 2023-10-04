@@ -410,10 +410,6 @@ function OrderScreen() {
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-2">
-          {console.log({ shippingAddress: shippingAddress })}
-          {console.log({ userEmail: userEmail })}
-          {console.log({ billingAddress: billingAddress.fullNameB })}
-
           <div className="overflow-x-auto md:col-span-3">
             <div className="card  p-3">
               {orderItems && orderItems.some((item) => item.sentOverNight) && (

@@ -13,7 +13,6 @@ export default async function handler(req, res) {
     try {
       const { totalPrice, orderId } = req.body;
 
-      console.log('Received price:', totalPrice);
       const session = await stripe.checkout.sessions.create({
         line_items: [
           {
