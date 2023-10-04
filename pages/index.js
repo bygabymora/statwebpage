@@ -14,6 +14,7 @@ function Carousel({ products }) {
   const [totalSlides, setTotalSlides] = React.useState(7); // default to a larger screen size
   const [touchStartX, setTouchStartX] = React.useState(0);
   const [touchEndX, setTouchEndX] = React.useState(0);
+  const [isInteracting, setIsInteracting] = React.useState(false);
 
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
@@ -25,14 +26,21 @@ function Carousel({ products }) {
 
   const handleTouchEnd = () => {
     if (touchStartX - touchEndX > 75) {
-      // if swipe left for over 75px
       nextSlide();
     }
-
     if (touchEndX - touchStartX > 75) {
-      // if swipe right for over 75px
       prevSlide();
     }
+  };
+
+  const handleInteractionStart = () => {
+    setIsInteracting(true);
+  };
+
+  const handleInteractionEnd = () => {
+    setTimeout(() => {
+      setIsInteracting(false);
+    }, 3000);
   };
 
   React.useEffect(() => {
@@ -54,7 +62,7 @@ function Carousel({ products }) {
       if (oldSlide + 1 < totalSlides) {
         return oldSlide + 1;
       } else {
-        return 0; // Return to the first slide when you reach the end
+        return 0;
       }
     });
   }, [totalSlides]);
@@ -67,27 +75,23 @@ function Carousel({ products }) {
         setVisibleItems(3);
       }
     };
-
-    handleResize(); // Call on initial render
+    handleResize();
     window.addEventListener('resize', handleResize);
-
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  // Auto-play
   React.useEffect(() => {
+    if (isInteracting) return;
     const interval = setInterval(() => {
       nextSlide();
-    }, 3000); // 3 seconds interval
-
-    return () => clearInterval(interval); // Clear the interval when the component unmounts
-  }, [nextSlide]);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [nextSlide, isInteracting]);
 
   return (
-    <div className="carousel-container ">
+    <div className="carousel-container">
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
@@ -104,6 +108,8 @@ function Carousel({ products }) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseEnter={handleInteractionStart}
+        onMouseLeave={handleInteractionEnd}
       >
         {products.map((product) => (
           <div className="carousel-item px-3 lg:px-0" key={product.slug}>
@@ -111,7 +117,6 @@ function Carousel({ products }) {
           </div>
         ))}
       </div>
-
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
