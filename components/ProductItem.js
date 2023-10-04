@@ -345,68 +345,70 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       </div>
 
       <div>
-        <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
-          {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-            <div className="flex gap-20 m-2 justify-between items-center ">
-              <div className="flex-column">
-                <div className="font-bold">Status</div>
-                <div className="">
+        {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
+            {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+              <div className="flex gap-20 m-2 justify-between items-center ">
+                <div className="flex-column">
+                  <div className="font-bold">Status</div>
+                  <div className="">
+                    {(purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                      ? 'Out of Stock'
+                      : 'In Stock'}
+                  </div>
+                </div>
+                <button
+                  className="primary-button align-middle "
+                  type="button"
+                  onClick={addToCartHandler}
+                  disabled={
+                    (purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  }
+                >
                   {(purchaseType === 'Each' && isOutOfStock) ||
                   (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                   (purchaseType === 'Clearance' && isOutOfStockClearance)
                     ? 'Out of Stock'
-                    : 'In Stock'}
-                </div>
+                    : 'Add to Cart'}
+                </button>
               </div>
-              <button
-                className="primary-button align-middle "
-                type="button"
-                onClick={addToCartHandler}
-                disabled={
-                  (purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                }
-              >
-                {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'Add to Cart'}
-              </button>
-            </div>
-          ) : (
-            <div>
-              <div className="border border-gray-200 my-5">
-                <div className="flex justify-center gap-8 mx-2">
-                  <h1 className="text-red-500">Clearance</h1>
-                  <div className="mb-2 justify-between flex">
-                    <div className="font-bold">Price</div>
-                    <div className="">&nbsp; ${currentPrice}</div>
+            ) : (
+              <div>
+                <div className="border border-gray-200 my-5">
+                  <div className="flex justify-center gap-8 mx-2">
+                    <h1 className="text-red-500">Clearance</h1>
+                    <div className="mb-2 justify-between flex">
+                      <div className="font-bold">Price</div>
+                      <div className="">&nbsp; ${currentPrice}</div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="text-gray-500 mb-1">{product.notes}</div>
-              </div>
-              <button
-                className="primary-button align-middle "
-                type="button"
-                onClick={addToCartHandler}
-                disabled={
-                  (purchaseType === 'Each' && isOutOfStock) ||
+                  <div className="text-gray-500 mb-1">{product.notes}</div>
+                </div>
+                <button
+                  className="primary-button align-middle "
+                  type="button"
+                  onClick={addToCartHandler}
+                  disabled={
+                    (purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  }
+                >
+                  {(purchaseType === 'Each' && isOutOfStock) ||
                   (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                   (purchaseType === 'Clearance' && isOutOfStockClearance)
-                }
-              >
-                {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'Add to Cart'}
-              </button>
-            </div>
-          )}
-        </div>
+                    ? 'Out of Stock'
+                    : 'Add to Cart'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {purchaseType === 'Bulk' && isOutOfStockBulk && (

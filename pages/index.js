@@ -20,6 +20,7 @@ function Carousel({ products }) {
 
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
+    handleInteractionStart(); // Added this line
   };
 
   const handleTouchMove = (e) => {
@@ -29,18 +30,25 @@ function Carousel({ products }) {
   const handleTouchEnd = () => {
     if (touchStartX - touchEndX > 75) {
       nextSlide();
-    }
-    if (touchEndX - touchStartX > 75) {
+    } else if (touchEndX - touchStartX > 75) {
       prevSlide();
     }
+    handleInteractionEnd(); // Added this line
   };
 
+  let interactionEndTimer = null; // Declare at the top of the Carousel component
+
   const handleInteractionStart = () => {
+    // Clear any existing timer when a new interaction starts
+    if (interactionEndTimer) {
+      clearTimeout(interactionEndTimer);
+    }
     setIsInteracting(true);
   };
 
   const handleInteractionEnd = () => {
-    setTimeout(() => {
+    // Set a timer to stop the interaction state after a delay
+    interactionEndTimer = setTimeout(() => {
       setIsInteracting(false);
     }, 3000);
   };
@@ -93,9 +101,10 @@ function Carousel({ products }) {
   }, [nextSlide, isInteracting]);
 
   const handleMouseDown = (e) => {
-    e.preventDefault(); // add this
+    e.preventDefault();
     setMouseStartX(e.clientX);
     setIsDragging(true);
+    handleInteractionStart(); // Added this line
   };
 
   const handleMouseMove = (e) => {
@@ -103,21 +112,14 @@ function Carousel({ products }) {
     const dragDelta = mouseStartX - e.clientX;
     if (dragDelta > 75) {
       nextSlide();
-    }
-    if (dragDelta < -75) {
+    } else if (dragDelta < -75) {
       prevSlide();
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    const dragDelta = mouseStartX;
-    if (dragDelta > 75) {
-      nextSlide();
-    }
-    if (dragDelta < -75) {
-      prevSlide();
-    }
+    handleInteractionEnd(); // Added this line
   };
 
   const handleOnMouseLeave = () => {
