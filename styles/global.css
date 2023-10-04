@@ -653,6 +653,21 @@ img {
   padding: 0.5rem;
   z-index: 1;
 }
+.contact__form-inputs {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: none;
+  color: var(--text-color);
+  outline: none;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+
+  z-index: 1;
+}
 .contact__message {
   resize: none;
 }

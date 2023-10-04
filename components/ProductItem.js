@@ -216,7 +216,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
           </div>
         </Link>
 
-        <div className="flex flex-col justify-center items-center px-2 flex-1">
+        <div className="flex flex-col justify-center items-center px-2 mb-3 flex-1">
           <Link
             href={{ pathname: `products/${product.slug}` }}
             className="justify-center items-center text-center"
@@ -279,19 +279,19 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
           )}
 
           {purchaseType === 'Each' && isOutOfStock && (
-            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
+            <div className="mb-1 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
               <div className="">Out of Stock</div>
             </div>
           )}
           {purchaseType === 'Bulk' && isOutOfStockBulk && (
-            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
+            <div className="mb-1 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
               <div className="">Out of Stock</div>
             </div>
           )}
           {purchaseType === 'Clearance' && isOutOfStockClearance && (
-            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
+            <div className="mb-1 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
               <div className="">Out of Stock</div>
             </div>
@@ -340,6 +340,150 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                 </div>
               ) : null}
             </div>
+          )}
+          {purchaseType === 'Bulk' && isOutOfStockBulk && (
+            <form className="text-center mb-3 " ref={form} onSubmit={sendEmail}>
+              <label className="font-bold ">Join Our Wait List</label>
+              <input
+                type="text"
+                name="user_name"
+                className="contact__form-inputs"
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                placeholder="Name"
+                required
+              />
+              <input
+                type="email"
+                name="user_email"
+                className="contact__form-inputs"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                placeholder="Email"
+                required
+              />
+              <input
+                type="text"
+                name="emailSlug"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailSlug(e.target.value)}
+                value={emailSlug}
+                hidden
+                required
+              />
+              <input
+                type="text"
+                name="emailManufacturer"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailManufacturer(e.target.value)}
+                value={emailManufacturer}
+                hidden
+                required
+              />
+              <button
+                className="primary-button "
+                type="submit"
+                onClick={sendEmail}
+              >
+                Submit
+              </button>
+            </form>
+          )}
+          {purchaseType === 'Each' && isOutOfStock && (
+            <form className="text-center my-2 " ref={form} onSubmit={sendEmail}>
+              <label className="mt-3 font-bold ">Join Our Wait List</label>
+              <input
+                type="text"
+                name="user_name"
+                className="contact__form-inputs"
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                placeholder="Name"
+                required
+              />
+              <input
+                type="email"
+                name="user_email"
+                className="contact__form-inputs"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                placeholder="Email"
+                required
+              />
+              <input
+                type="text"
+                name="emailSlug"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailSlug(e.target.value)}
+                value={emailSlug}
+                hidden
+                required
+              />
+              <input
+                type="text"
+                name="emailManufacturer"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailManufacturer(e.target.value)}
+                value={emailManufacturer}
+                hidden
+                required
+              />
+              <button
+                className="primary-button mt-3"
+                type="submit"
+                onClick={sendEmail}
+              >
+                Submit
+              </button>
+            </form>
+          )}
+          {purchaseType === 'Clearance' && isOutOfStockClearance && (
+            <form className="text-center my-2 " ref={form} onSubmit={sendEmail}>
+              <label className="mt-3 font-bold ">Join Our Wait List</label>
+              <input
+                type="text"
+                name="user_name"
+                className="contact__form-inputs"
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                placeholder="Name"
+                required
+              />
+              <input
+                type="email"
+                name="user_email"
+                className="contact__form-inputs"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                placeholder="Email"
+                required
+              />
+              <input
+                type="text"
+                name="emailSlug"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailSlug(e.target.value)}
+                value={emailSlug}
+                hidden
+                required
+              />
+              <input
+                type="text"
+                name="emailManufacturer"
+                className="contact__form-inputs"
+                onChange={(e) => setEmailManufacturer(e.target.value)}
+                value={emailManufacturer}
+                hidden
+                required
+              />
+              <button
+                className="primary-button mt-3"
+                type="submit"
+                onClick={sendEmail}
+              >
+                Submit
+              </button>
+            </form>
           )}
         </div>
       </div>
@@ -410,147 +554,6 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
           </div>
         )}
       </div>
-
-      {purchaseType === 'Bulk' && isOutOfStockBulk && (
-        <form className="text-center mb-3 " ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button className="primary-button " type="submit" onClick={sendEmail}>
-            Submit
-          </button>
-        </form>
-      )}
-      {purchaseType === 'Each' && isOutOfStock && (
-        <form className="text-center my-2 " ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button
-            className="primary-button mt-3"
-            type="submit"
-            onClick={sendEmail}
-          >
-            Submit
-          </button>
-        </form>
-      )}
-      {purchaseType === 'Clearance' && isOutOfStockClearance && (
-        <form className="text-center my-2 " ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button
-            className="primary-button mt-3"
-            type="submit"
-            onClick={sendEmail}
-          >
-            Submit
-          </button>
-        </form>
-      )}
     </div>
   );
 };
