@@ -15,6 +15,8 @@ function Carousel({ products }) {
   const [touchStartX, setTouchStartX] = React.useState(0);
   const [touchEndX, setTouchEndX] = React.useState(0);
   const [isInteracting, setIsInteracting] = React.useState(false);
+  const [mouseStartX, setMouseStartX] = React.useState(0);
+  const [isDragging, setIsDragging] = React.useState(false);
 
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
@@ -90,6 +92,39 @@ function Carousel({ products }) {
     return () => clearInterval(interval);
   }, [nextSlide, isInteracting]);
 
+  const handleMouseDown = (e) => {
+    e.preventDefault(); // add this
+    setMouseStartX(e.clientX);
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const dragDelta = mouseStartX - e.clientX;
+    if (dragDelta > 75) {
+      nextSlide();
+    }
+    if (dragDelta < -75) {
+      prevSlide();
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    const dragDelta = mouseStartX;
+    if (dragDelta > 75) {
+      nextSlide();
+    }
+    if (dragDelta < -75) {
+      prevSlide();
+    }
+  };
+
+  const handleOnMouseLeave = () => {
+    handleInteractionEnd();
+    handleMouseUp();
+  };
+
   return (
     <div className="carousel-container">
       <button
@@ -108,8 +143,11 @@ function Carousel({ products }) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
         onMouseEnter={handleInteractionStart}
-        onMouseLeave={handleInteractionEnd}
+        onMouseLeave={handleOnMouseLeave} // using combined function here
       >
         {products.map((product) => (
           <div className="carousel-item px-3 lg:px-0" key={product.slug}>

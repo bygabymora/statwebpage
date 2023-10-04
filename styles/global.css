@@ -425,6 +425,7 @@ img {
 .carousel-items {
   display: flex;
   transition: all 0.5s ease-in-out;
+  user-select: none;
 }
 
 /* Assuming each ProductItem has a fixed width */
@@ -436,6 +437,7 @@ img {
 @media (max-width: 768px) {
   .carousel-item {
     width: 100%; /* for mobile */
+    user-select: none;
   }
 }
 
