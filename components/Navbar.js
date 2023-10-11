@@ -109,6 +109,10 @@ const Navbar = () => {
               Clearance
             </span>
           </Link>
+          <Link href="/news" className="nav__link">
+            <BiPhotoAlbum className="uil uil-scenery nav__icon" />
+            News
+          </Link>
 
           <br className="break" />
         </div>

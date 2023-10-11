@@ -9,6 +9,20 @@ const newsSchema = new mongoose.Schema(
     tags: [{ type: String }],
     imageUrl: { type: String, required: true },
     author: { type: String, required: true },
+    sources: [
+      {
+        title: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        url: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -38,6 +38,8 @@ function reducer(state, action) {
       return state;
   }
 }
+const initialLinkState = [{ heading: '', url: '' }];
+
 export default function AdminNewsEditScreen() {
   const { query } = useRouter();
   const newsId = query.id;
@@ -53,6 +55,7 @@ export default function AdminNewsEditScreen() {
     formState: { errors },
     setValue,
   } = useForm();
+  const [links, setLinks] = React.useState(initialLinkState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,6 +158,14 @@ export default function AdminNewsEditScreen() {
       dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
       toast.error(getError(err));
     }
+  };
+  const addLink = () => {
+    setLinks([...links, { heading: '', url: '' }]);
+  };
+  const updateLink = (index, field, value) => {
+    const newLinks = [...links];
+    newLinks[index][field] = value;
+    setLinks(newLinks);
   };
 
   return (
@@ -351,6 +362,28 @@ export default function AdminNewsEditScreen() {
                 {errors.author && (
                   <div className="text-red-500">{errors.author.message}</div>
                 )}
+              </div>
+              <div className="mb-4">
+                <label>Links</label>
+                {links.map((link, index) => (
+                  <div key={index} className="flex flex-row space-x-4">
+                    <input
+                      type="text"
+                      placeholder="Heading"
+                      value={link.heading}
+                      onChange={(e) =>
+                        updateLink(index, 'heading', e.target.value)
+                      }
+                    />
+                    <input
+                      type="text"
+                      placeholder="URL"
+                      value={link.url}
+                      onChange={(e) => updateLink(index, 'url', e.target.value)}
+                    />
+                  </div>
+                ))}
+                <button onClick={addLink}>Add another link</button>
               </div>
 
               <div className="flex flex-row">
