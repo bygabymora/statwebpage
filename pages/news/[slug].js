@@ -6,10 +6,17 @@ import db from '../../utils/db';
 import News from '../../models/News';
 import Image from 'next/image';
 
+function replaceSlashNWithBreak(content) {
+  return content.replace(/\/n/g, '<br/>');
+}
+
 function parseContentWithImages(content) {
   // Use a regular expression to find image tags in the content
   const imageTagRegex = /\[([^\]]+)\]/g;
   const matches = content.match(imageTagRegex);
+
+  // Replace /n with <br/>
+  content = replaceSlashNWithBreak(content);
 
   if (!matches) {
     return content;
@@ -19,7 +26,7 @@ function parseContentWithImages(content) {
   let parsedContent = content;
   matches.forEach((match) => {
     const imageUrl = match.slice(1, -1); // Remove brackets [ and ]
-    const imgElement = `<Image src="${imageUrl}" alt="${content}" width=${300} height=${200} class="mx-auto my-auto rounded-lg"/>`;
+    const imgElement = `<Image src="${imageUrl}" alt="${content}" width={300} height={200} class="mx-auto my-auto rounded-lg"/>`;
     parsedContent = parsedContent.replace(match, imgElement);
   });
 
@@ -27,6 +34,9 @@ function parseContentWithImages(content) {
 }
 
 function formatContentWithParagraphTitles(content) {
+  // Replace /n with <br/>
+  content = replaceSlashNWithBreak(content);
+
   // Split the content into paragraphs
   const paragraphs = content.split('\n');
 
@@ -37,7 +47,7 @@ function formatContentWithParagraphTitles(content) {
         return `<p><strong>${paragraph.substring(1)}</strong></p>`;
       } else {
         // Otherwise, keep the paragraph as is
-        return `<p >${paragraph}</p>`;
+        return `<p>${paragraph}</p>`;
       }
     })
     .join('');
