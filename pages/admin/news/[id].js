@@ -142,6 +142,13 @@ export default function AdminNewsEditScreen() {
   }) => {
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
+
+      // Extract the links from the 'links' state
+      const sources = links.map((link) => ({
+        title: link.heading,
+        url: link.url,
+      }));
+
       await axios.put(`/api/admin/news/${newsId}`, {
         title,
         slug,
@@ -150,7 +157,9 @@ export default function AdminNewsEditScreen() {
         tags,
         imageUrl,
         author,
+        sources, // Include the 'sources' field in the request body
       });
+
       dispatch({ type: 'UPDATE_SUCCESS' });
       toast.success('News updated successfully');
       router.push('/admin/news');

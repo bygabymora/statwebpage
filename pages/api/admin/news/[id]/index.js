@@ -38,6 +38,7 @@ const putHandler = async (req, res) => {
     news.tags = req.body.tags;
     news.imageUrl = req.body.imageUrl;
     news.author = req.body.author;
+    news.sources = req.body.sources;
 
     await news.save();
     await db.disconnect();

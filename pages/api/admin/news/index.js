@@ -28,11 +28,26 @@ const postHandler = async (req, res) => {
     imageUrl:
       'https://res.cloudinary.com/dcjahs0jp/image/upload/v1694037866/arpshiwxqjzhv7edkhuy.png',
     author: 'Sample Author',
+    sources: [
+      {
+        title: 'Sample Source1 title1',
+        url: 'https://sampleurl1.com',
+      },
+      {
+        title: 'Sample Source2 title2',
+        url: 'https://sampleurl2.com',
+      },
+    ],
   });
 
-  const news = await newNews.save();
-  await db.disconnect();
-  res.send({ message: 'News created successfully', news });
+  try {
+    const news = await newNews.save();
+    await db.disconnect();
+    res.status(201).send({ message: 'News created successfully', news });
+  } catch (error) {
+    await db.disconnect();
+    res.status(500).send({ message: 'Error creating News entry', error });
+  }
 };
 
 const getHandler = async (req, res) => {
