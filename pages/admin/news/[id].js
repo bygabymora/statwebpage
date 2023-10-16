@@ -38,7 +38,6 @@ function reducer(state, action) {
       return state;
   }
 }
-const initialLinkState = [{ heading: '', url: '' }];
 
 export default function AdminNewsEditScreen() {
   const { query } = useRouter();
@@ -55,7 +54,8 @@ export default function AdminNewsEditScreen() {
     formState: { errors },
     setValue,
   } = useForm();
-  const [links, setLinks] = React.useState(initialLinkState);
+
+  const [links, setLinks] = React.useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +70,7 @@ export default function AdminNewsEditScreen() {
         setValue('tags', data.tags);
         setValue('imageUrl', data.imageUrl);
         setValue('author', data.author);
+        setLinks(data.sources || []);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -173,7 +174,10 @@ export default function AdminNewsEditScreen() {
   };
   const updateLink = (index, field, value) => {
     const newLinks = [...links];
-    newLinks[index][field] = value;
+    newLinks[index] = {
+      ...newLinks[index],
+      [field]: value,
+    };
     setLinks(newLinks);
   };
 
@@ -373,22 +377,24 @@ export default function AdminNewsEditScreen() {
                 )}
               </div>
               <div className="mb-4">
-                <label>Links</label>
+                <label>Sources</label>
                 {links.map((link, index) => (
                   <div key={index} className="flex flex-row space-x-4">
                     <input
                       type="text"
                       placeholder="Heading"
-                      value={link.heading}
+                      value={link.title}
                       onChange={(e) =>
                         updateLink(index, 'heading', e.target.value)
                       }
+                      // Use 'heading' as the field name
                     />
                     <input
                       type="text"
                       placeholder="URL"
                       value={link.url}
                       onChange={(e) => updateLink(index, 'url', e.target.value)}
+                      // Use 'url' as the field name
                     />
                   </div>
                 ))}

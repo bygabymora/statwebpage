@@ -38,7 +38,10 @@ const putHandler = async (req, res) => {
     news.tags = req.body.tags;
     news.imageUrl = req.body.imageUrl;
     news.author = req.body.author;
-    news.sources = req.body.sources;
+    news.sources = req.body.sources.map((source) => ({
+      title: source.title,
+      url: source.url,
+    }));
 
     await news.save();
     await db.disconnect();
