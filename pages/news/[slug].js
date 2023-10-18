@@ -98,14 +98,16 @@ export default function Newscreen(props) {
             ></div>
           </div>
         </div>
-        <div className="flex flex-row justify-between items-center gap-4 font-bold my-6 ">
+        <div className="flex flex-row justify-between items-center gap-4 font-bold mt-3 ">
           {news.author}
         </div>
         <div className="source-links my-4">
-          <span>Sources: </span>
+          <span className="flex flex-row justify-between items-center gap-4 font-bold ">
+            Sources:{' '}
+          </span>
           {news.sources &&
             news.sources.map((source, index) => (
-              <div key={index} className="source-link">
+              <div key={index} className="source-link underline">
                 <a href={source.url} target="_blank" rel="noopener noreferrer">
                   {source.title}
                 </a>
