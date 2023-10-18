@@ -28,10 +28,11 @@ export default function News({ news }) {
 
 export async function getServerSideProps() {
   await db.connect();
-  const news = await New.find().lean();
+  const news = await New.find().select('-_id').lean();
+
   return {
     props: {
-      news: news.map(db.convertDocToObj),
+      news,
     },
   };
 }

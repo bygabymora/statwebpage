@@ -131,7 +131,6 @@ export default function AdminNewsEditScreen() {
       toast.error(getError(err));
     }
   };
-
   const submitHandler = async ({
     title,
     slug,
@@ -141,16 +140,19 @@ export default function AdminNewsEditScreen() {
     imageUrl,
     author,
   }) => {
+    // Extract the links from the 'links' state
+    const sources = links.map((link) => ({
+      title: link.heading,
+      url: link.url,
+    }));
+
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
 
-      // Extract the links from the 'links' state
-      const sources = links.map((link) => ({
-        title: link.heading,
-        url: link.url,
-      }));
+      // Log the sources array to check its format
+      console.log('Sources:', sources);
 
-      await axios.put(`/api/admin/news/${newsId}`, {
+      const response = await axios.put(`/api/admin/news/${newsId}`, {
         title,
         slug,
         content,
@@ -161,6 +163,9 @@ export default function AdminNewsEditScreen() {
         sources, // Include the 'sources' field in the request body
       });
 
+      // Log the API response to check if it indicates success or any issues
+      console.log('API Response:', response.data);
+
       dispatch({ type: 'UPDATE_SUCCESS' });
       toast.success('News updated successfully');
       router.push('/admin/news');
@@ -169,6 +174,7 @@ export default function AdminNewsEditScreen() {
       toast.error(getError(err));
     }
   };
+
   const addLink = () => {
     setLinks([...links, { heading: '', url: '' }]);
   };
@@ -387,7 +393,6 @@ export default function AdminNewsEditScreen() {
                       onChange={(e) =>
                         updateLink(index, 'heading', e.target.value)
                       }
-                      // Use 'heading' as the field name
                     />
                     <input
                       type="text"
@@ -398,7 +403,9 @@ export default function AdminNewsEditScreen() {
                     />
                   </div>
                 ))}
-                <button onClick={addLink}>Add another link</button>
+                <button type="button" onClick={addLink}>
+                  Add another link
+                </button>
               </div>
 
               <div className="flex flex-row">
