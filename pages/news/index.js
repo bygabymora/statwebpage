@@ -28,11 +28,43 @@ export default function News({ news }) {
 
 export async function getServerSideProps() {
   await db.connect();
-  const news = await New.find().select('-_id').lean();
+  const news = await New.find().lean();
+
+  // Convert _id, createdAt, updatedAt in sources to string and createdAt to ISO date strings
+  const newsWithModifiedFields = news.map((newsItem) => {
+    const sourcesWithModifiedFields = newsItem.sources.map((source) => {
+      const { _id, createdAt, updatedAt, ...rest } = source;
+      const modifiedSource = {
+        ...rest,
+        _id: _id.toString(),
+      };
+      if (createdAt) {
+        modifiedSource.createdAt = createdAt.toISOString();
+      }
+      if (updatedAt) {
+        modifiedSource.updatedAt = updatedAt.toISOString();
+      }
+      return modifiedSource;
+    });
+
+    const { _id, createdAt, updatedAt, ...rest } = newsItem;
+    const modifiedNewsItem = {
+      ...rest,
+      _id: _id.toString(),
+      sources: sourcesWithModifiedFields,
+    };
+    if (createdAt) {
+      modifiedNewsItem.createdAt = createdAt.toISOString();
+    }
+    if (updatedAt) {
+      modifiedNewsItem.updatedAt = updatedAt.toISOString();
+    }
+    return modifiedNewsItem;
+  });
 
   return {
     props: {
-      news,
+      news: newsWithModifiedFields,
     },
   };
 }
