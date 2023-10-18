@@ -142,7 +142,7 @@ export default function AdminNewsEditScreen() {
   }) => {
     // Extract the links from the 'links' state
     const sources = links.map((link) => ({
-      title: link.heading,
+      title: link.title,
       url: link.url,
     }));
 
@@ -176,7 +176,7 @@ export default function AdminNewsEditScreen() {
   };
 
   const addLink = () => {
-    setLinks([...links, { heading: '', url: '' }]);
+    setLinks([...links, { title: '', url: '' }]);
   };
   const updateLink = (index, field, value) => {
     const newLinks = [...links];
@@ -388,10 +388,10 @@ export default function AdminNewsEditScreen() {
                   <div key={index} className="flex flex-row space-x-4">
                     <input
                       type="text"
-                      placeholder="Heading"
+                      placeholder="Title"
                       value={link.title}
                       onChange={(e) =>
-                        updateLink(index, 'heading', e.target.value)
+                        updateLink(index, 'title', e.target.value)
                       }
                     />
                     <input

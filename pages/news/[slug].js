@@ -124,11 +124,44 @@ export async function getServerSideProps(context) {
 
   const news = await News.findOne({ slug }).lean();
   console.log('Fetched news:', news);
-  await db.disconnect();
 
-  return {
-    props: {
-      news: news ? db.convertDocToObj(news) : null,
-    },
-  };
+  if (!news) {
+    return {
+      notFound: true,
+    };
+  }
+
+  try {
+    // Convert _id field within sources array to strings
+    const formattedSources = news.sources.map((source) => ({
+      ...source,
+      _id: source._id.toString(),
+    }));
+
+    const formattedNews = {
+      ...news,
+      _id: news._id.toString(),
+      imageUrl: news.imageUrl || '',
+      createdAt: news.createdAt.toISOString(),
+      updatedAt: news.updatedAt.toISOString(),
+      sources: formattedSources,
+    };
+
+    console.log('Formatted news:', formattedNews);
+
+    await db.disconnect();
+
+    return {
+      props: {
+        news: formattedNews,
+      },
+    };
+  } catch (error) {
+    console.error('Error formatting news:', error);
+    await db.disconnect();
+
+    return {
+      notFound: true,
+    };
+  }
 }
