@@ -146,6 +146,7 @@ const Banner = () => {
               alt="Banner"
               width={500}
               height={500}
+              quality={25}
             />
           ) : audience === 'manufacturer' ? (
             <Image
@@ -154,6 +155,7 @@ const Banner = () => {
               alt="Banner"
               width={500}
               height={500}
+              quality={25}
             />
           ) : (
             <Image
@@ -162,6 +164,7 @@ const Banner = () => {
               alt="Banner"
               width={500}
               height={500}
+              quality={25}
             />
           )}
         </div>
