@@ -128,7 +128,7 @@ function Carousel({ products }) {
   };
 
   return (
-    <div className="carousel-container">
+    <div className="carousel-container" lang="en">
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}

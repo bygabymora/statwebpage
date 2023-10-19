@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <Layout title="STAT">
+    <Layout title="STAT" lang="en">
       {' '}
       <Analytics>{children}</Analytics>
     </Layout>

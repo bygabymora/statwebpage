@@ -10,7 +10,7 @@ import Logo from '../public/images/assets/logo2.png';
 
 export default function Layout({ title, children, news, product }) {
   return (
-    <div className="w-full">
+    <div className="w-full" lang="en">
       <Analytics />
       <Head lang="en">
         <title>{title ? title : 'STAT'}</title>
