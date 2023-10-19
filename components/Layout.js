@@ -12,7 +12,7 @@ export default function Layout({ title, children, news, product }) {
   return (
     <div className="w-full">
       <Analytics />
-      <Head>
+      <Head lang="en">
         <title>{title ? title : 'STAT'}</title>
         <meta name="description" content="Surgical Supplies at low price" />
         <link rel="icon" href="/favicon.ico" />
