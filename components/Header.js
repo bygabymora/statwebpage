@@ -91,7 +91,7 @@ const Header = () => {
                 onChange={handleSearchInputChange}
                 onKeyDown={handleKeyDown}
                 type="text"
-                className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full"
+                className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full text-blue-900"
                 placeholder="Search..."
                 onBlur={() => setSuggestions([])}
               />
