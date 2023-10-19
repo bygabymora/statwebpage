@@ -95,7 +95,11 @@ const Header = () => {
                 placeholder="Search..."
                 onBlur={() => setSuggestions([])}
               />
-              <button className="nav__search-button" onClick={handleSearch}>
+              <button
+                className="nav__search-button"
+                onClick={handleSearch}
+                aria-label="search"
+              >
                 <BiSearch className="nav__search-icon" />
               </button>
             </div>
@@ -139,6 +143,7 @@ const Header = () => {
               <Link
                 href={{ pathname: '/cart' }}
                 className="flex text-xl font-bold p-2"
+                aria-label="cart"
               >
                 <BsCart2 />
               </Link>
@@ -152,7 +157,7 @@ const Header = () => {
               )}
             </div>
 
-            <Signupbutton />
+            <Signupbutton aria-label="profile" />
             <Navbar />
           </div>
         </div>
