@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Banner1 from '../public/images/assets/banner1.svg';
+import Banner2 from '../public/images/assets/banner2.svg';
+import Banner3 from '../public/images/assets/banner3.svg';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AiOutlineSend } from 'react-icons/ai';
@@ -142,31 +145,28 @@ const Banner = () => {
           {audience === 'hospital' ? (
             <Image
               className="image-container-image"
-              src="https://res.cloudinary.com/dcjahs0jp/image/upload/v1697726828/dfvqknrmjnenpovsdq4z.png"
+              src={Banner2}
               alt="Banner"
               width={500}
               height={500}
               quality={5}
-              loading="eager"
             />
           ) : audience === 'manufacturer' ? (
             <Image
               className="image-container-image"
-              src="https://res.cloudinary.com/dcjahs0jp/image/upload/v1697726846/ozhyfajx211qympvqnrp.png"
+              src={Banner3}
               alt="Banner"
               width={500}
               height={500}
               quality={5}
-              loading="eager"
             />
           ) : (
             <Image
               className="image-container-image"
-              src="https://res.cloudinary.com/dcjahs0jp/image/upload/v1697726722/co9sefc62taygygn7y9z.png"
+              src={Banner1}
               alt="Banner"
               width={500}
               height={500}
-              loading="eager"
               quality={5}
             />
           )}

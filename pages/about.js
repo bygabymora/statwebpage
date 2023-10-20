@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import Image from 'next/image';
+import image from '../public/images/assets/about.svg';
 import { useSpring, animated } from 'react-spring';
 
 export default function AboutScreen() {
@@ -22,11 +23,7 @@ export default function AboutScreen() {
     <Layout title="About Us">
       <div className="grid lg:grid-cols-2 md:grid-cols-1  banner-container mx-auto px-4 py-8 items-center">
         <animated.div className="image-container" style={imageAnimation}>
-          <Image
-            src="https://res.cloudinary.com/dcjahs0jp/image/upload/v1697729838/admganngge2clnhercun.png"
-            alt="About Us"
-            className="about-image"
-          />
+          <Image src={image} alt="About Us" className="about-image" />
         </animated.div>
         <animated.div className="content-container" style={contentAnimation}>
           <h2 className="section__title"> About Us</h2>
