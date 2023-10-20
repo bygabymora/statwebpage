@@ -327,13 +327,19 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                       id="uom"
                     >
                       {product.countInStock > 0 && (
-                        <option value="Each">Each</option>
+                        <option value="Each" id="each">
+                          Each
+                        </option>
                       )}
                       {product.countInStockBulk > 0 && (
-                        <option value="Bulk">Box</option>
+                        <option value="Bulk" id="Box">
+                          Box
+                        </option>
                       )}
                       {product.countInStockClearance > 0 && (
-                        <option value="Clearance">Clearance</option>
+                        <option value="Clearance" id="Clearance">
+                          Clearance
+                        </option>
                       )}
                     </select>
                   </div>
