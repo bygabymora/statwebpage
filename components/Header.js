@@ -124,7 +124,7 @@ const Header = () => {
           <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
               <div className="r__logo r__logo-1">
-                <Image src={Logo2} alt="logo" width={500} />
+                <Image src={Logo2} alt="logo" width={500} quality={5} />
               </div>
             </Link>
             <Link
