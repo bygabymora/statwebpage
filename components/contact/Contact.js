@@ -20,7 +20,7 @@ const Contact = () => {
         <div className="contact__container container grid">
           <div className="contact__content">
             <div className="contact__card">
-              <h3 className="contact__card-title">Address</h3>
+              <h2 className="contact__card-title">Address</h2>
               <Link
                 className="contact__card-data"
                 href="https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu"
@@ -30,7 +30,7 @@ const Contact = () => {
               </Link>
             </div>
             <div className="contact__card">
-              <h3 className="contact__card-title">Phone</h3>
+              <h2 className="contact__card-title">Phone</h2>
               <span className="contact__card-data">813-252-0727 </span>
               <a
                 href="tel:8132520727"
@@ -42,11 +42,11 @@ const Contact = () => {
               </a>
             </div>
             <div className="contact__card">
-              <h3 className="contact__card-title">Fax</h3>
+              <h2 className="contact__card-title">Fax</h2>
               <span className="contact__card-data">813-607-4110 </span>
             </div>
             <div className="contact__card">
-              <h3 className="contact__card-title">Email</h3>
+              <h2 className="contact__card-title">Email</h2>
               <span className="contact__card-data">
                 sales@statsurgicalsupply.com
               </span>
