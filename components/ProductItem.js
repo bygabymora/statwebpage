@@ -22,6 +22,8 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.countInStock
   );
+  const selectId = `uomSelect-${Math.random().toString(36).substr(2, 9)}`;
+  const labelFor = selectId;
 
   useEffect(() => {
     if (product.countInStock === 0) {
@@ -303,7 +305,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
                 <div className=" justify-between items-center gap-2  mt-2">
                   <div className="mb-2 flex flex-row">
-                    <label className="font-bold" htmlFor="uomSelect">
+                    <label className="font-bold" htmlFor={labelFor}>
                       U o M &nbsp;
                     </label>
                     <select
@@ -324,20 +326,23 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                           setCurrentCountInStock(product.countInStockClearance);
                         }
                       }}
-                      id="uomSelect" // Unique ID for the select element
+                      id={selectId} // Use the generated unique ID for the select element
                     >
                       {product.countInStock > 0 && (
-                        <option value="Each" id="eachOption">
+                        <option value="Each" id={`${selectId}-eachOption`}>
                           Each
                         </option>
                       )}
                       {product.countInStockBulk > 0 && (
-                        <option value="Bulk" id="bulkOption">
+                        <option value="Bulk" id={`${selectId}-bulkOption`}>
                           Box
                         </option>
                       )}
                       {product.countInStockClearance > 0 && (
-                        <option value="Clearance" id="clearanceOption">
+                        <option
+                          value="Clearance"
+                          id={`${selectId}-clearanceOption`}
+                        >
                           Clearance
                         </option>
                       )}
