@@ -49,6 +49,7 @@ const ContactUs = () => {
             className="contact__form-input"
             onChange={(e) => setName(e.target.value)}
             value={name}
+            id="user_name"
             required
           />
         </div>
@@ -63,6 +64,7 @@ const ContactUs = () => {
             className="contact__form-input"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            id="user_email"
             required
           />
         </div>
@@ -76,6 +78,7 @@ const ContactUs = () => {
             className="contact__form-input contact__message"
             onChange={(e) => setMessage(e.target.value)}
             value={message}
+            id="message"
             required
           />
         </div>
