@@ -303,7 +303,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
                 <div className=" justify-between items-center gap-2  mt-2">
                   <div className="mb-2 flex flex-row">
-                    <div className="font-bold">U o M &nbsp;</div>
+                    <div className="font-bold" for="uom">
+                      U o M &nbsp;
+                    </div>
                     <select
                       value={purchaseType}
                       onChange={(e) => {
@@ -322,6 +324,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                           setCurrentCountInStock(product.countInStockClearance);
                         }
                       }}
+                      id="uom"
                     >
                       {product.countInStock > 0 && (
                         <option value="Each">Each</option>
