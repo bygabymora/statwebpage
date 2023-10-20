@@ -303,9 +303,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
                 <div className=" justify-between items-center gap-2  mt-2">
                   <div className="mb-2 flex flex-row">
-                    <div className="font-bold" for="uom">
+                    <label className="font-bold" htmlFor="uomSelect">
                       U o M &nbsp;
-                    </div>
+                    </label>
                     <select
                       value={purchaseType}
                       onChange={(e) => {
@@ -324,25 +324,26 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                           setCurrentCountInStock(product.countInStockClearance);
                         }
                       }}
-                      id="uom"
+                      id="uomSelect" // Unique ID for the select element
                     >
                       {product.countInStock > 0 && (
-                        <option value="Each" id="each">
+                        <option value="Each" id="eachOption">
                           Each
                         </option>
                       )}
                       {product.countInStockBulk > 0 && (
-                        <option value="Bulk" id="Box">
+                        <option value="Bulk" id="bulkOption">
                           Box
                         </option>
                       )}
                       {product.countInStockClearance > 0 && (
-                        <option value="Clearance" id="Clearance">
+                        <option value="Clearance" id="clearanceOption">
                           Clearance
                         </option>
                       )}
                     </select>
                   </div>
+
                   <div className="flex flex-row mb-2 justify-between">
                     <div className="font-bold">Price</div>
                     <div className="">&nbsp; ${currentPrice}</div>
