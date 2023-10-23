@@ -229,7 +229,7 @@ export default function AdminProductEditScreen() {
                 <label htmlFor="manufacturer">Manufacturer</label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline uppercase"
                   id="slug"
                   {...register('manufacturer', {
                     required: 'Please enter manufacturer',
