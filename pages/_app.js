@@ -28,14 +28,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <Script
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
+          async // Add the async attribute here
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="afterInteractive" async>
           {`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-3JJZVPL0B5');
-    `}
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3JJZVPL0B5');
+          `}
         </Script>
 
         <PayPalScriptProvider deferLoading={true}>
