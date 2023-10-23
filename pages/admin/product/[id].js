@@ -144,6 +144,7 @@ export default function AdminProductEditScreen() {
     includes,
   }) => {
     try {
+      manufacturer = manufacturer.toUpperCase();
       dispatch({ type: 'UPDATE_REQUEST' });
       await axios.put(`/api/admin/products/${productId}`, {
         name,
