@@ -32,20 +32,24 @@ function generateProductJSONLD(product) {
     '@type': 'Product',
     name: product.name,
     image: product.image,
+    brand: product.manufacturer,
     description: product.description || '',
     sku: product.slug || '',
     mpn: product.slug || '',
-    brand: {
-      '@type': 'Thing',
-      name: product.manufacturer,
-    },
     offers: {
       '@type': 'Offer',
       priceCurrency: 'USD',
       price: product.price,
       itemCondition: 'https://schema.org/NewCondition',
-      availability: 'https://schema.org/InStock',
+      availability:
+        product.countInStock > 0 ||
+        product.countInStockBulk > 0 ||
+        product.countInStockClearance > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
       url: `https://www.statsurgicalsupply.com/products/${product.slug}`,
+      hasMerchantReturnPolicy: 'https://schema.org/NoReturnsPolicy',
+      shippingDetails: 'https://schema.org/ShipsWithin48Hours',
     },
   };
 }
