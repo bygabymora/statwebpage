@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <Script
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
-          async // Add the async attribute here
+          async
         />
         <Script id="gtag-init" strategy="afterInteractive" async>
           {`

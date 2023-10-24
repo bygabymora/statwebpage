@@ -37,8 +37,8 @@ export default function Footer() {
           <div className="footer-linkGroup flex flex-col m-5">
             <h4 className="font-bold">Support</h4>
             <Link href="/faqs">FAQs</Link>
-            <Link href="/terms-and-conditions">Shipping & Returns</Link>
-            <Link href="/terms-and-conditions">Terms & Conditions</Link>
+            <Link href="/return-policy">Return policy</Link>
+            <Link href="/terms-of-use">Terms of use</Link>
           </div>
         </section>
       </div>
@@ -56,13 +56,15 @@ export default function Footer() {
 
       <div className="flex flex-col sm:flex-row justify-between w-full items-center mt-5 sm:mt-0">
         <div className="flex items-center">
-          <Image
-            className="footer-logo hidden lg:block"
-            src={Logo}
-            alt="STAT Logo"
-            width={300}
-            height={100}
-          />
+          <div>
+            <Image
+              className="footer-logo hidden lg:block"
+              src={Logo}
+              alt="STAT Logo"
+              width={300}
+              height={100}
+            />
+          </div>
           <div className="font-bold footer-copyright ml-4">
             <p>&copy; 2023 STAT Surgical Supply. All rights reserved.</p>
           </div>
