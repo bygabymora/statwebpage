@@ -6,7 +6,7 @@ export default function facs() {
     <>
       <Layout title="Return policy">
         <div className="card p-5 mb-10">
-          <h1 className="section__title">Return policy</h1>
+          <h1 className="section__title">Return Policy</h1>
           <br />
           <h2 className="section__subtitle">Last updated October 19, 2023</h2>
           <h3 className="text-gray-500">
@@ -36,9 +36,13 @@ export default function facs() {
           <p className="text-gray-500 font-bold ml-5">
             Stat Surgical Supply LLC
             <br />
-            Attn: Returns RMA# 100 South Ashley Drive Suite 600
+            Attn: Returns RMA#
             <br />
-            Tampa, FL 33602 United States.
+            100 South Ashley Drive Suite 600
+            <br />
+            Tampa, FL 33602
+            <br />
+            United States.
             <br />
           </p>
           <br />
@@ -78,7 +82,7 @@ export default function facs() {
             <br />
             Integra Duragen
             <br />
-            Medtronic Bone Grafts.
+            Medtronic Bone Grafts
             <br />
           </p>
 

@@ -16,7 +16,7 @@ export default function facs() {
     <>
       <Layout title="Terms of use">
         <div className="card p-5 mb-10">
-          <h1 className="section__title">Terms of use</h1>
+          <h1 className="section__title">Terms of Use</h1>
           <br />
           <h2 className="section__subtitle">Last updated October 23, 2023</h2>
           <p>
@@ -102,33 +102,32 @@ export default function facs() {
             warrant that:
             <br />
             <br />
-            <strong className="ml-5">A.</strong> all registration information
-            you submit is truthful and accurate;
+            <strong>A.</strong> all registration information you submit is
+            truthful and accurate;
             <br />
-            <strong className="ml-5">B.</strong> you will maintain the accuracy
-            of such information;
+            <strong>B.</strong> you will maintain the accuracy of such
+            information;
             <br />
-            <strong className="ml-5">C.</strong> you will keep your password
-            confidential and will be responsible for all use of your password
-            and account;
+            <strong>C.</strong> you will keep your password confidential and
+            will be responsible for all use of your password and account;
             <br />
-            <strong className="ml-5">D.</strong> you are not a minor in the
-            jurisdiction in which you reside, or if a minor, you have received
-            parental permission to use our Sites;
+            <strong>D.</strong> you are not a minor in the jurisdiction in which
+            you reside, or if a minor, you have received parental permission to
+            use our Sites;
             <br />
-            <strong className="ml-5">E.</strong> your use of the Company
-            Services does not violate any applicable law or regulation.
+            <strong>E.</strong> your use of the Company Services does not
+            violate any applicable law or regulation.
             <br />
             <br />
             You also agree to:
             <br />
             <br />
-            <strong className="ml-5">(a)</strong> provide true, accurate,
-            current and complete information about yourself as prompted by the
-            Sites registration form.
+            <strong>(a)</strong> provide true, accurate, current and complete
+            information about yourself as prompted by the Sites registration
+            form.
             <br />
-            <strong className="ml-5">(b)</strong> maintain and promptly update
-            registration data to keep it true, accurate, current and complete.
+            <strong>(b)</strong> maintain and promptly update registration data
+            to keep it true, accurate, current and complete.
             <br />
             <br />
             If you provide any information that is untrue, inaccurate, not
@@ -159,48 +158,46 @@ export default function facs() {
             you thereby represent and warrant that:
             <br />
             <br />
-            <strong className="ml-5">A.</strong> the creation, distribution,
-            transmission, public display and performance, accessing, downloading
-            and copying of your Contribution does not and will not infringe the
-            proprietary rights, including but not limited to the copyright,
-            patent, trademark, trade secret or moral rights of any third party;
+            <strong>A.</strong> the creation, distribution, transmission, public
+            display and performance, accessing, downloading and copying of your
+            Contribution does not and will not infringe the proprietary rights,
+            including but not limited to the copyright, patent, trademark, trade
+            secret or moral rights of any third party;
             <br />
-            <strong className="ml-5">B.</strong> you are the creator and owner
-            of or have the necessary licenses, rights, consents, releases and
-            permissions to use and to authorize Stat Surgical Supply LLC and the
-            Sites&apos; users to use your Contributions as necessary to exercise
-            the licenses granted by you under this Agreement;
+            <strong>B.</strong> you are the creator and owner of or have the
+            necessary licenses, rights, consents, releases and permissions to
+            use and to authorize Stat Surgical Supply LLC and the Sites&apos;
+            users to use your Contributions as necessary to exercise the
+            licenses granted by you under this Agreement;
             <br />
-            <strong className="ml-5">C.</strong> you have the written consent,
-            release, and/or permission of each and every identifiable individual
-            person in the Contribution to use the name or likeness of each and
-            every such identifiable individual person to enable inclusion and
-            use of the Contribution in the manner contemplated by our Sites;
+            <strong>C.</strong> you have the written consent, release, and/or
+            permission of each and every identifiable individual person in the
+            Contribution to use the name or likeness of each and every such
+            identifiable individual person to enable inclusion and use of the
+            Contribution in the manner contemplated by our Sites;
             <br />
-            <strong className="ml-5">D.</strong> your Contribution is not
-            obscene, lewd, lascivious, filthy, violent, harassing or otherwise
-            objectionable (as determined by Stat Surgical Supply LLC), libelous
-            or slanderous, does not ridicule, mock, disparage, intimidate or
-            abuse anyone, does not advocate the violent overthrow of any
-            government, does not incite, encourage or threaten physical harm
-            against another, does not violate any applicable law, regulation, or
-            rule, and does not violate the privacy or publicity rights of any
-            third party;
+            <strong>D.</strong> your Contribution is not obscene, lewd,
+            lascivious, filthy, violent, harassing or otherwise objectionable
+            (as determined by Stat Surgical Supply LLC), libelous or slanderous,
+            does not ridicule, mock, disparage, intimidate or abuse anyone, does
+            not advocate the violent overthrow of any government, does not
+            incite, encourage or threaten physical harm against another, does
+            not violate any applicable law, regulation, or rule, and does not
+            violate the privacy or publicity rights of any third party;
             <br />
-            <strong className="ml-5">E.</strong> your Contribution does not
-            contain material that solicits personal information from anyone
-            under 18 or exploit people under the age of 18 in a sexual or
-            violent manner, and does not violate any federal or state law
-            concerning child pornography or otherwise intended to protect the
-            health or well-being of minors;
+            <strong>E.</strong> your Contribution does not contain material that
+            solicits personal information from anyone under 18 or exploit people
+            under the age of 18 in a sexual or violent manner, and does not
+            violate any federal or state law concerning child pornography or
+            otherwise intended to protect the health or well-being of minors;
             <br />
-            <strong className="ml-5">F.</strong> your Contribution does not
-            include any offensive comments that are connected to race, national
-            origin, gender, sexual preference or physical handicap;
+            <strong>F.</strong> your Contribution does not include any offensive
+            comments that are connected to race, national origin, gender, sexual
+            preference or physical handicap;
             <br />
-            <strong className="ml-5">G.</strong> your Contribution does not
-            otherwise violate, or link to material that violates, any provision
-            of this Agreement or any applicable law or regulation.
+            <strong>G.</strong> your Contribution does not otherwise violate, or
+            link to material that violates, any provision of this Agreement or
+            any applicable law or regulation.
           </p>
           <br />
           <h2>CONTRIBUTION LICENSE</h2>
@@ -235,11 +232,16 @@ export default function facs() {
             consent.
             <br />
             <br />
-            Company has the right, in our sole and absolute discretion, to (i)
-            edit, redact or otherwise change any Contributions, (ii)
-            re-categorize any Contributions to place them in more appropriate
-            locations or (iii) pre-screen or delete any Contributions that are
-            determined to be inappropriate or otherwise in violation of this
+            Company has the right, in our sole and absolute discretion, to
+            <br />
+            <strong>(i)</strong> edit, redact or otherwise change any
+            Contributions,
+            <br />
+            <strong>(ii)</strong> re-categorize any Contributions to place them
+            in more appropriate locations or
+            <br />
+            <strong>(iii)</strong> pre-screen or delete any Contributions that
+            are determined to be inappropriate or otherwise in violation of this
             Agreement.
             <br />
             <br />
@@ -273,69 +275,66 @@ export default function facs() {
             limited to:
             <br />
             <br />
-            <strong className="ml-5">A.</strong> attempting to bypass any
-            measures of the Sites designed to prevent or restrict access to the
-            Sites, or any portion of the Sites
+            <strong>A.</strong> attempting to bypass any measures of the Sites
+            designed to prevent or restrict access to the Sites, or any portion
+            of the Sites
             <br />
-            <strong className="ml-5">B.</strong> attempting to impersonate
-            another user or person or using the username of another user
+            <strong>B.</strong> attempting to impersonate another user or person
+            or using the username of another user
             <br />
-            <strong className="ml-5">C.</strong> criminal or tortious activity
+            <strong>C.</strong> criminal or tortious activity
             <br />
-            <strong className="ml-5">D.</strong> deciphering, decompiling,
-            disassembling or reverse engineering any of the software comprising
-            or in any way making up a part of the Sites
+            <strong>D.</strong> deciphering, decompiling, disassembling or
+            reverse engineering any of the software comprising or in any way
+            making up a part of the Sites
             <br />
-            <strong className="ml-5">E.</strong> deleting the copyright or other
-            proprietary rights notice from any Sites&apos; content
+            <strong>E.</strong> deleting the copyright or other proprietary
+            rights notice from any Sites&apos; content
             <br />
-            <strong className="ml-5">F.</strong> engaging in any automated use
-            of the system, such as using any data mining, robots or similar data
-            gathering and extraction tools
+            <strong>F.</strong> engaging in any automated use of the system,
+            such as using any data mining, robots or similar data gathering and
+            extraction tools
             <br />
-            <strong className="ml-5">G.</strong> except as may be the result of
-            standard search engine or Internet browser usage, using or
-            launching, developing or distributing any automated system,
-            including, without limitation, any spider, robot (or
-            &quot;bot&quot;), cheat utility, scraper or offline reader that
-            accesses the Sites, or using or launching any unauthorized script or
-            other software
+            <strong>G.</strong> except as may be the result of standard search
+            engine or Internet browser usage, using or launching, developing or
+            distributing any automated system, including, without limitation,
+            any spider, robot (or &quot;bot&quot;), cheat utility, scraper or
+            offline reader that accesses the Sites, or using or launching any
+            unauthorized script or other software
             <br />
-            <strong className="ml-5">H.</strong> harassing, annoying,
-            intimidating or threatening any Company employees or agents engaged
-            in providing any portion of the Company Services to you
+            <strong>H.</strong> harassing, annoying, intimidating or threatening
+            any Company employees or agents engaged in providing any portion of
+            the Company Services to you
             <br />
-            <strong className="ml-5">I.</strong> interfering with, disrupting,
-            or creating an undue burden on the Sites or the networks or services
-            connected to the Sites
+            <strong>I.</strong> interfering with, disrupting, or creating an
+            undue burden on the Sites or the networks or services connected to
+            the Sites
             <br />
-            <strong className="ml-5">J.</strong> making any unauthorized use of
-            the Company Services, including collecting usernames and/or email
-            addresses of users by electronic or other means for the purpose of
-            sending unsolicited email, or creating user accounts by automated
-            means or under false pretenses
+            <strong>J.</strong> making any unauthorized use of the Company
+            Services, including collecting usernames and/or email addresses of
+            users by electronic or other means for the purpose of sending
+            unsolicited email, or creating user accounts by automated means or
+            under false pretenses
             <br />
-            <strong className="ml-5">K.</strong> selling or otherwise
-            transferring your profile
+            <strong>K.</strong> selling or otherwise transferring your profile
             <br />
-            <strong className="ml-5">L.</strong> tricking, defrauding or
-            misleading Company and other users, especially in any attempt to
-            learn sensitive account information such as passwords
+            <strong>L.</strong> tricking, defrauding or misleading Company and
+            other users, especially in any attempt to learn sensitive account
+            information such as passwords
             <br />
-            <strong className="ml-5">M.</strong> systematic retrieval of data or
-            other content from the Sites to create or compile, directly or
-            indirectly, a collection, compilation, database or directory without
-            written permission from Company
+            <strong>M.</strong> systematic retrieval of data or other content
+            from the Sites to create or compile, directly or indirectly, a
+            collection, compilation, database or directory without written
+            permission from Company
             <br />
-            <strong className="ml-5">N.</strong> using any information obtained
-            from the Sites in order to harass, abuse, or harm another person
+            <strong>N.</strong> using any information obtained from the Sites in
+            order to harass, abuse, or harm another person
             <br />
-            <strong className="ml-5">O.</strong> using the Company Services as
-            part of any effort to compete with Company or to provide services as
-            a service bureau
+            <strong>O.</strong> using the Company Services as part of any effort
+            to compete with Company or to provide services as a service bureau
             <br />
-            <strong className="ml-5">P.</strong> using the Sites in a manner
-            inconsistent with any and all applicable laws and regulation
+            <strong>P.</strong> using the Sites in a manner inconsistent with
+            any and all applicable laws and regulation
           </p>
           <br />
           <h2>INTELLECTUAL PROPERTY RIGHTS</h2>
@@ -411,30 +410,29 @@ export default function facs() {
             Stat Surgical Supply LLC reserves the right but does not have the
             obligation to:
             <br />
-            <strong className="ml-5">A.</strong> monitor the Sites for
-            violations of this Agreement;
+            <strong>A.</strong> monitor the Sites for violations of this
+            Agreement;
             <br />
-            <strong className="ml-5">B.</strong> take appropriate legal action
-            against anyone who, in Stat Surgical Supply LLC sole discretion,
-            violates this Agreement, including without limitation, reporting
-            such user to law enforcement authorities;
+            <strong>B.</strong> take appropriate legal action against anyone
+            who, in Stat Surgical Supply LLC sole discretion, violates this
+            Agreement, including without limitation, reporting such user to law
+            enforcement authorities;
             <br />
-            <strong className="ml-5">C.</strong> in Stat Surgical Supply LLC
-            sole discretion and without limitation, refuse, restrict access to
-            or availability of, or disable (to the extent technologically
-            feasible) any user’s contribution or any portion thereof that may
-            violate this Agreement or any Stat Surgical Supply LLC policy;
+            <strong>C.</strong> in Stat Surgical Supply LLC sole discretion and
+            without limitation, refuse, restrict access to or availability of,
+            or disable (to the extent technologically feasible) any user’s
+            contribution or any portion thereof that may violate this Agreement
+            or any Stat Surgical Supply LLC policy;
             <br />
-            <strong className="ml-5">D.</strong> in Company’s sole discretion
-            and without limitation, notice or liability to remove from the Sites
-            or otherwise disable all files and content that are excessive in
-            size or are in any way burdensome to Stat Surgical Supply LLC
-            &apos;s systems;
+            <strong>D.</strong> in Company’s sole discretion and without
+            limitation, notice or liability to remove from the Sites or
+            otherwise disable all files and content that are excessive in size
+            or are in any way burdensome to Stat Surgical Supply LLC &apos;s
+            systems;
             <br />
-            <strong className="ml-5">E.</strong> otherwise manage the Sites in a
-            manner designed to protect the rights and property of Stat Surgical
-            Supply LLC and others and to facilitate the proper functioning of
-            the Sites.
+            <strong>E.</strong> otherwise manage the Sites in a manner designed
+            to protect the rights and property of Stat Surgical Supply LLC and
+            others and to facilitate the proper functioning of the Sites.
           </p>
           <br />
           <h2>TERM AND TERMINATION</h2>
@@ -535,93 +533,98 @@ export default function facs() {
           <br />
           <h3>With Company</h3>
           <p>
-            With Company
+            {' '}
             <br />
-            <strong className="ml-5">A.</strong> Governing Law; Jurisdiction.
-            This Agreement and all aspects of the Sites and Company Services
-            shall be governed by and construed in accordance with the internal
-            laws of the State of Florida, without regard to conflict of law
-            provisions. With respect to any disputes or claims not subject to
-            informal dispute resolution or arbitration (as set forth below), you
-            agree not to commence or prosecute any action in connection
-            therewith other than in the state and federal courts located in
-            Hillsborough County, State of Florida, and you hereby consent to,
-            and waive all defenses of lack of personal jurisdiction and forum
-            non conveniens with respect to, venue and jurisdiction in such state
-            and federal courts. Application of the United Nations Convention on
-            Contracts for the International Sale of Goods is excluded from this
-            Agreement. Additionally, application of the Uniform Computer
-            Information Transaction Act (UCITA) is excluded from this Agreement.
-            In no event shall any claim, action or proceeding by you related in
-            any way to the Sites or Company Services be instituted more than two
-            (2) years after the cause of action arose.
             <br />
-            <strong className="ml-5">B.</strong> Informal Resolution. To
-            expedite resolution and control the cost of any dispute, controversy
-            or claim related to this Agreement (&quot;Dispute&quot;), you and
-            Company agree to first attempt to negotiate any Dispute (except
-            those Disputes expressly provided below) informally for at least
-            thirty (30) days before initiating any arbitration or court
-            proceeding. Such informal negotiations commence upon written notice
-            from one person to the other.
+            <strong>A. Governing Law; Jurisdiction. </strong>This Agreement and
+            all aspects of the Sites and Company Services shall be governed by
+            and construed in accordance with the internal laws of the State of
+            Florida, without regard to conflict of law provisions. With respect
+            to any disputes or claims not subject to informal dispute resolution
+            or arbitration (as set forth below), you agree not to commence or
+            prosecute any action in connection therewith other than in the state
+            and federal courts located in Hillsborough County, State of Florida,
+            and you hereby consent to, and waive all defenses of lack of
+            personal jurisdiction and forum non conveniens with respect to,
+            venue and jurisdiction in such state and federal courts. Application
+            of the United Nations Convention on Contracts for the International
+            Sale of Goods is excluded from this Agreement. Additionally,
+            application of the Uniform Computer Information Transaction Act
+            (UCITA) is excluded from this Agreement. In no event shall any
+            claim, action or proceeding by you related in any way to the Sites
+            or Company Services be instituted more than two (2) years after the
+            cause of action arose.
             <br />
-            <strong className="ml-5">C.</strong> Binding Arbitration. If you and
-            Company are unable to resolve a Dispute through informal
-            negotiations, either you or Company may elect to have the Dispute
-            (except those Disputes expressly excluded below) finally and
-            exclusively resolved by binding arbitration. Any election to
-            arbitrate by one party shall be final and binding on the other. YOU
-            UNDERSTAND THAT ABSENT THIS PROVISION, YOU WOULD HAVE THE RIGHT TO
-            SUE IN COURT AND HAVE A JURY TRIAL. The arbitration shall be
-            commenced and conducted under the Commercial Arbitration Rules of
-            the American Arbitration Association (&quot;AAA&quot;) and, where
-            appropriate, the AAA’s Supplementary Procedures for Consumer Related
-            Disputes (&quot;AAA Consumer Rules&quot;), both of which are
-            available at the AAA website www.adr.org. The determination of
-            whether a Dispute is subject to arbitration shall be governed by the
-            Federal Arbitration Act and determined by a court rather than an
-            arbitrator. Your arbitration fees and your share of arbitrator
-            compensation shall be governed by the AAA Consumer Rules and, where
-            appropriate, limited by the AAA Consumer Rules. If such costs are
-            determined by the arbitrator to be excessive, Company will pay all
-            arbitration fees and expenses. The arbitration may be conducted in
-            person, through the submission of documents, by phone or online. The
-            arbitrator will make a decision in writing, but need not provide a
-            statement of reasons unless requested by a party. The arbitrator
-            must follow applicable law, and any award may be challenged if the
-            arbitrator fails to do so. Except where otherwise required by the
-            applicable AAA rules or applicable law, the arbitration will take
-            place in Hillsborough County, State of Florida. Except as otherwise
-            provided in this Agreement, you and Company may litigate in court to
-            compel arbitration, stay proceedings pending arbitration, or to
-            confirm, modify, vacate or enter judgment on the award entered by
-            the arbitrator.
             <br />
-            <strong className="ml-5">D.</strong> Restrictions. You and Company
-            agree that any arbitration shall be limited to the Dispute between
-            Company and you individually. To the full extent permitted by law,
-            (1) no arbitration shall be joined with any other; (2) there is no
-            right or authority for any Dispute to be arbitrated on a
-            class-action basis or to utilize class action procedures; and (3)
-            there is no right or authority for any Dispute to be brought in a
-            purported representative capacity on behalf of the general public or
-            any other persons.
+            <strong>B.Informal Resolution.</strong> To expedite resolution and
+            control the cost of any dispute, controversy or claim related to
+            this Agreement (&quot;Dispute&quot;), you and Company agree to first
+            attempt to negotiate any Dispute (except those Disputes expressly
+            provided below) informally for at least thirty (30) days before
+            initiating any arbitration or court proceeding. Such informal
+            negotiations commence upon written notice from one person to the
+            other.
             <br />
-            <strong className="ml-5">E.</strong> Exceptions to Informal
-            Negotiations and Arbitration. You and Company agree that the
-            following Disputes are not subject to the above provisions
-            concerning informal negotiations and binding arbitration: (1) any
-            Disputes seeking to enforce or protect, or concerning the validity
-            of any of your or Company’s intellectual property rights; (2) any
-            Dispute related to, or arising from, allegations of theft, piracy,
-            invasion of privacy or unauthorized use; and (3) any claim for
-            injunctive relief. If this Section is found to be illegal or
-            unenforceable then neither you nor Company will elect to arbitrate
-            any Dispute falling within that portion of this Section found to be
-            illegal or unenforceable and such Dispute shall be decided by a
-            court of competent jurisdiction within the courts listed for
-            jurisdiction above, and you and Company agree to submit to the
-            personal jurisdiction of that court.
+            <br />
+            <strong>C. Binding Arbitration.</strong> If you and Company are
+            unable to resolve a Dispute through informal negotiations, either
+            you or Company may elect to have the Dispute (except those Disputes
+            expressly excluded below) finally and exclusively resolved by
+            binding arbitration. Any election to arbitrate by one party shall be
+            final and binding on the other. YOU UNDERSTAND THAT ABSENT THIS
+            PROVISION, YOU WOULD HAVE THE RIGHT TO SUE IN COURT AND HAVE A JURY
+            TRIAL. The arbitration shall be commenced and conducted under the
+            Commercial Arbitration Rules of the American Arbitration Association
+            (&quot;AAA&quot;) and, where appropriate, the AAA’s Supplementary
+            Procedures for Consumer Related Disputes (&quot;AAA Consumer
+            Rules&quot;), both of which are available at the AAA website
+            www.adr.org. The determination of whether a Dispute is subject to
+            arbitration shall be governed by the Federal Arbitration Act and
+            determined by a court rather than an arbitrator. Your arbitration
+            fees and your share of arbitrator compensation shall be governed by
+            the AAA Consumer Rules and, where appropriate, limited by the AAA
+            Consumer Rules. If such costs are determined by the arbitrator to be
+            excessive, Company will pay all arbitration fees and expenses. The
+            arbitration may be conducted in person, through the submission of
+            documents, by phone or online. The arbitrator will make a decision
+            in writing, but need not provide a statement of reasons unless
+            requested by a party. The arbitrator must follow applicable law, and
+            any award may be challenged if the arbitrator fails to do so. Except
+            where otherwise required by the applicable AAA rules or applicable
+            law, the arbitration will take place in Hillsborough County, State
+            of Florida. Except as otherwise provided in this Agreement, you and
+            Company may litigate in court to compel arbitration, stay
+            proceedings pending arbitration, or to confirm, modify, vacate or
+            enter judgment on the award entered by the arbitrator.
+            <br />
+            <br />
+            <strong>D. Restrictions.</strong> You and Company agree that any
+            arbitration shall be limited to the Dispute between Company and you
+            individually. To the full extent permitted by law, (1) no
+            arbitration shall be joined with any other; (2) there is no right or
+            authority for any Dispute to be arbitrated on a class-action basis
+            or to utilize class action procedures; and (3) there is no right or
+            authority for any Dispute to be brought in a purported
+            representative capacity on behalf of the general public or any other
+            persons.
+            <br />
+            <br />
+            <strong>
+              E. Exceptions to Informal Negotiations and Arbitration.
+            </strong>{' '}
+            You and Company agree that the following Disputes are not subject to
+            the above provisions concerning informal negotiations and binding
+            arbitration: (1) any Disputes seeking to enforce or protect, or
+            concerning the validity of any of your or Company’s intellectual
+            property rights; (2) any Dispute related to, or arising from,
+            allegations of theft, piracy, invasion of privacy or unauthorized
+            use; and (3) any claim for injunctive relief. If this Section is
+            found to be illegal or unenforceable then neither you nor Company
+            will elect to arbitrate any Dispute falling within that portion of
+            this Section found to be illegal or unenforceable and such Dispute
+            shall be decided by a court of competent jurisdiction within the
+            courts listed for jurisdiction above, and you and Company agree to
+            submit to the personal jurisdiction of that court.
           </p>
           <br />
           <h2>CORRECTIONS</h2>
