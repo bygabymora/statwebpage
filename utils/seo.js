@@ -60,7 +60,10 @@ function generateProductJSONLD(product) {
         handlingTime: 'Handling time will be defined after purchase',
         transitTime: 'Transit time will be defined after purchase',
         value: 'Value will be defined after purchase',
-        shippingDestination: 'USA',
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'USA',
+        },
       },
     },
     applicableCountry: 'USA',
