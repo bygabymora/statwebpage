@@ -52,6 +52,7 @@ function generateProductJSONLD(product) {
         '@type': 'MerchantReturnPolicy',
         returnPolicyCategory:
           'https://www.statsurgicalsupply.com/return-policy',
+        applicableCountry: 'USA',
       },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
