@@ -55,11 +55,11 @@ function generateProductJSONLD(product) {
       },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
-        shippingRate: 'Shipping rate will be defined after purchase',
-        deliveryTime: 'Delivery time will be defined after purchase',
-        handlingTime: 'Handling time will be defined after purchase',
-        transitTime: 'Transit time will be defined after purchase',
-        value: 'Value will be defined after purchase',
+        shippingRate: 'https://schema.org/FreeShipping',
+        deliveryTime: 'https://schema.org/OneDayShipping',
+        handlingTime: 'https://schema.org/1BusinessDay',
+        transitTime: 'https://schema.org/1BusinessDay',
+        value: 'https://schema.org/USD0.00',
         shippingDestination: {
           '@type': 'DefinedRegion',
           addressCountry: 'USA',
