@@ -174,19 +174,28 @@ export default function AdminProdcutsScreen() {
                         )}
                       </button>
                     </th>
-                    <th className="p-2 text-left w-[12%]">PRICE EACH</th>
+                    <th className="p-2 text-left w-[12%]">
+                      PRICE
+                      <br /> EACH
+                    </th>
                     <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
-                      COUNT EACH
+                      COUNT
+                      <br /> EACH
                     </th>
                     <th className="p-2 text-left  w-[12%]">
                       PRICE <br /> BOX
                     </th>
                     <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
-                      COUNT BOX
+                      COUNT <br />
+                      BOX
                     </th>
-                    <th className="p-2 text-left  w-[12%]">PRICE C/RANCE</th>
+                    <th className="p-2 text-left  w-[12%]">
+                      PRICE
+                      <br /> C/RANCE
+                    </th>
                     <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
-                      COUNT C/RANCE
+                      COUNT <br />
+                      C/RANCE
                     </th>
                     <th className="p-2 text-left  w-[14%]">ACTIONS</th>
                   </tr>
