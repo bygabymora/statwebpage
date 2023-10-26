@@ -39,6 +39,7 @@ function reducer(state, action) {
       state;
   }
 }
+
 export default function AdminProdcutsScreen() {
   const router = useRouter();
   const [sortDirection, setSortDirection] = useState(1);
@@ -46,7 +47,11 @@ export default function AdminProdcutsScreen() {
     const newSortDirection = sortDirection === -1 ? 1 : -1;
     setSortDirection(newSortDirection);
   };
+
   const [sortedProducts, setSortedProducts] = useState([]);
+  const [productUpdates, setProductUpdates] = useState({});
+  const [hasChanges, setHasChanges] = useState(false);
+
   const [
     { loading, error, loadingCreate, successDelete, loadingDelete },
     dispatch,
@@ -78,16 +83,26 @@ export default function AdminProdcutsScreen() {
         const { slug } = router.query;
 
         const sortQuery = sortDirection === 1 ? 'asc' : 'desc';
-        console.log('Sort direction in useEffect:', sortDirection);
 
         const { data } = await axios.get(
           `/api/admin/products?slug=${slug}&sort=${sortQuery}`
         );
-        const sortedData = data.map((product) => ({ ...product }));
-        dispatch({ type: 'FETCH_SUCCESS', payload: sortedData });
 
-        // Update the sorted products state
-        setSortedProducts(sortedData);
+        const initialProductUpdates = {};
+        data.forEach((product) => {
+          initialProductUpdates[product._id] = {
+            price: product.price,
+            countInStock: product.countInStock,
+            priceBulk: product.priceBulk,
+            countInStockBulk: product.countInStockBulk,
+            priceClearance: product.priceClearance,
+            countInStockClearance: product.countInStockClearance,
+          };
+        });
+
+        setProductUpdates(initialProductUpdates);
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+        setSortedProducts(data);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -111,6 +126,96 @@ export default function AdminProdcutsScreen() {
       toast.success('Product deleted successfully');
     } catch (err) {
       dispatch({ type: 'DELETE_FAIL' });
+      toast.error(getError(err));
+    }
+  };
+  const handlePriceChange = (productId, newPrice) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: { ...prevUpdates[productId], price: newPrice },
+    }));
+    setHasChanges(true);
+  };
+  const handlePriceChange2 = (productId, newPrice2) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: { ...prevUpdates[productId], priceBulk: newPrice2 },
+    }));
+    setHasChanges(true);
+  };
+  const handlePriceChange3 = (productId, newPrice3) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: { ...prevUpdates[productId], priceClearance: newPrice3 },
+    }));
+    setHasChanges(true);
+  };
+
+  const handleStockCountChange = (productId, newStockCount) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: { ...prevUpdates[productId], countInStock: newStockCount },
+    }));
+    setHasChanges(true);
+  };
+  const handleStockCountChange2 = (productId, newStockCount2) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: {
+        ...prevUpdates[productId],
+        countInStockBulk: newStockCount2,
+      },
+    }));
+    setHasChanges(true);
+  };
+  const handleStockCountChange3 = (productId, newStockCount3) => {
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: {
+        ...prevUpdates[productId],
+        countInStockClearance: newStockCount3,
+      },
+    }));
+    setHasChanges(true);
+  };
+
+  const handleEditClick = async (productId) => {
+    if (!window.confirm('Are you sure?')) {
+      return;
+    }
+    const updatedProduct = { ...productUpdates[productId] };
+
+    try {
+      const response = await axios.get(`/api/admin/products/${productId}`);
+      const existingProduct = response.data;
+
+      const updateFields = {
+        name: existingProduct.name,
+        manufacturer: existingProduct.manufacturer,
+        slug: existingProduct.slug,
+        lot: existingProduct.lot,
+        expiration: existingProduct.expiration,
+        image: existingProduct.image,
+        countInStock: existingProduct.countInStock,
+        countInStockBulk: existingProduct.countInStockBulk,
+        sentOverNight: existingProduct.sentOverNight,
+        isInClearance: existingProduct.isInClearance,
+        countInStockClearance: existingProduct.countInStockClearance,
+        priceClearance: existingProduct.priceClearance,
+        includes: existingProduct.includes,
+        ...updatedProduct,
+      };
+
+      // Update the input fields with the new values
+      setProductUpdates((prevUpdates) => ({
+        ...prevUpdates,
+        [productId]: {},
+      }));
+
+      await axios.put(`/api/admin/products/${productId}/update`, updateFields);
+      toast.success('Product updated successfully');
+      window.location.reload();
+    } catch (err) {
       toast.error(getError(err));
     }
   };
@@ -203,22 +308,112 @@ export default function AdminProdcutsScreen() {
                 <tbody>
                   {sortedProducts.map((product) => (
                     <tr key={product._id} className="border-b">
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.slug}
-                        <br />
-                        {product.manufacturer}
+                      <td className=" p-2 border-r border-gray-300 ">
+                        <div>
+                          {product.slug}
+                          <br />
+                          {product.manufacturer}
+                        </div>
+                        {hasChanges && (
+                          <button
+                            onClick={() => handleEditClick(product._id)}
+                            className="primary-button"
+                          >
+                            <BiSolidEdit />
+                          </button>
+                        )}
                       </td>
-                      <td className=" p-2 ">${product.price}</td>
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.countInStock}
+                      <td className=" p-2 w-[12%]">
+                        $
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]?.price !== undefined
+                              ? productUpdates[product._id]?.price
+                              : product.price
+                          }
+                          onChange={(e) =>
+                            handlePriceChange(product._id, e.target.value)
+                          }
+                        />
                       </td>
-                      <td className=" p-2 ">${product.priceBulk}</td>
-                      <td className=" p-2 border-r border-gray-300">
-                        {product.countInStockBulk}
+                      <td className=" p-2 border-r border-gray-300 w-[12%]">
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]?.countInStock !==
+                            undefined
+                              ? productUpdates[product._id]?.countInStock
+                              : product.countInStock
+                          }
+                          onChange={(e) =>
+                            handleStockCountChange(product._id, e.target.value)
+                          }
+                        />
                       </td>
-                      <td className=" p-2 ">${product.priceClearance}</td>
+                      <td className=" p-2 ">
+                        $
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]?.priceBulk !== undefined
+                              ? productUpdates[product._id]?.priceBulk
+                              : product.priceBulk
+                          }
+                          onChange={(e) =>
+                            handlePriceChange2(product._id, e.target.value)
+                          }
+                        />
+                      </td>
                       <td className=" p-2 border-r border-gray-300">
-                        {product.countInStockClearance}
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]?.countInStockBulk !==
+                            undefined
+                              ? productUpdates[product._id]?.countInStockBulk
+                              : product.countInStockBulk
+                          }
+                          onChange={(e) =>
+                            handleStockCountChange2(product._id, e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className=" p-2 ">
+                        $
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]?.priceClearance !==
+                            undefined
+                              ? productUpdates[product._id]?.priceClearance
+                              : product.priceClearance
+                          }
+                          onChange={(e) =>
+                            handlePriceChange3(product._id, e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className=" p-2 border-r border-gray-300">
+                        <input
+                          className="w-[70%]"
+                          type="number"
+                          value={
+                            productUpdates[product._id]
+                              ?.countInStockClearance !== undefined
+                              ? productUpdates[product._id]
+                                  ?.countInStockClearance
+                              : product.countInStockClearance
+                          }
+                          onChange={(e) =>
+                            handleStockCountChange3(product._id, e.target.value)
+                          }
+                        />
                       </td>
                       <td className=" p-5 text-center flex flex-row">
                         <button
@@ -226,7 +421,7 @@ export default function AdminProdcutsScreen() {
                             router.push(`/admin/product/${product._id}`)
                           }
                           type="button"
-                          className="primary-button font-bold underline "
+                          className="primary-button font-bold underline"
                         >
                           <BiSolidEdit />
                         </button>
