@@ -66,7 +66,11 @@ export default function AdminProdcutsScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/products`);
+        const { slug } = router.query;
+
+        const { data } = await axios.get(
+          `/api/admin/products?slug=${slug}&sort=desc`
+        );
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
@@ -78,7 +82,7 @@ export default function AdminProdcutsScreen() {
     } else {
       fetchData();
     }
-  }, [successDelete]);
+  }, [router.query, successDelete]);
 
   const deleteHandler = async (productId) => {
     if (!window.confirm('Are you sure?')) {
@@ -138,21 +142,27 @@ export default function AdminProdcutsScreen() {
           ) : (
             <div className="overflow-x-auto">
               <br />
-              <table className="min-w-full">
+              <table className="min-w-full mb-5">
                 <thead className="border-b">
                   <tr>
-                    <th className="p-2 text-left border-r border-gray-300">
-                      REF.
+                    <th className="p-2 text-left border-r border-gray-300 w-[16%]">
+                      REF/Manufacturer
                     </th>
-                    <th className="p-2 text-left">PRICE EACH</th>
-                    <th className="p-2 text-left  border-r border-gray-300">
+                    <th className="p-2 text-left w-[12%]">PRICE EACH</th>
+                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
                       COUNT EACH
                     </th>
-                    <th className="p-2 text-left">PRICE BOX</th>
-                    <th className="p-2 text-left  border-r border-gray-300">
+                    <th className="p-2 text-left  w-[12%]">
+                      PRICE <br /> BOX
+                    </th>
+                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
                       COUNT BOX
                     </th>
-                    <th className="p-2 text-left">ACTIONS</th>
+                    <th className="p-2 text-left  w-[12%]">PRICE C/RANCE</th>
+                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
+                      COUNT C/RANCE
+                    </th>
+                    <th className="p-2 text-left  w-[14%]">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -160,6 +170,8 @@ export default function AdminProdcutsScreen() {
                     <tr key={product._id} className="border-b">
                       <td className=" p-2 border-r border-gray-300">
                         {product.slug}
+                        <br />
+                        {product.manufacturer}
                       </td>
                       <td className=" p-2 ">${product.price}</td>
                       <td className=" p-2 border-r border-gray-300">
@@ -168,6 +180,10 @@ export default function AdminProdcutsScreen() {
                       <td className=" p-2 ">${product.priceBulk}</td>
                       <td className=" p-2 border-r border-gray-300">
                         {product.countInStockBulk}
+                      </td>
+                      <td className=" p-2 ">${product.priceClearance}</td>
+                      <td className=" p-2 border-r border-gray-300">
+                        {product.countInStockClearance}
                       </td>
                       <td className=" p-5 text-center flex flex-row">
                         <button
