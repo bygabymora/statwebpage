@@ -46,10 +46,27 @@ const postHandler = async (req, res) => {
   await db.disconnect();
   res.send({ message: 'Product created successfully', product });
 };
+// ...
 const getHandler = async (req, res) => {
   await db.connect();
-  const products = await Product.find({}).sort({ slug: -1 });
-  await db.disconnect();
-  res.send(products);
+
+  try {
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1; // Determine the sort direction from the query parameter
+
+    let sortField = 'slug';
+    if (sortDirection === -1) {
+      sortField = `-${sortField}`;
+    }
+
+    const products = await Product.find({}).sort(sortField);
+
+    res.send(products);
+  } catch (error) {
+    res.status(500).send({ message: 'Error fetching products', error });
+  } finally {
+    await db.disconnect();
+  }
 };
+// ...
+
 export default handler;

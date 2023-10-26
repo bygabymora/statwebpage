@@ -1,11 +1,15 @@
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
-import { BsTrash3 } from 'react-icons/bs';
+import {
+  BsFillArrowDownSquareFill,
+  BsFillArrowUpSquareFill,
+  BsTrash3,
+} from 'react-icons/bs';
 import { BiSolidEdit } from 'react-icons/bi';
 
 function reducer(state, action) {
@@ -37,13 +41,18 @@ function reducer(state, action) {
 }
 export default function AdminProdcutsScreen() {
   const router = useRouter();
-
+  const [sortDirection, setSortDirection] = useState(1);
+  const toggleSortDirection = () => {
+    const newSortDirection = sortDirection === -1 ? 1 : -1;
+    setSortDirection(newSortDirection);
+  };
+  const [sortedProducts, setSortedProducts] = useState([]);
   const [
-    { loading, error, products, loadingCreate, successDelete, loadingDelete },
+    { loading, error, loadingCreate, successDelete, loadingDelete },
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
-    products: [],
+
     error: '',
   });
 
@@ -68,21 +77,27 @@ export default function AdminProdcutsScreen() {
         dispatch({ type: 'FETCH_REQUEST' });
         const { slug } = router.query;
 
+        const sortQuery = sortDirection === 1 ? 'asc' : 'desc';
+        console.log('Sort direction in useEffect:', sortDirection);
+
         const { data } = await axios.get(
-          `/api/admin/products?slug=${slug}&sort=desc`
+          `/api/admin/products?slug=${slug}&sort=${sortQuery}`
         );
-        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+        const sortedData = data.map((product) => ({ ...product }));
+        dispatch({ type: 'FETCH_SUCCESS', payload: sortedData });
+
+        // Update the sorted products state
+        setSortedProducts(sortedData);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
-
     if (successDelete) {
       dispatch({ type: 'DELETE_RESET' });
     } else {
       fetchData();
     }
-  }, [router.query, successDelete]);
+  }, [router.query, sortDirection, successDelete]);
 
   const deleteHandler = async (productId) => {
     if (!window.confirm('Are you sure?')) {
@@ -99,6 +114,7 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
+
   return (
     <Layout title="Admin Products">
       <div className="grid md:grid-cols-4 md:gap-5">
@@ -145,8 +161,18 @@ export default function AdminProdcutsScreen() {
               <table className="min-w-full mb-5">
                 <thead className="border-b">
                   <tr>
-                    <th className="p-2 text-left border-r border-gray-300 w-[16%]">
+                    <th className="p-2 text-center border-r border-gray-300 w-[16%]">
                       REF/Manufacturer
+                      <button
+                        onClick={toggleSortDirection}
+                        className="primary-button"
+                      >
+                        {sortDirection === -1 ? (
+                          <BsFillArrowUpSquareFill />
+                        ) : (
+                          <BsFillArrowDownSquareFill />
+                        )}
+                      </button>
                     </th>
                     <th className="p-2 text-left w-[12%]">PRICE EACH</th>
                     <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
@@ -166,7 +192,7 @@ export default function AdminProdcutsScreen() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
+                  {sortedProducts.map((product) => (
                     <tr key={product._id} className="border-b">
                       <td className=" p-2 border-r border-gray-300">
                         {product.slug}
