@@ -104,6 +104,7 @@ export default function AdminProdcutsScreen() {
         );
 
         const initialProductUpdates = {};
+
         data.forEach((product) => {
           initialProductUpdates[product._id] = {
             price: product.price,
@@ -243,6 +244,13 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
+  const hasUpdates = (originalProduct, updates) => {
+    if (!updates) return false;
+
+    return Object.keys(updates).some(
+      (key) => originalProduct[key] !== updates[key]
+    );
+  };
 
   return (
     <Layout title="Admin Products">
@@ -338,8 +346,7 @@ export default function AdminProdcutsScreen() {
                           <br />
                           {product.manufacturer}
                         </div>
-                        {Object.keys(productUpdates[product._id] || {}).length >
-                          0 && (
+                        {hasUpdates(product, productUpdates[product._id]) && (
                           <>
                             <div className="flex flex-row justify-center items-center text-center gap-2 mt-1">
                               <button
@@ -352,8 +359,18 @@ export default function AdminProdcutsScreen() {
                                 onClick={() => {
                                   setProductUpdates((prevUpdates) => ({
                                     ...prevUpdates,
-                                    [product._id]: {},
+                                    [product._id]: {
+                                      price: product.price,
+                                      countInStock: product.countInStock,
+                                      priceBulk: product.priceBulk,
+                                      countInStockBulk:
+                                        product.countInStockBulk,
+                                      priceClearance: product.priceClearance,
+                                      countInStockClearance:
+                                        product.countInStockClearance,
+                                    },
                                   }));
+
                                   setIsChangesDisplayed(
                                     (prevIsChangesDisplayed) => ({
                                       ...prevIsChangesDisplayed,
