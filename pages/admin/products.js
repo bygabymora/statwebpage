@@ -147,52 +147,83 @@ export default function AdminProdcutsScreen() {
   };
   const handlePriceChange = (productId, newPrice) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: { ...prevUpdates[productId], price: newPrice },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: { ...prevUpdates[productId], price: newPrice },
+      };
+    });
   };
+
   const handlePriceChange2 = (productId, newPrice2) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: { ...prevUpdates[productId], priceBulk: newPrice2 },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: { ...prevUpdates[productId], priceBulk: newPrice2 },
+      };
+    });
   };
   const handlePriceChange3 = (productId, newPrice3) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: { ...prevUpdates[productId], priceClearance: newPrice3 },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: { ...prevUpdates[productId], priceClearance: newPrice3 },
+      };
+    });
   };
 
   const handleStockCountChange = (productId, newStockCount) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: { ...prevUpdates[productId], countInStock: newStockCount },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: { ...prevUpdates[productId], countInStock: newStockCount },
+      };
+    });
   };
   const handleStockCountChange2 = (productId, newStockCount2) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: {
-        ...prevUpdates[productId],
-        countInStockBulk: newStockCount2,
-      },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: {
+          ...prevUpdates[productId],
+          countInStockBulk: newStockCount2,
+        },
+      };
+    });
   };
   const handleStockCountChange3 = (productId, newStockCount3) => {
     setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => ({
-      ...prevUpdates,
-      [productId]: {
-        ...prevUpdates[productId],
-        countInStockClearance: newStockCount3,
-      },
-    }));
+    setProductUpdates((prevUpdates) => {
+      if (!prevUpdates[productId]) {
+        prevUpdates[productId] = {};
+      }
+      return {
+        ...prevUpdates,
+        [productId]: {
+          ...prevUpdates[productId],
+          countInStockClearance: newStockCount3,
+        },
+      };
+    });
   };
 
   const handleEditClick = async (productId) => {
