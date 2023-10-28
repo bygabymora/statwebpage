@@ -355,7 +355,10 @@ img {
   color: var(--container-color);
   @apply rounded py-2 px-4 shadow outline-none hover:bg-gray-400 active:bg-gray-500;
 }
-
+.primary-button2 {
+  background-color: var(--title-color);
+  color: var(--container-color);
+}
 .product-image {
   @apply object-cover rounded-t-lg;
 }

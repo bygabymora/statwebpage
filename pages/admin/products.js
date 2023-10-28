@@ -10,7 +10,8 @@ import {
   BsFillArrowUpSquareFill,
   BsTrash3,
 } from 'react-icons/bs';
-import { BiSolidEdit } from 'react-icons/bi';
+import { BiSolidEdit, BiUpload } from 'react-icons/bi';
+import { TiCancel } from 'react-icons/ti';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -34,6 +35,8 @@ function reducer(state, action) {
       return { ...state, loadingDelete: false };
     case 'DELETE_RESET':
       return { ...state, loadingDelete: false, successDelete: false };
+    case 'SET_EDIT_PRODUCT':
+      return { ...state, editProductId: action.payload };
 
     default:
       state;
@@ -50,8 +53,8 @@ export default function AdminProdcutsScreen() {
 
   const [sortedProducts, setSortedProducts] = useState([]);
   const [productUpdates, setProductUpdates] = useState({});
-  const [hasChanges, setHasChanges] = useState(false);
-
+  const [isChangesDisplayed, setIsChangesDisplayed] = useState({});
+  const [currentEditingProductId, setCurrentEditingProductId] = useState(null);
   const [
     { loading, error, loadingCreate, successDelete, loadingDelete },
     dispatch,
@@ -76,6 +79,18 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
+
+  useEffect(() => {
+    const initialUpdates = {};
+    const initialIsChangesDisplayed = {};
+    sortedProducts.forEach((product) => {
+      initialUpdates[product._id] = {};
+      initialIsChangesDisplayed[product._id] = false;
+    });
+    setProductUpdates(initialUpdates);
+    setIsChangesDisplayed(initialIsChangesDisplayed);
+  }, [sortedProducts]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -130,35 +145,36 @@ export default function AdminProdcutsScreen() {
     }
   };
   const handlePriceChange = (productId, newPrice) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: { ...prevUpdates[productId], price: newPrice },
     }));
-    setHasChanges(true);
   };
   const handlePriceChange2 = (productId, newPrice2) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: { ...prevUpdates[productId], priceBulk: newPrice2 },
     }));
-    setHasChanges(true);
   };
   const handlePriceChange3 = (productId, newPrice3) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: { ...prevUpdates[productId], priceClearance: newPrice3 },
     }));
-    setHasChanges(true);
   };
 
   const handleStockCountChange = (productId, newStockCount) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: { ...prevUpdates[productId], countInStock: newStockCount },
     }));
-    setHasChanges(true);
   };
   const handleStockCountChange2 = (productId, newStockCount2) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: {
@@ -166,9 +182,9 @@ export default function AdminProdcutsScreen() {
         countInStockBulk: newStockCount2,
       },
     }));
-    setHasChanges(true);
   };
   const handleStockCountChange3 = (productId, newStockCount3) => {
+    setCurrentEditingProductId(productId);
     setProductUpdates((prevUpdates) => ({
       ...prevUpdates,
       [productId]: {
@@ -176,13 +192,21 @@ export default function AdminProdcutsScreen() {
         countInStockClearance: newStockCount3,
       },
     }));
-    setHasChanges(true);
   };
 
   const handleEditClick = async (productId) => {
     if (!window.confirm('Are you sure?')) {
       return;
     }
+    const hasPendingChanges = Object.keys(productUpdates).some(
+      (id) => id !== productId && Object.keys(productUpdates[id]).length > 0
+    );
+
+    if (hasPendingChanges && productId !== currentEditingProductId) {
+      toast.error('Please save other changes first.');
+      return;
+    }
+
     const updatedProduct = { ...productUpdates[productId] };
 
     try {
@@ -214,7 +238,7 @@ export default function AdminProdcutsScreen() {
 
       await axios.put(`/api/admin/products/${productId}/update`, updateFields);
       toast.success('Product updated successfully');
-      window.location.reload();
+      setCurrentEditingProductId(null);
     } catch (err) {
       toast.error(getError(err));
     }
@@ -314,13 +338,36 @@ export default function AdminProdcutsScreen() {
                           <br />
                           {product.manufacturer}
                         </div>
-                        {hasChanges && (
-                          <button
-                            onClick={() => handleEditClick(product._id)}
-                            className="primary-button"
-                          >
-                            <BiSolidEdit />
-                          </button>
+                        {Object.keys(productUpdates[product._id] || {}).length >
+                          0 && (
+                          <>
+                            <div className="flex flex-row justify-center items-center text-center gap-2 mt-1">
+                              <button
+                                onClick={() => handleEditClick(product._id)}
+                                className="primary-button2 p-1 rounded shadow outline-none hover:bg-gray-400 active:bg-gray-500"
+                              >
+                                <BiUpload />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setProductUpdates((prevUpdates) => ({
+                                    ...prevUpdates,
+                                    [product._id]: {},
+                                  }));
+                                  setIsChangesDisplayed(
+                                    (prevIsChangesDisplayed) => ({
+                                      ...prevIsChangesDisplayed,
+                                      [product._id]: false,
+                                    })
+                                  );
+                                  setCurrentEditingProductId(null);
+                                }}
+                                className="primary-button2 p-1 rounded shadow outline-none hover:bg-gray-400 active:bg-gray-500"
+                              >
+                                <TiCancel />
+                              </button>
+                            </div>
+                          </>
                         )}
                       </td>
                       <td className=" p-2 w-[12%]">
@@ -328,13 +375,13 @@ export default function AdminProdcutsScreen() {
                         <input
                           className="w-[70%]"
                           type="number"
-                          value={
-                            productUpdates[product._id]?.price !== undefined
-                              ? productUpdates[product._id]?.price
-                              : product.price
-                          }
+                          value={productUpdates[product._id]?.price}
                           onChange={(e) =>
                             handlePriceChange(product._id, e.target.value)
+                          }
+                          disabled={
+                            currentEditingProductId &&
+                            currentEditingProductId !== product._id
                           }
                         />
                       </td>
@@ -342,15 +389,15 @@ export default function AdminProdcutsScreen() {
                         <input
                           className="w-[70%]"
                           type="number"
-                          value={
-                            productUpdates[product._id]?.countInStock !==
-                            undefined
-                              ? productUpdates[product._id]?.countInStock
-                              : product.countInStock
-                          }
+                          value={productUpdates[product._id]?.countInStock}
                           onChange={(e) =>
                             handleStockCountChange(product._id, e.target.value)
                           }
+                          disabled={
+                            isChangesDisplayed[product._id] ||
+                            (currentEditingProductId &&
+                              currentEditingProductId !== product._id)
+                          }
                         />
                       </td>
                       <td className=" p-2 ">
@@ -358,28 +405,29 @@ export default function AdminProdcutsScreen() {
                         <input
                           className="w-[70%]"
                           type="number"
-                          value={
-                            productUpdates[product._id]?.priceBulk !== undefined
-                              ? productUpdates[product._id]?.priceBulk
-                              : product.priceBulk
-                          }
+                          value={productUpdates[product._id]?.priceBulk}
                           onChange={(e) =>
                             handlePriceChange2(product._id, e.target.value)
                           }
+                          disabled={
+                            isChangesDisplayed[product._id] ||
+                            (currentEditingProductId &&
+                              currentEditingProductId !== product._id)
+                          }
                         />
                       </td>
                       <td className=" p-2 border-r border-gray-300">
                         <input
                           className="w-[70%]"
                           type="number"
-                          value={
-                            productUpdates[product._id]?.countInStockBulk !==
-                            undefined
-                              ? productUpdates[product._id]?.countInStockBulk
-                              : product.countInStockBulk
-                          }
+                          value={productUpdates[product._id]?.countInStockBulk}
                           onChange={(e) =>
                             handleStockCountChange2(product._id, e.target.value)
+                          }
+                          disabled={
+                            isChangesDisplayed[product._id] ||
+                            (currentEditingProductId &&
+                              currentEditingProductId !== product._id)
                           }
                         />
                       </td>
@@ -388,14 +436,14 @@ export default function AdminProdcutsScreen() {
                         <input
                           className="w-[70%]"
                           type="number"
-                          value={
-                            productUpdates[product._id]?.priceClearance !==
-                            undefined
-                              ? productUpdates[product._id]?.priceClearance
-                              : product.priceClearance
-                          }
+                          value={productUpdates[product._id]?.priceClearance}
                           onChange={(e) =>
                             handlePriceChange3(product._id, e.target.value)
+                          }
+                          disabled={
+                            isChangesDisplayed[product._id] ||
+                            (currentEditingProductId &&
+                              currentEditingProductId !== product._id)
                           }
                         />
                       </td>
@@ -404,14 +452,15 @@ export default function AdminProdcutsScreen() {
                           className="w-[70%]"
                           type="number"
                           value={
-                            productUpdates[product._id]
-                              ?.countInStockClearance !== undefined
-                              ? productUpdates[product._id]
-                                  ?.countInStockClearance
-                              : product.countInStockClearance
+                            productUpdates[product._id]?.countInStockClearance
                           }
                           onChange={(e) =>
                             handleStockCountChange3(product._id, e.target.value)
+                          }
+                          disabled={
+                            isChangesDisplayed[product._id] ||
+                            (currentEditingProductId &&
+                              currentEditingProductId !== product._id)
                           }
                         />
                       </td>
