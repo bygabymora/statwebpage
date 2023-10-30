@@ -51,7 +51,7 @@ function generateProductJSONLD(product) {
 
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',
-        returnPolicyCategory: 'RETURNS_ACCEPTED',
+        returnPolicyCategory: 'RETURN_REASON_CATEGORY_UNSPECIFIED',
         applicableCountry: {
           '@type': 'Country',
           name: 'US',
