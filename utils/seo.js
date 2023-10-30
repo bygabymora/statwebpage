@@ -82,11 +82,11 @@ function generateProductJSONLD(product) {
         value: 'https://schema.org/USD0.00',
         shippingDestination: {
           '@type': 'DefinedRegion',
-          addressCountry: 'USA',
+          addressCountry: 'United States',
         },
       },
     },
-    applicableCountry: 'USA',
+    applicableCountry: 'United States',
   };
 }
 
