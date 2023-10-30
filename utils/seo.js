@@ -53,7 +53,7 @@ function generateProductJSONLD(product) {
         returnPolicyCategory: {
           '@type': 'MerchantReturnEnumeration',
           name: 'https://schema.org/FullRefund',
-          enum: 'https://schema.org/FullRefund',
+          enum: 0,
         },
 
         applicableCountry: {
