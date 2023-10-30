@@ -64,7 +64,6 @@ function generateProductJSONLD(product) {
           '@type': 'MonetaryAmount',
           currency: 'USD',
           value: '0.00',
-          maxValue: '0.00',
         },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',
@@ -73,10 +72,6 @@ function generateProductJSONLD(product) {
           transitTime: 'https://schema.org/1BusinessDay',
           handlingTime: 'https://schema.org/1BusinessDay',
         },
-
-        handlingTime: 'https://schema.org/1BusinessDay',
-        transitTime: 'https://schema.org/1BusinessDay',
-        value: 'https://schema.org/USD0.00',
         shippingDestination: {
           '@type': 'DefinedRegion',
           addressCountry: 'US',
