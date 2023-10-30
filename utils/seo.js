@@ -48,19 +48,16 @@ function generateProductJSONLD(product) {
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
       url: `https://www.statsurgicalsupply.com/products/${product.slug}`,
+
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',
-        returnPolicyCategory: {
-          '@type': 'MerchantReturnEnumeration',
-          name: 'https://schema.org/FullRefund',
-          enum: 0,
-        },
-
+        returnPolicyCategory: 'RETURNS_ACCEPTED',
         applicableCountry: {
           '@type': 'Country',
-          name: 'United States',
+          name: 'US',
         },
       },
+
       shippingDetails: {
         '@type': 'OfferShippingDetails',
         shippingRate: {
@@ -82,11 +79,11 @@ function generateProductJSONLD(product) {
         value: 'https://schema.org/USD0.00',
         shippingDestination: {
           '@type': 'DefinedRegion',
-          addressCountry: 'United States',
+          addressCountry: 'US',
         },
       },
     },
-    applicableCountry: 'United States',
+    applicableCountry: 'US',
   };
 }
 
