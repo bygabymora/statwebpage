@@ -58,7 +58,7 @@ function generateProductJSONLD(product) {
 
         applicableCountry: {
           '@type': 'Country',
-          name: 'USA',
+          name: 'United States',
         },
       },
       shippingDetails: {
