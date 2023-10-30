@@ -50,13 +50,33 @@ function generateProductJSONLD(product) {
       url: `https://www.statsurgicalsupply.com/products/${product.slug}`,
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',
-        returnPolicyCategory: 'https://schema.org/FullRefund',
-        applicableCountry: 'USA',
+        returnPolicyCategory: {
+          '@type': 'MerchantReturnEnumeration',
+          name: 'https://schema.org/FullRefund',
+          enum: 'https://schema.org/FullRefund',
+        },
+
+        applicableCountry: {
+          '@type': 'Country',
+          name: 'USA',
+        },
       },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
-        shippingRate: 'https://schema.org/FreeShipping',
-        deliveryTime: 'https://schema.org/OneDayShipping',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          currency: 'USD',
+          value: '0.00',
+          maxValue: '0.00',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          businessDays: 'https://schema.org/BusinessDay',
+          cutoffTime: '12:00',
+          transitTime: 'https://schema.org/1BusinessDay',
+          handlingTime: 'https://schema.org/1BusinessDay',
+        },
+
         handlingTime: 'https://schema.org/1BusinessDay',
         transitTime: 'https://schema.org/1BusinessDay',
         value: 'https://schema.org/USD0.00',
