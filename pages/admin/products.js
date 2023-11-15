@@ -12,6 +12,7 @@ import {
 } from 'react-icons/bs';
 import { BiSolidEdit, BiUpload } from 'react-icons/bi';
 import { TiCancel } from 'react-icons/ti';
+import Image from 'next/image';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -376,6 +377,13 @@ export default function AdminProdcutsScreen() {
                           {product.slug}
                           <br />
                           {product.manufacturer}
+                          <br />
+                          <Image
+                            width={100}
+                            height={100}
+                            src={product.image}
+                            alt={product.name}
+                          />
                         </div>
                         {hasUpdates(product, productUpdates[product._id]) && (
                           <>
