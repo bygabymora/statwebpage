@@ -7,6 +7,7 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
 import ReactGA from 'react-ga';
 import Script from 'next/script';
+import { reportWebVitals } from '../utils/reportWebVitals';
 
 // Initialize Google Analytics with your tracking ID
 ReactGA.initialize('G-DZ8WE2HZH9', {
@@ -74,3 +75,4 @@ function Auth({ children, adminOnly }) {
 }
 
 export default MyApp;
+export { reportWebVitals };
