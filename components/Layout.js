@@ -16,6 +16,7 @@ export default function Layout({ title, children, news, product }) {
         <title>{title ? title : 'STAT'}</title>
         <meta name="description" content="Surgical Supplies at low price" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href="https://www.statsurgicalsupply.com/" />
         <link
           rel="alternate"
           type="application/ld+json"
