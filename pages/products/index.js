@@ -78,7 +78,7 @@ export default function Products({ products }) {
 
 export async function getServerSideProps() {
   await db.connect();
-  const products = await Product.find().lean();
+  const products = await Product.find().sort({ slug: 1 }).lean();
   return {
     props: {
       products: products.map(db.convertDocToObj),
