@@ -5,7 +5,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
 import { Analytics } from '@vercel/analytics/react';
-import { generateJSONLD, generateProductJSONLD } from '../utils/seo';
+import {
+  generateJSONLD,
+  generateProductJSONLD,
+  generateMainPageJSONLD,
+} from '../utils/seo';
 import Logo from '../public/images/assets/logo2.png';
 
 export default function Layout({ title, children, news, product }) {
@@ -21,6 +25,12 @@ export default function Layout({ title, children, news, product }) {
           rel="alternate"
           type="application/ld+json"
           href="/api/featuredProductsJSONLD"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateMainPageJSONLD()),
+          }}
         />
         {news && (
           <>

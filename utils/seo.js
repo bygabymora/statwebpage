@@ -30,7 +30,7 @@ function generateProductJSONLD(product) {
   return {
     '@context': 'https://schema.org/',
     '@type': 'Product',
-    name: product.name,
+    name: `Stat Surgical Supply ${product.name}`,
     image: product.image,
     brand: product.manufacturer,
     description: product.description || '',
@@ -47,8 +47,12 @@ function generateProductJSONLD(product) {
         product.countInStockClearance > 0
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
+      name: `Stat Surgical Supply ${product.name}`,
       url: `https://www.statsurgicalsupply.com/products/${product.slug}`,
-
+      seller: {
+        '@type': 'Organization',
+        name: 'STAT Surgical Supply',
+      },
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',
         returnReasonCategory: 'RETURN_REASON_CATEGORY_UNSPECIFIED',
@@ -81,5 +85,21 @@ function generateProductJSONLD(product) {
     applicableCountry: 'US',
   };
 }
+function generateMainPageJSONLD() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    url: 'https://www.statsurgicalsupply.com',
+    name: 'STAT Surgical Supply',
+    description:
+      'We provide high-quality surgical supplies to meet the needs of healthcare professionals. Partner with us to save thousands on the same devices you purchase direct.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target:
+        'https://www.statsurgicalsupply.com/search?query={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
 
-export { generateJSONLD, generateProductJSONLD };
+export { generateJSONLD, generateProductJSONLD, generateMainPageJSONLD };
