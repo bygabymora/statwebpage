@@ -487,7 +487,7 @@ export default function ShippingScreen() {
                   type="text"
                   id="fullNameB"
                   placeholder="Enter Full Name"
-                  {...register('fullNameB', { required: true, minLength: 3 })}
+                  {...register('fullNameB', { required: false, minLength: 3 })}
                   autoFocus
                   autoCapitalize="true"
                   required
