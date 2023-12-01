@@ -100,8 +100,23 @@ export default function PlaceOrderScreen() {
   }, [paymentMethod, router]);
 
   const [loading, setLoading] = useState(false);
+  const validateOrder = () => {
+    if (
+      !shippingAddress ||
+      !billingAddress ||
+      !paymentMethod ||
+      cartItems.length === 0
+    ) {
+      return false;
+    }
 
+    return true;
+  };
   const placeOrderHandler = async () => {
+    if (!validateOrder()) {
+      toast.error('Please fill all required fields.');
+      return;
+    }
     sendEmail();
     try {
       setLoading(true);
@@ -302,10 +317,16 @@ export default function PlaceOrderScreen() {
             </div>
           </div>
           <form ref={form} hidden>
-            <input type="text" name="user_name" value={emailName} />
-            <input type="text" name="user_phone" value={emailPhone} />
-            <input type="text" name="total_order" value={emailTotalOrder} />
+            <input type="text" name="user_name" value={emailName} readOnly />
+            <input type="text" name="user_phone" value={emailPhone} readOnly />
             <input
+              type="text"
+              name="total_order"
+              value={emailTotalOrder}
+              readOnly
+            />
+            <input
+              readOnly
               type="text"
               name="payment_method"
               value={
@@ -319,6 +340,7 @@ export default function PlaceOrderScreen() {
               type="text"
               name="shipping_preference"
               value={emailShippingPreference}
+              readOnly
             />
             <input type="text" name="user_email" value={email} />
           </form>
