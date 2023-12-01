@@ -520,7 +520,7 @@ export default function ShippingScreen() {
                   type="text"
                   id="phoneB"
                   placeholder="Enter Phone Number"
-                  {...register('phoneB', { required: true, minLength: 3 })}
+                  {...register('phoneB', { required: false, minLength: 3 })}
                   autoFocus
                   autoCapitalize="true"
                 />
@@ -535,7 +535,7 @@ export default function ShippingScreen() {
                   type="text"
                   id="addressB"
                   placeholder="Enter address"
-                  {...register('addressB', { required: true, minLength: 3 })}
+                  {...register('addressB', { required: false, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
@@ -550,7 +550,7 @@ export default function ShippingScreen() {
                   type="text"
                   id="stateB"
                   placeholder="Enter state"
-                  {...register('stateB', { required: true, minLength: 3 })}
+                  {...register('stateB', { required: false, minLength: 3 })}
                   onChange={handleStateChange}
                   onFocus={() => setShowSuggestions(true)}
                   onKeyDown={handleKeyDown} // Add the onKeyDown event handler
@@ -585,7 +585,7 @@ export default function ShippingScreen() {
                   type="text"
                   id="cityB"
                   placeholder="Enter city"
-                  {...register('cityB', { required: true, minLength: 3 })}
+                  {...register('cityB', { required: false, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
@@ -600,7 +600,10 @@ export default function ShippingScreen() {
                   type="text"
                   id="postalCodeB"
                   placeholder="Enter postal code"
-                  {...register('postalCodeB', { required: true, minLength: 3 })}
+                  {...register('postalCodeB', {
+                    required: false,
+                    minLength: 3,
+                  })}
                   autoCapitalize="true"
                   required
                 />
