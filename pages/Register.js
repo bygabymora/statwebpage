@@ -26,18 +26,28 @@ export default function LoginScreen() {
     getValues,
     formState: { errors },
   } = useForm();
-  const submitHandler = async ({ name, email, password }) => {
+  const submitHandler = async ({
+    name,
+    email,
+    password,
+    companyName,
+    companyEinCode,
+  }) => {
     try {
       await axios.post('/api/auth/signup', {
         name,
         email,
         password,
+        companyName,
+        companyEinCode,
       });
 
       const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
+        companyName,
+        companyEinCode,
       });
       if (result.error) {
         toast.error(result.error);
@@ -115,6 +125,26 @@ export default function LoginScreen() {
           />
           {errors.companyName && (
             <div className="text-red-500">{errors.companyName.message}</div>
+          )}
+        </div>
+        <div className="mb-4">
+          <label
+            className="block mb-2 text-sm font-bold text-gray-700"
+            htmlFor="companyEinCode"
+          >
+            Company EIN*
+          </label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            id="companyEinCode"
+            autoFocus
+            {...register('companyEinCode', {
+              required: 'Please enter company name',
+            })}
+          />
+          {errors.companyEinCode && (
+            <div className="text-red-500">{errors.companyEinCode.message}</div>
           )}
         </div>
         <div className="mb-4">
