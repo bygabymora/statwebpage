@@ -532,6 +532,7 @@ export default function ShippingScreen() {
                   placeholder="Company's Name"
                   {...register('companyB', { required: false, minLength: 3 })}
                   autoCapitalize="true"
+                  required
                 />
                 {errors.companyB && (
                   <p className="text-red-500">
@@ -548,6 +549,7 @@ export default function ShippingScreen() {
                   placeholder="Enter Phone Number"
                   {...register('phoneB', { required: false, minLength: 3 })}
                   autoCapitalize="true"
+                  required
                 />
                 {errors.phoneB && (
                   <p className="text-red-500">Phone Number is required.</p>
