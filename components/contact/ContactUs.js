@@ -40,7 +40,7 @@ const ContactUs = () => {
 
       <form className="contact__form" ref={form} onSubmit={sendEmail}>
         <div className="contact__form-div">
-          <label className="contact__form-tag" for="user_name">
+          <label className="contact__form-tag" htmlFor="user_name">
             Name*
           </label>
           <input
@@ -55,7 +55,7 @@ const ContactUs = () => {
         </div>
 
         <div className="contact__form-div">
-          <label className="contact__form-tag" for="user_email">
+          <label className="contact__form-tag" htmlFor="user_email">
             Email*
           </label>
           <input
@@ -70,7 +70,7 @@ const ContactUs = () => {
         </div>
 
         <div className="contact__form-div">
-          <label className="contact__form-tag" for="message">
+          <label className="contact__form-tag" htmlFor="message">
             Message*
           </label>
           <textarea

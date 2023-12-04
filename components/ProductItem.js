@@ -22,7 +22,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.countInStock
   );
-  const selectId = `uomSelect-${Math.random().toString(36).substr(2, 9)}`;
+  const selectId = `uomSelect-${product.id}`;
   const labelFor = selectId;
 
   useEffect(() => {
@@ -326,22 +326,22 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                           setCurrentCountInStock(product.countInStockClearance);
                         }
                       }}
-                      id={selectId} // Use the generated unique ID for the select element
+                      id={labelFor} // Use the generated unique ID for the select element
                     >
                       {product.countInStock > 0 && (
-                        <option value="Each" id={`${selectId}-eachOption`}>
+                        <option value="Each" id={`${labelFor}-eachOption`}>
                           Each
                         </option>
                       )}
                       {product.countInStockBulk > 0 && (
-                        <option value="Bulk" id={`${selectId}-bulkOption`}>
+                        <option value="Bulk" id={`${labelFor}-bulkOption`}>
                           Box
                         </option>
                       )}
                       {product.countInStockClearance > 0 && (
                         <option
                           value="Clearance"
-                          id={`${selectId}-clearanceOption`}
+                          id={`${labelFor}-clearanceOption`}
                         >
                           Clearance
                         </option>

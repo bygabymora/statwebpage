@@ -17,6 +17,12 @@ export default NextAuth({
       if (user?.isAdmin) {
         token.isAdmin = user.isAdmin;
       }
+      if (user?.companyName) {
+        token.companyName = user.companyName;
+      }
+      if (user?.companyEinCode) {
+        token.companyEinCode = user.companyEinCode;
+      }
       return token;
     },
 
@@ -27,6 +33,13 @@ export default NextAuth({
       if (token?.isAdmin) {
         session.user.isAdmin = token.isAdmin;
       }
+      if (token?.companyName) {
+        session.user.companyName = token.companyName;
+      }
+      if (token?.companyEinCode) {
+        session.user.companyEinCode = token.companyEinCode;
+      }
+
       return session;
     },
   },

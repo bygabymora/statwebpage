@@ -78,7 +78,7 @@ export default function Footer() {
           src={Payment}
           alt="Payment Methods"
           width={300}
-          height={100}
+          height={'auto'}
         />
         <br />
         <div className="flex flex-row">
