@@ -21,6 +21,8 @@ export default function ProfileScreen() {
   useEffect(() => {
     setValue('name', session.user.name);
     setValue('email', session.user.email);
+    setValue('companyName', session.user.companyName);
+    setValue('companyEinCode', session.user.companyEinCode);
   }, [session.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);
