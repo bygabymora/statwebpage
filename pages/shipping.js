@@ -318,18 +318,11 @@ export default function ShippingScreen() {
               <div className="mb-2">
                 <p className="text-sm">
                   {lastOrder.shippingAddress.fullName}
-                  <br />{' '}
-                  {lastOrder.shippingAddress.company && (
-                    <>
-                      {lastOrder.shippingAddress.company}
-                      <br />{' '}
-                    </>
-                  )}
-                  {lastOrder.shippingAddress.phone && (
-                    <>
-                      {lastOrder.shippingAddress.phone} <br />{' '}
-                    </>
-                  )}
+                  <br />
+                  {lastOrder.shippingAddress.company}
+                  <br />
+                  {lastOrder.shippingAddress.phone}
+                  <br />
                   {lastOrder.shippingAddress.address}
                   <br /> {lastOrder.shippingAddress.state}
                   <br /> {lastOrder.shippingAddress.city}
@@ -468,7 +461,6 @@ export default function ShippingScreen() {
         <div className="mx-auto max-w-screen-md">
           <h1 className="text-2xl font-bold">Billing Address</h1>
           <div className="mb-4 contact__form-div">
-            {/* Checkbox to toggle billing address same as shipping address */}
             <label htmlFor="sameAddress">Same as Shipping Address</label> &nbsp;
             <input
               type="checkbox"

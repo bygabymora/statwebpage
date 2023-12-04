@@ -186,10 +186,10 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.city}, {shippingAddress.postalCode}{' '}
                 <h2 className="mb-2 text-lg">Billing Address</h2>
                 <div>
-                  {billingAddress.fullName},{' '}
-                  {billingAddress.company && <>{billingAddress.company},</>}{' '}
-                  {billingAddress.phone}, {billingAddress.address},{' '}
-                  {billingAddress.city}, {billingAddress.postalCode}{' '}
+                  {billingAddress.fullNameB},{' '}
+                  {billingAddress.companyB && <>{billingAddress.companyB},</>}{' '}
+                  {billingAddress.phoneB}, {billingAddress.addressB},{' '}
+                  {billingAddress.cityB}, {billingAddress.postalCodeB}{' '}
                 </div>
                 {shippingAddress.notes && (
                   <>
