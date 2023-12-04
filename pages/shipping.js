@@ -7,8 +7,12 @@ import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 export default function ShippingScreen() {
+  const { data: session } = useSession();
+  const [name, setName] = useState('');
+
   const usStates = [
     'Alabama',
     'Alaska',
@@ -71,9 +75,9 @@ export default function ShippingScreen() {
   const [showSuggestions, setShowSuggestions] = useState(false); // Add state for tracking the visibility of suggestions
 
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1); // Initialize to -1, meaning no suggestion is selected
-  const [shippingSpeed, setShippingSpeed] = useState('');
-  const [shippingCompany, setShippingCompany] = useState('');
-  const [shippingPaymentMethod, setPaymentMethod] = useState('');
+  const [shippingSpeed, setShippingSpeed] = useState('Overnight');
+  const [shippingCompany, setShippingCompany] = useState('FedEx');
+  const [shippingPaymentMethod, setPaymentMethod] = useState('Bill me');
   const [accountNumber, setAccountNumber] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
   const [sameAddress, setSameAddress] = useState(true);
@@ -96,6 +100,16 @@ export default function ShippingScreen() {
 
   const handleSpecialNotesChange = (event) => {
     setSpecialNotes(event.target.value);
+  };
+
+  useEffect(() => {
+    if (session && session.user && session.user.name) {
+      setName(session.user.name);
+    }
+  }, [session, session.user.name]);
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
   };
 
   const handleShippingInstructions = () => {
@@ -190,6 +204,15 @@ export default function ShippingScreen() {
     postalCodeB,
     notes,
   }) => {
+    if (sameAddress) {
+      fullNameB = fullName;
+      companyB = company;
+      phoneB = phone;
+      addressB = address;
+      stateB = state;
+      cityB = city;
+      postalCodeB = postalCode;
+    }
     dispatch({
       type: 'SAVE_SHIPPING_ADDRESS',
       payload: {
@@ -243,6 +266,7 @@ export default function ShippingScreen() {
     const fetchLastOrder = async () => {
       try {
         const { data } = await axios.get('/api/orders/lastOrder');
+
         setLastOrder(data);
       } catch (err) {
         console.error(err);
@@ -268,18 +292,27 @@ export default function ShippingScreen() {
 
   useEffect(() => {
     if (sameAddress) {
-      setValue('fullNameB', shippingAddress.fullName);
-      setValue('companyB', shippingAddress.company);
-      setValue('phoneB', shippingAddress.phone);
-      setValue('addressB', shippingAddress.address);
-      setValue('stateB', shippingAddress.state);
-      setValue('cityB', shippingAddress.city);
-      setValue('postalCodeB', shippingAddress.postalCode);
+      if (
+        shippingAddress.fullName &&
+        shippingAddress.address &&
+        shippingAddress.city &&
+        shippingAddress.state &&
+        shippingAddress.postalCode
+      ) {
+        setValue('fullNameB', shippingAddress.fullName);
+        setValue('companyB', shippingAddress.company);
+        setValue('phoneB', shippingAddress.phone);
+        setValue('addressB', shippingAddress.address);
+        setValue('stateB', shippingAddress.state);
+        setValue('cityB', shippingAddress.city);
+        setValue('postalCodeB', shippingAddress.postalCode);
+      }
     }
   }, [sameAddress, setValue, shippingAddress]);
 
-  const handleSameAddressChange = () => {
-    setSameAddress(!sameAddress);
+  const handleSameAddressChange = (event) => {
+    setSameAddress(event.target.checked);
+    console.log('Checkbox Checked:', event.target.checked);
   };
 
   return (
@@ -345,6 +378,8 @@ export default function ShippingScreen() {
               {...register('fullName', { required: true, minLength: 3 })}
               autoFocus
               autoCapitalize="true"
+              value={name}
+              onChange={handleNameChange}
               required
             />
             {errors.fullName && (
@@ -352,15 +387,15 @@ export default function ShippingScreen() {
             )}
           </div>
           <div className="mb-4 contact__form-div">
-            <label htmlFor="company">Company</label>
+            <label htmlFor="company">Company*</label>
             <input
               className="w-full contact__form-input"
               type="text"
               id="company"
               placeholder="Company's Name"
               {...register('company', { required: false, minLength: 3 })}
-              autoFocus
               autoCapitalize="true"
+              value={session.user.companyName}
             />
             {errors.company && (
               <p className="text-red-500">Please check Company{"'"}s name.</p>
@@ -374,7 +409,6 @@ export default function ShippingScreen() {
               id="phone"
               placeholder="Enter Phone Number"
               {...register('phone', { required: true, minLength: 3 })}
-              autoFocus
               autoCapitalize="true"
             />
             {errors.phone && (
@@ -462,12 +496,13 @@ export default function ShippingScreen() {
           <h1 className="text-2xl font-bold">Billing Address</h1>
           <div className="mb-4 contact__form-div">
             <label htmlFor="sameAddress">Same as Shipping Address</label> &nbsp;
-            <input
-              type="checkbox"
-              id="sameAddress"
-              checked={sameAddress}
-              onChange={handleSameAddressChange}
-            />
+            <div>
+              <input
+                type="checkbox"
+                checked={sameAddress}
+                onChange={handleSameAddressChange}
+              />
+            </div>
           </div>
 
           {!sameAddress && (
@@ -480,7 +515,6 @@ export default function ShippingScreen() {
                   id="fullNameB"
                   placeholder="Enter Full Name"
                   {...register('fullNameB', { required: false, minLength: 3 })}
-                  autoFocus
                   autoCapitalize="true"
                   required
                 />
@@ -494,9 +528,9 @@ export default function ShippingScreen() {
                   className="w-full contact__form-input"
                   type="text"
                   id="companyB"
+                  value={session.user.companyName}
                   placeholder="Company's Name"
                   {...register('companyB', { required: false, minLength: 3 })}
-                  autoFocus
                   autoCapitalize="true"
                 />
                 {errors.companyB && (
@@ -513,7 +547,6 @@ export default function ShippingScreen() {
                   id="phoneB"
                   placeholder="Enter Phone Number"
                   {...register('phoneB', { required: false, minLength: 3 })}
-                  autoFocus
                   autoCapitalize="true"
                 />
                 {errors.phoneB && (
@@ -607,7 +640,7 @@ export default function ShippingScreen() {
           )}
         </div>
         <div className="mx-auto max-w-screen-md">
-          <h1 className="mb-4 text-xl">Shipping preferences</h1>
+          <h2 className="text-2xl font-bold">Shipping preferences</h2>
           <div className="mb-4 ">
             <h2 className="">Shipping Speed:</h2>
             <div>
