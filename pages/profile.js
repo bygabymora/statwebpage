@@ -15,6 +15,7 @@ export default function ProfileScreen() {
     register,
     getValues,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -23,6 +24,8 @@ export default function ProfileScreen() {
     setValue('email', session.user.email);
     setValue('companyName', session.user.companyName);
     setValue('companyEinCode', session.user.companyEinCode);
+    console.log('companyEinCode:', session.user.companyEinCode);
+    console.log('name:', session.user.name);
   }, [session.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);
@@ -43,8 +46,13 @@ export default function ProfileScreen() {
         email,
         password,
       });
-      toast.success('Profile updated successfully');
-      if (result.error) {
+      if (!result.error) {
+        // Toggle the form only if there's no error
+        toggleModifyForm();
+        toast.success('Profile updated successfully');
+        // Optional: Reset the form with new values
+        reset({ name, email, password: '' });
+      } else {
         toast.error(result.error);
       }
     } catch (err) {
@@ -56,22 +64,22 @@ export default function ProfileScreen() {
     <Layout title="Profile">
       <h1 className="mb-4 text-xl ml-10">User Profile Information</h1>
       <div className="mb-4 ml-10">
-        <p>
+        <div>
           <strong>Full Name:</strong>
           <div>{session.user.name}</div>
-        </p>
-        <p>
+        </div>
+        <div>
           <strong>Email:</strong>
           <div>{session.user.email}</div>
-        </p>
-        <p>
+        </div>
+        <div>
           <strong>Company Name:</strong>
           <div>{session.user.companyName}</div>
-        </p>
-        <p>
+        </div>
+        <div>
           <strong>Company EIN:</strong>
           <div>{session.user.companyEinCode}</div>
-        </p>
+        </div>
         <Link href={'/order-history'} className="font-bold underline">
           Order History
         </Link>
@@ -184,7 +192,9 @@ export default function ProfileScreen() {
               )}
           </div>
           <div className="mb-4">
-            <button className="primary-button">Update Profile</button>
+            <button className="primary-button" type="submit">
+              Update Profile
+            </button>
           </div>
         </form>
       </div>

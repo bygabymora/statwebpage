@@ -42,6 +42,8 @@ export default NextAuth({
             _id: user._id,
             name: user.name,
             email: user.email,
+            companyName: user.companyName,
+            companyEinCode: user.companyEinCode,
             image: 'f',
             isAdmin: user.isAdmin,
           };
