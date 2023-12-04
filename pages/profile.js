@@ -62,6 +62,14 @@ export default function ProfileScreen() {
           <strong>Email:</strong>
           <div>{session.user.email}</div>
         </p>
+        <p>
+          <strong>Company Name:</strong>
+          <div>{session.user.companyName}</div>
+        </p>
+        <p>
+          <strong>Company EIN:</strong>
+          <div>{session.user.companyEinCode}</div>
+        </p>
         <Link href={'/order-history'} className="font-bold underline">
           Order History
         </Link>
