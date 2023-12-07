@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
@@ -204,6 +205,10 @@ export default function ShippingScreen() {
     postalCodeB,
     notes,
   }) => {
+    if (!session || !session.user || !session.user._id) {
+      toast.error('User not found, please try to login again');
+      return; // Prevent form submission
+    }
     if (sameAddress) {
       fullNameB = fullName;
       companyB = company;
