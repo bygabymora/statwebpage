@@ -275,7 +275,9 @@ export default function ShippingScreen() {
       router.push('/payment');
     } catch (error) {
       // Handle errors (e.g., user not found, network issues)
-      toast.error('An error occurred while fetching user data');
+      toast.error(
+        'An error occurred while fetching user data, please check your session information or login again.'
+      );
       console.error(error);
     }
   };
