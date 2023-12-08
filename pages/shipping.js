@@ -207,7 +207,7 @@ export default function ShippingScreen() {
   }) => {
     try {
       // Fetch user info from the database
-      const response = await axios.get(`api/users/[id].js`);
+      const response = await axios.get(`api/users/${session.user._id}`);
       const userData = response.data;
 
       if (!userData) {
