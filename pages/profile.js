@@ -53,11 +53,12 @@ export default function ProfileScreen() {
         // Optional: Reset the form with new values
         reset({ name, email, password: '' });
       } else {
-        toast.error(
-          "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
-        );
+        toast.error(result.error);
       }
     } catch (err) {
+      toast.error(
+        "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
+      );
       toast.error(getError(err));
     }
   };
