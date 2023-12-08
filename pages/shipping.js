@@ -188,7 +188,7 @@ export default function ShippingScreen() {
     setValue('notes', shippingAddress.notes);
   }, [setValue, shippingAddress]);
 
-  const submitHandler = ({
+  const submitHandler = async ({
     fullName,
     company,
     phone,
@@ -205,44 +205,29 @@ export default function ShippingScreen() {
     postalCodeB,
     notes,
   }) => {
-    if (!session || !session.user || !session.user._id) {
-      toast.error('User not found, please try to login again');
-      return; // Prevent form submission
-    }
-    if (sameAddress) {
-      fullNameB = fullName;
-      companyB = company;
-      phoneB = phone;
-      addressB = address;
-      stateB = state;
-      cityB = city;
-      postalCodeB = postalCode;
-    }
-    dispatch({
-      type: 'SAVE_SHIPPING_ADDRESS',
-      payload: {
-        fullName,
-        company,
-        phone,
-        address,
-        state,
-        city,
-        postalCode,
-        fullNameB,
-        companyB,
-        phoneB,
-        addressB,
-        stateB,
-        cityB,
-        postalCodeB,
-        notes,
-      },
-    });
-    Cookies.set(
-      'cart',
-      JSON.stringify({
-        ...cart,
-        shippingAddress: {
+    try {
+      // Fetch user info from the database
+      const response = await axios.get(`/api/users/${session.user._id}`);
+      const userData = response.data;
+
+      if (!userData) {
+        toast.error('User not found, please try to login again');
+        return; // Prevent form submission
+      }
+
+      // Continue with the form submission logic
+      if (sameAddress) {
+        fullNameB = fullName;
+        companyB = company;
+        phoneB = phone;
+        addressB = address;
+        stateB = state;
+        cityB = city;
+        postalCodeB = postalCode;
+      }
+      dispatch({
+        type: 'SAVE_SHIPPING_ADDRESS',
+        payload: {
           fullName,
           company,
           phone,
@@ -250,9 +235,6 @@ export default function ShippingScreen() {
           state,
           city,
           postalCode,
-          notes,
-        },
-        billingAddress: {
           fullNameB,
           companyB,
           phoneB,
@@ -260,11 +242,42 @@ export default function ShippingScreen() {
           stateB,
           cityB,
           postalCodeB,
+          notes,
         },
-      })
-    );
+      });
+      Cookies.set(
+        'cart',
+        JSON.stringify({
+          ...cart,
+          shippingAddress: {
+            fullName,
+            company,
+            phone,
+            address,
+            state,
+            city,
+            postalCode,
+            notes,
+          },
+          billingAddress: {
+            fullNameB,
+            companyB,
+            phoneB,
+            addressB,
+            stateB,
+            cityB,
+            postalCodeB,
+          },
+        })
+      );
 
-    router.push('/payment');
+      // Redirect to the payment page
+      router.push('/payment');
+    } catch (error) {
+      // Handle errors (e.g., user not found, network issues)
+      toast.error('An error occurred while fetching user data');
+      console.error(error);
+    }
   };
 
   useEffect(() => {
