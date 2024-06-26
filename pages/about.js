@@ -25,7 +25,6 @@ export default function AboutScreen() {
         <animated.div className="image-container" style={imageAnimation}>
           <Image src={image} alt="About Us" className="about-image" />
         </animated.div>{' '}
-        &quot;
         <animated.div className="content-container" style={contentAnimation}>
           <h2 className="section__title"> About Us</h2>
           <p className="about-content">
