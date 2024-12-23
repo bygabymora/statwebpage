@@ -82,7 +82,7 @@ const Banner = () => {
               <>
                 Partner with us to expand your market reach in two ways. We
                 provide cost savings on the same devices you are purchasing
-                direct. Additionally, we will buy your excess inventory.
+                direct. Additionally, we buy your excess inventory.
                 <br />
                 <Link
                   href="/ManufacturerForm"
