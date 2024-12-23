@@ -1,6 +1,6 @@
-import db from '../../utils/db';
-import Product from '../../models/Product';
-import { generateProductJSONLD } from '../../utils/seo';
+import db from "../../utils/db";
+import Product from "../../models/Product";
+import { generateProductJSONLD } from "../../utils/seo";
 
 const handleRequest = async (req, res) => {
   try {
@@ -11,10 +11,10 @@ const handleRequest = async (req, res) => {
       generateProductJSONLD(product)
     );
 
-    res.setHeader('Content-Type', 'application/ld+json');
+    res.setHeader("Content-Type", "application/ld+json");
     res.status(200).json(jsonldData);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch products.' });
+    res.status(500).json({ error: "Failed to fetch products." }, error);
   }
 };
 export default handleRequest;
