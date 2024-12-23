@@ -1,4 +1,4 @@
-import { getToken } from 'next-auth/jwt';
+import { getToken } from "next-auth/jwt";
 
 async function fetchData(req) {
   try {
@@ -6,7 +6,7 @@ async function fetchData(req) {
     const user = token ? token : {}; // Assuming getToken returns null or the user object
     return user;
   } catch (error) {
-    throw new Error('Error fetching user data');
+    throw new Error("Error fetching user data", error);
   }
 }
 
@@ -19,6 +19,6 @@ export default async function handler(req, res) {
     res.status(200).json({ email: user.email });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 }
