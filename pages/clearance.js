@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 import Product from '../models/Product.js';
 import db from '../utils/db';
 import { ProductItemPage } from '../components/ProductItemPage';

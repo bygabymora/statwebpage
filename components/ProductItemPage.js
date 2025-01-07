@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useSession } from "next-auth/react";
 import { Store } from '../utils/Store';
 import { useContext } from 'react';
 import axios from 'axios';
@@ -15,6 +16,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each');
+  const { status, data: session } = useSession();
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
     product.description
@@ -229,10 +231,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             </div>
           </Link>
           {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-            <div
-              className="mb-2 flex items-center justify-center 
-         lg:block"
-            >
+            <div className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">
                 <button
@@ -441,6 +440,10 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         <div>
           {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
             <div className="flex justify-between items-center gap-2 mx-10 mt-5">
+               {status === "loading" ? (
+                    "Loading"
+                  ) : (
+                    session?.user && (
               <div className="mb-2 justify-between">
                 <div className="font-bold">U o M &nbsp;</div>
                 <select
@@ -474,10 +477,18 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   )}
                 </select>
               </div>
+               )
+              )}
+              {status === "loading" ? (
+                    "Loading"
+                  ) : (
+                    session?.user && (
               <div className="mb-2 justify-between">
                 <div className="font-bold">Price</div>
                 <div className="">&nbsp; ${currentPrice}</div>
               </div>
+                )
+              )}
             </div>
           ) : null}
           <div>
@@ -494,6 +505,10 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                         : 'In Stock'}
                     </div>
                   </div>
+                  {status === "loading" ? (
+                    "Loading"
+                  ) : (
+                    session?.user && (
                   <button
                     className="primary-button align-middle "
                     type="button"
@@ -510,20 +525,32 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       ? 'Out of Stock'
                       : 'Add to Cart'}
                   </button>
+                    )
+                  )}
                 </div>
               ) : (
                 <div>
                   <div className="border border-gray-200 my-5">
                     <div className="flex justify-center gap-8 mx-2">
                       <h1 className="text-red-500">Clearance</h1>
+                      {status === "loading" ? (
+                        "Loading"
+                      ) : (
+                        session?.user && (
                       <div className="mb-2 justify-between flex">
                         <div className="font-bold">Price</div>
                         <div className="">&nbsp; ${currentPrice}</div>
                       </div>
+                       )
+                      )}
                     </div>
 
                     <div className="text-gray-500 mb-1">{product.notes}</div>
                   </div>
+                  {status === "loading" ? (
+                   "Loading"
+                  ) : (
+                    session?.user && (
                   <button
                     className="primary-button align-middle "
                     type="button"
@@ -540,12 +567,15 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       ? 'Out of Stock'
                       : 'Add to Cart'}
                   </button>
+                    )
+                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
+      
     </div>
   );
 };

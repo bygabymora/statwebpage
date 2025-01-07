@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { BiMessageAdd } from 'react-icons/bi';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 
 export default function ManufacturerForm() {
   const form = useRef();

@@ -9,8 +9,8 @@ import {
   generateJSONLD,
   generateProductJSONLD,
   generateMainPageJSONLD,
-} from '../utils/seo';
-import Logo from '../public/images/assets/logo2.png';
+} from '../../utils/seo';
+import Logo from '../../public/images/assets/logo2.png';
 
 export default function Layout({ title, children, news, product }) {
   return (

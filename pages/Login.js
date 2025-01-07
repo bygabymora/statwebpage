@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { signIn } from 'next-auth/react';

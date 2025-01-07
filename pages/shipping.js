@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 import CheckoutWizard from '../components/CheckoutWizard';
 import { useForm } from 'react-hook-form';
 import { useContext } from 'react';

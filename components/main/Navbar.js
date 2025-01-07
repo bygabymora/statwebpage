@@ -39,26 +39,35 @@ const Navbar = () => {
       const yOffsetLargeScreen = -170;
       setTimeout(() => {
         const element = document.getElementById(section);
-        const y =
-          element.getBoundingClientRect().top +
-          window.scrollY +
-          yOffsetLargeScreen;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        if (element) { // Verificar si el elemento existe
+          const y =
+            element.getBoundingClientRect().top +
+            window.scrollY +
+            yOffsetLargeScreen;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        } else {
+          console.error(`Element with id "${section}" not found.`);
+        }
       }, 200);
     } else {
       const yOffsetSmallScreen = -50;
       setTimeout(() => {
-        const path = `/#${section}`; // Construct anchor link with #
+        const path = `/#${section}`;
         router.push(path);
         const element = document.getElementById(section);
-        const y =
-          element.getBoundingClientRect().top +
-          window.scrollY +
-          yOffsetSmallScreen;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        if (element) { 
+          const y =
+            element.getBoundingClientRect().top +
+            window.scrollY +
+            yOffsetSmallScreen;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        } else {
+          console.error(`Element with id "${section}" not found.`);
+        }
       }, 200);
     }
   };
+  
   const handleHomeClick = () => {
     // Check if the current route is the home page
     if (router.pathname === '/') {

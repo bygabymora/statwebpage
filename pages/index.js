@@ -1,5 +1,5 @@
-import Layout from '../components/Layout.js';
-import { ProductItem } from '../components/ProductItem.js';
+import Layout from './../components/main/Layout';
+import { ProductItem } from '../components/products/ProductItem';
 import React from 'react';
 import Banner from '../components/Banner';
 import Contact from '../components/contact/Contact';

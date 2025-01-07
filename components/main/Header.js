@@ -4,10 +4,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import Logo from '../public/images/assets/logo2.svg';
-import Logo2 from '../public/images/assets/logo.png';
+import Logo from '../../public/images/assets/banner2.svg';
+import Logo2 from '../../public/images/assets/logo.png';
 import Navbar from './Navbar';
-import { Store } from '../utils/Store';
+import { Store } from '../../utils/Store';
+import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import { BiSearch } from 'react-icons/bi';
 import axios from 'axios';
@@ -19,6 +20,7 @@ const Header = () => {
   const [cartItemsCount, setCarItemsCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const { status, data: session } = useSession();
 
   useEffect(() => {
     setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
@@ -139,6 +141,10 @@ const Header = () => {
           </div>
 
           <div className="nav-reverse flex h-12 place-items-center gap-4">
+          {status === "loading" ? (
+            "Loading"
+          ) : (
+            session?.user && (
             <div className="flex h-12 items-center">
               <Link
                 href={{ pathname: '/cart' }}
@@ -156,7 +162,8 @@ const Header = () => {
                 </sub>
               )}
             </div>
-
+             )
+            )}
             <Signupbutton aria-label="profile" />
             <Navbar />
           </div>

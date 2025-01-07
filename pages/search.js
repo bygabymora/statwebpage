@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { ProductItem } from '../components/ProductItem.js';
-import Layout from '../components/Layout';
+import { ProductItem } from '../components/products/ProductItem';
+import Layout from '../components/main/Layout';
 import { BiMessageAdd } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error.js';
@@ -21,8 +21,6 @@ const SearchPage = ({ query }) => {
   const [searchedWord, setSearchedWord] = useState('');
 
   const tab = <>&nbsp;&nbsp;</>;
-
-  
 
   useEffect(() => {
     const fetchSearchResults = async () => {

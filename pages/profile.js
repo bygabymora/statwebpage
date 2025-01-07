@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error';
 import axios from 'axios';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 import Link from 'next/link';
 
 export default function ProfileScreen() {

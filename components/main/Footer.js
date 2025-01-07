@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Logo from '../public/images/assets/logo2.png';
-import linkedIn from '../public/images/assets/linkedIn.svg';
-import facebook from '../public/images/assets/facebook.svg';
-import Google from '../public/images/assets/Google.svg';
-import Payment from '../public/images/assets/payments.png';
+import Logo from './../../public/images/assets/logo2.png';
+import linkedIn from './../../public/images/assets/linkedIn.svg';
+import facebook from './../../public/images/assets/facebook.svg';
+import Google from './../../public/images/assets/Google.svg';
+import Payment from './../../public/images/assets/payments.png';
 import { AiOutlineSend } from 'react-icons/ai';
 
 export default function Footer() {

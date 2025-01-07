@@ -1,7 +1,7 @@
 import React from 'react';
 import { useContext } from 'react';
 import { Store } from '../utils/Store';
-import Layout from '../components/Layout';
+import Layout from '../components/main/Layout';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BsTrash3 } from 'react-icons/bs';

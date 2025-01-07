@@ -2,9 +2,9 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { BsPerson } from 'react-icons/bs';
 import { signOut, useSession } from 'next-auth/react';
 import { Menu } from '@headlessui/react';
-import DropdownLink from './DropdownLink';
+import DropdownLink from '../DropdownLink';
 import Cookies from 'js-cookie';
-import { Store } from '../utils/Store';
+import { Store } from '../../utils/Store';
 
 const SignupButton = () => {
   const { status, data: session } = useSession();

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Store } from '../utils/Store';
+import { useSession } from "next-auth/react";
+import { Store } from '../../utils/Store';
 import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -24,6 +25,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   );
   const selectId = `uomSelect-${product.id}`;
   const labelFor = selectId;
+  const { status, data: session } = useSession();
 
   useEffect(() => {
     if (product.countInStock === 0) {
@@ -237,7 +239,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             )}
           </Link>
 
-          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
             <div
               className="mb-2 flex items-center justify-center 
          lg:block"
@@ -300,63 +302,73 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             </div>
           )}
 
-          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-            <div>
-              {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-                <div className=" justify-between items-center gap-2  mt-2">
-                  <div className="mb-2 flex flex-row">
-                    <label className="font-bold" htmlFor={labelFor}>
-                      U o M &nbsp;
-                    </label>
-                    <select
-                      value={purchaseType}
-                      onChange={(e) => {
-                        setPurchaseType(e.target.value);
-                        if (e.target.value === 'Bulk') {
-                          setCurrentPrice(product.priceBulk);
-                          setCurrentDescription(product.descriptionBulk);
-                          setCurrentCountInStock(product.countInStockBulk);
-                        } else if (e.target.value === 'Each') {
-                          setCurrentPrice(product.price);
-                          setCurrentDescription(product.description);
-                          setCurrentCountInStock(product.countInStock);
-                        } else if (e.target.value === 'Clearance') {
-                          setCurrentPrice(product.priceClearance);
-                          setCurrentDescription(product.descriptionClearance);
-                          setCurrentCountInStock(product.countInStockClearance);
-                        }
-                      }}
-                      id={labelFor} // Use the generated unique ID for the select element
-                    >
-                      {product.countInStock > 0 && (
-                        <option value="Each" id={`${labelFor}-eachOption`}>
-                          Each
-                        </option>
-                      )}
-                      {product.countInStockBulk > 0 && (
-                        <option value="Bulk" id={`${labelFor}-bulkOption`}>
-                          Box
-                        </option>
-                      )}
-                      {product.countInStockClearance > 0 && (
-                        <option
-                          value="Clearance"
-                          id={`${labelFor}-clearanceOption`}
-                        >
-                          Clearance
-                        </option>
-                      )}
-                    </select>
-                  </div>
+<>
+      {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+        <div>
+          {purchaseType === "Each" || purchaseType === "Bulk" ? (
+            <div className="justify-between items-center gap-2 mt-2">
+              {status === "loading" ? (
+                "Loading..."
+              ) : (
+                session?.user && (
+                  <>
+                    <div className="mb-2 flex flex-row">
+                      <label className="font-bold" htmlFor={labelFor}>
+                        U o M &nbsp;
+                      </label>
+                      <select
+                        value={purchaseType}
+                        onChange={(e) => {
+                          setPurchaseType(e.target.value);
+                          if (e.target.value === "Bulk") {
+                            setCurrentPrice(product.priceBulk);
+                            setCurrentDescription(product.descriptionBulk);
+                            setCurrentCountInStock(product.countInStockBulk);
+                          } else if (e.target.value === "Each") {
+                            setCurrentPrice(product.price);
+                            setCurrentDescription(product.description);
+                            setCurrentCountInStock(product.countInStock);
+                          } else if (e.target.value === "Clearance") {
+                            setCurrentPrice(product.priceClearance);
+                            setCurrentDescription(product.descriptionClearance);
+                            setCurrentCountInStock(product.countInStockClearance);
+                          }
+                        }}
+                        id={labelFor} // Use the generated unique ID for the select element
+                      >
+                        {product.countInStock > 0 && (
+                          <option value="Each" id={`${labelFor}-eachOption`}>
+                            Each
+                          </option>
+                        )}
+                        {product.countInStockBulk > 0 && (
+                          <option value="Bulk" id={`${labelFor}-bulkOption`}>
+                            Box
+                          </option>
+                        )}
+                        {product.countInStockClearance > 0 && (
+                          <option
+                            value="Clearance"
+                            id={`${labelFor}-clearanceOption`}
+                          >
+                            Clearance
+                          </option>
+                        )}
+                      </select>
+                    </div>
 
-                  <div className="flex flex-row mb-2 justify-between">
-                    <div className="font-bold">Price</div>
-                    <div className="">&nbsp; ${currentPrice}</div>
-                  </div>
-                </div>
-              ) : null}
+                    <div className="flex flex-row mb-2 justify-between">
+                      <div className="font-bold">Price</div>
+                      <div className="">&nbsp; ${currentPrice}</div>
+                    </div>
+                  </>
+                )
+              )}
             </div>
-          )}
+          ) : null}
+        </div>
+      )}
+    </>
           {purchaseType === 'Bulk' && isOutOfStockBulk && (
             <form className="text-center mb-3 " ref={form} onSubmit={sendEmail}>
               <label className="font-bold ">Join Our Wait List</label>
@@ -505,71 +517,89 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       </div>
 
       <div>
-        {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-          <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
-            {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-              <div className="flex gap-20 m-2 justify-between items-center ">
-                <div className="flex-column">
-                  <div className="font-bold">Status</div>
-                  <div className="">
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                      ? 'Out of Stock'
-                      : 'In Stock'}
-                  </div>
-                </div>
-                <button
-                  className="primary-button align-middle "
-                  type="button"
-                  onClick={addToCartHandler}
-                  disabled={
-                    (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  }
-                >
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div className="border border-gray-200 my-5">
-                  <div className="flex justify-center gap-8 mx-2">
-                    <h1 className="text-red-500">Clearance</h1>
-                    <div className="mb-2 justify-between flex">
-                      <div className="font-bold">Price</div>
-                      <div className="">&nbsp; ${currentPrice}</div>
-                    </div>
-                  </div>
-
-                  <div className="text-gray-500 mb-1">{product.notes}</div>
-                </div>
-                <button
-                  className="primary-button align-middle "
-                  type="button"
-                  onClick={addToCartHandler}
-                  disabled={
-                    (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  }
-                >
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
-                </button>
-              </div>
-            )}
+  {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+    <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
+      {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+        <div className="flex gap-20 m-2 justify-between items-center">
+          <div className="flex-column">
+            <div className="font-bold">Status</div>
+            <div>
+              {(purchaseType === 'Each' && isOutOfStock) ||
+              (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+              (purchaseType === 'Clearance' && isOutOfStockClearance)
+                ? 'Out of Stock'
+                : 'In Stock'}
+            </div>
           </div>
-        )}
-      </div>
+          {status === "loading" ? (
+            "Loading"
+          ) : (
+            session?.user && (
+              <button
+                className="primary-button align-middle"
+                type="button"
+                onClick={addToCartHandler}
+                disabled={
+                  (purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                }
+              >
+                {(purchaseType === 'Each' && isOutOfStock) ||
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  ? 'Out of Stock'
+                  : 'Add to Cart'}
+              </button>
+            )
+          )}
+        </div>
+      ) : (
+        <div>
+          <div className="border border-gray-200 my-5">
+            <div className="flex justify-center gap-8 mx-2">
+              <h1 className="text-red-500">Clearance</h1>
+              {status === "loading" ? (
+                "Loading"
+              ) : (
+                session?.user && (
+                  <div className="mb-2 justify-between flex">
+                    <div className="font-bold">Price</div>
+                    <div className="">&nbsp; ${currentPrice}</div>
+                  </div>
+                )
+              )}
+            </div>
+
+            <div className="text-gray-500 mb-1">{product.notes}</div>
+          </div>
+          {status === "loading" ? (
+            "Loading"
+          ) : (
+            session?.user && (
+              <button
+                className="primary-button align-middle"
+                type="button"
+                onClick={addToCartHandler}
+                disabled={
+                  (purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                }
+              >
+                {(purchaseType === 'Each' && isOutOfStock) ||
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  ? 'Out of Stock'
+                  : 'Add to Cart'}
+              </button>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  )}
+</div>
     </div>
   );
 };

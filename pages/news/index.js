@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../../components/Layout';
+import Layout from '../../components/main/Layout';
 import { NewsItem } from '../../components/NewsItem';
 import New from '../../models/News.js';
 import db from '../../utils/db';
