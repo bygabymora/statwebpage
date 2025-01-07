@@ -230,7 +230,8 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               </div>
             </div>
           </Link>
-          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          <div>
+          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && session?.user && (
             <div className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">
@@ -270,6 +271,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               </div>
             </div>
           )}
+          </div>
           {purchaseType === 'Each' && isOutOfStock && (
             <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>

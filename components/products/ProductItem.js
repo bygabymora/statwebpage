@@ -239,11 +239,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             )}
           </Link>
 
-          { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && session?.user &&  (
             <div
-              className="mb-2 flex items-center justify-center 
-         lg:block"
-            >
+              className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">
                 <button

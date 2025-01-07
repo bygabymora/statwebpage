@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import Logo from '../../public/images/assets/banner2.svg';
+import Logo from '../../public/images/assets/logo2.svg';
 import Logo2 from '../../public/images/assets/logo.png';
 import Navbar from './Navbar';
 import { Store } from '../../utils/Store';
@@ -121,7 +121,6 @@ const Header = () => {
             )}
           </div>
         </div>
-
         <div className="flex h-12 items-center nav-field">
           <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>

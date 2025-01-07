@@ -279,6 +279,10 @@ export default function ProductScreen(props) {
           </ul>
         </div>
         <div>
+        {status === "loading" ? (
+            "Loading"
+          ) : (
+            session?.user && (
           <div className="card p-5">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
@@ -315,10 +319,7 @@ export default function ProductScreen(props) {
             </div>
 
             <div>
-            {status === "loading" ? (
-                    "Loading"
-                  ) : (
-                    session?.user && (
+
             <div className="mb-2 flex justify-between">
               <div className="font-bold">U o M &nbsp;</div>
               <select
@@ -350,8 +351,7 @@ export default function ProductScreen(props) {
                 )}
               </select>
             </div>
-             )
-            )}
+
             {status === "loading" ? (
                     "Loading"
                   ) : (
@@ -385,7 +385,7 @@ export default function ProductScreen(props) {
                 (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                 (purchaseType === 'Clearance' && isOutOfStockClearance)
               }
-            >
+              >
               {(purchaseType === 'Each' && isOutOfStock) ||
               (purchaseType === 'Bulk' && isOutOfStockBulk) ||
               (purchaseType === 'Clearance' && isOutOfStockClearance)
@@ -560,6 +560,8 @@ export default function ProductScreen(props) {
               </form>
             )}
           </div>
+             )
+            )}
         </div>
       </div>
     </Layout>
