@@ -101,7 +101,7 @@ const SearchPage = ({ query }) => {
       <div>
         <h1 className="section__title">Search Results</h1>
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 mb-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-3 mb-3">
             {products.map((product) => (
               <ProductItem key={product._id} product={product} />
             ))}
@@ -186,7 +186,7 @@ const SearchPage = ({ query }) => {
                   type="email"
                   placeholder="Please enter your email"
                   name="email"
-                  className="contact__form-input"
+                  className="contact__form-input "
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   required

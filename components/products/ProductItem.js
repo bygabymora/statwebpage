@@ -207,11 +207,11 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
           href={{ pathname: `products/${product.slug}` }}
           className="justify-center items-center text-center flex-1"
         >
-          <div className="">
+          <div className="p-2">
             <Image
               src={`${product.image}`}
               alt={currentDescription}
-              className="product-image no-drag"
+              className="product-image no-drag rounded-lg"
               width={800}
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
@@ -382,7 +382,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               <input
                 type="email"
                 name="user_email"
-                className="contact__form-inputs"
+                className="contact__form-inputs mt-2"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 placeholder="Email"
@@ -430,7 +430,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               <input
                 type="email"
                 name="user_email"
-                className="contact__form-inputs"
+                className="contact__form-inputs mt-2"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 placeholder="Email"

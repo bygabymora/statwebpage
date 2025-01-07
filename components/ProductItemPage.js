@@ -201,16 +201,16 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         {product.manufacturer}{' '}
       </h2>
 
-      <div className="flex flex-row justify-between ">
+      <div className="flex flex-row justify-between">
         <Link
           href={{ pathname: `products/${product.slug}` }}
           className="justify-center items-center text-center flex-1"
         >
-          <div className="">
+          <div className="p-2">
             <Image
               src={`${product.image}`}
               alt={currentDescription}
-              className="product-image no-drag"
+              className="product-image no-drag rounded-lg"
               width={800}
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
@@ -342,7 +342,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         </form>
       )}
       {purchaseType === 'Each' && isOutOfStock && (
-        <form className="text-center " ref={form} onSubmit={sendEmail}>
+        <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
           <label className="mt-3 font-bold ">Join Our Wait List</label>
           <input
             type="text"
@@ -356,7 +356,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           <input
             type="email"
             name="user_email"
-            className="contact__form-input"
+            className="contact__form-input mt-2"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             placeholder="Email"

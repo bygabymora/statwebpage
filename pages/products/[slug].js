@@ -430,7 +430,7 @@ export default function ProductScreen(props) {
                 <input
                   type="email"
                   name="user_email"
-                  className="contact__form-input"
+                  className="contact__form-input mt-2"
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   placeholder="Email"
@@ -464,12 +464,12 @@ export default function ProductScreen(props) {
               </form>
             )}
             {purchaseType === 'Each' && isOutOfStock && (
-              <form className="text-center " ref={form} onSubmit={sendEmail}>
+              <form className="text-center" ref={form} onSubmit={sendEmail}>
                 <label className="mt-3 font-bold ">Join Our Wait List</label>
                 <input
                   type="text"
                   name="user_name"
-                  className="contact__form-input"
+                  className="contact__form-input "
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                   placeholder="Name"
@@ -478,7 +478,7 @@ export default function ProductScreen(props) {
                 <input
                   type="email"
                   name="user_email"
-                  className="contact__form-input"
+                  className="contact__form-input mt-2"
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   placeholder="Email"
