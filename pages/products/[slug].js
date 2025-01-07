@@ -7,6 +7,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Store } from '../../utils/Store';
 import db from '../../utils/db';
 import Product from '../../models/Product';
+import { useSession } from "next-auth/react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
@@ -20,6 +21,7 @@ export default function ProductScreen(props) {
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false); // Add Clearance state
   const [qty, setQty] = useState(1);
+  const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
@@ -312,6 +314,11 @@ export default function ProductScreen(props) {
               </div>
             </div>
 
+            <div>
+            {status === "loading" ? (
+                    "Loading"
+                  ) : (
+                    session?.user && (
             <div className="mb-2 flex justify-between">
               <div className="font-bold">U o M &nbsp;</div>
               <select
@@ -343,10 +350,21 @@ export default function ProductScreen(props) {
                 )}
               </select>
             </div>
+             )
+            )}
+            {status === "loading" ? (
+                    "Loading"
+                  ) : (
+                    session?.user && (
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Price</div>
               <div className="text-2xl">${currentPrice}</div>
             </div>
+             )
+            )}
+            </div>
+
+            
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Status</div>
               &nbsp;

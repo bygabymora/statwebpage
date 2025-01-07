@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import Layout from '../components/main/Layout';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -6,13 +6,19 @@ import { signIn } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error';
 import { useSession } from 'next-auth/react';
+import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { useRouter } from 'next/router';
 
 export default function Login() {
   const { data: session } = useSession();
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
   const { redirect } = router.query;
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   useEffect(() => {
     if (session?.user) {
@@ -77,24 +83,34 @@ export default function Login() {
           >
             Password
           </label>
-          <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            autoFocus
-            id="password"
-            type="password"
-            {...register('password', {
-              required: 'Please enter a password',
-              minLength: {
-                value: 8,
-                message: 'Password must have at least 8 characters',
-              },
-              validate: (value) =>
-                /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(value) ||
-                'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-            })}
-            placeholder="Password"
-          />
-
+          <div className="relative">
+            <input
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              autoFocus
+              id="password"
+              type={showPassword ? "text" : "password"}
+              {...register("password", {
+                required: "Please enter a password",
+                minLength: {
+                  value: 8,
+                  message: "Password must have at least 8 characters",
+                },
+                validate: (value) =>
+                  /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(value) ||
+                  "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+              })}
+              placeholder="Password"
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(), togglePasswordVisibility();
+              }}
+              className="absolute inset-y-0 right-0 px-3 py-2 text-gray-700"
+            >
+              {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+            </button>
+          </div>
           {errors.password && (
             <div className="text-blue-950">{errors.password.message}</div>
           )}

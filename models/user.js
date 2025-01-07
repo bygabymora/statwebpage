@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, required: true, default: false },
     companyName: { type: String, required: true },
     companyEinCode: { type: String, required: true },
+    active: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,

@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import Layout from '../components/main/Layout';
 import { getError } from '../utils/error';
+import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -13,6 +14,12 @@ export default function LoginScreen() {
 
   const router = useRouter();
   const { redirect } = router.query;
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   useEffect(() => {
     if (session?.user) {
@@ -152,26 +159,36 @@ export default function LoginScreen() {
             className="block mb-2 text-sm font-bold text-gray-700"
             htmlFor="password"
           >
-            Password*
+            Password
           </label>
-          <input
-            type="password"
-            {...register('password', {
-              required: 'Please enter password',
-              minLength: {
-                value: 8,
-                message: 'Password must be at least 8 characters',
-              },
-              pattern: {
-                value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
-                message:
-                  'Password must contain 1 lowercase, 1 uppercase, 1 number, and 1 special character',
-              },
-            })}
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            id="password"
-            autoFocus
-          ></input>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              {...register('password', {
+                required: 'Please enter password',
+                minLength: {
+                  value: 8,
+                  message: 'Password must be at least 8 characters',
+                },
+                pattern: {
+                  value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
+                  message:
+                    'Password must contain 1 lowercase, 1 uppercase, 1 number, and 1 special character',
+                },
+              })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="password"
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(), togglePasswordVisibility();
+              }}
+              className="absolute inset-y-0 right-0 px-3 py-2 text-gray-700"
+            >
+              {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+            </button>
+          </div>
           {errors.password && (
             <div className="text-red-500 ">{errors.password.message}</div>
           )}
@@ -181,21 +198,32 @@ export default function LoginScreen() {
             className="block mb-2 text-sm font-bold text-gray-700"
             htmlFor="confirmPassword"
           >
-            Confirm Password*
+            Confirm Password
           </label>
-          <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            type="password"
-            id="confirmPassword"
-            {...register('confirmPassword', {
-              required: 'Please enter confirm password',
-              validate: (value) => value === getValues('password'),
-              minLength: {
-                value: 6,
-                message: 'confirm password is more than 5 chars',
-              },
-            })}
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="confirmPassword"
+              {...register('confirmPassword', {
+                required: 'Please enter confirm password',
+                validate: (value) => value === getValues('password'),
+                minLength: {
+                  value: 8,
+                  message: 'Confirm password must be at least 8 characters',
+                },
+              })}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(), togglePasswordVisibility();
+              }}
+              className="absolute inset-y-0 right-0 px-3 py-2 text-gray-700"
+            >
+              {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+            </button>
+          </div>
           {errors.confirmPassword && (
             <div className="text-red-500 ">
               {errors.confirmPassword.message}
@@ -203,9 +231,10 @@ export default function LoginScreen() {
           )}
           {errors.confirmPassword &&
             errors.confirmPassword.type === 'validate' && (
-              <div className="text-red-500 ">Password do not match</div>
+              <div className="text-red-500 ">Passwords do not match</div>
             )}
         </div>
+        
         <div className="mb-4">
           <input
             type="checkbox"
