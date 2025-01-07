@@ -1,4 +1,4 @@
-import Layout from '../../components/Layout';
+import Layout from '../../components/main/Layout';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { BsBackspace, BsCart2 } from 'react-icons/bs';
