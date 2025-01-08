@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from "next-auth/react";
-import { Store } from '../utils/Store';
+import { Store } from '../../utils/Store';
 import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -25,6 +25,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     product.countInStock
   );
 
+
   useEffect(() => {
     if (product.countInStock === 0) {
       setPurchaseType('Bulk');
@@ -38,6 +39,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     product.descriptionBulk,
     product.countInStockBulk,
   ]);
+
 
   useEffect(() => {
     if (product.countInStockBulk === 0 && product.countInStock === 0) {
@@ -53,6 +55,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     product.descriptionClearance,
     product.countInStockClearance,
   ]);
+
 
   useEffect(() => {
     if (
@@ -76,6 +79,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     product.description,
   ]);
 
+
   useEffect(() => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
@@ -85,12 +89,14 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     }
   }, [clearancePurchaseType, product]);
 
+
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
       (x) => x.slug === product.slug && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
+
 
     if (purchaseType === 'Each' && data.countInStock < quantity) {
       setIsOutOfStock(true);
@@ -141,6 +147,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setQty(1);
     toast.success('Item added to cart');
 
+
     if (purchaseType === 'Each' && data.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
@@ -153,22 +160,28 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     }
   };
 
+
   //-----------------EmailJS-----------------//
 
+
   const form = useRef();
+
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailSlug, setEmailSlug] = useState('');
   const [emailManufacturer, setEmailManufacturer] = useState('');
 
+
   useEffect(() => {
     setEmailSlug(product.slug);
     setEmailManufacturer(product.manufacturer);
   }, [product.slug, product.manufacturer]);
 
+
   const sendEmail = (e) => {
     e.preventDefault();
+
 
     emailjs
       .sendForm(
@@ -193,6 +206,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   };
   //-----------//
 
+
   return (
     <div className="block justify-center card  items-center text-center my-3 text-xs lg:text-lg">
       <h2 className="font-bold my-2">
@@ -200,6 +214,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         {'-'}
         {product.manufacturer}{' '}
       </h2>
+
 
       <div className="flex flex-row justify-between">
         <Link
@@ -218,6 +233,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             />
           </div>
         </Link>
+
 
         <div className="flex flex-col justify-center items-center px-2 flex-1">
           <Link
@@ -292,6 +308,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           )}
         </div>
       </div>
+
 
       {purchaseType === 'Bulk' && isOutOfStockBulk && (
         <form className="text-center " ref={form} onSubmit={sendEmail}>
@@ -438,6 +455,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         </form>
       )}
 
+
       {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
         <div>
           {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
@@ -547,6 +565,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       )}
                     </div>
 
+
                     <div className="text-gray-500 mb-1">{product.notes}</div>
                   </div>
                   {status === "loading" ? (
@@ -577,7 +596,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           </div>
         </div>
       )}
-      
+     
     </div>
   );
 };

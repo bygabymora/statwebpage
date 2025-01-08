@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../../components/main/Layout';
-import { ProductItemPage } from '../../components/ProductItemPage';
+import { ProductItemPage } from '../../components/products/ProductItemPage';
 import Product from '../../models/Product.js';
 import db from '../../utils/db';
 
