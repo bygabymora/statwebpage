@@ -37,6 +37,7 @@ export default function ProductScreen(props) {
   const [emailManufacturer, setEmailManufacturer] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -279,10 +280,10 @@ export default function ProductScreen(props) {
           </ul>
         </div>
         <div>
-        {status === "loading" ? (
+        {active === "loading" ? (
             "Loading"
           ) : (
-            session?.user && (
+            active && (
           <div className="card p-5">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
@@ -352,10 +353,10 @@ export default function ProductScreen(props) {
               </select>
             </div>
 
-            {status === "loading" ? (
-                    "Loading"
+            {active === "loading" ? (
+                   "Loading"
                   ) : (
-                    session?.user && (
+                  active && (
             <div className="mb-2 flex justify-between">
               <div className="font-bold">Price</div>
               <div className="text-2xl">${currentPrice}</div>

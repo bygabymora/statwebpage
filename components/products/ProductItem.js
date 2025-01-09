@@ -15,6 +15,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false);
   const [qty, setQty] = useState(1);
+  const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each');
   const [currentPrice, setCurrentPrice] = useState(product.price);
   const [currentDescription, setCurrentDescription] = useState(
@@ -25,7 +26,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   );
   const selectId = `uomSelect-${product.id}`;
   const labelFor = selectId;
-  const { status, data: session } = useSession();
+  const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
     if (product.countInStock === 0) {
@@ -239,7 +240,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             )}
           </Link>
 
-          { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && session?.user &&  (
+          { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active &&  (
             <div
               className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
@@ -305,10 +306,10 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
         <div>
           {purchaseType === "Each" || purchaseType === "Bulk" ? (
             <div className="justify-between items-center gap-2 mt-2">
-              {status === "loading" ? (
+              {active === "loading" ? (
                 "Loading..."
               ) : (
-                session?.user && (
+                active && (
                   <>
                     <div className="mb-2 flex flex-row">
                       <label className="font-bold" htmlFor={labelFor}>
@@ -529,10 +530,10 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                 : 'In Stock'}
             </div>
           </div>
-          {status === "loading" ? (
+          {active === "loading" ? (
             "Loading"
           ) : (
-            session?.user && (
+            active && (
               <button
                 className="primary-button align-middle"
                 type="button"
@@ -557,10 +558,10 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
           <div className="border border-gray-200 my-5">
             <div className="flex justify-center gap-8 mx-2">
               <h1 className="text-red-500">Clearance</h1>
-              {status === "loading" ? (
+              {active === "loading" ? (
                 "Loading"
               ) : (
-                session?.user && (
+                active && (
                   <div className="mb-2 justify-between flex">
                     <div className="font-bold">Price</div>
                     <div className="">&nbsp; ${currentPrice}</div>
@@ -571,10 +572,10 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
             <div className="text-gray-500 mb-1">{product.notes}</div>
           </div>
-          {status === "loading" ? (
+          {active === "loading" ? (
             "Loading"
           ) : (
-            session?.user && (
+            session?.user?.active && (
               <button
                 className="primary-button align-middle"
                 type="button"

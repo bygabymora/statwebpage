@@ -22,6 +22,8 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
 
+  const active = session?.user?.active || status === "authenticated";
+
   useEffect(() => {
     setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, [cart.cartItems]);
@@ -140,10 +142,10 @@ const Header = () => {
           </div>
 
           <div className="nav-reverse flex h-12 place-items-center gap-4">
-          {status === "loading" ? (
+          {active === "loading" ? (
             "Loading"
           ) : (
-            session?.user && (
+            active && (
             <div className="flex h-12 items-center">
               <Link
                 href={{ pathname: '/cart' }}
