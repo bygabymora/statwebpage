@@ -29,9 +29,9 @@ export default function Products({ products }) {
     <Layout title="Products">
       <div className="grid grid-cols-1 md:grid-cols-4">
         <div className="md:col-span-1 p-4">
-          <ul className="lg:block md:sticky md:top-[8rem] hidden">
+          <ul className="md:block md:sticky md:top-[8rem] hidden">
             <div
-              onClick={handleShowAll}
+              onClick={handleShowAll} 
               className={`manufacturer-item cursor-pointer ${
                 selectedManufacturer === null
                   ? 'bg-slate-200 cursor-pointer'
