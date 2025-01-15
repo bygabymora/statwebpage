@@ -244,8 +244,8 @@ export default function ProductScreen(props) {
           `}</style>
         </div>
 
-        <div className="">
-          <ul>
+        <div className="space-y-4">
+          <ul className="space-y-2">
             <li>
               <h1 className="text-xl font-bold">{product.slug}</h1>
             </li>
@@ -263,13 +263,13 @@ export default function ProductScreen(props) {
               </li>
             )}
             {product.sentOverNight && (
-              <li>
+              <li className="space-y-2">
                 <br />
                 <br />
                 <br />
                 <br />
-                <h1 className="text-xl">Shipping recomendations:</h1>
-                <p>
+                <h1 className="text-lg font-semibold">Shipping recomendations:</h1>
+                <p className="text-sm" style={{ color: '#788b9b' }}>
                   It is recommended that this product ships overnight due to
                   temperature sensitivity. Stat Surgical Supply is not
                   responsible for product damage or failure if the customer
@@ -284,7 +284,7 @@ export default function ProductScreen(props) {
             "Loading"
           ) : (
             active && (
-          <div className="card p-5">
+          <div className="card p-5 mb-4">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">
