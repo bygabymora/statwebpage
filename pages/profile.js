@@ -65,28 +65,31 @@ export default function ProfileScreen() {
 
   return (
     <Layout title="Profile">
+      <section className='profile-info mb-3'> 
       <h1 className="mb-4 text-xl ml-10">User Profile Information</h1>
-      <div className="mb-4 ml-10">
-        <div>
-          <strong>Full Name:</strong>
-          <div>{session.user.name}</div>
+        <div className="info-block ml-10">
+          <div>
+            <strong>Full Name:</strong>
+            <div>{session.user.name}</div>
+          </div>
+          <div>
+            <strong>Email:</strong>
+            <div>{session.user.email}</div>
+          </div>
+          <div>
+            <strong>Company Name:</strong>
+            <div>{session.user.companyName}</div>
+          </div>
+          <div>
+            <strong>Company EIN:</strong>
+            <div>{session.user.companyEinCode}</div>
+          </div>
+          <Link href={'/order-history'} className="font-bold underline" style={{ color: '#144e8b' }} >
+            Order History
+          </Link>
         </div>
-        <div>
-          <strong>Email:</strong>
-          <div>{session.user.email}</div>
-        </div>
-        <div>
-          <strong>Company Name:</strong>
-          <div>{session.user.companyName}</div>
-        </div>
-        <div>
-          <strong>Company EIN:</strong>
-          <div>{session.user.companyEinCode}</div>
-        </div>
-        <Link href={'/order-history'} className="font-bold underline">
-          Order History
-        </Link>
-      </div>
+      </section>
+      
       <div
         className={`mx-auto max-w-screen-md ${
           showModifyForm ? 'block' : 'hidden'
@@ -209,10 +212,10 @@ export default function ProfileScreen() {
         }`}
       ></div>
 
-      <div>
+      <div className="mb-4">
         {/* Show Modify Profile Button */}
         <button
-          className={`primary-button ${
+          className={`primary-button ml-10 ${
             showModifyForm ? 'hidden' : 'block'
           } mr-2`}
           onClick={toggleModifyForm}

@@ -454,6 +454,10 @@ img {
 .loginmenu {
   grid-column: 1;
 }
+
+.info-block div {
+  @apply mb-4;
+}
 /*=============== STATIC BANNER ===============*/
 .static-banner-container {
   width: 100%;
