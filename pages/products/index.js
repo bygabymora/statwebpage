@@ -40,7 +40,7 @@ export default function Products({ products }) {
             >
               ALL PRODUCTS
             </div>
-            <h2 class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3" id="manufacturers">
+            <h2 className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3" id="manufacturers">
               Manufacturers
             </h2>
             {manufacturers.map((manufacturer, index) => (

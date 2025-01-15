@@ -38,7 +38,7 @@ export default function Clearance({ products }) {
       <div className="grid grid-cols-1 md:grid-cols-4">
         {/* Left Sidebar */}
         <div className="md:col-span-1 p-4">
-          <ul>
+          <ul className="md:block md:sticky md:top-[8rem] hidden">
             <div
               onClick={handleShowAll}
               className={`manufacturer-item cursor-pointer ${
@@ -49,14 +49,14 @@ export default function Clearance({ products }) {
             >
               ALL PRODUCTS
             </div>
-            <h2 className="font-bold text-center mt-5" id="manufacturers">
+            <h2 className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3" id="manufacturers">
               Manufacturers
             </h2>
             {manufacturers.map((manufacturer, index) => (
-              <div
+              <div class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
                 key={index}
                 onClick={() => handleManufacturerClick(manufacturer)}
-                className={`manufacturer-item cursor-pointer ${
+                className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
                   selectedManufacturer === manufacturer
                     ? 'bg-slate-200 cursor-pointer'
                     : ''
