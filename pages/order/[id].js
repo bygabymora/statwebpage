@@ -369,11 +369,11 @@ function OrderScreen() {
   return (
     <Layout
       title={`Order ${orderId.substring(orderId.length - 8).toUpperCase()}`}
+      
     >
-      <h1 className="mb-4 text-xl">{`Order ${orderId
+      <h1 className="mb-1 text-xl font-bold">{`Order ${orderId
         .substring(orderId.length - 8)
         .toUpperCase()}`}</h1>
-
       <br />
       <div>
         <h2>Thank you for your order!</h2>
@@ -382,7 +382,7 @@ function OrderScreen() {
           <a
             href="mailto:sales@statsurgicalsupply.com"
             target="_blank"
-            className="font-bold underline"
+            className="font-bold underline" style={{ color: '#144e8b' }}
           >
             sales@statsurgicalsupply.com
           </a>{' '}
@@ -390,7 +390,7 @@ function OrderScreen() {
           <a
             href="tel:8132520727"
             onClick={handleCallButtonClick}
-            className="font-bold underline"
+            className="font-bold underline" style={{ color: '#144e8b' }}
             target="_blank"
           >
             813-252-0727
@@ -512,39 +512,39 @@ function OrderScreen() {
               )}
             </div>
 
-            <div className="card overflow-x-auto p-5 mb-2">
+            <div className="card overflow-x-auto p-5 mb-4">
               <h2 className="mb-2 text-lg">Order Items</h2>
-              <table className="min-w-full">
-                <thead className="border-b">
+              <table className="table-auto min-w-full border-collapse border">
+                <thead className="border">
                   <tr>
-                    <th className="px-5 text-left">Item</th>
-                    <th className="    p-5 text-right">Quantity</th>
-                    <th className="p-5 py-2 text-right">Type</th>
-                    <th className="  p-5 text-right">Price</th>
-                    <th className="p-5 text-right">Subtotal</th>
+                    <th className="px-5 border text-left">Item</th>
+                    <th className="p-5 border text-right">Quantity</th>
+                    <th className="p-5 border py-2 text-right">Type</th>
+                    <th className="p-5 border text-right">Price</th>
+                    <th className="p-5 border text-right">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody>
                   {orderItems.map((item) => (
-                    <tr key={item._id} className="border-b">
+                    <tr key={item._id} className="border">
                       <td>
                         <Link
                           href={`/products/${item.slug}`}
-                          className="flex items-center"
+                          className="flex flex-col items-center"
                         >
                           <Image
                             src={item.image}
                             alt={item.name}
                             width={50}
                             height={50}
+                            className="mb-1"
                           ></Image>
-                          &nbsp;
-                          {item.name}
+                           <span className="text-center">{item.name}</span>
                         </Link>
                       </td>
-                      <td className=" p-5 text-right">{item.quantity}</td>
-                      <td className="p-5 text-right">{item.purchaseType}</td>
-                      <td className="p-5 text-right">${item.price}</td>
+                      <td className="p-5 border text-right">{item.quantity}</td>
+                      <td className="p-5 border text-right">{item.purchaseType}</td>
+                      <td className="p-5 border text-right">${item.price}</td>
                       <td className="p-5 text-right">
                         ${item.quantity * item.price}
                       </td>
@@ -555,7 +555,7 @@ function OrderScreen() {
             </div>
           </div>
           <div>
-            <div className="card p-2">
+            <div className="card p-2 mb-4">
               <h2 className="mb-2 text-lg">Order Summary</h2>
               <ul>
                 <li>
@@ -710,7 +710,7 @@ function OrderScreen() {
                   )}
                 <br />
                 <li>
-                  <div className="mb-2 px-3 flex justify-between">
+                  <div className="mb-2 px-3 flex justify-between text-center">
                     {!session.user.isAdmin && (
                       <div>
                         We will contact you for more information depending on

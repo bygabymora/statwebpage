@@ -43,36 +43,36 @@ function OrderHistoryScreen() {
       ) : error ? (
         <div className="alert-error">{error}</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="border-b">
+        <div className="overflow-x-auto mb-4">
+          <table className="table-auto min-w-full border-collapse border">
+            <thead className="border">
               <tr>
-                <th className="px-5 text-left">ID</th>
-                <th className="p-5 text-left">DATE</th>
-                <th className="p-5 text-left">TOTAL</th>
-                <th className="p-5 text-left">PAID</th>
-                <th className="p-5 text-left">PROCESSED</th>
-                <th className="p-5 text-left">DELIVERED</th>
-                <th className="p-5 text-left">ACTION</th>
+                <th className="px-5 border text-left">ID</th>
+                <th className="p-5 border text-left">DATE</th>
+                <th className="p-5 border text-left">TOTAL</th>
+                <th className="p-5 border text-left">PAID</th>
+                <th className="p-5 border text-left">PROCESSED</th>
+                <th className="p-5 border text-left">DELIVERED</th>
+                <th className="p-5 border text-left">ACTION</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order._id} className="border-b">
-                  <td className=" p-5 ">{order._id.substring(20, 24)}</td>
-                  <td className=" p-5 ">{order.createdAt.substring(0, 10)}</td>
-                  <td className=" p-5 ">${order.totalPrice}</td>
-                  <td className=" p-5 ">
+                <tr key={order._id} className="border">
+                  <td className=" p-5 border">{order._id.substring(20, 24)}</td>
+                  <td className=" p-5 border">{order.createdAt.substring(0, 10)}</td>
+                  <td className=" p-5 border">${order.totalPrice}</td>
+                  <td className=" p-5 border">
                     {order.isPaid
                       ? `${order.paidAt.substring(0, 10)}`
                       : 'not paid'}
                   </td>
-                  <td className=" p-5 ">
+                  <td className=" p-5 border">
                     {order.isDelivered
                       ? `${order.deliveredAt.substring(0, 10)}`
                       : 'Not Processed'}
                   </td>
-                  <td className=" p-5 ">
+                  <td className=" p-5 border">
                     {order.isAtCostumers
                       ? `${order.atCostumersDate.substring(0, 10)}`
                       : 'Not Delivered'}
@@ -80,7 +80,7 @@ function OrderHistoryScreen() {
                   <td className=" p-5 ">
                     <Link
                       className="font-bold underline"
-                      href={`/order/${order._id}`}
+                      href={`/order/${order._id}`} style={{ color: '#144e8b' }}
                       passHref
                     >
                       Details
