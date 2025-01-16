@@ -115,6 +115,15 @@ button {
   outline: none;
 }
 
+.card ul li {
+  padding: 12px 0;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.card ul li:last-child {
+  border-bottom: none;
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -381,6 +390,20 @@ img {
 .myBtn:hover {
   background-color: var(--title-color);
 }
+
+.table-auto th, .table-auto td {
+  padding: 12px 15px;
+}
+
+.table-auto th {
+  background-color: #f7f7f7; /* Color de fondo suave */
+  color: #788b9b; /* Color de texto suave */
+}
+
+.table-auto tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
 .cart-button {
   width: 100%;
 }

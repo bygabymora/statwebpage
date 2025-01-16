@@ -52,20 +52,20 @@ function CartScreen() {
       ) : (
         <div className="grid sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4">
           <div className=" md:col-span-3">
-            <table className="table-auto min-w-full">
+            <table className="table-auto min-w-full border-collapse border">
               <thead className="border-b">
                 <tr>
-                  <th className="px-5 text-left">Product</th>
-                  <th className="p-5 py-2 text-right">Type</th>
-                  <th className="p-5 py-2 text-right">Quantity</th>
+                  <th className="px-5 border text-left">Product</th>
+                  <th className="p-5 py-2 border text-right">Type</th>
+                  <th className="p-5 py-2 border text-right">Quantity</th>
                   <th className="p-5 py-2 text-right">Price</th>
                   <th className="p-5"></th>
                 </tr>
               </thead>
               <tbody>
                 {cartItems.map((item) => (
-                  <tr key={item.slug} className="border-b">
-                    <td className="p-5">
+                  <tr key={item.slug} className="border">
+                    <td className="p-5 border">
                       <Link
                         href={`/products/${item.slug}`}
                         className="flex items-center"
@@ -82,11 +82,11 @@ function CartScreen() {
                         &nbsp;{item.slug}
                       </Link>
                     </td>
-                    <td className="p-5 text-right">
+                    <td className="p-5 text-right border">
                       {item.purchaseType === 'Bulk' ? 'Box' : item.purchaseType}
                     </td>
                     {item.purchaseType === 'Each' && (
-                      <td className="p-5 text-right">
+                      <td className="p-5 text-right border">
                         <select
                           value={item.quantity}
                           onChange={(e) =>
@@ -135,7 +135,7 @@ function CartScreen() {
                         </select>
                       </td>
                     )}
-                    <td className="p-5 text-right">${item.price}</td>
+                    <td className="p-5 text-right border">${item.price}</td>
                     <td className="p-5 text-center">
                       <button onClick={() => removeItemHandler(item)}>
                         <BsTrash3 className="h-5 w-5" />
@@ -146,7 +146,7 @@ function CartScreen() {
               </tbody>
             </table>
           </div>
-          <div className="card p-5">
+          <div className="card p-5 mb-4">
             <ul>
               <li>
                 <div className="pb-3 font-xl">
