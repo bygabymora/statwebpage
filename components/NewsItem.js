@@ -4,32 +4,32 @@ import Image from 'next/image';
 
 export const NewsItem = ({ news }) => {
   return (
-    <div className="flex flex-row justify-between items-center text-center mb-3 text-xs lg:text-lg max-w-full gap-2 border border-opacity-10 border-b-2 border-r-2 rounded-lg rounded-tl-2xl p-4">
+    <div className="flex flex-row justify-between items-center text-center mb-3 text-xs lg:text-lg max-w-full gap-3 border border-gray-200 shadow-lg rounded-lg p-4 hover:shadow-xl  transition-shadow duration-300 ease-in-out">
       <div className="flex flex-col justify-center items-center">
         <Link
           href={{ pathname: `news/${news.slug}` }}
-          className="justify-center items-center text-center"
+          className="group flex justify-center items-center text-center"
         >
           <div className="p-2"> 
             <Image
               src={`${news.imageUrl}`}
               alt={news.slug}
-              className="news-image rounded-lg" 
+              className="news-image rounded-lg group-hover:scale-105 transition-transform duration-300 ease-in-out" 
               width={300}
               height={200}
             />
           </div>
         </Link>
         <div className="max-w-full text-center mt-2">
-          <div className="text-4xl font-bold">
+          <div className="text-4xl font-bold text-[#144e8b]">
             {new Date(news.createdAt).getDate()}
           </div>
-          <div className="text-lg">
+          <div className="text-lg text-[#414b53]">
             {new Date(news.createdAt).toLocaleDateString('en-US', {
               month: 'long',
             })}
           </div>
-          <div className="text-lg">
+          <div className="text-lg text-[#414b53]">
             {new Date(news.createdAt).getFullYear()}
           </div>
         </div>
@@ -41,9 +41,9 @@ export const NewsItem = ({ news }) => {
         >
           <h2 className="font-bold">
             {news.title}
-            <br />
+            <br/>
           </h2>
-          <br />
+          <br/>
           <div className="max-w-full">{news.slug}</div>
         </Link>
       </div>

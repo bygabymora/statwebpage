@@ -16,7 +16,7 @@ export default function News({ news }) {
       <p className="text-center">
         Here are some of the latest news from the world of health.
       </p>
-      <br />
+      <br/>
       <div className="grid grid-cols-1 md:grid-cols-2">
         {news.map((newsItem) => (
           <NewsItem news={newsItem} key={newsItem.slug}></NewsItem>
