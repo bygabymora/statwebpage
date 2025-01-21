@@ -126,8 +126,13 @@ const Header = () => {
         <div className="flex h-12 items-center nav-field">
           <div className="flex h-12 items-center">
             <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
-              <div className="r__logo r__logo-1">
-                <Image src={Logo2} alt="logo" width={500} quality={5} />
+              <div className="r__logo r__logo-1 overflow-hidden ">
+                <Image 
+                src={Logo2} 
+                alt="logo" 
+                width={500} 
+               
+                quality={5} />
               </div>
             </Link>
             <Link
@@ -135,8 +140,13 @@ const Header = () => {
               className="nav__logo_2 logo"
               onClick={handleHomeClick}
             >
-              <div className="r__logo r__logo-2">
-                <Image src={Logo} alt="logo" width={400} />
+              <div className="r__logo r__logo-2 overflow-hidden h-10 w-10 md:w-18">
+                <Image 
+                src={Logo} 
+                alt="logo" 
+                className='max-w-full h-auto object-contain'
+                width={200} 
+                />
               </div>
             </Link>
           </div>
