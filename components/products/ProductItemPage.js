@@ -217,7 +217,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         {'-'}
         {product.manufacturer}{' '}
       </h2>
-
       <div className="flex flex-row justify-between">
         <Link
           href={{ pathname: `products/${product.slug}` }}
@@ -235,8 +234,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             />
           </div>
         </Link>
-
-
         <div className="flex flex-col justify-center items-center px-2 flex-1">
           <Link
             href={{ pathname: `products/${product.slug}` }}
@@ -310,8 +307,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           )}
         </div>
       </div>
-
-
       {purchaseType === 'Bulk' && isOutOfStockBulk && (
         <form className="text-center " ref={form} onSubmit={sendEmail}>
           <label className="mt-3 font-bold ">Join Our Wait List</label>
@@ -456,8 +451,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           </button>
         </form>
       )}
-
-
       {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
         <div>
           {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
@@ -566,8 +559,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                        )
                       )}
                     </div>
-
-
                     <div className="text-gray-500 mb-1">{product.notes}</div>
                   </div>
                   {active === "loading" ? (
@@ -598,7 +589,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           </div>
         </div>
       )}
-     
     </div>
   );
 };
