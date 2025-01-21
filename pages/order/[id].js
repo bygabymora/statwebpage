@@ -650,7 +650,7 @@ function OrderScreen() {
                         <div>Loading...</div>
                       ) : (
                         <PayPalButtons
-                          className="fit-content  mt-3"
+                          className="fit-content mt-3"
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}

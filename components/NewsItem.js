@@ -24,12 +24,12 @@ export const NewsItem = ({ news }) => {
           <div className="text-4xl font-bold text-[#144e8b]">
             {new Date(news.createdAt).getDate()}
           </div>
-          <div className="text-lg text-[#414b53]">
+          <div className="font-bold">
             {new Date(news.createdAt).toLocaleDateString('en-US', {
               month: 'long',
             })}
           </div>
-          <div className="text-lg text-[#414b53]">
+          <div className="font-bold">
             {new Date(news.createdAt).getFullYear()}
           </div>
         </div>

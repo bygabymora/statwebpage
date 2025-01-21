@@ -196,7 +196,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   //-----------//
 
   return (
-    <div className="block justify-center card  items-center text-center my-3 text-xs lg:text-lg pb-3">
+    <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
+     border-gray-200 shadow-lg rounded-lg p-1.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
+    >
       <h2 className="font-bold my-2">
         {product.slug}
         {'-'}

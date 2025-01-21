@@ -252,7 +252,6 @@ export default function ProductScreen(props) {
             <li>
               <h1 className="text-xl font-bold">{product.manufacturer}</h1>
             </li>
-
             <li>
               <h1 className="text-xl">{currentDescription}</h1>
             </li>
@@ -269,7 +268,7 @@ export default function ProductScreen(props) {
                 <br />
                 <br />
                 <h1 className="text-lg font-semibold">Shipping recomendations:</h1>
-                <p className="text-sm" style={{ color: '#788b9b' }}>
+                <p className="text-sm text-[#788b9b]">
                   It is recommended that this product ships overnight due to
                   temperature sensitivity. Stat Surgical Supply is not
                   responsible for product damage or failure if the customer
