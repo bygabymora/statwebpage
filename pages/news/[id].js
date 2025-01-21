@@ -107,7 +107,7 @@ export default function Newscreen(props) {
           </span>
           {news.sources &&
             news.sources.map((source, index) => (
-              <div key={index} className="source-link underline">
+              <div key={index} className="source-link underline ">
                 <a href={source.url} target="_blank" rel="noopener noreferrer">
                   {source.title}
                 </a>

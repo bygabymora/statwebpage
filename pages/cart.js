@@ -68,13 +68,14 @@ function CartScreen() {
                     <td className="p-5 border">
                       <Link
                         href={`/products/${item.slug}`}
-                        className="flex items-center"
+                        className="flex flex-col items-center"
                       >
                         <Image
                           src={item.image}
                           alt={item.slug}
                           width={50}
                           height={50}
+                          className="mb-1"
                         />
                         &nbsp;
                         {item.manufacturer}
