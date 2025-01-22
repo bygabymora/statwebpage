@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Layout from '../../components/main/Layout';
 import { ProductItemPage } from '../../components/products/ProductItemPage';
 import Product from '../../models/Product.js';
@@ -8,6 +8,7 @@ import { AiOutlineMenuFold } from 'react-icons/ai';
 export default function Products({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
+  const firstProductRef = useRef(null);
   
   const manufacturers = [
     ...new Set(products.map((product) => product.manufacturer)),
@@ -21,6 +22,8 @@ export default function Products({ products }) {
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
+    
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleShowAll = () => {
@@ -75,11 +78,12 @@ export default function Products({ products }) {
           <h2 className="section__title" id="products">
             Products
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
-            {filteredProducts.map((product) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
+            {filteredProducts.map((product, index) => (
               <ProductItemPage
                 product={product}
                 key={product.slug}
+                ref={index === 0 ? firstProductRef : null}
               ></ProductItemPage>
             ))}
           </div>
