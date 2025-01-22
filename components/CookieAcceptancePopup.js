@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Store } from '../utils/Store';
+import Link from 'next/link';
 
 const CookieAcceptancePopup = () => {
   const { state, dispatch } = useContext(Store);
@@ -42,7 +43,7 @@ const CookieAcceptancePopup = () => {
           <p className="text-sm text-center md:text-left">
             We use cookies to enhance your experience. By continuing to use our
             website, you agree to our cookies use.
-            <a href="/privacy-policy" className="text-white hover:underline"> Learn more</a>
+           <Link href="/privacy-policy" className="text-white hover:underline">Learn more</Link>
           </p>
           <div className="flex space-x-4">
             <button
