@@ -3,9 +3,11 @@ import Layout from '../components/main/Layout';
 import Product from '../models/Product.js';
 import db from '../utils/db';
 import { ProductItemPage } from '../components/products/ProductItemPage';
+import { AiOutlineMenuFold } from 'react-icons/ai';
 
 export default function Clearance({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
+  const [showManufacturers, setShowManufacturers] = useState(false);
 
   const manufacturers = [
     ...new Set(
@@ -38,7 +40,18 @@ export default function Clearance({ products }) {
       <div className="grid grid-cols-1 md:grid-cols-4">
         {/* Left Sidebar */}
         <div className="md:col-span-1 p-4">
-          <ul className="md:block md:sticky md:top-[8rem] hidden">
+          <div className="block md:hidden mb-4">
+            <button
+              className="bg-[#144e8b] px-4 py-2 rounded"
+              onClick={() => setShowManufacturers(!showManufacturers)}
+            >
+              <AiOutlineMenuFold color="white"/>
+            </button>
+          </div>
+          <ul className={`${
+            showManufacturers ? 'block' : 'hidden'
+            } md:block md:sticky md:top-[8rem]`}
+            >
             <div
               onClick={handleShowAll}
               className={`manufacturer-item cursor-pointer ${
