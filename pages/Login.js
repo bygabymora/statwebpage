@@ -124,7 +124,7 @@ export default function Login() {
           Don&apos;t have an account? &nbsp;
           <Link
             href="/Register"
-            className="font-bold underline active:text-gray-700"
+            className="font-bold underline active:text-[#144e8b]"
           >
             Register
           </Link>

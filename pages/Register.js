@@ -257,7 +257,7 @@ export default function LoginScreen() {
           Already have an account? &nbsp;
           <Link
             href="/Login"
-            className="font-bold underline active:text-gray-700"
+            className="font-bold underline active:text-[#144e8b]"
           >
             Login
           </Link>
