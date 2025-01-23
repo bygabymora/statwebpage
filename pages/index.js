@@ -151,7 +151,7 @@ function Carousel({ products }) {
         onMouseEnter={handleInteractionStart}
         onMouseLeave={handleOnMouseLeave} // using combined function here
       >
-        {products.map((product) => (
+        {products?.map((product) => (
           <div className="carousel-item px-3 lg:px-0" key={product.slug}>
             <ProductItem product={product} />
           </div>
@@ -169,15 +169,14 @@ function Carousel({ products }) {
 }
 
 export default function Home({ products }) {
-  const filteredProducts = products
-    .filter(
+  const filteredProducts = products?.filter(
       (product) =>
         product.countInStock > 0 ||
         product.countInStockBulk > 0 ||
         product.countInStockClearance > 0
     )
     .slice(0, 9);
-
+    
   return (
     <Layout title="STAT Surgical Supply">
       <StaticBanner />
@@ -191,12 +190,3 @@ export default function Home({ products }) {
   );
 }
 
-export async function getServerSideProps() {
-  await db.connect();
-  const products = await Product.find().lean();
-  return {
-    props: {
-      products: products.map(db.convertDocToObj),
-    },
-  };
-}

@@ -3,8 +3,7 @@ import Product from '../../../models/Product';
 
 const handler = async (req, res) => {
   await db.connect();
-  const product = await Product.findById(req.query.id).lean();
-  await db.disconnect();
+  const product = await Product.findById(req.query.id);
   res.send(product);
 };
 

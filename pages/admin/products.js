@@ -374,7 +374,7 @@ export default function AdminProdcutsScreen() {
                     <tr key={product._id} className="border-b">
                       <td className=" p-2 border-r border-gray-300 ">
                         <div>
-                          {product.slug}
+                          {product.name}
                           <br />
                           {product.manufacturer}
                           <br />

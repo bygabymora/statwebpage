@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Layout from '../components/main/Layout';
-import Product from '../models/Product.js';
-import db from '../utils/db';
-import { ProductItemPage } from '../components/products/ProductItemPage';
-import { AiOutlineMenuFold } from 'react-icons/ai';
+import React, { useState } from "react";
+import Layout from "../components/main/Layout";
+import Product from "../models/Product.js";
+import db from "../utils/db";
+import { ProductItemPage } from "../components/products/ProductItemPage";
+import { AiOutlineMenuFold } from "react-icons/ai";
 
 export default function Clearance({ products }) {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
@@ -26,7 +26,7 @@ export default function Clearance({ products }) {
     : products.filter((product) => product.countInStockClearance > 0);
 
   const handleManufacturerClick = (manufacturer) => {
-    setSelectedManufacturer(manufacturer);
+    setSelectedManufacturer(manufacturer)
   };
 
   const handleShowAll = () => {
@@ -45,34 +45,39 @@ export default function Clearance({ products }) {
               className="bg-[#144e8b] px-4 py-2 rounded"
               onClick={() => setShowManufacturers(!showManufacturers)}
             >
-              <AiOutlineMenuFold color="white"/>
+              <AiOutlineMenuFold color="white" />
             </button>
           </div>
-          <ul className={`${
-            showManufacturers ? 'block' : 'hidden'
+          <ul
+            className={`${
+              showManufacturers ? "block" : "hidden"
             } md:block md:sticky md:top-[8rem]`}
-            >
+          >
             <div
               onClick={handleShowAll}
               className={`manufacturer-item cursor-pointer ${
                 selectedManufacturer === null
-                  ? 'bg-slate-200 cursor-pointer'
-                  : ''
+                  ? "bg-slate-200 cursor-pointer"
+                  : ""
               }`}
             >
               ALL PRODUCTS
             </div>
-            <h2 className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3" id="manufacturers">
+            <h2
+              className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
+              id="manufacturers"
+            >
               Manufacturers
             </h2>
             {manufacturers.map((manufacturer, index) => (
-              <div class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
+              <div
+                class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
                 key={index}
                 onClick={() => handleManufacturerClick(manufacturer)}
                 className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
                   selectedManufacturer === manufacturer
-                    ? 'bg-slate-200 cursor-pointer'
-                    : ''
+                    ? "bg-slate-200 cursor-pointer"
+                    : ""
                 }`}
               >
                 {manufacturer}
@@ -98,14 +103,4 @@ export default function Clearance({ products }) {
       </div>
     </Layout>
   );
-}
-
-export async function getServerSideProps() {
-  await db.connect();
-  const products = await Product.find().lean();
-  return {
-    props: {
-      products: products.map(db.convertDocToObj),
-    },
-  };
 }

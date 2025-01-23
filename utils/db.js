@@ -3,21 +3,20 @@ import mongoose from 'mongoose';
 const connection = {};
 
 async function connect() {
-  if (connection.isConnected) {
-    console.log('already connected');
-    return;
-  }
-  if (mongoose.connections.length > 0) {
-    connection.isConnected = mongoose.connections[0].readyState;
-    if (connection.isConnected === 1) {
-      console.log('use previous connection');
+  try {
+    if (connection.isConnected) {
+      console.log('already connected');
       return;
     }
-    await mongoose.disconnect();
+    const db = await mongoose.connect(process.env.MONGODB_URI_FINAL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    connection.isConnected = db.connections[0].readyState;
+    console.log('Conexión exitosa a MongoDB');
+  } catch (error) {
+    console.error('Error al conectar con MongoDB:', error);
   }
-  const db = await mongoose.connect(process.env.MONGODB_URI);
-  console.log('new connection');
-  connection.isConnected = db.connections[0].readyState;
 }
 
 async function disconnect() {
@@ -31,12 +30,6 @@ async function disconnect() {
   }
 }
 
-function convertDocToObj(doc) {
-  doc._id = doc._id.toString();
-  doc.createdAt = doc.createdAt.toString();
-  doc.updatedAt = doc.updatedAt.toString();
-  return doc;
-}
 
-const db = { connect, disconnect, convertDocToObj };
+const db = { connect, disconnect };
 export default db;

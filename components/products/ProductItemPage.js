@@ -213,13 +213,13 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
      border-gray-200 shadow-lg rounded-lg p-0.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
     >
       <h2 className="font-bold my-2">
-        {product.slug}
+        {product.name}
         {'-'}
         {product.manufacturer}{' '}
       </h2>
       <div className="flex flex-row justify-between">
         <Link
-          href={{ pathname: `products/${product.slug}` }}
+          href={{ pathname: `products/${product.name}` }}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
@@ -236,7 +236,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         </Link>
         <div className="flex flex-col justify-center items-center px-2 flex-1">
           <Link
-            href={{ pathname: `products/${product.slug}` }}
+            href={{ pathname: `products/${product.name}` }}
             className="justify-center items-center text-center"
           >
             <div className="max-w-full">
@@ -554,7 +554,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       active && (
                       <div className="mb-2 justify-between flex">
                         <div className="font-bold">Price</div>
-                        <div className="">&nbsp; ${currentPrice}</div>
+                        <div className="">&nbsp; ${callForPrice}</div>
                       </div>
                        )
                       )}

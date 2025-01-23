@@ -200,7 +200,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
      border-gray-200 shadow-lg rounded-lg p-1.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
     >
       <h2 className="font-bold my-2">
-        {product.slug}
+        {product.name}
         {'-'}
         {product.manufacturer}{' '}
       </h2>
@@ -268,7 +268,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                       setQty(qty + 1);
                     } else {
                       alert(
-                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
+                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.name} at this moment`
                       );
                     }
                   }}

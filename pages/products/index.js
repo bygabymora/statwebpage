@@ -1,15 +1,36 @@
-import React, { useState, useRef } from 'react';
-import Layout from '../../components/main/Layout';
-import { ProductItemPage } from '../../components/products/ProductItemPage';
-import Product from '../../models/Product.js';
-import db from '../../utils/db';
-import { AiOutlineMenuFold } from 'react-icons/ai';
+import React, { useState, useRef, useEffect } from "react";
+import Layout from "../../components/main/Layout";
+import { ProductItemPage } from "../../components/products/ProductItemPage";
+import Product from "../../models/Product.js";
+import db from "../../utils/db";
+import { AiOutlineMenuFold } from "react-icons/ai";
+import axios from 'axios';
 
-export default function Products({ products }) {
+export default function Products() {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
+  const [products, setProducts] = useState([]);
   const firstProductRef = useRef(null);
+
+  const [loading, setLoading] = useState(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const sortDirection = 1;
+      const sortQuery = sortDirection === 1 ? "asc" : "desc";
+      const { data } = await axios.get(`/api/products?sort=${sortQuery}`);
+      setProducts(data);
+    } catch (err) {
+      console.error('Error al obtener productos:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
   
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const manufacturers = [
     ...new Set(products.map((product) => product.manufacturer)),
   ];
@@ -22,7 +43,7 @@ export default function Products({ products }) {
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
-    
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -42,31 +63,36 @@ export default function Products({ products }) {
               <AiOutlineMenuFold color="white"/>
             </button>
           </div>
-          <ul className={`${
-            showManufacturers ? 'block' : 'hidden'
+          <ul
+            className={`${
+              showManufacturers ? "block" : "hidden"
             } md:block md:sticky md:top-[8rem]`}
           >
             <div
-              onClick={handleShowAll} 
+              onClick={handleShowAll}
               className={`manufacturer-item cursor-pointer ${
                 selectedManufacturer === null
-                  ? 'bg-slate-200 cursor-pointer'
-                  : ''
+                  ? "bg-slate-200 cursor-pointer"
+                  : ""
               }`}
             >
               ALL PRODUCTS
             </div>
-            <h2 className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3" id="manufacturers">
+            <h2
+              className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
+              id="manufacturers"
+            >
               Manufacturers
             </h2>
             {manufacturers.map((manufacturer, index) => (
-              <div class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
+              <div
+                class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
                 key={index}
                 onClick={() => handleManufacturerClick(manufacturer)}
                 className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
                   selectedManufacturer === manufacturer
-                    ? 'bg-slate-200 cursor-pointer'
-                    : ''
+                    ? "bg-slate-200 cursor-pointer"
+                    : ""
                 }`}
               >
                 {manufacturer}
@@ -79,26 +105,20 @@ export default function Products({ products }) {
             Products
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
-            {filteredProducts.map((product, index) => (
-              <ProductItemPage
-                product={product}
-                key={product.slug}
-                ref={index === 0 ? firstProductRef : null}
-              ></ProductItemPage>
-            ))}
+            {loading ? (
+            <p>Cargando productos...</p>
+            ) : (
+            filteredProducts.map((product, index) => (
+            <ProductItemPage 
+            product={product} 
+            key={product.slug}
+            ref={index === 0 ? firstProductRef : null}
+            ></ProductItemPage>
+            ))
+            )}
           </div>
         </div>
       </div>
     </Layout>
   );
-}
-
-export async function getServerSideProps() {
-  await db.connect();
-  const products = await Product.find().sort({ slug: 1 }).lean();
-  return {
-    props: {
-      products: products.map(db.convertDocToObj),
-    },
-  };
 }
