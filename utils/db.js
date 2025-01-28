@@ -17,8 +17,6 @@ async function connect() {
       await mongoose.disconnect();
     }
     const db = await mongoose.connect(process.env.MONGODB_URI_FINAL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     connection.isConnected = db.connections[0].readyState;
     console.log('already connected MongoDB');
