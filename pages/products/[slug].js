@@ -571,7 +571,7 @@ export default function ProductScreen(props) {
 
 export async function getStaticPaths() {
   await db.connect();
-  
+
   const products = await fetchDataWithRetry(async () => {
     return await Product.find({}, 'slug').lean();
   });
@@ -590,7 +590,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   await db.connect();
-  
+
   const product = await fetchDataWithRetry(async () => {
     return await Product.findOne({ slug: String(params.slug) }).lean();
   });
