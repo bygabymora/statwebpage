@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   
   try {
     await db.connect(true); // Try to reconnect
-  } catch (error) {
+  } catch {
     return res
       .status(503)
       .json({ message: 'Service unavailable: Database connection failed' });

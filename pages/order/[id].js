@@ -92,7 +92,7 @@ function OrderScreen() {
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
-    };
+    }; 
 
     if (
       !order._id ||
@@ -121,7 +121,7 @@ function OrderScreen() {
       };
       loadPaypalScript();
     }
-  }, [order, orderId, paypalDispatch, successDeliver, successPay]);
+  }, [order, orderId, paypalDispatch, sendEmail, successDeliver, successPay]);
 
   const {
     shippingAddress,

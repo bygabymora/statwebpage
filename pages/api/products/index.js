@@ -4,7 +4,7 @@ import db from '../../../utils/db';
 const handler = async (req, res) => {
     try {
       await db.connect(); // Try to reconnect
-    } catch (error) {
+    } catch {
       return res
         .status(503)
         .json({ message: "Service unavailable: Database connection failed" });
@@ -30,8 +30,8 @@ const getHandler = async (req, res) => {
       const products = await Product.find({}).sort(sortField);
   
       res.send(products);
-    } catch (error) {
-      res.status(500).send({ message: "Error fetching products", error });
+    } catch {
+      res.status(500).send({ message: "Error fetching products"});
     }
   };
 
