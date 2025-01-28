@@ -61,5 +61,8 @@
   "description": "STAT webpage",
   "main": "next.config.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  }
 }
