@@ -131,6 +131,14 @@ export default function AdminProdcutsScreen() {
     }
   }, [router.query, sortDirection, successDelete]);
 
+  const handleInputChange = (productId, field, value) => {
+    setCurrentEditingProductId(productId);
+    setProductUpdates((prevUpdates) => ({
+      ...prevUpdates,
+      [productId]: { ...prevUpdates[productId], [field]: value },
+    }));
+  };
+
   const deleteHandler = async (productId) => {
     if (!window.confirm('Are you sure?')) {
       return;
@@ -310,7 +318,7 @@ export default function AdminProdcutsScreen() {
         </div>
         <div className="overflow-x-auto md:col-span-3">
           <div className="flex justify-between">
-            <h1 className="mb-4 text-xl">Products</h1>
+            <h1 className="mb-4 flex gap-2 text-xl items-center">Products</h1>
             {loadingDelete && <div>Deleting item...</div>}
             <button
               disabled={loadingCreate}
@@ -326,12 +334,15 @@ export default function AdminProdcutsScreen() {
             <div className="alert-error">{error}</div>
           ) : (
             <div className="overflow-x-auto">
-              <br />
-              <table className="min-w-full mb-5">
-                <thead className="border-b">
-                  <tr>
-                    <th className="p-2 text-center border-r border-gray-300 w-[16%]">
-                      REF/Manufacturer
+                <br />
+              <table className="min-w-full mb-5 border border-collapse">
+                <thead className="border border-collapse">
+                  <tr className="bg-gray-50">
+                    <th className="p-2 text-center border w-[16%]">
+                      REF
+                      <br />
+                      Manufacturer
+                      <br />
                       <button
                         onClick={toggleSortDirection}
                         className="primary-button"
@@ -347,14 +358,14 @@ export default function AdminProdcutsScreen() {
                       PRICE
                       <br /> EACH
                     </th>
-                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
+                    <th className="p-2 text-left  border  w-[12%]">
                       COUNT
                       <br /> EACH
                     </th>
                     <th className="p-2 text-left  w-[12%]">
                       PRICE <br /> BOX
                     </th>
-                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
+                    <th className="p-2 text-left  border w-[12%]">
                       COUNT <br />
                       BOX
                     </th>
@@ -362,7 +373,7 @@ export default function AdminProdcutsScreen() {
                       PRICE
                       <br /> C/RANCE
                     </th>
-                    <th className="p-2 text-left  border-r border-gray-300  w-[12%]">
+                    <th className="p-2 text-left  border w-[12%]">
                       COUNT <br />
                       C/RANCE
                     </th>
@@ -371,8 +382,8 @@ export default function AdminProdcutsScreen() {
                 </thead>
                 <tbody>
                   {sortedProducts.map((product) => (
-                    <tr key={product._id} className="border-b">
-                      <td className=" p-2 border-r border-gray-300 ">
+                    <tr key={product._id} className="border border-collapse odd:bg-white even:bg-gray-50">
+                      <td className=" p-2 border">
                         <div>
                           {product.name}
                           <br />
@@ -432,13 +443,8 @@ export default function AdminProdcutsScreen() {
                           className="w-[70%]"
                           type="number"
                           value={productUpdates[product._id]?.price}
-                          onChange={(e) =>
-                            handlePriceChange(product._id, e.target.value)
-                          }
-                          disabled={
-                            currentEditingProductId &&
-                            currentEditingProductId !== product._id
-                          }
+                          onChange={(e) => handleInputChange(product._id, 'price', e.target.value)}
+                          disabled={currentEditingProductId && currentEditingProductId !== product._id}
                         />
                       </td>
                       <td className=" p-2 border-r border-gray-300 w-[12%]">

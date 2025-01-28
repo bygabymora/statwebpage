@@ -75,12 +75,12 @@ function CartScreen() {
                           alt={item.slug}
                           width={50}
                           height={50}
-                          className="mb-1"
+                          className="mb-1 rounded-lg"
                         />
                         &nbsp;
                         {item.manufacturer}
                         <br />
-                        &nbsp;{item.slug}
+                        &nbsp;{item.name}
                       </Link>
                     </td>
                     <td className="p-5 text-right border">

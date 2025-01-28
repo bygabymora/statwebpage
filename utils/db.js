@@ -8,12 +8,20 @@ async function connect() {
       console.log('already connected');
       return;
     }
+    if (mongoose.connections.length > 0) {
+      connection.isConnected = mongoose.connections[0].readyState;
+      if (connection.isConnected === 1) {
+        console.log('Using pre-connection to the database');
+        return;
+      }
+      await mongoose.disconnect();
+    }
     const db = await mongoose.connect(process.env.MONGODB_URI_FINAL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     connection.isConnected = db.connections[0].readyState;
-    console.log('Conexión exitosa a MongoDB');
+    console.log('already connected MongoDB');
   } catch (error) {
     console.error('Error al conectar con MongoDB:', error);
   }

@@ -332,58 +332,6 @@ const productSchema = new mongoose.Schema(
       ],
     },
 
-    vendors: [
-      {
-        vendorId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Vendor",
-          required: false,
-        },
-        purchaseOrders: [
-          {
-            purchaseOrderId: { type: String, required: false },
-          },
-        ],
-        companyName: { type: String, required: false },
-        each: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-        box: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-        loose: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-      },
-    ],
-    customers: [
-      {
-        customerId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Customer",
-          required: false,
-        },
-        invoices: [
-          {
-            invoiceId: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "Invoice",
-              required: false,
-            },
-          },
-        ],
-        each: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-        box: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-        loose: {
-          quantity: { type: Number, default: 0, required: false },
-        },
-      },
-    ],
-
     purchases: [
       {
         purchaseId: { type: String, required: false },
@@ -466,7 +414,7 @@ const productSchema = new mongoose.Schema(
 );
 
 const Product =
-  mongoose.models?.Product || mongoose.model("Product", productSchema);
+  mongoose.models.Product || mongoose.model("Product", productSchema);
 
 const productFields = [
   "name",
@@ -482,7 +430,6 @@ const productFields = [
   "box",
   "loose",
   "clearance",
-  "vendors",
   "buyers",
   "purchases",
   "receiptOrders",

@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Layout from "../../components/main/Layout";
 import { ProductItemPage } from "../../components/products/ProductItemPage";
-import Product from "../../models/Product.js";
-import db from "../../utils/db";
 import { AiOutlineMenuFold } from "react-icons/ai";
 import axios from 'axios';
 

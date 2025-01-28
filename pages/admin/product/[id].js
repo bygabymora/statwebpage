@@ -182,7 +182,8 @@ export default function AdminProductEditScreen() {
   return (
     <Layout title={`Edit Product ${productId}`}>
       <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
+        <div
+        >
           <ul>
             <li>
               <Link href="/admin/dashboard">Dashboard</Link>
@@ -219,7 +220,6 @@ export default function AdminProductEditScreen() {
                   id="name"
                   autoFocus
                   {...register('name', {
-                    required: 'Please enter name',
                   })}
                 />
                 {errors.name && (
@@ -233,7 +233,6 @@ export default function AdminProductEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline uppercase"
                   id="slug"
                   {...register('manufacturer', {
-                    required: 'Please enter manufacturer',
                   })}
                 />
                 {errors.manufacturer && (
@@ -306,7 +305,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="description"
                     {...register('description', {
-                      required: 'Please enter Description',
                     })}
                   />
                   {errors.description && (
@@ -322,7 +320,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="price"
                     {...register('price', {
-                      required: 'Please enter price',
                     })}
                   />
                   {errors.price && (
@@ -336,7 +333,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="countInStock"
                     {...register('countInStock', {
-                      required: 'Please enter countInStock',
                     })}
                   />
                   {errors.countInStock && (
@@ -355,7 +351,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="descriptionBulk"
                     {...register('descriptionBulk', {
-                      required: 'Please enter Description Bulk',
                     })}
                   />
                   {errors.description && (
@@ -371,7 +366,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="priceBulk"
                     {...register('priceBulk', {
-                      required: 'Please enter price Bulk',
                     })}
                   />
                   {errors.price && (
@@ -385,7 +379,6 @@ export default function AdminProductEditScreen() {
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                     id="countInStockBulk"
                     {...register('countInStockBulk', {
-                      required: 'Please enter countInStock Bulk',
                     })}
                   />
                   {errors.countInStock && (
@@ -418,7 +411,6 @@ export default function AdminProductEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="descriptionClearance"
                   {...register('descriptionClearance', {
-                    required: 'Please enter Description Clearance',
                   })}
                 />
                 {errors.description && (
@@ -435,7 +427,6 @@ export default function AdminProductEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="priceClearance"
                   {...register('priceClearance', {
-                    required: 'Please enter price Clearance',
                   })}
                 />
                 {errors.priceClearance && (
@@ -453,7 +444,6 @@ export default function AdminProductEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="countInStockClearance"
                   {...register('countInStockClearance', {
-                    required: 'Please enter countInStock Clearance',
                   })}
                 />
                 {errors.countInStockClearance && (
@@ -469,7 +459,6 @@ export default function AdminProductEditScreen() {
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="notes"
                   {...register('notes', {
-                    required: 'Please enter notes',
                   })}
                 />
                 {errors.notes && (

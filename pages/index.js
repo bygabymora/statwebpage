@@ -4,9 +4,43 @@ import React from 'react';
 import Banner from '../components/Banner';
 import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
-import Product from '../models/Product.js';
-import db from '../utils/db.js';
+import db from '../utils/db';
+import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
+
+export async function getServerSideProps() {
+  await db.connect();
+  const products = await Product.find({}).lean();
+  await db.disconnect();
+  const serializeObjectIds = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map(serializeObjectIds); // If it is an array, we process each element
+    } else if (obj && typeof obj === 'object') {
+      // If it is an object, we process its properties
+      return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = obj[key] && obj[key]._id ? obj[key]._id.toString() : serializeObjectIds(obj[key]);
+        return acc;
+      }, {});
+    }
+    return obj; // If it is not an object or an array, we return it as is
+  };
+
+  // Serialize all products
+  const serializedProducts = products.map((product) => {
+    return serializeObjectIds({
+      ...product,
+      _id: product._id.toString(),
+      createdAt: product.createdAt ? product.createdAt.toISOString() : null,
+      updatedAt: product.updatedAt ? product.updatedAt.toISOString() : null,
+    });
+  });
+;
+  return {
+    props: {
+      products: serializedProducts,
+    },
+  };
+}
 
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = React.useState(0);
@@ -68,6 +102,7 @@ function Carousel({ products }) {
   };
 
   const nextSlide = React.useCallback(() => {
+    console.log('Next slide');
     setCurrentSlide((oldSlide) => {
       if (oldSlide + 1 < totalSlides) {
         return oldSlide + 1;
@@ -170,13 +205,13 @@ function Carousel({ products }) {
 
 export default function Home({ products }) {
   const filteredProducts = products?.filter(
-      (product) =>
-        product.countInStock > 0 ||
-        product.countInStockBulk > 0 ||
-        product.countInStockClearance > 0
-    )
-    .slice(0, 9);
-    
+    (product) =>
+      product.each?.price > 0 && // Valid price greater than 0
+      product.each?.description && 
+      product.each?.description.trim() !== '' // Non-empty description
+  )
+  .slice(0, 9);
+
   return (
     <Layout title="STAT Surgical Supply">
       <StaticBanner />

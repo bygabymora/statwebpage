@@ -23,12 +23,12 @@ export default function ProductScreen(props) {
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
-  const [currentPrice, setCurrentPrice] = useState(product.price);
+  const [currentPrice, setCurrentPrice] = useState(product.each?.price || 0);
   const [currentDescription, setCurrentDescription] = useState(
-    product.description
+    product.each?.description || ''
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.countInStock
+    product.each?.countInStock || 0
   );
   const form = useRef();
   const [name, setName] = useState('');
@@ -73,27 +73,13 @@ export default function ProductScreen(props) {
     product.countInStockClearance,
   ]);
 
-  useEffect(() => {
-    if (
-      product.countInStockClearance === 0 &&
-      product.countInStockBulk === 0 &&
-      product.countInStock === 0
-    ) {
-      setPurchaseType('Each');
-      setCurrentPrice(product.price);
-      setCurrentDescription(product.description);
-      setCurrentCountInStock(product.countInStock);
-      setIsOutOfStock(true);
-      setIsOutOfStockBulk(true);
-      setIsOutOfStockClearance(true);
-    }
-  }, [
-    product.countInStockClearance,
-    product.countInStockBulk,
-    product.countInStock,
-    product.price,
-    product.description,
-  ]);
+    useEffect(() => {
+      if (purchaseType === 'Each') {
+        setCurrentPrice(product.each?.price || 0);
+        setCurrentDescription(product.each?.description || '');
+        setCurrentCountInStock(product.each?.countInStock || 0);
+      }
+    }, [purchaseType, product.each]);
 
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
@@ -119,20 +105,36 @@ export default function ProductScreen(props) {
         ...product,
         quantity,
         purchaseType,
-        sentOverNight: product.sentOverNight,
-        price: purchaseType === 'Each' ? product.price : product.priceBulk,
+        price:
+          purchaseType === 'Each'
+            ? product.each?.price
+            : purchaseType === 'Bulk'
+            ? product.box?.price
+            : purchaseType === 'Clearance'
+            ? product.clearance?.price
+            : product.price,
         description:
           purchaseType === 'Each'
-            ? product.description
-            : product.descriptionBulk,
+            ? product.each?.description
+            : purchaseType === 'Bulk'
+            ? product.box?.description
+            : purchaseType === 'Clearance'
+            ? product.clearance?.description
+            : product.description,
         countInStock:
-          purchaseType === 'Each' ? data.countInStock : data.countInStockBulk,
+          purchaseType === 'Each'
+            ? product.each?.countInStock
+            : purchaseType === 'Bulk'
+            ? product.box?.countInStock
+            : purchaseType === 'Clearance'
+            ? product.clearance?.countInStock
+            : product.countInStock,
       },
     });
     setQty(1);
     toast.success('Item added to cart');
 
-    if (purchaseType === 'Each' && data.countInStock < quantity) {
+    if (purchaseType === 'Each' && data.countInStockEach < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
@@ -179,7 +181,7 @@ export default function ProductScreen(props) {
   //-----------//
 
   return (
-    <Layout title={product.slug} product={product}>
+    <Layout title={product.name} product={product}>
       <div className="py-2">
         <Link href={'/products'} className="flex gap-4 items-center">
           <BsBackspace />
@@ -202,7 +204,7 @@ export default function ProductScreen(props) {
           >
             <Image
               src={product.image}
-              alt={product.slug}
+              alt={product.name}
               width={640}
               height={640}
               className="rounded-lg hover:cursor-zoom-in no-drag" // <-- Added no-drag class here
@@ -247,7 +249,7 @@ export default function ProductScreen(props) {
         <div className="space-y-4">
           <ul className="space-y-2">
             <li>
-              <h1 className="text-xl font-bold">{product.slug}</h1>
+              <h1 className="text-xl font-bold">{product.name}</h1>
             </li>
             <li>
               <h1 className="text-xl font-bold">{product.manufacturer}</h1>
@@ -326,29 +328,27 @@ export default function ProductScreen(props) {
                 value={purchaseType}
                 onChange={(e) => {
                   setPurchaseType(e.target.value);
-                  if (e.target.value === 'Bulk') {
-                    setCurrentPrice(product.priceBulk);
-                    setCurrentDescription(product.descriptionBulk);
-                    setCurrentCountInStock(product.countInStockBulk);
-                  } else if (e.target.value === 'Each') {
-                    setCurrentPrice(product.price);
-                    setCurrentDescription(product.description);
-                    setCurrentCountInStock(product.countInStock);
+                  if (e.target.value === 'Each') {
+                    setCurrentPrice(product.each?.price || 0);
+                    setCurrentDescription(product.each?.description || '');
+                    setCurrentCountInStock(product.each?.countInStock || 0);
+                  } else if (e.target.value === 'Bulk') {
+                    setCurrentPrice(product.box?.price || 0);
+                    setCurrentDescription(product.box?.description || '');
+                    setCurrentCountInStock(product.box?.countInStock || 0);
                   } else if (e.target.value === 'Clearance') {
                     // Handle Clearance option
-                    setCurrentPrice(product.priceClearance);
-                    setCurrentDescription(product.descriptionClearance);
-                    setCurrentCountInStock(product.countInStockClearance);
+                    setCurrentPrice(product.clearance?.price || 0);
+                    setCurrentDescription(product.clearance?.description || '');
+                    setCurrentCountInStock(product.clearance?.countInStock || 0);
                   }
                 }}
               >
-                {product.countInStock > 0 && <option value="Each">Each</option>}
-                {product.countInStockBulk > 0 && (
-                  <option value="Bulk">Box</option>
-                )}
-                {product.countInStockClearance > 0 && (
-                  <option value="Clearance">Clearance</option>
-                )}
+               {product.each?.countInStock > 0 && <option value="Each">Each</option>}
+                  {product.box?.countInStock > 0 && <option value="Bulk">Box</option>}
+                  {product.clearance?.countInStock > 0 && (
+                    <option value="Clearance">Clearance</option>
+                  )}
               </select>
             </div>
 
@@ -568,3 +568,36 @@ export default function ProductScreen(props) {
   );
 }
 
+export async function getStaticPaths() {
+  await db.connect();
+  const products = await Product.find({}, 'slug').lean();
+  await db.disconnect();
+
+  console.log("Productos generados en getStaticPaths:", products); // <-- Depuración
+
+  return {
+    paths: products.map((product) => ({
+      params: { slug: String(product.slug) }, // Asegurar que es string
+    })),
+    fallback: 'blocking',
+  };
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+
+  await db.connect();
+  const product = await Product.findOne({ slug: String(params.slug) }).lean();
+  await db.disconnect();
+
+  if (!product) {
+    return { notFound: true };
+  }
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+    },
+    revalidate: 10, // Opcional: Regenerar la página cada 10 segundos si hay cambios
+  };
+}
