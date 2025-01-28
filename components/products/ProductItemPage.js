@@ -10,6 +10,7 @@ import emailjs from '@emailjs/browser';
 
 export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const { state, dispatch } = useContext(Store);
+  const [callForPrice, setCallForPrice] = useState(null);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState(false);
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
@@ -48,6 +49,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setCurrentPrice(product.priceClearance);
       setCurrentDescription(product.descriptionClearance);
       setCurrentCountInStock(product.countInStockClearance);
+      setCallForPrice(product.clearancePrice || "Contact us for price");
     }
   }, [
     product.countInStockBulk,
@@ -55,6 +57,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     product.priceClearance,
     product.descriptionClearance,
     product.countInStockClearance,
+    product,
   ]);
 
 
