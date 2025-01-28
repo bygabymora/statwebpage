@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import Layout from "../components/main/Layout";
-import Product from "../models/Product.js";
-import db from "../utils/db";
 import { ProductItemPage } from "../components/products/ProductItemPage";
 import { AiOutlineMenuFold } from "react-icons/ai";
 
@@ -11,19 +9,19 @@ export default function Clearance({ products }) {
 
   const manufacturers = [
     ...new Set(
-      products
+      (products || [])
         .filter((product) => product.countInStockClearance > 0)
         .map((product) => product.manufacturer)
     ),
   ];
 
   const filteredProducts = selectedManufacturer
-    ? products.filter(
-        (product) =>
-          product.manufacturer === selectedManufacturer &&
-          product.product.countInStockClearance > 0
-      )
-    : products.filter((product) => product.countInStockClearance > 0);
+  ? (products || []).filter(
+      (product) =>
+        product.manufacturer === selectedManufacturer &&
+        product.countInStockClearance > 0
+    )
+  : (products || []).filter((product) => product.countInStockClearance > 0);
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer)

@@ -154,18 +154,6 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
-  const handlePriceChange = (productId, newPrice) => {
-    setCurrentEditingProductId(productId);
-    setProductUpdates((prevUpdates) => {
-      if (!prevUpdates[productId]) {
-        prevUpdates[productId] = {};
-      }
-      return {
-        ...prevUpdates,
-        [productId]: { ...prevUpdates[productId], price: newPrice },
-      };
-    });
-  };
 
   const handlePriceChange2 = (productId, newPrice2) => {
     setCurrentEditingProductId(productId);
