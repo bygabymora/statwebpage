@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { BsBackspace, BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
+import { fetchDataWithRetry } from '../../utils/dbUtils';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Store } from '../../utils/Store';
 import db from '../../utils/db';
