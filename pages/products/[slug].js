@@ -571,24 +571,30 @@ export default function ProductScreen(props) {
 
 export async function getStaticPaths() {
   await db.connect();
-  const products = await Product.find({}, 'slug').lean();
+  
+  const products = await fetchDataWithRetry(async () => {
+    return await Product.find({}, 'slug').lean();
+  });
+
   await db.disconnect();
 
-  console.log("Productos generados en getStaticPaths:", products); // <-- Depuración
+  console.log("Productos generados en getStaticPaths:", products); // Debugging
 
   return {
     paths: products.map((product) => ({
-      params: { slug: String(product.slug) }, // Asegurar que es string
+      params: { slug: String(product.slug) }, // Ensure it's a string
     })),
     fallback: 'blocking',
   };
 }
 
-export async function getStaticProps(context) {
-  const { params } = context;
-
+export async function getStaticProps({ params }) {
   await db.connect();
-  const product = await Product.findOne({ slug: String(params.slug) }).lean();
+  
+  const product = await fetchDataWithRetry(async () => {
+    return await Product.findOne({ slug: String(params.slug) }).lean();
+  });
+
   await db.disconnect();
 
   if (!product) {
@@ -599,6 +605,6 @@ export async function getStaticProps(context) {
     props: {
       product: JSON.parse(JSON.stringify(product)),
     },
-    revalidate: 10, // Opcional: Regenerar la página cada 10 segundos si hay cambios
+    revalidate: 10, // Optional: Regenerate the page every 10 seconds if there are changes
   };
 }
