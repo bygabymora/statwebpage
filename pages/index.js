@@ -4,7 +4,7 @@ import React from 'react';
 import Banner from '../components/Banner';
 import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
-import connectToDatabase from "../../utils/db";
+import connectToDatabase from "../utils/db";
 import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 
