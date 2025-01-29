@@ -311,7 +311,7 @@ export default function ProductScreen(props) {
                       setQty(qty + 1);
                     } else {
                       alert(
-                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
+                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.name} at this moment`
                       );
                     }
                   }}
@@ -573,7 +573,7 @@ export async function getStaticPaths() {
   await db.connect();
 
   const products = await fetchDataWithRetry(async () => {
-    return await Product.find({}, 'slug').lean();
+    return await Product.find({},'slug').lean();
   });
 
   await db.disconnect();
