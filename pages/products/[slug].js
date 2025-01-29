@@ -575,9 +575,6 @@ export async function getStaticPaths() {
   const products = await fetchDataWithRetry(async () => {
     return await Product.find({},'slug').lean();
   });
-
-  await db.disconnect();
-
   console.log("Productos generados en getStaticPaths:", products); // Debugging
 
   return {
@@ -595,8 +592,6 @@ export async function getStaticProps({ params }) {
     return await Product.findOne({ slug: String(params.slug) }).lean();
   });
 
-  await db.disconnect();
-
   if (!product) {
     return { notFound: true };
   }
@@ -605,6 +600,6 @@ export async function getStaticProps({ params }) {
     props: {
       product: JSON.parse(JSON.stringify(product)),
     },
-    revalidate: 10, // Optional: Regenerate the page every 10 seconds if there are changes
+    revalidate: 60, // Optional: Regenerate the page every 60 seconds if there are changes
   };
 }
