@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import connectToDatabase from "../../utils/db";
 import {
   BiHomeSmile,
   BiUser,
@@ -23,6 +24,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchClearanceProducts = async () => {
+      await connectToDatabase();
       try {
         const response = await axios.get('/api/clearance');
         setHasClearanceProducts(response.data.hasClearanceProducts);
