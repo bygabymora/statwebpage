@@ -11,7 +11,6 @@ import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 export async function getServerSideProps() {
   await db.connect();
   const products = await Product.find({}).lean();
-  await db.disconnect();
   const serializeObjectIds = (obj) => {
     if (Array.isArray(obj)) {
       return obj.map(serializeObjectIds); // If it is an array, we process each element

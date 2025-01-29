@@ -37,12 +37,12 @@ async function connect() {
 
 async function disconnect() {
   if (connection.isConnected) {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && !process.env.IS_BUILD) {
       await mongoose.disconnect();
       connection.isConnected = false;
       console.log('Disconnected from MongoDB');
     } else {
-      console.log('Not disconnected (development mode)');
+      console.log('Not disconnected (development mode or build process)');
     }
   }
 }
