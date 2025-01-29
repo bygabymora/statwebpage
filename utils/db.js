@@ -1,50 +1,35 @@
 import mongoose from 'mongoose';
 
-const connection = {};
+const MONGODB_URI = process.env.MONGODB_URI_FINAL || process.env.MONGODB_URI;
 
-async function connect() {
-  try {
-    // Check if already connected
-    if (connection.isConnected) {
-      console.log('Already connected to MongoDB');
-      return;
-    }
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI_FINAL environment variable");
+}
 
-    // Check if there are existing connections
-    if (mongoose.connections.length > 0) {
-      connection.isConnected = mongoose.connections[0].readyState;
-      if (connection.isConnected === 1) {
-        console.log('Using existing connection to MongoDB');
-        return;
-      }
-      // Disconnect if the connection is not ready
-      await mongoose.disconnect();
-    }
+// Use global cache in development to prevent multiple connections
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-    // Connect to MongoDB
-    const db = await mongoose.connect(process.env.MONGODB_URI_FINAL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+async function connectToDatabase() {
+  if (cached.conn) {
+    console.log("Reusing existing MongoDB connection");
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    console.log("Creating new MongoDB connection...");
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false, // Helps prevent unexpected behavior in serverless environments
+    }).then((mongoose) => {
+      console.log("Connected to MongoDB");
+      return mongoose;
     });
-
-    connection.isConnected = db.connections[0].readyState;
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
-async function disconnect() {
-  if (connection.isConnected) {
-    if (process.env.NODE_ENV === 'production') {
-      await mongoose.disconnect();
-      connection.isConnected = false;
-      console.log('Disconnected from MongoDB');
-    } else {
-      console.log('Not disconnected (development mode)');
-    }
-  }
-}
-
-const db = { connect, disconnect };
-export default db;
+export default connectToDatabase;

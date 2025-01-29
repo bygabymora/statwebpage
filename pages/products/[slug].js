@@ -6,12 +6,51 @@ import Image from 'next/image';
 import { fetchDataWithRetry } from '../../utils/dbUtils';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Store } from '../../utils/Store';
-import db from '../../utils/db';
+import connectToDatabase from "../../utils/db";
 import Product from '../../models/Product';
 import { useSession } from "next-auth/react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
+
+export async function getStaticPaths() {
+  await connectToDatabase();
+
+  const products = await fetchDataWithRetry(async () => {
+    return await Product.find({},'slug').lean();
+  });
+  console.log("Productos generados en getStaticPaths:", products); // Debugging
+
+  return {
+    paths: products.map((product) => ({
+      params: { slug: String(product.slug) }, // Ensure it's a string
+    })),
+    fallback: 'blocking',
+  };
+}
+
+export async function getStaticProps({ params }) {
+  try {
+   await connectToDatabase();
+  const product = await fetchDataWithRetry(async () => {
+    return await Product.findOne({ slug: String(params.slug) }).lean();
+  });
+
+  if (!product) {
+    return { notFound: true };
+  }
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+    },
+    revalidate: 60, // Optional: Regenerate the page every 60 seconds if there are changes
+  };
+} catch (error) {
+  console.error("Error fetching product:", error);
+  return { notFound: true };
+}
+}
 
 export default function ProductScreen(props) {
   const { product } = props;
@@ -569,37 +608,3 @@ export default function ProductScreen(props) {
   );
 }
 
-export async function getStaticPaths() {
-  await db.connect();
-
-  const products = await fetchDataWithRetry(async () => {
-    return await Product.find({},'slug').lean();
-  });
-  console.log("Productos generados en getStaticPaths:", products); // Debugging
-
-  return {
-    paths: products.map((product) => ({
-      params: { slug: String(product.slug) }, // Ensure it's a string
-    })),
-    fallback: 'blocking',
-  };
-}
-
-export async function getStaticProps({ params }) {
-  await db.connect();
-
-  const product = await fetchDataWithRetry(async () => {
-    return await Product.findOne({ slug: String(params.slug) }).lean();
-  });
-
-  if (!product) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      product: JSON.parse(JSON.stringify(product)),
-    },
-    revalidate: 60, // Optional: Regenerate the page every 60 seconds if there are changes
-  };
-}

@@ -4,12 +4,12 @@ import React from 'react';
 import Banner from '../components/Banner';
 import Contact from '../components/contact/Contact';
 import StaticBanner from '../components/StaticBanner';
-import db from '../utils/db';
+import connectToDatabase from "../../utils/db";
 import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 
 export async function getServerSideProps() {
-  await db.connect();
+  await connectToDatabase();
   const products = await Product.find({}).lean();
   const serializeObjectIds = (obj) => {
     if (Array.isArray(obj)) {
