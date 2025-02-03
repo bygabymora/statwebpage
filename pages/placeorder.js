@@ -112,6 +112,11 @@ export default function PlaceOrderScreen() {
 
     return true;
   };
+  const cartItemsWithPrice = cartItems.map(item => ({
+  ...item,
+  minSalePrice: item.minSalePrice || item.price, // Si falta, usa el precio como mínimo
+}));
+  
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
       toast.error('Please fill all required fields.');
@@ -121,7 +126,7 @@ export default function PlaceOrderScreen() {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/orders', {
-        orderItems: cartItems,
+        orderItems: cartItemsWithPrice,
         shippingAddress,
         billingAddress,
         paymentMethod,
@@ -143,8 +148,10 @@ export default function PlaceOrderScreen() {
       setLoading(false);
       toast.error(getError(err));
     }
+    
   };
 
+  console.log("Cart Items before order:", cartItems);
   return (
     <Layout title="Confirm Order">
       <CheckoutWizard activeStep={3} />
@@ -186,10 +193,11 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.city}, {shippingAddress.postalCode}{' '}
                 <h2 className="mb-2 text-lg">Billing Address</h2>
                 <div>
-                  {billingAddress.fullNameB},{' '}
-                  {billingAddress.companyB && <>{billingAddress.companyB},</>}{' '}
-                  {billingAddress.phoneB}, {billingAddress.addressB},{' '}
-                  {billingAddress.cityB}, {billingAddress.postalCodeB}{' '}
+                {billingAddress?.companyB && <>{billingAddress.companyB},</>}
+                {billingAddress?.phoneB}
+                {billingAddress?.addressB}
+                {billingAddress?.cityB}
+                {billingAddress?.postalCodeB}
                 </div>
                 {shippingAddress.notes && (
                   <>
@@ -225,10 +233,10 @@ export default function PlaceOrderScreen() {
                 <thead className="border-b">
                   <tr>
                     <th className="px-5 text-left">Item</th>
-                    <th className="  p-5 text-right">Type</th>
-                    <th className="    p-5 text-right">Quantity</th>
+                    <th className="p-5 text-right">Type</th>
+                    <th className="p-5 text-right">Quantity</th>
 
-                    <th className="  p-5 text-right">Price</th>
+                    <th className="p-5 text-right">Price</th>
                     <th className="p-5 text-right">Subtotal</th>
                   </tr>
                 </thead>
@@ -238,8 +246,8 @@ export default function PlaceOrderScreen() {
                       <td>
                         <Link
                           href={`/products/${item.slug}`}
-                          className="flex items-center"
-                        >
+                          className="flex items-center p-2"
+                        > &nbsp;
                           <Image
                             src={item.image}
                             alt={item.slug}
@@ -250,7 +258,8 @@ export default function PlaceOrderScreen() {
                               height: 'auto',
                             }}
                           ></Image>
-                          {item.slug}
+                          &nbsp;
+                           {item.name}
                         </Link>
                       </td>
                       <td className="p-5 text-right">{item.purchaseType}</td>
@@ -264,7 +273,7 @@ export default function PlaceOrderScreen() {
                 </tbody>
               </table>
               <div>
-                <Link className="underline font-bold" href="/cart">
+                <Link className="underline font-bold active:text-[#144e8b]" href="/cart">
                   Edit
                 </Link>
               </div>

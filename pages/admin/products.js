@@ -286,25 +286,25 @@ export default function AdminProdcutsScreen() {
         <div>
           <ul>
             <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
+              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
             </li>
             <li>
-              <Link href="/admin/orders">Orders</Link>
+              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products" className="font-bold">
+              <Link href="/admin/products" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
                 Products
               </Link>
             </li>
             <li>
-              <Link href="/admin/users">Users</Link>
+              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
             </li>
             <li>
-              <Link href="/admin/news">News</Link>
+              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
             </li>
           </ul>
         </div>
-        <div className="overflow-x-auto md:col-span-3">
+        <div className="overflow-x-auto md:col-span-3 ">
           <div className="flex justify-between">
             <h1 className="mb-4 flex gap-2 text-xl items-center">Products</h1>
             {loadingDelete && <div>Deleting item...</div>}

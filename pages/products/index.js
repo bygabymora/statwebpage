@@ -109,7 +109,7 @@ export default function Products() {
             filteredProducts.map((product, index) => (
             <ProductItemPage 
             product={product} 
-            key={product.slug}
+            key={product.name}
             ref={index === 0 ? firstProductRef : null}
             ></ProductItemPage>
             ))

@@ -10,7 +10,7 @@ export default function Clearance({ products }) {
   const manufacturers = [
     ...new Set(
       (products || [])
-        .filter((product) => product.countInStockClearance > 0)
+        .filter((product) => product.clearance?.countInStock > 0)
         .map((product) => product.manufacturer)
     ),
   ];
@@ -19,9 +19,9 @@ export default function Clearance({ products }) {
   ? (products || []).filter(
       (product) =>
         product.manufacturer === selectedManufacturer &&
-        product.countInStockClearance > 0
+        product.clearance?.countInStock > 0
     )
-  : (products || []).filter((product) => product.countInStockClearance > 0);
+  : (products || []).filter((product) => product.clearance?.countInStock > 0);
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer)

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { fetchDataWithRetry } from '../../utils/dbUtils';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Store } from '../../utils/Store';
-import connectToDatabase from "../../utils/db";
+import db from "../../utils/db";
 import Product from '../../models/Product';
 import { useSession } from "next-auth/react";
 import axios from 'axios';
@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
 
 export async function getStaticPaths() {
-  await connectToDatabase();
+  await db.connect();
 
   const products = await fetchDataWithRetry(async () => {
     return await Product.find({},'slug').lean();
@@ -31,7 +31,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   try {
-   await connectToDatabase();
+   await db.connect();
   const product = await fetchDataWithRetry(async () => {
     return await Product.findOne({ slug: String(params.slug) }).lean();
   });
@@ -44,7 +44,7 @@ export async function getStaticProps({ params }) {
     props: {
       product: JSON.parse(JSON.stringify(product)),
     },
-    revalidate: 60, // Optional: Regenerate the page every 60 seconds if there are changes
+    revalidate: 10, // Optional: Regenerate the page every 60 seconds if there are changes
   };
 } catch (error) {
   console.error("Error fetching product:", error);
@@ -57,13 +57,13 @@ export default function ProductScreen(props) {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
-  const [isOutOfStock, setIsOutOfStock] = useState(false);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false); // Add Clearance state
+  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
-  const [currentPrice, setCurrentPrice] = useState(product.each?.price || 0);
+  const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice);
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ''
   );
@@ -87,39 +87,28 @@ export default function ProductScreen(props) {
   useEffect(() => {
     if (product.countInStock === 0) {
       setPurchaseType('Bulk');
-      setCurrentPrice(product.priceBulk);
-      setCurrentDescription(product.descriptionBulk);
-      setCurrentCountInStock(product.countInStockBulk);
+      setCurrentPrice(product.box?.minSalePrice);
+      setCurrentDescription(product.box?.description);
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction);
     }
-  }, [
-    product.countInStock,
-    product.priceBulk,
-    product.descriptionBulk,
-    product.countInStockBulk,
-  ]);
+  }, [purchaseType, product.box]);
+
+useEffect(() => {
+    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
+      setPurchaseType('Clearance');
+      setCurrentPrice(product.clearance?.price);
+      setCurrentDescription(product.clearance?.description|| "No description");
+      setCurrentCountInStock(product.clearance?.countInStock);
+    }
+  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
 
   useEffect(() => {
-    if (product.countInStockBulk === 0 && product.countInStock === 0) {
-      setPurchaseType('Clearance');
-      setCurrentPrice(product.priceClearance);
-      setCurrentDescription(product.descriptionClearance);
-      setCurrentCountInStock(product.countInStockClearance);
+    if (purchaseType === 'Each') {
+      setCurrentPrice(product.each?.minSalePrice);
+      setCurrentDescription(product.each?.description || '');
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
     }
-  }, [
-    product.countInStockBulk,
-    product.countInStock,
-    product.priceClearance,
-    product.descriptionClearance,
-    product.countInStockClearance,
-  ]);
-
-    useEffect(() => {
-      if (purchaseType === 'Each') {
-        setCurrentPrice(product.each?.price || 0);
-        setCurrentDescription(product.each?.description || '');
-        setCurrentCountInStock(product.each?.countInStock || 0);
-      }
-    }, [purchaseType, product.each]);
+  }, [purchaseType, product.each]);
 
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
@@ -147,12 +136,12 @@ export default function ProductScreen(props) {
         purchaseType,
         price:
           purchaseType === 'Each'
-            ? product.each?.price
+            ? product.each?.minSaleprice
             : purchaseType === 'Bulk'
-            ? product.box?.price
+            ? product.box?.minSalePrice
             : purchaseType === 'Clearance'
             ? product.clearance?.price
-            : product.price,
+            : product.minSalePrice,
         description:
           purchaseType === 'Each'
             ? product.each?.description
@@ -163,9 +152,9 @@ export default function ProductScreen(props) {
             : product.description,
         countInStock:
           purchaseType === 'Each'
-            ? product.each?.countInStock
+            ? product.each?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Bulk'
-            ? product.box?.countInStock
+            ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
             ? product.clearance?.countInStock
             : product.countInStock,
@@ -369,27 +358,27 @@ export default function ProductScreen(props) {
                 onChange={(e) => {
                   setPurchaseType(e.target.value);
                   if (e.target.value === 'Each') {
-                    setCurrentPrice(product.each?.price || 0);
+                    setCurrentPrice(product.each?.minSalePrice || 0);
                     setCurrentDescription(product.each?.description || '');
-                    setCurrentCountInStock(product.each?.countInStock || 0);
+                    setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
                   } else if (e.target.value === 'Bulk') {
-                    setCurrentPrice(product.box?.price || 0);
+                    setCurrentPrice(product.box?.minSalePrice || 0);
                     setCurrentDescription(product.box?.description || '');
-                    setCurrentCountInStock(product.box?.countInStock || 0);
+                    setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction|| 0);
                   } else if (e.target.value === 'Clearance') {
                     // Handle Clearance option
-                    setCurrentPrice(product.clearance?.price || 0);
+                    setCurrentPrice(product.clearance?.minSalePrice || 0);
                     setCurrentDescription(product.clearance?.description || '');
                     setCurrentCountInStock(product.clearance?.countInStock || 0);
                   }
                 }}
-              >
-               {product.each?.countInStock > 0 && <option value="Each">Each</option>}
-                  {product.box?.countInStock > 0 && <option value="Bulk">Box</option>}
+                >
+                  {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
+                  {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
                   {product.clearance?.countInStock > 0 && (
                     <option value="Clearance">Clearance</option>
                   )}
-              </select>
+                </select>
             </div>
 
             {active === "loading" ? (

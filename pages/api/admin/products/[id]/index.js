@@ -30,7 +30,7 @@ const putHandler = async (req, res) => {
   if (product) {
     product.name = req.body.name;
     product.manufacturer = req.body.manufacturer;
-    product.slug = req.body.slug;
+    product.name = req.body.name;
     product.lot = req.body.lot;
     product.expiration = req.body.expiration;
     product.image = req.body.image;

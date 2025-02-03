@@ -11,18 +11,18 @@ import emailjs from '@emailjs/browser';
 export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const [isOutOfStock, setIsOutOfStock] = useState(false);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false);
+  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction ?? null);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each');
- const [currentPrice, setCurrentPrice] = useState(product.each?.price || 0);
+ const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ''
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock || 0
+    product.each?.quickBooksQuantityOnHandProduction ?? null
   );
   const selectId = `uomSelect-${product.id}`;
   const labelFor = selectId;
@@ -30,49 +30,38 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
   useEffect(() => {
     if (product.countInStock === 0) {
-      setPurchaseType('Bulk');
-      setCurrentPrice(product.priceBulk);
-      setCurrentDescription(product.descriptionBulk);
-      setCurrentCountInStock(product.countInStockBulk);
+      setPurchaseType('Box');
+      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
-  }, [
-    product.countInStock,
-    product.priceBulk,
-    product.descriptionBulk,
-    product.countInStockBulk,
-  ]);
+  }, [purchaseType, product.box]);
 
   useEffect(() => {
-    if (product.countInStockBulk === 0 && product.countInStock === 0) {
+    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.priceClearance);
-      setCurrentDescription(product.descriptionClearance);
-      setCurrentCountInStock(product.countInStockClearance);
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.clearance?.description|| "No description");
+      setCurrentCountInStock(product.clearance?.countInStock ?? null);
     }
-  }, [
-    product.countInStockBulk,
-    product.countInStock,
-    product.priceClearance,
-    product.descriptionClearance,
-    product.countInStockClearance,
-  ]);
+  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
-      setCurrentPrice(product.each?.price || 0);
+      setCurrentPrice(product.each?.minSalePrice ?? null);
       setCurrentDescription(product.each?.description || '');
-      setCurrentCountInStock(product.each?.countInStock || 0);
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction?? null);
     }
   }, [purchaseType, product.each]);
 
   useEffect(() => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.priceClearance);
-      setCurrentDescription(product.descriptionClearance);
-      setCurrentCountInStock(product.countInStockClearance);
+      setCurrentPrice(product.clareance?.price ?? null);
+      setCurrentDescription(product.clareance?.description || "No description");
+      setCurrentCountInStock(product.clareance?.countInStock ?? null);
     }
-  }, [clearancePurchaseType, product]);
+  }, [clearancePurchaseType, product.clearance]);
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
@@ -103,12 +92,12 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
         sentOverNight: product.sentOverNight,
         price:
           purchaseType === 'Each'
-            ? product.each?.price
+            ? product.each?.minSalePrice
             : purchaseType === 'Bulk'
-            ? product.box?.price
+            ? product.box?.minSalePrice
             : purchaseType === 'Clearance'
-            ? product.clearance?.price
-            : product.price,
+            ? product.clearance?.Price
+            : product.Price,
         description:
           purchaseType === 'Each'
             ? product.each?.description
@@ -119,12 +108,12 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             : product.description,
         countInStock:
           purchaseType === 'Each'
-            ? product.each?.countInStock
+            ? product.each?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Bulk'
-            ? product.box?.countInStock
+            ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
-            ? product.clearance?.countInStock
-            : product.countInStock,
+            ? product.clearance?.quickBooksQuantityOnHandProduction
+            : product.quickBooksQuantityOnHandProduction,
       },
     });
     setQty(1);
@@ -193,7 +182,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
       <div className="flex flex-row justify-between ">
         <Link
-          href={{ pathname: `products/${product.slug}` }}
+          href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
@@ -212,7 +201,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
         <div className="flex flex-col justify-center items-center px-2 mb-3 flex-1">
           <Link
-            href={{ pathname: `products/${product.slug}` }}
+            href={`/products/${product.slug}`}
             className="justify-center items-center text-center"
           >
             <div className="max-w-full">
@@ -308,22 +297,22 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                          onChange={(e) => {
                            setPurchaseType(e.target.value);
                            if (e.target.value === 'Each') {
-                             setCurrentPrice(product.each?.price || 0);
+                             setCurrentPrice(product.each?.minSalePrice ?? null);
                              setCurrentDescription(product.each?.description || '');
-                             setCurrentCountInStock(product.each?.countInStock || 0);
+                             setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
                            } else if (e.target.value === 'Bulk') {
-                             setCurrentPrice(product.box?.price || 0);
+                             setCurrentPrice(product.box?.minSalePrice ?? null);
                              setCurrentDescription(product.box?.description || '');
-                             setCurrentCountInStock(product.box?.countInStock || 0);
+                             setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
                            } else if (e.target.value === 'Clearance') {
-                             setCurrentPrice(product.clearance?.price || 0);
+                             setCurrentPrice(product.clearance?.Price ?? null);
                              setCurrentDescription(product.clearance?.description || '');
-                             setCurrentCountInStock(product.clearance?.countInStock || 0);
+                             setCurrentCountInStock(product.clearance?.countInStock ?? null);
                            }
                          }}
-                       >
-                         {product.each?.countInStock > 0 && <option value="Each">Each</option>}
-                         {product.box?.countInStock > 0 && <option value="Bulk">Box</option>}
+                         >
+                         {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
+                         {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
                          {product.clearance?.countInStock > 0 && (
                            <option value="Clearance">Clearance</option>
                          )}

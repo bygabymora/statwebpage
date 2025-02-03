@@ -17,7 +17,7 @@ function reducer(state, action) {
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
 
-    case 'DELETE_REQUEST':
+      case 'DELETE_REQUEST':
       return { ...state, loadingDelete: true };
     case 'DELETE_SUCCESS':
       return { ...state, loadingDelete: false, successDelete: true };
@@ -78,21 +78,21 @@ function AdminUsersScreen() {
         <div>
           <ul>
             <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
+              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
             </li>
             <li>
-              <Link href="/admin/orders">Orders</Link>
+              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products">Products</Link>
+              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
             </li>
             <li>
-              <Link href="/admin/users" className="font-bold">
+              <Link href="/admin/users" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
                 Users
               </Link>
             </li>
             <li>
-              <Link href="/admin/news">News</Link>
+              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
             </li>
           </ul>
         </div>

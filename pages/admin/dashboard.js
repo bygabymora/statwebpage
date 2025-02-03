@@ -53,7 +53,7 @@ function AdminDashboardScreen() {
     products: 'Products report.',
     users: 'Users report.',
   };
-
+  
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
     loading: true,
     summary: { salesData: [] },
@@ -133,25 +133,25 @@ function AdminDashboardScreen() {
 
   return (
     <Layout title="Admin Dashboard">
-      <div className="grid  md:grid-cols-4 md:gap-5">
+      <div className="grid md:grid-cols-4 md:gap-5">
         <div>
           <ul>
             <li>
-              <Link href="/admin/dashboard" className="font-bold">
+              <Link href="/admin/dashboard" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
                 Dashboard
               </Link>
             </li>
             <li>
-              <Link href="/admin/orders">Orders</Link>
+              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
             </li>
             <li>
-              <Link href="/admin/products">Products</Link>
+              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
             </li>
             <li>
-              <Link href="/admin/users">Users</Link>
+              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
             </li>
             <li>
-              <Link href="/admin/news">News</Link>
+              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
             </li>
           </ul>
         </div>

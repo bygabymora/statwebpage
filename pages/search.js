@@ -14,7 +14,7 @@ const SearchPage = ({ query }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [products, setProducts] = useState([]);
-  const [slug, setSlug] = useState('');
+  const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [manufacturer, setManufacturer] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,7 +27,7 @@ const SearchPage = ({ query }) => {
       const { data } = await axios.get(`/api/search?keyword=${query}`);
       setProducts(data);
       if (data.length === 0) {
-        setSlug(query);
+        setName(query);
         setSearchedWord(query);
       }
     };
@@ -40,7 +40,7 @@ const SearchPage = ({ query }) => {
     try {
       await axios.post('/api/searched', {
         searchedWord,
-        slug,
+        name,
         quantity,
         manufacturer,
         fullName,
@@ -60,7 +60,7 @@ const SearchPage = ({ query }) => {
   const sendEmail = () => {
     const formData = new FormData();
     formData.append('searchedWord', searchedWord);
-    formData.append('slug', slug);
+    formData.append('name', name);
     formData.append('manufacturer', manufacturer);
     formData.append('quantity', quantity);
     formData.append('fullName', fullName);
@@ -85,7 +85,7 @@ const SearchPage = ({ query }) => {
         }
       );
 
-    setSlug('');
+    setName('');
     setFullName('');
     setEmail('');
     setPhone('');
@@ -136,10 +136,10 @@ const SearchPage = ({ query }) => {
                 <input
                   type="text"
                   placeholder="Please enter the product reference"
-                  name="slug"
+                  name="name"
                   className="contact__form-input"
-                  onChange={(e) => setSlug(e.target.value)}
-                  value={slug}
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
                   required
                 />
               </div>

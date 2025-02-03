@@ -8,64 +8,50 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
 
-export const ProductItemPage = ({ product, clearancePurchaseType }) => {
+export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
   const [callForPrice, setCallForPrice] = useState(null);
   const { cart } = state;
-  const [isOutOfStock, setIsOutOfStock] = useState(false);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(false);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(false);
+  const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
+    ? product.each.quickBooksQuantityOnHandProduction 
+    : null);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(null);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each');
   const { status, data: session } = useSession();
-  const [currentPrice, setCurrentPrice] = useState(product.each?.price || 0);
-  const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ''
-  );
-  const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock || 0
-  );
+  const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
+  const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
+  const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
 
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
-    if (product.countInStock === 0) {
+    if (product.countInStock ?? null) {
       setPurchaseType('Bulk');
-      setCurrentPrice(product.priceBulk);
-      setCurrentDescription(product.descriptionBulk);
-      setCurrentCountInStock(product.countInStockBulk);
+      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
     }
-  }, [
-    product.countInStock,
-    product.priceBulk,
-    product.descriptionBulk,
-    product.countInStockBulk,
-  ]);
+  }, [purchaseType, product.box]);
 
 
   useEffect(() => {
-    if (product.countInStockBulk === 0 && product.countInStock === 0) {
+    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.priceClearance);
-      setCurrentDescription(product.descriptionClearance);
-      setCurrentCountInStock(product.countInStockClearance);
-      setCallForPrice(product.clearancePrice || "Contact us for price");
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.clearance?.description|| "No description");
+      setCurrentCountInStock(product.clearance?.countInStock ?? null);
+      setCallForPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
     }
-  }, [
-    product.countInStockBulk,
-    product.countInStock,
-    product.priceClearance,
-    product.descriptionClearance,
-    product.countInStockClearance,
-    product,
-  ]);
+  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
 
 
   useEffect(() => {
     if (purchaseType === 'Each') {
-      setCurrentPrice(product.each?.price || 0);
+      setCurrentPrice(product.each?.minSalePrice ?? null);
       setCurrentDescription(product.each?.description || '');
-      setCurrentCountInStock(product.each?.countInStock || 0);
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
   }, [purchaseType, product.each]);
 
@@ -73,16 +59,15 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.priceClearance);
-      setCurrentDescription(product.descriptionClearance);
-      setCurrentCountInStock(product.countInStockClearance);
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.clearance.description || "No description");
+      setCurrentCountInStock(product.clearance?.countInStock ?? null);
     }
-  }, [clearancePurchaseType, product]);
-
+  }, [clearancePurchaseType, product.clearance]);
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
-      (x) => x.slug === product.slug && x.purchaseType === purchaseType
+      (x) => x.name === product.name && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
@@ -109,12 +94,12 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         purchaseType,
         price:
           purchaseType === 'Each'
-            ? product.each?.price
+            ? product.each?.minSalePrice
             : purchaseType === 'Bulk'
-            ? product.box?.price
+            ? product.box?.minSalePrice
             : purchaseType === 'Clearance'
-            ? product.clearance?.price
-            : product.price,
+            ? product.clearance?.Price
+            : product.minSalePrice,
         description:
           purchaseType === 'Each'
             ? product.each?.description
@@ -125,9 +110,9 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             : product.description,
         countInStock:
           purchaseType === 'Each'
-            ? product.each?.countInStock
+            ? product.each?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Bulk'
-            ? product.box?.countInStock
+            ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
             ? product.clearance?.countInStock
             : product.countInStock,
@@ -192,7 +177,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setEmailManufacturer('');
   };
   //-----------//
-
+  
 
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg border 
@@ -205,12 +190,12 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       </h2>
       <div className="flex flex-row justify-between">
         <Link
-          href={{ pathname: `products/${product.slug}` }}
+          href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
             <Image
-              src={`${product.image}`}
+              src={product.image}
               alt={currentDescription}
               className="product-image no-drag rounded-lg"
               width={800}
@@ -222,7 +207,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         </Link>
         <div className="flex flex-col justify-center items-center px-2 flex-1">
           <Link
-            href={{ pathname: `products/${product.slug}` }}
+            href={`/products/${product.slug}`}
             className="justify-center items-center text-center"
           >
             <div className="max-w-full">
@@ -256,9 +241,8 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                     if (qty < currentCountInStock) {
                       setQty(qty + 1);
                     } else {
-                      alert(
-                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.slug} at this moment`
-                      );
+                      alert(`Sorry, we do not have any additional units of ${product.manufacturer} ${product.name} at this moment.`);
+
                     }
                   }}
                   disabled={
@@ -451,24 +435,24 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   value={purchaseType}
                   onChange={(e) => {
                     setPurchaseType(e.target.value);
-                    if (e.target.value === 'Each') {
-                      setCurrentPrice(product.each?.price || 0);
+                    if (e.target.value === 'Each' && product.each) {
+                      setCurrentPrice(product.each?.minSalePrice ?? null);
                       setCurrentDescription(product.each?.description || '');
-                      setCurrentCountInStock(product.each?.countInStock || 0);
-                    } else if (e.target.value === 'Bulk') {
-                      setCurrentPrice(product.box?.price || 0);
+                      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
+                    } else if (e.target.value === 'Bulk' && product.box) {
+                      setCurrentPrice(product.box?.minSalePrice ?? null);
                       setCurrentDescription(product.box?.description || '');
-                      setCurrentCountInStock(product.box?.countInStock || 0);
-                    } else if (e.target.value === 'Clearance') {
+                      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
+                    } else if (e.target.value === 'Clearance' && product.clearance) {
                       // Handle Clearance option
-                      setCurrentPrice(product.clearance?.price || 0);
+                      setCurrentPrice(product.clearance?.price ?? null);
                       setCurrentDescription(product.clearance?.description || '');
-                      setCurrentCountInStock(product.clearance?.countInStock || 0);
+                      setCurrentCountInStock(product.clearance?.countInStock ?? null);
                     }
                   }}
                 >
-                  {product.each?.countInStock > 0 && <option value="Each">Each</option>}
-                  {product.box?.countInStock > 0 && <option value="Bulk">Box</option>}
+                  {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
+                  {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
                   {product.clearance?.countInStock > 0 && (
                     <option value="Clearance">Clearance</option>
                   )}
@@ -526,46 +510,22 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   )}
                 </div>
               ) : (
-                <div>
-                  <div className="border border-gray-200 my-5">
-                    <div className="flex justify-center gap-8 mx-2">
-                      <h1 className="text-red-500">Clearance</h1>
-                      {active === "loading" ? (
-                        "Loading"
-                      ) : (
-                      active && (
-                      <div className="mb-2 justify-between flex">
+              <div>
+                <div className="my-5">
+                  <div className="flex justify-center gap-4 mx-2">
+                    <h1 className="text-red-500">Clearance</h1>
+                    {active === "loading" ? (
+                      "Loading"
+                    ) : active ? (
+                      <div className="mb-2 flex justify-between">
                         <div className="font-bold">Price</div>
-                        <div className="">&nbsp; ${callForPrice}</div>
+                        <div>&nbsp;${callForPrice}</div>
                       </div>
-                       )
-                      )}
-                    </div>
-                    <div className="text-gray-500 mb-1">{product.notes}</div>
+                    ) : null}
                   </div>
-                  {active === "loading" ? (
-                   "Loading"
-                  ) : (
-                  active && (
-                  <button
-                    className="primary-button align-middle "
-                    type="button"
-                    onClick={addToCartHandler}
-                    disabled={
-                      (purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    }
-                  >
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                      ? 'Out of Stock'
-                      : 'Add to Cart'}
-                  </button>
-                    )
-                  )}
+                  <div className="text-gray-500 mb-1">{product.notes}</div>
                 </div>
+              </div>
               )}
             </div>
           </div>

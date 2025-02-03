@@ -92,8 +92,8 @@ function OrderScreen() {
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
-    }; 
-
+    };
+  
     if (
       !order._id ||
       successPay ||
@@ -101,27 +101,28 @@ function OrderScreen() {
       (order._id && order._id !== orderId)
     ) {
       fetchOrder();
-      if (successPay) {
+      if (successPay) 
         dispatch({ type: 'PAY_RESET' });
-      }
-      if (successDeliver) {
+      if (successDeliver) 
         dispatch({ type: 'DELIVER_RESET' });
-      }
-    } else {
+    } 
+    else if (!order.isPaid) {  
       const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get('/api/keys/paypal');
-        paypalDispatch({
-          type: 'resetOptions',
-          value: {
-            'client-id': clientId,
-            currency: 'USD',
-          },
-        });
-        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+        if (!window.paypal) { 
+          const { data: clientId } = await axios.get('/api/keys/paypal');
+          paypalDispatch({
+            type: 'resetOptions',
+            value: {
+              'client-id': clientId,
+              currency: 'USD',
+            },
+          });
+          paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+        }
       };
       loadPaypalScript();
     }
-  }, [order, orderId, paypalDispatch, sendEmail, successDeliver, successPay]);
+  }, [order, orderId, dispatch, paypalDispatch, sendEmail, successDeliver, successPay]);
 
   const {
     shippingAddress,
@@ -490,7 +491,7 @@ function OrderScreen() {
                 <div className="alert-error">Delivery Pending</div>
               )}
             </div>
-
+            
             <div className="card p-5">
               <h2 className="mb-2 text-lg">Payment Method</h2>
               {paymentMethod === 'Stripe' ? (
@@ -529,7 +530,7 @@ function OrderScreen() {
                     <tr key={item._id} className="border">
                       <td>
                         <Link
-                          href={`/products/${item.slug}`}
+                          href={`/products/${item.name}`}
                           className="flex flex-col items-center"
                         >
                           <Image

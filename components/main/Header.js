@@ -39,7 +39,7 @@ const Header = () => {
 
   const handleSearchInputChange = async (e) => {
     setSearchQuery(e.target.value);
-
+  
     if (e.target.value.length >= 2) {
       try {
         const { data } = await axios.get('/api/search', {
@@ -56,19 +56,26 @@ const Header = () => {
     }
   };
 
-  const handleSearch = async (query) => {
+  const handleSearch = async (query = '') => {
     const searchWord = query || searchQuery.trim();
-
-    await axios.post('/api/searched', {
-      searchedWord: searchWord,
-      slug: 'raw-search',
-      manufacturer: 'raw-search',
-      fullName: 'raw-search',
-      email: 'raw-search',
-    });
-
-    if (searchWord) {
-      router.push(`/search?query=${searchWord}`);
+  
+    if (!searchWord) {
+      console.warn("La búsqueda está vacía.");
+      return;
+    }
+  
+    try {
+      await axios.post('/api/searched', {
+        searchedWord: searchWord,
+        slug: 'raw-search',
+        manufacturer: 'raw-search',
+        fullName: 'raw-search',
+        email: 'raw-search',
+      });
+  
+      router.push(`/search?query=${encodeURIComponent(searchWord)}`);
+    } catch (error) {
+      console.error("Error en la búsqueda:", error.response?.data || error.message);
     }
   };
 
@@ -83,7 +90,7 @@ const Header = () => {
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
-
+  console.log("Tipo de searchQuery:", typeof searchQuery);
   return (
     <header className="header">
       <nav className="nav container text-center flex-row-reverse ">
@@ -101,7 +108,7 @@ const Header = () => {
               />
               <button
                 className="nav__search-button"
-                onClick={handleSearch}
+                onClick={() => handleSearch()}
                 aria-label="search"
               >
                 <BiSearch className="nav__search-icon" />
@@ -114,9 +121,9 @@ const Header = () => {
                   <div
                     key={idx}
                     className="suggestion-item px-3 py-2 hover:bg-gray-200"
-                    onMouseDown={() => handleSuggestionClick(product.slug)}
+                    onMouseDown={() => handleSuggestionClick(product.name)}
                   >
-                    {product.slug}
+                    {product.name}
                   </div>
                 ))}
               </div>

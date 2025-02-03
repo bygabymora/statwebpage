@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const searchedSchema = new mongoose.Schema(
   {
     searchedWord: { type: String, required: true },
-    slug: { type: String, required: true },
+    name: { type: String, required: true },
     quantity: { type: Number, required: false },
     manufacturer: { type: String, required: true },
     fullName: { type: String, required: true },

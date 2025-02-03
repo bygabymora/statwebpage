@@ -205,7 +205,7 @@ function Carousel({ products }) {
 export default function Home({ products }) {
   const filteredProducts = products?.filter(
     (product) =>
-      product.each?.price > 0 && // Valid price greater than 0
+      product.each?.minSalePrice > 0 && // Valid price greater than 0
       product.each?.description && 
       product.each?.description.trim() !== '' // Non-empty description
   )

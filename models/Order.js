@@ -7,10 +7,11 @@ const orderSchema = new mongoose.Schema(
       {
         name: { type: String, required: true },
         slug: { type: String, required: true },
+        price: { type: Number, required: true},
+        minSalePrice: { type: Number, required: true },
         quantity: { type: Number, required: true },
         purchaseType: { type: String, required: true },
         image: { type: String, required: true },
-        price: { type: Number, required: true },
         sentOverNight: { type: Boolean, default: false, required: true },
       },
     ],

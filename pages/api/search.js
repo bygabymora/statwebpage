@@ -1,5 +1,6 @@
 import db from '../../utils/db';
 import Product from '../../models/Product';
+import { name } from '@cloudinary/url-gen/actions/namedTransformation';
 
 export default async function handler(req, res) {
   
@@ -15,9 +16,9 @@ export default async function handler(req, res) {
 const keyword = req.query.keyword
   ? {
       $or: [
-        { name: { $regex: req.query.keyword, $options: 'i' } },
+        { fullname: { $regex: req.query.keyword, $options: 'i' } },
         { manufacturer: { $regex: req.query.keyword, $options: 'i' } },
-        { slug: { $regex: req.query.keyword, $options: 'i' } },
+        { name: { $regex: req.query.keyword, $options: 'i' } },
         { description: { $regex: req.query.keyword, $options: 'i' } },
         { descriptionBulk: { $regex: req.query.keyword, $options: 'i' } },
       ],
