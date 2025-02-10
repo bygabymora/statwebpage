@@ -293,7 +293,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                         U o M &nbsp;
                       </label>
                       <select
-                         value={purchaseType}
+                        value={purchaseType}
                          onChange={(e) => {
                            setPurchaseType(e.target.value);
                            if (e.target.value === 'Each') {
@@ -310,13 +310,13 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                              setCurrentCountInStock(product.clearance?.countInStock ?? null);
                            }
                          }}
-                         >
+                        >
                          {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
                          {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
                          {product.clearance?.countInStock > 0 && (
                            <option value="Clearance">Clearance</option>
-                         )}
-                       </select>
+                        )}
+                      </select>
                     </div>
 
                     <div className="flex flex-row mb-2 justify-between">

@@ -27,11 +27,11 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
-    if (product.countInStock ?? null) {
+    if (product.countInStock || 0 ) {
       setPurchaseType('Bulk');
-      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentPrice(product.box?.minSalePrice || 0 );
       setCurrentDescription(product.box?.description || '');
-      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0 );
     }
   }, [purchaseType, product.box]);
 
@@ -436,18 +436,18 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   onChange={(e) => {
                     setPurchaseType(e.target.value);
                     if (e.target.value === 'Each' && product.each) {
-                      setCurrentPrice(product.each?.minSalePrice ?? null);
+                      setCurrentPrice(product.each?.minSalePrice || 0 );
                       setCurrentDescription(product.each?.description || '');
-                      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
+                      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0 );
                     } else if (e.target.value === 'Bulk' && product.box) {
-                      setCurrentPrice(product.box?.minSalePrice ?? null);
+                      setCurrentPrice(product.box?.minSalePrice || 0 );
                       setCurrentDescription(product.box?.description || '');
-                      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
+                      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0 );
                     } else if (e.target.value === 'Clearance' && product.clearance) {
                       // Handle Clearance option
-                      setCurrentPrice(product.clearance?.price ?? null);
+                      setCurrentPrice(product.clearance?.price || 0 );
                       setCurrentDescription(product.clearance?.description || '');
-                      setCurrentCountInStock(product.clearance?.countInStock ?? null);
+                      setCurrentCountInStock(product.clearance?.countInStock || 0 );
                     }
                   }}
                 >

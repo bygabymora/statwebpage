@@ -122,7 +122,7 @@ function OrderScreen() {
       };
       loadPaypalScript();
     }
-  }, [order, orderId, dispatch, paypalDispatch, sendEmail, successDeliver, successPay]);
+  }, [order, orderId, dispatch, paypalDispatch,  successDeliver, successPay]);
 
   const {
     shippingAddress,

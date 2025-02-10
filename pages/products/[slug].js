@@ -91,7 +91,7 @@ export default function ProductScreen(props) {
       setCurrentDescription(product.box?.description);
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction);
     }
-  }, [purchaseType, product.box]);
+  }, [purchaseType, product.box, product.countInStock]);
 
 useEffect(() => {
     if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {

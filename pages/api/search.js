@@ -1,6 +1,5 @@
 import db from '../../utils/db';
 import Product from '../../models/Product';
-import { name } from '@cloudinary/url-gen/actions/namedTransformation';
 
 export default async function handler(req, res) {
   
@@ -12,7 +11,7 @@ export default async function handler(req, res) {
       .json({ message: 'Service unavailable: Database connection failed' });
   }
 
-
+  console.log("Keyword filter:", keyword);
 const keyword = req.query.keyword
   ? {
       $or: [
