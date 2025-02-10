@@ -10,7 +10,6 @@ import emailjs from '@emailjs/browser';
 const SearchPage = ({ query }) => {
   const form = useRef();
 
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [products, setProducts] = useState([]);
@@ -43,7 +42,6 @@ const SearchPage = ({ query }) => {
         name,
         quantity,
         manufacturer,
-        fullName,
         email,
         phone,
         message,
@@ -63,7 +61,6 @@ const SearchPage = ({ query }) => {
     formData.append('name', name);
     formData.append('manufacturer', manufacturer);
     formData.append('quantity', quantity);
-    formData.append('fullName', fullName);
     formData.append('email', email);
     formData.append('phone', phone);
     formData.append('message', message);
@@ -86,7 +83,6 @@ const SearchPage = ({ query }) => {
       );
 
     setName('');
-    setFullName('');
     setEmail('');
     setPhone('');
     setManufacturer('');
@@ -173,10 +169,10 @@ const SearchPage = ({ query }) => {
                 <input
                   type="text"
                   placeholder="Please enter your name"
-                  name="fullName"
+                  name="Name"
                   className="contact__form-input"
-                  onChange={(e) => setFullName(e.target.value)}
-                  value={fullName}
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
                   required
                 />
               </div>

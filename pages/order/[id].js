@@ -337,7 +337,7 @@ function OrderScreen() {
   function sendEmail() {
     const formData = new FormData();
 
-    formData.append('user_name', shippingAddress.fullName);
+    formData.append('user_name', shippingAddress.name);
     formData.append('user_phone', shippingAddress.phone);
     formData.append('user_email', userEmail);
     formData.append('total_order', totalPrice);

@@ -6,7 +6,6 @@ const searchedSchema = new mongoose.Schema(
     name: { type: String, required: true },
     quantity: { type: Number, required: false },
     manufacturer: { type: String, required: true },
-    fullName: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: false },
     message: { type: String, required: false },

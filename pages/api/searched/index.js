@@ -1,19 +1,28 @@
 import Searched from '../../../models/Searched';
 import db from '../../../utils/db';
 
-const handler = async (req, res) => {
-  try {
-    await db.connect();
-
-    const newSearched = new Searched({
-      ...req.body,
-    });
-
-    const searched = await newSearched.save();
-    res.status(201).send(searched);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: 'Error saving search query.' });
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      console.log("🔍 Request body:", req.body);
+      await db.connect();
+      const searched = new Searched({
+        searchedWord: req.body.searchedWord,
+        name: req.body.name,
+        quantity: req.body.quantity,
+        manufacturer: req.body.manufacturer,
+        email: req.body.email,
+        phone: req.body.phone,
+        message: req.body.message,
+      });
+      const createdSearched = await searched.save();
+      await db.disconnect();
+      res.status(201).send({ message: 'Searched created', searched: createdSearched });
+    } catch (error) {
+      await db.disconnect();
+      res.status(500).send({ message: 'Error in creating searched', error });
+    }
+  } else {
+    res.status(405).send({ message: 'Method not allowed' });
   }
-};
-export default handler;
+}

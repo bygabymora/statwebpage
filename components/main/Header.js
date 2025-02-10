@@ -60,22 +60,21 @@ const Header = () => {
     const searchWord = query || searchQuery.trim();
   
     if (!searchWord) {
-      console.warn("La búsqueda está vacía.");
+      console.warn("Search is empty.");
       return;
     }
   
     try {
       await axios.post('/api/searched', {
         searchedWord: searchWord,
-        slug: 'raw-search',
         manufacturer: 'raw-search',
-        fullName: 'raw-search',
-        email: 'raw-search',
+        name: 'raw-search',
+        email: 'raw-search', 
       });
-  
+
       router.push(`/search?query=${encodeURIComponent(searchWord)}`);
     } catch (error) {
-      console.error("Error en la búsqueda:", error.response?.data || error.message);
+      console.error("Error in the search:", error.response?.data || error.message);
     }
   };
 
