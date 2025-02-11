@@ -26,7 +26,9 @@ const getHandler = async (req, res) => {
       if (sortDirection === -1) {
         sortField = `-${sortField}`;
       }
-      const products = await Product.find({approved: true, active: true}).lean();
+      const products = await Product.find({approved: true, active: true})
+      .sort({ [sortField]: sortDirection })
+      .lean();
       console.log("productos filtrados:", products);
       res.send(products);
     } catch {
