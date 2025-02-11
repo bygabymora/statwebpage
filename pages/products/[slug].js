@@ -79,6 +79,7 @@ export default function ProductScreen(props) {
   const [emailManufacturer, setEmailManufacturer] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
@@ -130,6 +131,11 @@ useEffect(() => {
       setIsOutOfStockClearance(true);
       return;
     }
+    if (data.countInStock < quantity) {
+      setShowModal(true);
+      return;
+    }
+
     dispatch({
       type: 'CART_ADD_ITEM',
       payload: {
@@ -340,9 +346,7 @@ useEffect(() => {
                     if (qty < currentCountInStock) {
                       setQty(qty + 1);
                     } else {
-                      alert(
-                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.name} at this moment`
-                      );
+                      setShowModal(true);
                     }
                   }}
                 >
@@ -350,9 +354,25 @@ useEffect(() => {
                 </button>
               </div>
             </div>
-
+            {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                  <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
+                  <p className="text-[#788b9b]">
+                  Sorry, we do not have any additional units of{" "}
+                  <span className="font-bold text-[#144e8b]">{product.manufacturer} {product.name}</span>{" "}
+                  At this moment. Please contact us for more information.
+                  </p>
+                  <button 
+                    className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#03793d] transition"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
             <div>
-
             <div className="mb-2 flex justify-between">
               <div className="font-bold">U o M &nbsp;</div>
               <select

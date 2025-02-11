@@ -23,6 +23,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
   const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
   const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
+  const [showModal, setShowModal] = useState(false);
 
   const active = session?.user?.active || status === "authenticated";
 
@@ -212,7 +213,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           >
             <div className="max-w-full">
               <div className="h-[3em] overflow-hidden relative flex ">
-                <span className="flex-1 ">{currentDescription}</span>
+                <span className="flex-1">{currentDescription}</span>
               </div>
             </div>
           </Link>
@@ -241,8 +242,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                     if (qty < currentCountInStock) {
                       setQty(qty + 1);
                     } else {
-                      alert(`Sorry, we do not have any additional units of ${product.manufacturer} ${product.name} at this moment.`);
-
+                      setShowModal(true);
                     }
                   }}
                   disabled={
@@ -252,6 +252,24 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   }
                 >
                   +
+                </button>
+              </div>
+            </div>
+          )}
+          {showModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
+                <p className="text-[#788b9b]">
+                Sorry, we do not have any additional units of{" "}
+                <span className="font-bold text-[#144e8b]">{product.manufacturer} {product.name}</span>{" "}
+                At this moment. Please contact us for more information.
+                </p>
+                <button 
+                  className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#03793d] transition"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
                 </button>
               </div>
             </div>
