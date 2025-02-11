@@ -24,6 +24,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.each?.quickBooksQuantityOnHandProduction ?? null
   );
+  useEffect(() => {
+    setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
+  }, [product.each?.quickBooksQuantityOnHandProduction]);
   const selectId = `uomSelect-${product.id}`;
   const labelFor = selectId;
   const active = session?.user?.active || status === "authenticated";

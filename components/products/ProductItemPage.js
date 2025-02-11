@@ -10,7 +10,7 @@ import emailjs from '@emailjs/browser';
 
 export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
-  const [callForPrice, setCallForPrice] = useState(null);
+  const [setCallForPrice] = useState(null);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
     ? product.each.quickBooksQuantityOnHandProduction 
