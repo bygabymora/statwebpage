@@ -41,7 +41,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.clearance?.description|| "No description");
+      setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(product.clearance?.countInStock ?? null);
       setCallForPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
     }
@@ -61,7 +61,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.clearance.description || "No description");
+      setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(product.clearance?.countInStock ?? null);
     }
   }, [clearancePurchaseType, product.clearance]);
@@ -439,77 +439,97 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           </button>
         </form>
       )}
-      {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-        <div>
-          {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-            <div className="flex justify-between items-center gap-2 mx-10 mt-5">
-               {active === "loading" ? (
-                    "Loading"
-                  ) : (
-                active && (
-              <div className="mb-2 justify-between">
-                <div className="font-bold">U o M &nbsp;</div>
-                <select
-                  value={purchaseType}
-                  onChange={(e) => {
-                    setPurchaseType(e.target.value);
-                    if (e.target.value === 'Each' && product.each) {
-                      setCurrentPrice(product.each?.minSalePrice || 0 );
-                      setCurrentDescription(product.each?.description || '');
-                      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0 );
-                    } else if (e.target.value === 'Bulk' && product.box) {
-                      setCurrentPrice(product.box?.minSalePrice || 0 );
-                      setCurrentDescription(product.box?.description || '');
-                      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0 );
-                    } else if (e.target.value === 'Clearance' && product.clearance) {
-                      // Handle Clearance option
-                      setCurrentPrice(product.clearance?.price || 0 );
-                      setCurrentDescription(product.clearance?.description || '');
-                      setCurrentCountInStock(product.clearance?.countInStock || 0 );
-                    }
-                  }}
-                >
-                  {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
-                  {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
-                  {product.clearance?.countInStock > 0 && (
-                    <option value="Clearance">Clearance</option>
-                  )}
-                </select>
-              </div>
-               )
-              )}
-              {active === "loading" ? (
-                    "Loading"
-                  ) : (
-                active && (
-              <div className="mb-2 justify-between">
-                <div className="font-bold">Price</div>
-                <div className="">&nbsp; ${currentPrice}</div>
-              </div>
-                )
-              )}
-            </div>
-          ) : null}
+        {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
           <div>
+            {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+            purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+            <div className="flex justify-between items-center gap-2 mx-10 mt-5">
+            {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
+                <div className="mb-2 justify-between">
+                  <div className="font-bold">U o M &nbsp;</div>
+                  <select
+                    value={purchaseType}
+                    onChange={(e) => {
+                      setPurchaseType(e.target.value);
+                      if (e.target.value === 'Each' && product.each) {
+                        setCurrentPrice(product.each?.minSalePrice || 0);
+                        setCurrentDescription(product.each?.description || '');
+                        setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Bulk' && product.box) {
+                        setCurrentPrice(product.box?.minSalePrice || 0);
+                        setCurrentDescription(product.box?.description || '');
+                        setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Clearance' && product.clearance) {
+                        setCurrentPrice(product.clearance?.price || 0);
+                        setCurrentDescription(product.clearance?.description || '');
+                        setCurrentCountInStock(product.clearance?.countInStock || 0);
+                      }
+                    }}
+                  >
+                    {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Each">Each</option>
+                    )}
+                    {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Bulk">Box</option>
+                    )}
+                    {product.clearance?.countInStock > 0 && (
+                      <option value="Clearance">Clearance</option>
+                    )}
+                  </select>
+                </div>
+              )
+            )}
+            {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
+                <div className="mb-2 justify-between">
+                  <div className="font-bold">Price</div>
+                  <div className="">&nbsp; ${currentPrice}</div>
+                </div>
+              )
+            )}
+          </div>
+        ) : null
+      ) : (
+        // If you only have Clearance, show it once without an "Add to Cart" button
+        <div className="my-5 text-center">
+          <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+          {active === "loading" ? (
+          "Loading"
+          ) : active ? (
+              <div className="mb-2 flex justify-center">
+                <div className="font-bold">Price:</div>
+                <div className="ml-2 text-[#788b9b]">
+                  $ {product.clearance?.price || 'Call for Price'}
+                </div>
+              </div>
+            ) : null}
+              <div className="text-[#414b53]">{product.notes}</div>
+        </div>
+          )}
+          {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
+            product.box?.quickBooksQuantityOnHandProduction > 0) && (
             <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
-              {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-                <div className="flex justify-center gap-5 m-2 text-center items-center ">
-                  <div className="flex-column">
-                    <div className="font-bold">Status</div>
-                    <div className="">
-                      {(purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
-                        ? 'Out of Stock'
-                        : 'In Stock'}
-                    </div>
-                  </div>
-                  {active === "loading" ? (
-                    "Loading"
-                  ) : (
-                  active && (
+              <div className="flex-column">
+                <div className="font-bold">Status</div>
+                <div className="">
+                  {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'In Stock'}
+                </div>
+              </div>
+              {active === "loading" ? (
+              "Loading"
+              ) : (
+                active && (
                   <button
-                    className="primary-button align-middle "
+                    className="primary-button align-middle"
                     type="button"
                     onClick={addToCartHandler}
                     disabled={
@@ -517,38 +537,19 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                       (purchaseType === 'Clearance' && isOutOfStockClearance)
                     }
-                  >
+                    >
                     {(purchaseType === 'Each' && isOutOfStock) ||
                     (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                     (purchaseType === 'Clearance' && isOutOfStockClearance)
-                      ? 'Out of Stock'
-                      : 'Add to Cart'}
+                    ? 'Out of Stock'
+                    : 'Add to Cart'}
                   </button>
-                    )
-                  )}
-                </div>
-              ) : (
-              <div>
-                <div className="my-5">
-                  <div className="flex justify-center gap-4 mx-2">
-                    <h1 className="text-red-500">Clearance</h1>
-                    {active === "loading" ? (
-                      "Loading"
-                    ) : active ? (
-                      <div className="mb-2 flex justify-between">
-                        <div className="font-bold">Price</div>
-                        <div>&nbsp;${callForPrice}</div>
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="text-gray-500 mb-1">{product.notes}</div>
-                </div>
-              </div>
+                )
               )}
             </div>
-          </div>
+          )}
         </div>
-      )}
+        )}
     </div>
   );
 };

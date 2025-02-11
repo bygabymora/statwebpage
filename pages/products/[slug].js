@@ -318,10 +318,6 @@ useEffect(() => {
           </ul>
         </div>
         <div>
-        {active === "loading" ? (
-            "Loading"
-          ) : (
-            active && (
           <div className="card p-5 mb-4">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
@@ -373,76 +369,117 @@ useEffect(() => {
               </div>
             )}
             <div>
-            <div className="mb-2 flex justify-between">
-              <div className="font-bold">U o M &nbsp;</div>
-              <select
-                value={purchaseType}
-                onChange={(e) => {
-                  setPurchaseType(e.target.value);
-                  if (e.target.value === 'Each') {
-                    setCurrentPrice(product.each?.minSalePrice || 0);
-                    setCurrentDescription(product.each?.description || '');
-                    setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
-                  } else if (e.target.value === 'Bulk') {
-                    setCurrentPrice(product.box?.minSalePrice || 0);
-                    setCurrentDescription(product.box?.description || '');
-                    setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction|| 0);
-                  } else if (e.target.value === 'Clearance') {
-                    // Handle Clearance option
-                    setCurrentPrice(product.clearance?.minSalePrice || 0);
-                    setCurrentDescription(product.clearance?.description || '');
-                    setCurrentCountInStock(product.clearance?.countInStock || 0);
-                  }
-                }}
-                >
-                  {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
-                  {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
-                  {product.clearance?.countInStock > 0 && (
-                    <option value="Clearance">Clearance</option>
-                  )}
-                </select>
-            </div>
-
+            {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          <div>
+            {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+            purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+            <div>
             {active === "loading" ? (
-                   "Loading"
-                  ) : (
-                  active && (
-            <div className="mb-2 flex justify-between">
-              <div className="font-bold">Price</div>
-              <div className="text-2xl">${currentPrice}</div>
-            </div>
-             )
+              "Loading"
+            ) : (
+              active && (
+                <div className="mb-2 flex justify-between">
+                  <div className="font-bold">U o M &nbsp;</div>
+                  <select
+                    value={purchaseType}
+                    onChange={(e) => {
+                      setPurchaseType(e.target.value);
+                      if (e.target.value === 'Each' && product.each) {
+                        setCurrentPrice(product.each?.minSalePrice || 0);
+                        setCurrentDescription(product.each?.description || '');
+                        setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Bulk' && product.box) {
+                        setCurrentPrice(product.box?.minSalePrice || 0);
+                        setCurrentDescription(product.box?.description || '');
+                        setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Clearance' && product.clearance) {
+                        setCurrentPrice(product.clearance?.price || 0);
+                        setCurrentDescription(product.clearance?.description || '');
+                        setCurrentCountInStock(product.clearance?.countInStock || 0);
+                      }
+                    }}
+                  >
+                    {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Each">Each</option>
+                    )}
+                    {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Bulk">Box</option>
+                    )}
+                    {product.clearance?.countInStock > 0 && (
+                      <option value="Clearance">Clearance</option>
+                    )}
+                  </select>
+                </div>
+              )
             )}
-            </div>
-
-            
-            <div className="mb-2 flex justify-between">
-              <div className="font-bold">Status</div>
-              &nbsp;
-              <div className="">
-                {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'In Stock'}
+            {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
+                <div className="mb-2 flex justify-between">
+                  <div className="font-bold">Price</div>
+                  <div className="text-2xl">${currentPrice}</div>
+                </div>
+              )
+            )}
+          </div>
+        ) : null
+      ) : (
+        // If you only have Clearance, show it once without an "Add to Cart" button
+        <div className="my-5 text-center">
+          <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+          {active === "loading" ? (
+          "Loading"
+          ) : active ? (
+              <div className="mb-2 flex justify-between">
+                <div className="font-bold">Price:</div>
+                <div className="ml-2 text-[#788b9b]">
+                  $ {product.clearance?.price || 'Call for Price'}
+                </div>
               </div>
+            ) : null}
+              <div className="text-[#414b53]">{product.notes}</div>
+        </div>
+          )}
+          {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
+            product.box?.quickBooksQuantityOnHandProduction > 0) && (
+            <div>
+              <div className="mb-2 flex justify-between">
+                <div className="font-bold">Status</div>
+                <div>
+                  {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'In Stock'}
+                </div>
+              </div>
+              {active === "loading" ? (
+              "Loading"
+              ) : (
+                active && (
+                  <button
+                    className="primary-button cart-button my-2"
+                    type="button"
+                    onClick={addToCartHandler}
+                    disabled={
+                      (purchaseType === 'Each' && isOutOfStock) ||
+                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                      (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    }
+                    >
+                    {(purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'Add to Cart'}
+                  </button>
+                )
+              )}
             </div>
-            <button
-              className="primary-button cart-button my-2"
-              type="button"
-              onClick={addToCartHandler}
-              disabled={
-                (purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-              }
-              >
-              {(purchaseType === 'Each' && isOutOfStock) ||
-              (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-              (purchaseType === 'Clearance' && isOutOfStockClearance)
-                ? 'Out of Stock'
-                : 'Add to Cart'}
-            </button>
+          )}
+        </div>
+        )}
             {showPopup && (
               <div className="popup">
                 <div className="popup-content">
@@ -611,8 +648,7 @@ useEffect(() => {
               </form>
             )}
           </div>
-             )
-            )}
+          </div>
         </div>
       </div>
     </Layout>
