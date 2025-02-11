@@ -57,9 +57,11 @@ export default function ProductScreen(props) {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
-  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock); // Add Clearance state
+  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction > 0
+    ? product.each.quickBooksQuantityOnHandProduction
+    : null);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(null);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
   const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'

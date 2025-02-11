@@ -18,7 +18,7 @@ const handler = async (req, res) => {
   };
 
 const getHandler = async (req, res) => {
-  
+
     try {
       const sortDirection = req.query.sort === "asc" ? 1 : -1; // Determine the sort direction from the query parameter
   
@@ -26,9 +26,8 @@ const getHandler = async (req, res) => {
       if (sortDirection === -1) {
         sortField = `-${sortField}`;
       }
-  
-      const products = await Product.find({}).sort(sortField);
-  
+      const products = await Product.find({approved: true, active: true}).lean();
+      console.log("productos filtrados:", products);
       res.send(products);
     } catch {
       res.status(500).send({ message: "Error fetching products"});
