@@ -10,7 +10,6 @@ import emailjs from '@emailjs/browser';
 
 export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
-  const [callForPrice, setCallForPrice] = useState(null);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
     ? product.each.quickBooksQuantityOnHandProduction 
@@ -36,17 +35,14 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     }
   }, [purchaseType, product.box]);
 
-
   useEffect(() => {
     if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
       setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(product.clearance?.countInStock ?? null);
-      setCallForPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
     }
   }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
-
 
   useEffect(() => {
     if (purchaseType === 'Each') {
@@ -55,7 +51,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
   }, [purchaseType, product.each]);
-
 
   useEffect(() => {
     if (clearancePurchaseType) {
@@ -72,7 +67,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
-
 
     if (purchaseType === 'Each' && data.countInStockEach < quantity) {
       setIsOutOfStock(true);
@@ -122,7 +116,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setQty(1);
     toast.success('Item added to cart');
 
-
     if (purchaseType === 'Each' && data.countInStock < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
@@ -135,9 +128,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     }
   };
 
-
   //-----------------EmailJS-----------------//
-
 
   const form = useRef();
   const [name, setName] = useState('');
@@ -145,17 +136,13 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [emailSlug, setEmailSlug] = useState('');
   const [emailManufacturer, setEmailManufacturer] = useState('');
 
-
   useEffect(() => {
     setEmailSlug(product.slug);
     setEmailManufacturer(product.manufacturer);
   }, [product.slug, product.manufacturer]);
 
-
   const sendEmail = (e) => {
     e.preventDefault();
-
-
     emailjs
       .sendForm(
         'service_ej3pm1k',
@@ -178,8 +165,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setEmailManufacturer('');
   };
   //-----------//
-  
-
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg border 
      border-gray-200 shadow-lg rounded-lg p-0.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
