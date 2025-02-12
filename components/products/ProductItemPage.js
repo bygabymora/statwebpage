@@ -14,7 +14,9 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
     ? product.each.quickBooksQuantityOnHandProduction 
     : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(null);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.each?.quickBooksQuantityOnHandProduction > 0 
+    ? product.each.quickBooksQuantityOnHandProduction 
+    : null);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState('Each');
@@ -31,7 +33,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setPurchaseType('Bulk');
       setCurrentPrice(product.box?.minSalePrice || 0 );
       setCurrentDescription(product.box?.description || '');
-      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0 );
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
     }
   }, [purchaseType, product.box]);
 
@@ -63,7 +65,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
-      (x) => x.name === product.name && x.purchaseType === purchaseType
+      (x) => x._id === product._id && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
@@ -116,7 +118,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setQty(1);
     toast.success('Item added to cart');
 
-    if (purchaseType === 'Each' && data.countInStock < quantity) {
+    if (purchaseType === 'Each' && data.countInStockEach < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");

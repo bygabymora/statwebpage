@@ -27,7 +27,7 @@ function CartScreen() {
 
     const { data } = await axios.get(`/api/products/${item._id}`);
 
-    if (data.purchaseType === 'Each' && data.countInStock < quantity) {
+    if (data.purchaseType === 'Each' && data.countInStockEach < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
     if (data.purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
@@ -94,7 +94,7 @@ function CartScreen() {
                             updateCartHandler(item, e.target.value)
                           }
                         >
-                          {[...Array(item.countInStock).keys()].map((x) => (
+                          {[...Array(item.countInStockEach).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
                               {x + 1}
                             </option>
