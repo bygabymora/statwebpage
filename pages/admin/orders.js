@@ -18,7 +18,7 @@ function reducer(state, action) {
 }
 
 export default function AdminOrderScreen() {
-  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, orders, loadingDelete }, dispatch] = useReducer(reducer, {
     loading: true,
     orders: [],
     error: '',
@@ -37,79 +37,76 @@ export default function AdminOrderScreen() {
     fetchData();
   }, []);
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard'},
+    { href: '/admin/orders', label: 'Orders', isBold: true},
+    { href: '/admin/products', label: 'Products'},
+    { href: '/admin/users', label: 'Users'},
+    { href: '/admin/news', label: 'News'},
+  ];
+
   return (
     <Layout title="Admin Dashboard">
-      <div className="grid md:grid-cols-4 md:gap-2">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
-                Orders
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
-            </li>
+        <div className="flex justify-center">
+          <ul className="flex space-x-4 my-3 lg:text-lg w-full">
+            {links.map(({ href, label, isBold}) => (
+              <li key={href} className="w-full">
+                <Link href={href} 
+                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition 
+                  ${isBold ? 'font-semibold' : ''}`} 
+                >
+                  {label}
+                </Link> 
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <h1 className="mb-4 text-xl">Admin Orders</h1>
-
+        <div className="md:col-span-3 p-4">
+          <h1 className="text-2xl font-bold mb-4">Admin Orders</h1>
+          {loadingDelete && <div>Deleting...</div>}
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
-            <div className="alert-error">{error}</div>
+            <div className="text-red-500">{error}</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
+              <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 border border-collapse">
                   <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="p-5 text-left">USER</th>
-                    <th className="p-5 text-left">DATE</th>
-                    <th className="p-5 text-left">TOTAL</th>
-                    <th className="p-5 text-left">PAID</th>
-                    <th className="p-5 text-left">PROCESSED</th>
-                    <th className="p-5 text-left">DELIVERED</th>
-                    <th className="p-5 text-left">ACTION</th>
+                    {['ID', 'User', 'Date', 'Total', 'PAID', 'Processed', 'Delivered', 'Actions'].map((header) => (
+                      <th key={header} className="p-4 text-left uppercase border border-collapse">
+                        {header}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order._id} className="border-b">
-                      <td className="p-5">{order._id.substring(20, 24)}</td>
-                      <td className="p-5">
+                    <tr key={order._id} className="border-b hover:bg-gray-100">
+                      <td className="border border-collapse p-5">{order._id.substring(20, 24)}</td>
+                      <td className="border border-collapse p-5">
                         {order.user ? order.user.name : 'DELETED USER'}
                       </td>
-                      <td className="p-5">
+                      <td className="border border-collapse p-5">
                         {order.createdAt.substring(0, 10)}
                       </td>
-                      <td className="p-5">${order.totalPrice}</td>
-                      <td className="p-5">
+                      <td className="border border-collapse p-5">${order.totalPrice}</td>
+                      <td className="border border-collapse p-5">
                         {order.isPaid
                           ? `${order.paidAt.substring(0, 10)}`
                           : 'not paid'}
                       </td>
-                      <td className="p-5">
+                      <td className="border border-collapse p-5">
                         {order.isDelivered
                           ? `${order.deliveredAt.substring(0, 10)}`
                           : 'Not Processed'}
                       </td>
-                      <td className="p-5">
+                      <td className="border border-collapse p-5">
                         {order.isAtCostumers
                           ? `${order.atCostumersDate.substring(0, 10)}`
                           : 'not delivered'}
                       </td>
-                      <td className="p-5">
+                      <td className="border border-collapse p-5">
                         <Link
                           className=" underline font-bold "
                           href={`/order/${order._id}`}
@@ -125,7 +122,7 @@ export default function AdminOrderScreen() {
             </div>
           )}
         </div>
-      </div>
+      
     </Layout>
   );
 }

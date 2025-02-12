@@ -72,82 +72,82 @@ function AdminUsersScreen() {
     }
   };
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard'},
+    { href: '/admin/orders', label: 'Orders'},
+    { href: '/admin/products', label: 'Products'},
+    { href: '/admin/users', label: 'Users', isBold: true},
+    { href: '/admin/news', label: 'News'},
+  ];
+
   return (
     <Layout title="Users">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
-                Users
+      <div className="flex justify-center">
+        <ul className="flex space-x-4 my-3 lg:text-lg w-full">
+          {links.map(({ href, label, isBold }) => (
+            <li key={href} className="w-full">
+              <Link href={href}
+              className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition 
+                ${isBold ? 'font-semibold' : ''}`}
+              > 
+                {label}
               </Link>
             </li>
-            <li>
-              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <h1 className="mb-4 text-xl">Users</h1>
-          {loadingDelete && <div>Deleting...</div>}
-          {loading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="p-5 text-left">NAME</th>
-                    <th className="p-5 text-left">EMAIL</th>
-                    <th className="p-5 text-left">ADMIN</th>
-                    <th className="p-5 text-left">ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user._id} className="border-b">
-                      <td className=" p-5 ">{user._id.substring(20, 24)}</td>
-                      <td className=" p-5 ">{user.name}</td>
-                      <td className=" p-5 ">{user.email}</td>
-                      <td className=" p-5 ">{user.isAdmin ? 'YES' : 'NO'}</td>
-                      <td className=" p-5 ">
-                        <button
-                          onClick={() => router.push(`/admin/user/${user._id}`)}
-                          type="button"
-                          className="primary-button font-bold underline mr-2 "
-                        >
-                          <BiSolidEdit />
-                        </button>
-                        &nbsp;
-                        <button
-                          onClick={() => deleteHandler(user._id)}
-                          className="primary-button font-bold underline"
-                          type="button"
-                        >
-                          <BsTrash3 />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          ))}     
+        </ul>
       </div>
-    </Layout>
+      <div className="md:col-span-3 p-4">
+        <h1 className="text-2xl font-bold mb-4">Users</h1>
+        {loadingDelete && <div>Deleting...</div>}
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div className="text-red-500">{error}</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead className="bg-gray-100 border border-collapse">
+                <tr>
+                  {['ID', 'Name', 'Email', 'Company', 'EIN', 'Admin', 'Actions'].map((header) => (
+                    <th key={header} className="p-4 text-left uppercase border border-collapse">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user._id} className="border-b hover:bg-gray-100">
+                    <td className="border border-collapse p-4">{user._id.substring(20, 24)}</td>
+                    <td className="border border-collapse p-4">{user.name}</td>
+                    <td className="border border-collapse p-4">{user.email}</td>
+                    <td className="border border-collapse p-4">{user.companyName || '—'}</td>
+                    <td className="border border-collapse p-4">{user.companyEinCode || '—'}</td>
+                    <td className="border border-collapse p-4">{user.isAdmin ? '✅' : '❌'}</td>
+                    <td className="border border-collapse p-4 space-x-2">
+                      <button
+                        onClick={() => router.push(`/admin/user/${user._id}`)}
+                        className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b]"
+                        title="Edit User"
+                      >
+                        <BiSolidEdit />
+                      </button>
+                      <button
+                        onClick={() => deleteHandler(user._id)}
+                        className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b]"
+                        title="Delete User"
+                      >
+                        <BsTrash3 />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+  </Layout>
   );
 }
 

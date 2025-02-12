@@ -356,7 +356,7 @@ useEffect(() => {
                   <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
                   <p className="text-[#788b9b]">
                   Sorry, we do not have any additional units of{" "}
-                  <span className="font-bold text-[#144e8b]">{product.manufacturer} {product.name}</span>{" "}
+                  <span className="font-bold text-[#144e8b]">{product.manufacturer} - {product.name}</span>{" "}
                   At this moment. Please contact us for more information.
                   </p>
                   <button 

@@ -62,6 +62,8 @@ export default function AdminUserEditScreen() {
         dispatch({ type: 'FETCH_SUCCESS' });
         setValue('name', data.name);
         setValue('email', data.email);
+        setValue('companyName', data.companyName);
+        setValue('companyEinCode', data.companyEinCode);
         setValue('isAdmin', data.isAdmin);
         setEsAdmin(data.isAdmin);
       } catch (err) {
@@ -74,13 +76,15 @@ export default function AdminUserEditScreen() {
 
   const router = useRouter();
 
-  const submitHandler = async ({ name, email, password }) => {
+  const submitHandler = async ({ name, email, password, companyName, companyEinCode }) => {
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
       await axios.put(`/api/admin/users/${userId}`, {
         name,
         email,
         password,
+        companyName: companyName || '',
+        companyEinCode: companyEinCode || '',
         isAdmin,
       });
       dispatch({ type: 'UPDATE_SUCCESS' });
@@ -156,6 +160,39 @@ export default function AdminUserEditScreen() {
                   <div className="text-red-500">{errors.email.message}</div>
                 )}
               </div>
+
+              <div className="mb-4">
+                <label htmlFor="companyName">Company Name</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="companyName"
+                  autoFocus
+                  {...register('companyName', {
+                    required: 'Please insert companyName',
+                  })}
+                />
+                {errors.companyName && (
+                  <div className="text-red-500">{errors.companyName.message}</div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="companyEinCode">company Ein Code</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="companyEinCode"
+                  autoFocus
+                  {...register('companyEinCode', {
+                    required: 'Please insert companyEinCode',
+                  })}
+                />
+                {errors.companyEinCode && (
+                  <div className="text-red-500">{errors.companyEinCode.message}</div>
+                )}
+              </div>
+
               <div className="mb-4">
                 <label htmlFor="isAdmin">Is Admin?</label>
                 &nbsp;

@@ -27,6 +27,7 @@ const getHandler = async (req, res) => {
   await db.disconnect();
   res.send(user);
 };
+  
 
 const putHandler = async (req, res) => {
   await db.connect();
@@ -34,6 +35,8 @@ const putHandler = async (req, res) => {
   if (user) {
     user.name = req.body.name;
     user.email = req.body.email;
+    user.companyName = req.body.companyName;
+    user.companyEinCode = req.body.companyEinCode;
     user.isAdmin = Boolean(req.body.isAdmin);
     await user.save();
 

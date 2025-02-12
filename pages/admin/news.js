@@ -108,33 +108,33 @@ export default function AdminNewsScreen() {
     }
   };
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard'},
+    { href: '/admin/orders', label: 'Orders'},
+    { href: '/admin/products', label: 'Products'},
+    { href: '/admin/users', label: 'Users'},
+    { href: '/admin/news', label: 'News', isBold: true},
+  ];
+
   return (
     <Layout title="Admin News">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/news" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
-                News
+        <div className="flex justify-center">
+          <ul className="flex space-x-4 my-3 lg:text-lg w-full">
+            {links.map(({ href, label, isBold }) => (
+              <li key={href} className="w-full">
+                <Link href={href}
+                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition 
+                  ${isBold ? 'font-semibold' : ''}`}
+                >
+                {label}
               </Link>
-            </li>
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="overflow-x-auto md:col-span-3">
+        <div className="md:col-span-3 p-4">
           <div className="flex justify-between">
-            <h1 className="mb-4 text-xl">News</h1>
+            <h1 className="text-2xl font-bold mb-4">News</h1>
             {loadingDelete && <div>Deleting item...</div>}
             <button
               disabled={loadingCreate}
@@ -147,32 +147,33 @@ export default function AdminNewsScreen() {
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
-            <div className="alert-error">{error}</div>
+            <div className="text-red-500">{error}</div>
           ) : (
             <div className="overflow-x-auto">
               <br />
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="p-2 text-left border-r border-gray-300">
-                      Title
+              <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 border border-collapse">
+                <tr>
+                  <th className="p-2 text-left border-r border-gray-300">
+                    Title
+                  </th>
+                  {['Category', 'Tags', 'Author', 'Actions'].map((header) => (
+                    <th key={header} className="p-4 text-left uppercase border border-collapse">
+                      {header}
                     </th>
-                    <th className="p-2 text-left">Category</th>
-                    <th className="p-2 text-left">Tags</th>
-                    <th className="p-2 text-left">Author</th>
-                    <th className="p-2 text-left">Actions</th>
-                  </tr>
+                  ))}
+                </tr>
                 </thead>
                 <tbody>
                   {newsEntries.map((news) => (
-                    <tr key={news._id} className="border-b">
+                    <tr key={news._id} className="border-b hover:bg-gray-100">
                       <td className="p-2 border-r border-gray-300">
                         {news.title}
                       </td>
-                      <td className="p-2">{news.category}</td>
-                      <td className="p-2">{news.tags.join(', ')}</td>
-                      <td className="p-2">{news.author}</td>
-                      <td className="p-5 text-center flex flex-row">
+                      <td className="border border-collapse p-2">{news.category}</td>
+                      <td className="border border-collapse p-2">{news.tags.join(', ')}</td>
+                      <td className="border border-collapse p-2">{news.author}</td>
+                      <td className="border border-collapse p-5 text-center flex flex-row">
                         <Link
                           href={`/admin/news/${news._id}`}
                           className="primary-button font-bold underline"
@@ -195,7 +196,6 @@ export default function AdminNewsScreen() {
             </div>
           )}
         </div>
-      </div>
     </Layout>
   );
 }

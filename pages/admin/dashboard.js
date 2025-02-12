@@ -131,36 +131,36 @@ function AdminDashboardScreen() {
     fetchData();
   }, []);
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard', isBold: true},
+    { href: '/admin/orders', label: 'Orders'},
+    { href: '/admin/products', label: 'Products'},
+    { href: '/admin/users', label: 'Users'},
+    { href: '/admin/news', label: 'News'},
+  ];
+
   return (
     <Layout title="Admin Dashboard">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
-            </li>
+        <div className="flex justify-center">
+          <ul className="flex space-x-4 my-3 lg:text-lg w-full">
+            {links.map(({ href, label, isBold }) => (
+              <li key={href} className="w-full">
+                <Link href={href}
+                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition 
+                  ${isBold ? 'font-semibold' : ''}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}    
           </ul>
         </div>
-        <div className="md:col-span-3">
-          <h1 className="mb-4 text-xl">Admin Dashboard</h1>
+        <div className="md:col-span-3 p-4">
+          <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
-            <div className="alert-error">{error}</div>
+            <div className="text-red-500">{error}</div>
           ) : (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-4">
@@ -212,7 +212,7 @@ function AdminDashboardScreen() {
                   </a>
                 </div>
               </div>
-              <h2 className="text-xl">{chartTitles[activeChart]}</h2>
+              <h2 className="text-2xl font-bold mb-4">{chartTitles[activeChart]}</h2>
               {summary && (
                 <Bar
                   options={{
@@ -224,7 +224,6 @@ function AdminDashboardScreen() {
             </div>
           )}
         </div>
-      </div>
     </Layout>
   );
 }

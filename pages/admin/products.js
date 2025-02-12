@@ -245,7 +245,6 @@ export default function AdminProdcutsScreen() {
       const updateFields = {
         name: existingProduct.name,
         manufacturer: existingProduct.manufacturer,
-        slug: existingProduct.slug,
         lot: existingProduct.lot,
         expiration: existingProduct.expiration,
         image: existingProduct.image,
@@ -280,33 +279,33 @@ export default function AdminProdcutsScreen() {
     );
   };
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard'},
+    { href: '/admin/orders', label: 'Orders'},
+    { href: '/admin/products', label: 'Products', isBold: true},
+    { href: '/admin/users', label: 'Users'},
+    { href: '/admin/news', label: 'News'},
+  ];
+
   return (
     <Layout title="Admin Products">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="font-bold block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/news" className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3">News</Link>
-            </li>
+        <div className="flex justify-center">
+          <ul className="flex space-x-4 my-3 lg:text-lg w-full">
+            {links.map(({ href, label, isBold}) => (
+              <li key={href} className="w-full">
+                <Link href={href}
+                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition
+                  ${isBold ? 'font-semibold' : ''}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="overflow-x-auto md:col-span-3 ">
+        <div className="md:col-span-3 p-4">
           <div className="flex justify-between">
-            <h1 className="mb-4 flex gap-2 text-xl items-center">Products</h1>
+            <h1 className="text-2xl font-bold mb-4">Products</h1>
             {loadingDelete && <div>Deleting item...</div>}
             <button
               disabled={loadingCreate}
@@ -319,14 +318,14 @@ export default function AdminProdcutsScreen() {
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
-            <div className="alert-error">{error}</div>
+            <div className="text-red-500">{error}</div>
           ) : (
             <div className="overflow-x-auto">
-                <br />
-              <table className="min-w-full mb-5 border border-collapse">
-                <thead className="border border-collapse">
-                  <tr className="bg-gray-50">
-                    <th className="p-2 text-center border w-[16%]">
+              <br />
+              <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 border border-collapse">
+                  <tr>
+                    <th className="p-4 text-left uppercase border border-collapse">
                       REF
                       <br />
                       Manufacturer
@@ -540,7 +539,6 @@ export default function AdminProdcutsScreen() {
             </div>
           )}
         </div>
-      </div>
     </Layout>
   );
 }
