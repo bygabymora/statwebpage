@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { toast } from 'react-toastify';
 import Layout from '../../components/main/Layout';
 import { getError } from '../../utils/error';
@@ -32,6 +32,8 @@ function reducer(state, action) {
 
 function AdminUsersScreen() {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [{ loading, error, users, successDelete, loadingDelete }, dispatch] =
     useReducer(reducer, {
@@ -57,21 +59,24 @@ function AdminUsersScreen() {
     }
   }, [successDelete]);
 
-  const deleteHandler = async (userId) => {
-    if (!window.confirm('Are you sure?')) {
-      return;
-    }
+  const confirmDelete = (userId) => {
+    setSelectedUserId(userId);
+    setShowModal(true);
+  };
+
+  const deleteUser = async () => {
     try {
       dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/users/${userId}`);
+      await axios.delete(`/api/admin/users/${selectedUserId}`);
       dispatch({ type: 'DELETE_SUCCESS' });
       toast.success('User deleted successfully');
     } catch (err) {
       dispatch({ type: 'DELETE_FAIL' });
       toast.error(getError(err));
     }
+    setShowModal(false);
   };
-
+   
   const links = [
     { href: '/admin/dashboard', label: 'Dashboard'},
     { href: '/admin/orders', label: 'Orders'},
@@ -133,7 +138,7 @@ function AdminUsersScreen() {
                         <BiSolidEdit />
                       </button>
                       <button
-                        onClick={() => deleteHandler(user._id)}
+                        onClick={() => confirmDelete(user._id)}
                         className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b]"
                         title="Delete User"
                       >
@@ -142,6 +147,28 @@ function AdminUsersScreen() {
                     </td>
                   </tr>
                 ))}
+                {showModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                      <h2 className="font-bold text-lg">⚠️ Confirm Deletion ⚠️</h2>
+                      <p className="text-[#788b9b]">Are you sure you want to delete this user?</p>
+                      <div className="flex justify-center gap-4 mt-4">
+                        <button 
+                          className="px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
+                          onClick={deleteUser}
+                        >
+                          Delete
+                        </button>
+                        <button 
+                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                          onClick={() => setShowModal(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </tbody>
             </table>
           </div>
