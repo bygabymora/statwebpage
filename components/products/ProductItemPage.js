@@ -79,15 +79,15 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (purchaseType === 'Each' && data.countInStockEach < quantity) {
+    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
       return;
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStockBulk(true);
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      data.countInStockClearance < quantity
+      (data.clearance?.countInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
@@ -127,13 +127,13 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setQty(1);
     toast.success('Item added to cart');
 
-    if (purchaseType === 'Each' && data.countInStockEach < quantity) {
+    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0)  < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0)  < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (
       purchaseType === 'Clearance' &&
-      data.countInStockClearance < quantity
+      (data.clearance?.countInStock ?? 0) < quantity < quantity
     ) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
@@ -262,7 +262,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                 At this moment. Please contact us for more information.
                 </p>
                 <button 
-                  className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#03793d] transition"
+                  className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
                   onClick={() => setShowModal(false)}
                 >
                   Close
@@ -292,7 +292,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         </div>
       </div>
       {purchaseType === 'Bulk' && isOutOfStockBulk && (
-        <form className="text-center " ref={form} onSubmit={sendEmail}>
+        <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
           <label className="mt-3 font-bold ">Join Our Wait List</label>
           <input
             type="text"
@@ -306,7 +306,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           <input
             type="email"
             name="user_email"
-            className="contact__form-input"
+            className="contact__form-input mt-2"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             placeholder="Email"
