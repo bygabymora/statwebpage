@@ -23,19 +23,25 @@ function CartScreen() {
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
-    const purchaseType = item.purchaseType;
 
     const { data } = await axios.get(`/api/products/${item._id}`);
 
-    if (data.purchaseType === 'Each' && data.countInStockEach < quantity) {
+    if (data.purchaseType === 'Each' && item.countInStockEach < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
+      return;
     }
-    if (data.purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    if (data.purchaseType === 'Bulk' && item.countInStockBulk < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
+      return;
+    }
+    if (data.purchaseType === 'Clearance' && item.countInStockClearance < quantity
+    ) {
+      alert("Sorry, we don't have enough of that item in stock.");
+      return;
     }
     dispatch({
       type: 'CART_UPDATE_ITEM', // Change to a new action type
-      payload: { ...item, quantity, purchaseType },
+      payload: { ...item, quantity},
     });
   };
 

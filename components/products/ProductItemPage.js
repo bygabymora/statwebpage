@@ -19,7 +19,16 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     : null);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
-  const [purchaseType, setPurchaseType] = useState('Each');
+  const [purchaseType, setPurchaseType] = useState(() => {
+    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Bulk';
+    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Each';
+    } else if (product.clearance?.countInStock > 0) {
+      return 'Clearance';
+    }
+    return 'Each';
+  });
   const { status, data: session } = useSession();
   const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
   const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
