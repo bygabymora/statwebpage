@@ -72,12 +72,38 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     }
   }, [clearancePurchaseType, product.clearance]);
 
+  useEffect(() => {
+    if (purchaseType === 'Each') {
+      setCurrentPrice(product.each?.minSalePrice ?? null);
+      setCurrentDescription(product.each?.description || '');
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Bulk') {
+      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Clearance') {
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.each?.description || 'No description');
+      setCurrentCountInStock(product.clearance?.countInStock ?? 0);
+    }
+  }, [purchaseType, product]);
+
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
       (x) => x._id === product._id && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
+
+    let stockAvailable = 0;
+    if (purchaseType === 'Each') stockAvailable = data.each?.quickBooksQuantityOnHandProduction ?? 0;
+    if (purchaseType === 'Bulk') stockAvailable = data.box?.quickBooksQuantityOnHandProduction ?? 0;
+    if (purchaseType === 'Clearance') stockAvailable = data.clearance?.countInStock ?? 0;
+  
+    if (quantity > stockAvailable) {
+      toast.error("Sorry, we don't have enough stock available.");
+      return;
+    }
 
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
@@ -226,27 +252,20 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   -
                 </button>
                 <span className="px-1 mt-4">
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 0
-                    : qty}
+                  {qty}
                 </span>
                 <button
-                  className="border px-2 py-1 card"
-                  onClick={() => {
-                    if (qty < currentCountInStock) {
-                      setQty(qty + 1);
-                    } else {
-                      setShowModal(true);
-                    }
+                    className="border px-2 py-1 card"
+                    onClick={() => {
+                  if (qty < currentCountInStock) {
+                    setQty(qty + 1);
+                  } else {
+                  toast.error("Stock limit reached!");
+                  setShowModal(true);
+                }
                   }}
-                  disabled={
-                    (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  }
-                >
+                   disabled={qty >= currentCountInStock}
+                  >
                   +
                 </button>
               </div>
