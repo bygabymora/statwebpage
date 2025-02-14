@@ -99,11 +99,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     if (purchaseType === 'Each') stockAvailable = data.each?.quickBooksQuantityOnHandProduction ?? 0;
     if (purchaseType === 'Bulk') stockAvailable = data.box?.quickBooksQuantityOnHandProduction ?? 0;
     if (purchaseType === 'Clearance') stockAvailable = data.clearance?.countInStock ?? 0;
-  
-    if (quantity > stockAvailable) {
-      toast.error("Sorry, we don't have enough stock available.");
-      return;
-    }
 
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
@@ -260,11 +255,9 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                   if (qty < currentCountInStock) {
                     setQty(qty + 1);
                   } else {
-                  toast.error("Stock limit reached!");
                   setShowModal(true);
                 }
-                  }}
-                   disabled={qty >= currentCountInStock}
+                }}
                   >
                   +
                 </button>

@@ -64,7 +64,16 @@ export default function ProductScreen(props) {
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
-  const [purchaseType, setPurchaseType] = useState('Each'); // defaulting to 'Each'
+  const [purchaseType, setPurchaseType] = useState(() => {
+    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Bulk';
+    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Each';
+    } else if (product.clearance?.countInStock > 0) {
+      return 'Clearance';
+    }
+    return 'Each';
+  });
   const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice);
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ''
@@ -113,20 +122,41 @@ useEffect(() => {
     }
   }, [purchaseType, product.each]);
 
+  useEffect(() => {
+    if (purchaseType === 'Each') {
+      setCurrentPrice(product.each?.minSalePrice ?? null);
+      setCurrentDescription(product.each?.description || '');
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Bulk') {
+      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Clearance') {
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.each?.description || 'No description');
+      setCurrentCountInStock(product.clearance?.countInStock ?? 0);
+    }
+  }, [purchaseType, product]);
+
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (purchaseType === 'Each' && data.countInStock < quantity) {
+    let stockAvailable = 0;
+    if (purchaseType === 'Each') stockAvailable = data.each?.quickBooksQuantityOnHandProduction ?? 0;
+    if (purchaseType === 'Bulk') stockAvailable = data.box?.quickBooksQuantityOnHandProduction ?? 0;
+    if (purchaseType === 'Clearance') stockAvailable = data.clearance?.countInStock ?? 0;
+
+    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
       return;
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStockBulk(true);
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      data.countInStockClearance < quantity
+      (data.clearence?.countInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
@@ -330,11 +360,7 @@ useEffect(() => {
                   -
                 </button>
                 <span className="px-1 mt-4">
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 0
-                    : qty}
+                  {qty}
                 </span>
                 <button
                   className="border px-2 py-1 card"
