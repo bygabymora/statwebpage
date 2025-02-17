@@ -14,8 +14,8 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
     ? product.each.quickBooksQuantityOnHandProduction 
     : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.each?.quickBooksQuantityOnHandProduction > 0 
-    ? product.each.quickBooksQuantityOnHandProduction 
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
+    ? product.box.quickBooksQuantityOnHandProduction 
     : null);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
@@ -114,6 +114,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         ...product,
         quantity,
         purchaseType,
+        sentOverNight: product.sentOverNight,
         price:
           purchaseType === 'Each'
             ? product.each?.minSalePrice
@@ -121,7 +122,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             ? product.box?.minSalePrice
             : purchaseType === 'Clearance'
             ? product.clearance?.Price
-            : product.minSalePrice,
+            : product.Price,
         description:
           purchaseType === 'Each'
             ? product.each?.description

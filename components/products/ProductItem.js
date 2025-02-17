@@ -11,12 +11,26 @@ import emailjs from '@emailjs/browser';
 export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction ?? null);
+  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction > 0 
+    ? product.each.quickBooksQuantityOnHandProduction 
+    : null);
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
+    ? product.box.quickBooksQuantityOnHandProduction 
+    : null);
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const { status, data: session } = useSession();
-  const [purchaseType, setPurchaseType] = useState('Each');
+  const [purchaseType, setPurchaseType] = useState(() => {
+    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Bulk';
+    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Each';
+    } else if (product.clearance?.countInStock > 0) {
+      return 'Clearance';
+    }
+    return 'Each';
+  });
  const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ''
@@ -32,6 +46,22 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
+    if (purchaseType === 'Each') {
+      setCurrentPrice(product.each?.minSalePrice ?? null);
+      setCurrentDescription(product.each?.description || '');
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Bulk') {
+      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? 0);
+    } else if (purchaseType === 'Clearance') {
+      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentDescription(product.each?.description || 'No description');
+      setCurrentCountInStock(product.clearance?.countInStock ?? 0);
+    }
+  }, [purchaseType, product]); 
+
+  useEffect(() => {
     if (product.countInStock === 0) {
       setPurchaseType('Box');
       setCurrentPrice(product.box?.minSalePrice ?? null);
@@ -43,7 +73,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.clearance?.price ?? null);
+      setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
       setCurrentDescription(product.clearance?.description|| "No description");
       setCurrentCountInStock(product.clearance?.countInStock ?? null);
     }
@@ -68,20 +98,20 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
-      (x) => x.name === product.name && x.purchaseType === purchaseType
+      (x) => x.id === product.id && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
     const { data } = await axios.get(`/api/products/${product._id}`);
 
-    if (purchaseType === 'Each' && data.countInStock < quantity) {
+    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
       return;
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStockBulk(true);
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      data.countInStockClearance < quantity
+      (data.clearence?.countInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
@@ -116,19 +146,19 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
             ? product.clearance?.quickBooksQuantityOnHandProduction
-            : product.quickBooksQuantityOnHandProduction,
+            : product.countInStock,
       },
     });
     setQty(1);
     toast.success('Item added to cart');
 
-    if (purchaseType === 'Each' && data.countInStock < quantity) {
+    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
+    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
     } else if (
       purchaseType === 'Clearance' &&
-      data.countInStockClearance < quantity
+      (data.clearance?.countInStock ?? 0) < quantity
     ) {
       alert("Sorry, we don't have enough of that item in stock.");
     }
@@ -233,11 +263,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                   -
                 </button>
                 <span className="px-1 mt-4">
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 0
-                    : qty}
+                  {qty}
                 </span>
                 <button
                   className="border px-2 py-1 card"
@@ -245,23 +271,33 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                     if (qty < currentCountInStock) {
                       setQty(qty + 1);
                     } else {
-                      alert(
-                        `Sorry,  we do not have any additional units of ${product.manufacturer} ${product.name} at this moment`
-                      );
+                      setShowModal(true);
                     }
                   }}
-                  disabled={
-                    (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  }
                 >
                   +
                 </button>
               </div>
             </div>
           )}
-
+          {showModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
+                <p className="text-[#788b9b]">
+                Sorry, we do not have any additional units of{" "}
+                <span className="font-bold text-[#144e8b]">{product.manufacturer} - {product.name}</span>{" "}
+                At this moment. Please contact us for more information.
+                </p>
+                <button 
+                  className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
           {purchaseType === 'Each' && isOutOfStock && (
             <div className="mb-1 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
@@ -280,60 +316,116 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               <div className="">Out of Stock</div>
             </div>
           )}
-
-<>
-      {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-        <div>
-          {purchaseType === "Each" || purchaseType === "Bulk" ? (
-            <div className="justify-between items-center gap-2 mt-2">
+          <>
+          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+            <div>
+              {(product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0) ? (
+                (purchaseType === "Each" || purchaseType === "Bulk") && (
+                  <div className="justify-between items-center gap-2 mt-2">
+                    {active === "loading" ? (
+                      "Loading..."
+                    ) : (
+                      active && (
+                        <>
+                          <div className="mb-2 flex flex-row">
+                            <label className="font-bold" htmlFor={labelFor}>
+                              U o M &nbsp;
+                            </label>
+                            <select
+                              value={purchaseType}
+                              onChange={(e) => {
+                                setPurchaseType(e.target.value);
+                                if (e.target.value === 'Each' && product.each) {
+                                  setCurrentPrice(product.each?.minSalePrice || 0);
+                                  setCurrentDescription(product.each?.description || '');
+                                  setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                                } else if (e.target.value === 'Bulk' && product.box) {
+                                  setCurrentPrice(product.box?.minSalePrice || 0);
+                                  setCurrentDescription(product.box?.description || '');
+                                  setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                                } else if (e.target.value === 'Clearance' && product.clearance) {
+                                  setCurrentPrice(product.clearance?.price || 0);
+                                  setCurrentDescription(product.clearance?.description || '');
+                                  setCurrentCountInStock(product.clearance?.countInStock || 0);
+                                }
+                              }}
+                            >
+                              {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                                <option value="Each">Each</option>
+                              )}
+                              {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                                <option value="Bulk">Box</option>
+                              )}
+                              {product.clearance?.countInStock > 0 && (
+                                <option value="Clearance">Clearance</option>
+                              )}
+                            </select>
+                          </div>
+                          <div className="mb-2 justify-between">
+                            <div className="font-bold">Price</div>
+                            <div className="">&nbsp; ${currentPrice}</div>
+                          </div>
+                        </>
+                      )
+                    )}
+                  </div>
+                )
+              ) : (
+                <div className="my-5 text-center">
+                  <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+                  {active === "loading" ? (
+                    "Loading"
+                  ) : active ? (
+                    <div className="mb-2 flex justify-center">
+                      <div className="font-bold">Price:</div>
+                      <div className="ml-2 text-[#788b9b]">
+                        $ {product.clearance?.price || 'Call for Price'}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="text-[#414b53]">{product.notes}</div>
+                </div>
+              )}
+              {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
+            product.box?.quickBooksQuantityOnHandProduction > 0) && (
+            <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
+              <div className="flex-column">
+                <div className="font-bold">Status</div>
+                <div className="">
+                  {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'In Stock'}
+                </div>
+              </div>
               {active === "loading" ? (
-                "Loading..."
+              "Loading"
               ) : (
                 active && (
-                  <>
-                    <div className="mb-2 flex flex-row">
-                      <label className="font-bold" htmlFor={labelFor}>
-                        U o M &nbsp;
-                      </label>
-                      <select
-                        value={purchaseType}
-                         onChange={(e) => {
-                           setPurchaseType(e.target.value);
-                           if (e.target.value === 'Each') {
-                             setCurrentPrice(product.each?.minSalePrice ?? null);
-                             setCurrentDescription(product.each?.description || '');
-                             setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
-                           } else if (e.target.value === 'Bulk') {
-                             setCurrentPrice(product.box?.minSalePrice ?? null);
-                             setCurrentDescription(product.box?.description || '');
-                             setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
-                           } else if (e.target.value === 'Clearance') {
-                             setCurrentPrice(product.clearance?.Price ?? null);
-                             setCurrentDescription(product.clearance?.description || '');
-                             setCurrentCountInStock(product.clearance?.countInStock ?? null);
-                           }
-                         }}
-                        >
-                         {product.each?.quickBooksQuantityOnHandProduction > 0 && <option value="Each">Each</option>}
-                         {product.box?.quickBooksQuantityOnHandProduction > 0 && <option value="Bulk">Box</option>}
-                         {product.clearance?.countInStock > 0 && (
-                           <option value="Clearance">Clearance</option>
-                        )}
-                      </select>
-                    </div>
-
-                    <div className="flex flex-row mb-2 justify-between">
-                      <div className="font-bold">Price</div>
-                      <div className="">&nbsp; ${currentPrice}</div>
-                    </div>
-                  </>
+                  <button
+                    className="primary-button align-middle"
+                    type="button"
+                    onClick={addToCartHandler}
+                    disabled={
+                      (purchaseType === 'Each' && isOutOfStock) ||
+                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                      (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    }
+                    >
+                    {(purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'Add to Cart'}
+                  </button>
                 )
               )}
             </div>
-          ) : null}
-        </div>
-      )}
-    </>
+          )}
+            </div>
+          )}
+          </>
           {purchaseType === 'Bulk' && isOutOfStockBulk && (
             <form className="text-center mb-3 " ref={form} onSubmit={sendEmail}>
               <label className="font-bold ">Join Our Wait List</label>
@@ -482,44 +574,46 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       </div>
 
       <div>
-  {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-    <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
-      {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
-        <div className="flex gap-20 m-2 justify-between items-center">
-          <div className="flex-column">
-            <div className="font-bold">Status</div>
-            <div>
-              {(purchaseType === 'Each' && isOutOfStock) ||
-              (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-              (purchaseType === 'Clearance' && isOutOfStockClearance)
-                ? 'Out of Stock'
-                : 'In Stock'}
-            </div>
-          </div>
-          {active === "loading" ? (
-            "Loading"
-          ) : (
-            active && (
-              <button
-                className="primary-button align-middle"
-                type="button"
-                onClick={addToCartHandler}
-                disabled={
-                  (purchaseType === 'Each' && isOutOfStock) ||
+        {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+          <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
+            {purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+              <div className="flex gap-20 m-2 justify-between items-center">
+                <div className="flex-column">
+                  <div className="font-bold">Status</div>
+                  <div>
+                    {(purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                      ? 'Out of Stock'
+                      : 'In Stock'
+                    }
+                  </div>
+                </div>
+            {active === "loading" ? (
+                "Loading"
+                ) : (
+                active && (
+                <button
+                  className="primary-button align-middle"
+                  type="button"
+                  onClick={addToCartHandler}
+                  disabled={
+                    (purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  }
+                >
+                  {(purchaseType === 'Each' && isOutOfStock) ||
                   (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                   (purchaseType === 'Clearance' && isOutOfStockClearance)
-                }
-              >
-                {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'Add to Cart'}
-              </button>
-            )
-          )}
-        </div>
-      ) : (
+                    ? 'Out of Stock'
+                    : 'Add to Cart'
+                  }
+                </button>
+              )   
+            )}
+          </div>
+        ) : (
         <div>
           <div className="border border-gray-200 my-5">
             <div className="flex justify-center gap-8 mx-2">
