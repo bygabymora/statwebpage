@@ -505,14 +505,14 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           {active === "loading" ? (
           "Loading"
           ) : active ? (
-              <div className="mb-2 flex justify-center">
-                <div className="font-bold">Price:</div>
-                <div className="ml-2 text-[#788b9b]">
-                  $ {product.clearance?.price || 'Call for Price'}
-                </div>
+            <div className="mb-2 flex justify-center">
+              <div className="font-bold">Price:</div>
+              <div className="ml-2 text-[#788b9b]">
+                $ {product.clearance?.price || 'Call for Price'}
               </div>
-            ) : null}
-              <div className="text-[#414b53]">{product.notes}</div>
+            </div>
+          ) : null}
+          <div className="text-[#414b53]">{product.notes}</div>
         </div>
           )}
           {(product.each?.quickBooksQuantityOnHandProduction > 0 ||

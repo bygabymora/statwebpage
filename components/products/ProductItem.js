@@ -32,12 +32,8 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
     return 'Each';
   });
  const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice ?? null);
-  const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ''
-  );
-  const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.quickBooksQuantityOnHandProduction ?? null
-  );
+  const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
+  const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
   useEffect(() => {
     setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
   }, [product.each?.quickBooksQuantityOnHandProduction]);
@@ -213,7 +209,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
         {product.manufacturer}{' '}
       </h2>
 
-      <div className="flex flex-row justify-between ">
+      <div className="flex flex-row justify-betweens">
         <Link
           href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
@@ -242,12 +238,6 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                 <span className="flex-1 ">{currentDescription}</span>
               </div>
             </div>
-            {purchaseType === 'Clearance' && (
-              <div className="border border-gray-200 mt-2">
-                <h1 className="text-red-500">Clearance</h1>
-                <p className="text-gray-500">{product.notes}</p>
-              </div>
-            )}
           </Link>
 
           { !isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active &&  (
@@ -616,20 +606,6 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
         ) : (
         <div>
           <div className="border border-gray-200 my-5">
-            <div className="flex justify-center gap-8 mx-2">
-              <h1 className="text-red-500">Clearance</h1>
-              {active === "loading" ? (
-                "Loading"
-              ) : (
-                active && (
-                  <div className="mb-2 justify-between flex">
-                    <div className="font-bold">Price</div>
-                    <div className="">&nbsp; ${currentPrice}</div>
-                  </div>
-                )
-              )}
-            </div>
-
             <div className="text-gray-500 mb-1">{product.notes}</div>
           </div>
           {active === "loading" ? (
