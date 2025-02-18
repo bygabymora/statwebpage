@@ -60,27 +60,15 @@ export default function ProductScreen(props) {
   const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction > 0
     ? product.each.quickBooksQuantityOnHandProduction
     : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(null);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null); // Add Clearance state
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
+    ? product.box.quickBooksQuantityOnHandProduction 
+    : null); 
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clearance?.countInStock ?? null); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
-  const [purchaseType, setPurchaseType] = useState(() => {
-    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
-      return 'Bulk';
-    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
-      return 'Each';
-    } else if (product.clearance?.countInStock > 0) {
-      return 'Clearance';
-    }
-    return 'Each';
-  });
   const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice);
-  const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ''
-  );
-  const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock || 0
-  );
+  const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
+  const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.countInStock || 0);
   const form = useRef();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -90,6 +78,16 @@ export default function ProductScreen(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const active = session?.user?.active || status === "authenticated";
+    const [purchaseType, setPurchaseType] = useState(() => {
+    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Bulk';
+    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+      return 'Each';
+    } else if (product.clearance?.countInStock > 0) {
+      return 'Clearance';
+    }
+    return 'Each';
+  });
 
   useEffect(() => {
     setEmailSlug(product.slug);
@@ -112,7 +110,7 @@ useEffect(() => {
       setCurrentDescription(product.clearance?.description|| "No description");
       setCurrentCountInStock(product.clearance?.countInStock);
     }
-  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
+  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance?.countInStock]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
