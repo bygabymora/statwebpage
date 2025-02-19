@@ -11,20 +11,16 @@ import emailjs from '@emailjs/browser';
 export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const [isOutOfStock, setIsOutOfStock] = useState( product.each?.quickBooksQuantityOnHandProduction > 0 
-    ? product.each.quickBooksQuantityOnHandProduction 
-    : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
-    ? product.box.quickBooksQuantityOnHandProduction 
-    : null);
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
+  const [isOutOfStock, setIsOutOfStock] = useState();
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? 0);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState(() => {
-    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+    if ((product.box?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Bulk';
-    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+    } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Each';
-    } else if (product.clearance?.countInStock > 0) {
+    } else if ((product.clearance?.countInStock ?? 0)> 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -47,13 +43,17 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   }, [purchaseType, product.box]);
 
   useEffect(() => {
-    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
+    const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
+    const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
+    const clearanceStock = product.clearance?.countInStock ?? 0;
+  
+    if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
       setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(product.clearance?.countInStock ?? null);
+      setCurrentCountInStock(clearanceStock);
     }
-  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
+  }, [product]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
@@ -62,6 +62,10 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
   }, [purchaseType, product.each]);
+
+  useEffect(() => {
+    console.log("Product Data: ", product);
+  }, [product]);
 
   useEffect(() => {
     if (clearancePurchaseType) {

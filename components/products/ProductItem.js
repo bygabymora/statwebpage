@@ -11,12 +11,8 @@ import emailjs from '@emailjs/browser';
 export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction > 0 
-    ? product.each.quickBooksQuantityOnHandProduction 
-    : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
-    ? product.box.quickBooksQuantityOnHandProduction 
-    : null);
+  const [isOutOfStock, setIsOutOfStock] = useState();
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -66,14 +62,18 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
     }
   }, [purchaseType, product.box]);
 
-  useEffect(() => {
-    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
-      setPurchaseType('Clearance');
-      setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
-      setCurrentDescription(product.clearance?.description|| "No description");
-      setCurrentCountInStock(product.clearance?.countInStock ?? null);
-    }
-  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance]);
+    useEffect(() => {
+      const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
+      const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
+      const clearanceStock = product.clearance?.countInStock ?? 0;
+    
+      if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
+        setPurchaseType('Clearance');
+        setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
+        setCurrentDescription(product.each?.description || "No description");
+        setCurrentCountInStock(clearanceStock);
+      }
+    }, [product]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
@@ -306,116 +306,81 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               <div className="">Out of Stock</div>
             </div>
           )}
-          <>
+
           {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
-            <div>
-              {(product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0) ? (
-                (purchaseType === "Each" || purchaseType === "Bulk") && (
-                  <div className="justify-between items-center gap-2 mt-2">
-                    {active === "loading" ? (
-                      "Loading..."
-                    ) : (
-                      active && (
-                        <>
-                          <div className="mb-2 flex flex-row">
-                            <label className="font-bold" htmlFor={labelFor}>
-                              U o M &nbsp;
-                            </label>
-                            <select
-                              value={purchaseType}
-                              onChange={(e) => {
-                                setPurchaseType(e.target.value);
-                                if (e.target.value === 'Each' && product.each) {
-                                  setCurrentPrice(product.each?.minSalePrice || 0);
-                                  setCurrentDescription(product.each?.description || '');
-                                  setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
-                                } else if (e.target.value === 'Bulk' && product.box) {
-                                  setCurrentPrice(product.box?.minSalePrice || 0);
-                                  setCurrentDescription(product.box?.description || '');
-                                  setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
-                                } else if (e.target.value === 'Clearance' && product.clearance) {
-                                  setCurrentPrice(product.clearance?.price || 0);
-                                  setCurrentDescription(product.clearance?.description || '');
-                                  setCurrentCountInStock(product.clearance?.countInStock || 0);
-                                }
-                              }}
-                            >
-                              {product.each?.quickBooksQuantityOnHandProduction > 0 && (
-                                <option value="Each">Each</option>
-                              )}
-                              {product.box?.quickBooksQuantityOnHandProduction > 0 && (
-                                <option value="Bulk">Box</option>
-                              )}
-                              {product.clearance?.countInStock > 0 && (
-                                <option value="Clearance">Clearance</option>
-                              )}
-                            </select>
-                          </div>
-                          <div className="mb-2 justify-between">
-                            <div className="font-bold">Price</div>
-                            <div className="">&nbsp; ${currentPrice}</div>
-                          </div>
-                        </>
-                      )
-                    )}
-                  </div>
-                )
-              ) : (
-                <div className="my-5 text-center">
-                  <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
-                  {active === "loading" ? (
-                    "Loading"
-                  ) : active ? (
-                    <div className="mb-2 flex justify-center">
-                      <div className="font-bold">Price:</div>
-                      <div className="ml-2 text-[#788b9b]">
-                        $ {product.clearance?.price || 'Call for Price'}
-                      </div>
-                    </div>
-                  ) : null}
-                  <div className="text-[#414b53]">{product.notes}</div>
-                </div>
-              )}
-              {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-            product.box?.quickBooksQuantityOnHandProduction > 0) && (
-            <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
-              <div className="flex-column">
-                <div className="font-bold">Status</div>
-                <div className="">
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'In Stock'}
-                </div>
-              </div>
-              {active === "loading" ? (
+          <div>
+            {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+            purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+            <div className="flex justify-between items-center gap-2 mx-10 mt-5">
+            {active === "loading" ? (
               "Loading"
-              ) : (
-                active && (
-                  <button
-                    className="primary-button align-middle"
-                    type="button"
-                    onClick={addToCartHandler}
-                    disabled={
-                      (purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    }
-                    >
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
-                  </button>
-                )
-              )}
+            ) : (
+              active && (
+                <div className="mb-2 justify-between">
+                  <div className="font-bold">U o M &nbsp;</div>
+                  <select
+                    value={purchaseType}
+                    onChange={(e) => {
+                      setPurchaseType(e.target.value);
+                      if (e.target.value === 'Each' && product.each) {
+                        setCurrentPrice(product.each?.minSalePrice || 0);
+                        setCurrentDescription(product.each?.description || '');
+                        setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Bulk' && product.box) {
+                        setCurrentPrice(product.box?.minSalePrice || 0);
+                        setCurrentDescription(product.box?.description || '');
+                        setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                      } else if (e.target.value === 'Clearance' && product.clearance) {
+                        setCurrentPrice(product.clearance?.price || 0);
+                        setCurrentDescription(product.clearance?.description || '');
+                        setCurrentCountInStock(product.clearance?.countInStock || 0);
+                      }
+                    }}
+                  >
+                    {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Each">Each</option>
+                    )}
+                    {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                      <option value="Bulk">Box</option>
+                    )}
+                    {product.clearance?.countInStock > 0 && (
+                      <option value="Clearance">Clearance</option>
+                    )}
+                  </select>
+                </div>
+              )
+            )}
+            {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
+                <div className="mb-2 justify-between">
+                  <div className="font-bold">Price</div>
+                  <div className="">&nbsp; ${currentPrice}</div>
+                </div>
+              )
+            )}
+          </div>
+        ) : null
+      ) : (
+        // If you only have Clearance, show it once without an "Add to Cart" button
+        <div className="my-5 text-center">
+          <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+          {active === "loading" ? (
+          "Loading"
+          ) : active ? (
+            <div className="mb-2 flex justify-center">
+              <div className="font-bold">Price:</div>
+              <div className="ml-2 text-[#788b9b]">
+                $ {product.clearance?.price || 'Call for Price'}
+              </div>
             </div>
+          ) : null}
+          <div className="text-[#414b53]">{product.notes}</div>
+        </div>
           )}
-            </div>
-          )}
-          </>
+        </div>
+      )}
           {purchaseType === 'Bulk' && isOutOfStockBulk && (
             <form className="text-center mb-3 " ref={form} onSubmit={sendEmail}>
               <label className="font-bold ">Join Our Wait List</label>
