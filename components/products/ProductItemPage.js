@@ -13,7 +13,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? 0);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.cleareance?.countInStock ?? 0);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0)> 0) {

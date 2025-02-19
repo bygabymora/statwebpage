@@ -13,7 +13,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clareance?.countInStock ?? null);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.cleareance?.countInStock ?? null);
   const [qty, setQty] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const { status, data: session } = useSession();
@@ -33,7 +33,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
   }, [product.each?.quickBooksQuantityOnHandProduction]);
-  const selectId = `uomSelect-${product.id}`;
+  // const selectId = `uomSelect-${product.id}`;
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       setCurrentDescription(product.box?.description || '');
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
-  }, [purchaseType, product.box]);
+  }, [product.countInStock, product.box, product.each?.quickBooksQuantityOnHandProduction]);
 
     useEffect(() => {
       const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
@@ -85,9 +85,9 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.clareance?.price ?? null);
-      setCurrentDescription(product.clareance?.description || "No description");
-      setCurrentCountInStock(product.clareance?.countInStock ?? null);
+      setCurrentPrice(product.cleareance?.price ?? null);
+      setCurrentDescription(product.cleareance?.description || "No description");
+      setCurrentCountInStock(product.cleareance?.countInStock ?? null);
     }
   }, [clearancePurchaseType, product.clearance]);
 
