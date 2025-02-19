@@ -34,7 +34,6 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
     setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
   }, [product.each?.quickBooksQuantityOnHandProduction]);
   const selectId = `uomSelect-${product.id}`;
-  const labelFor = selectId;
   const active = session?.user?.active || status === "authenticated";
 
   useEffect(() => {

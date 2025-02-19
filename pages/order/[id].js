@@ -268,7 +268,7 @@ function OrderScreen() {
     } else {
       console.log('Payment failed');
     }
-  }, [order._id]);
+  }, [order._id, sendEmail]);
 
   function onError(err) {
     toast.error(getError(err));
