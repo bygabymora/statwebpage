@@ -209,7 +209,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
         {product.manufacturer}{' '}
       </h2>
 
-      <div className="flex flex-row justify-betweens">
+      <div className="flex flex-row justify-between">
         <Link
           href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
