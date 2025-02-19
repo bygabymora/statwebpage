@@ -57,12 +57,8 @@ export default function ProductScreen(props) {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
-  const [isOutOfStock, setIsOutOfStock] = useState(product.each?.quickBooksQuantityOnHandProduction > 0
-    ? product.each.quickBooksQuantityOnHandProduction
-    : null);
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(product.box?.quickBooksQuantityOnHandProduction > 0 
-    ? product.box.quickBooksQuantityOnHandProduction 
-    : null); 
+  const [isOutOfStock, setIsOutOfStock] = useState();
+  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(); 
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clearance?.countInStock ?? null); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
@@ -110,7 +106,7 @@ useEffect(() => {
       setCurrentDescription(product.clearance?.description|| "No description");
       setCurrentCountInStock(product.clearance?.countInStock);
     }
-  }, [product.each?.quickBooksQuantityOnHandProduction, product.box?.quickBooksQuantityOnHandProduction, product.clearance?.countInStock]);
+  }, [product.clearence?.description, product.clearance?.price]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
