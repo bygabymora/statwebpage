@@ -336,8 +336,8 @@ useEffect(() => {
             )}
           </ul>
         </div>
-        <div>
-          <div className="card p-5 mb-4">
+        <div className="flex flex-col lg:justify-center lg:items-center min-h-screen w-full">
+          <div className="card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">

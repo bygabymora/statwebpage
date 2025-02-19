@@ -94,17 +94,17 @@ const SearchPage = ({ query }) => {
 
   return (
     <Layout title="Search Results">
-      <div>
+      <div className="max-w-4xl mx-auto p-5">
         <h1 className="section__title">Search Results</h1>
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-3 mb-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {products.map((product) => (
               <ProductItem key={product._id} product={product} />
             ))}
           </div>
         ) : (
           <>
-            <div>
+            <div className="text-center">
               <h2 className="section__subtitle">No products found</h2>
               <p className="section__text text-center font-semibold">
                 Kindly provide your contact details, and we will reach out to
@@ -129,7 +129,7 @@ const SearchPage = ({ query }) => {
               </div>
               <div className="contact__form-div">
                 <label className="contact__form-tag">Reference*</label>
-                <input
+              <input
                   type="text"
                   placeholder="Please enter the product reference"
                   name="name"
@@ -137,8 +137,8 @@ const SearchPage = ({ query }) => {
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                   required
-                />
-              </div>
+              />
+            </div>
               <div className="contact__form-div">
                 <label className="contact__form-tag">Manufacturer*</label>
                 <input
@@ -203,14 +203,14 @@ const SearchPage = ({ query }) => {
 
               <div className="contact__form-div">
                 <label className="contact__form-tag">Message*</label>
-                <textarea
-                  name="message"
+            <textarea
+              name="message"
                   className="contact__form-input contact__message"
-                  onChange={(e) => setMessage(e.target.value)}
-                  value={message}
-                  required
-                />
-              </div>
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+              required
+            />
+          </div>
               <button className="button button--flex btn-contact w-full flex items-center justify-center">
                 <span className="text-white">Send Your Request {tab} </span>
                 <BiMessageAdd className="text-white ml-2" />

@@ -25,9 +25,10 @@ const Navbar = () => {
     const fetchClearanceProducts = async () => {
       try {
         const response = await axios.get('/api/clearance');
+        console.log('Api response:', response.data);
         setHasClearanceProducts(response.data.hasClearanceProducts);
       } catch (error) {
-        console.error('Failed to fetch clearance products:', error);
+        console.error('Error fetching clearance products:', error.response ? error.response.data : error.message);
       }
     };
 
