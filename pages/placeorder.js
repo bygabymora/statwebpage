@@ -114,7 +114,7 @@ export default function PlaceOrderScreen() {
   };
   const cartItemsWithPrice = cartItems.map(item => ({
   ...item,
-  minSalePrice: item.minSalePrice || item.price, // Si falta, usa el precio como mínimo
+  wpPrice: item.wpPrice || item.price, // Si falta, usa el precio como mínimo
 }));
   
   const placeOrderHandler = async () => {

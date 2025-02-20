@@ -62,9 +62,9 @@ export default function ProductScreen(props) {
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clearance?.countInStock ?? null); // Add Clearance state
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
-  const [currentPrice, setCurrentPrice] = useState(product.each?.minSalePrice);
+  const [currentPrice, setCurrentPrice] = useState(product.each?.wpPrice || null);
   const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
-  const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.countInStock || 0);
+  const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.countInStock || null);
   const form = useRef();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -75,11 +75,11 @@ export default function ProductScreen(props) {
   const [showModal, setShowModal] = useState(false);
   const active = session?.user?.active || status === "authenticated";
     const [purchaseType, setPurchaseType] = useState(() => {
-    if (product.box?.quickBooksQuantityOnHandProduction > 0) {
+    if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return 'Bulk';
-    } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
+    } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return 'Each';
-    } else if (product.clearance?.countInStock > 0) {
+    } else if ((product.clearance?.countInStock ?? 0) > 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -93,7 +93,7 @@ export default function ProductScreen(props) {
   useEffect(() => {
     if (product.countInStock === 0) {
       setPurchaseType('Bulk');
-      setCurrentPrice(product.box?.minSalePrice);
+      setCurrentPrice(product.box?.wpPrice);
       setCurrentDescription(product.box?.description);
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction);
     }
@@ -110,7 +110,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (purchaseType === 'Each') {
-      setCurrentPrice(product.each?.minSalePrice);
+      setCurrentPrice(product.each?.wpPrice);
       setCurrentDescription(product.each?.description || '');
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
     }
@@ -118,11 +118,11 @@ useEffect(() => {
 
   useEffect(() => {
     if (purchaseType === 'Each') {
-      setCurrentPrice(product.each?.minSalePrice ?? null);
+      setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || '');
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? 0);
     } else if (purchaseType === 'Bulk') {
-      setCurrentPrice(product.box?.minSalePrice ?? null);
+      setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || '');
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? 0);
     } else if (purchaseType === 'Clearance') {
@@ -163,12 +163,12 @@ useEffect(() => {
         purchaseType,
         price:
           purchaseType === 'Each'
-            ? product.each?.minSaleprice
+            ? product.each?.wpPrice
             : purchaseType === 'Bulk'
-            ? product.box?.minSalePrice
+            ? product.box?.wpPrice
             : purchaseType === 'Clearance'
             ? product.clearance?.price
-            : product.minSalePrice,
+            : product.Price,
         description:
           purchaseType === 'Each'
             ? product.each?.description
@@ -400,11 +400,11 @@ useEffect(() => {
                     onChange={(e) => {
                       setPurchaseType(e.target.value);
                       if (e.target.value === 'Each' && product.each) {
-                        setCurrentPrice(product.each?.minSalePrice || 0);
+                        setCurrentPrice(product.each?.wpPrice || 0);
                         setCurrentDescription(product.each?.description || '');
                         setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
                       } else if (e.target.value === 'Bulk' && product.box) {
-                        setCurrentPrice(product.box?.minSalePrice || 0);
+                        setCurrentPrice(product.box?.wpPrice || 0);
                         setCurrentDescription(product.box?.description || '');
                         setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
                       } else if (e.target.value === 'Clearance' && product.clearance) {
