@@ -106,7 +106,7 @@ useEffect(() => {
       setCurrentDescription(product.clearance?.description|| "No description");
       setCurrentCountInStock(product.clearance?.countInStock);
     }
-  }, [product.clearence?.description, product.clearance?.price]);
+  }, [product.clearance?.description, product.clearance?.price]);
 
   useEffect(() => {
     if (purchaseType === 'Each') {
@@ -145,7 +145,7 @@ useEffect(() => {
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      (data.clearence?.countInStock ?? 0) < quantity
+      (data.clearance?.countInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;

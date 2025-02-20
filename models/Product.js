@@ -87,7 +87,7 @@ const productSchema = new mongoose.Schema(
           ],
         },
       ],
-      lotsInClearence: [
+      lotsInClearance: [
         {
           receiptOrderId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -193,7 +193,7 @@ const productSchema = new mongoose.Schema(
           noExpirationDate: { type: Boolean, default: false, required: false },
         },
       ],
-      lotsInClearence: [
+      lotsInClearance: [
         {
           receiptOrderId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -296,7 +296,7 @@ const productSchema = new mongoose.Schema(
           noExpirationDate: { type: Boolean, default: false, required: false },
         },
       ],
-      lotsInClearence: [
+      lotsInClearance: [
         {
           receiptOrderId: {
             type: mongoose.Schema.Types.ObjectId,
