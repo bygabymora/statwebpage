@@ -244,8 +244,42 @@ useEffect(() => {
           Back to products.
         </Link>
       </div>
-      <div className="product-grid">
-        <div className="product-image">
+      <div className="mt-4 text-center">
+        <ul className="space-y-2">
+          <li>
+            <h1 className="text-xl font-bold">{product.name}</h1>
+          </li>
+          <li>
+            <h1 className="text-xl font-bold">{product.manufacturer}</h1>
+          </li>
+          <li>
+            <h1 className="text-xl">{currentDescription}</h1>
+          </li>
+          {purchaseType === 'Clearance' && (
+            <li>
+              <h1 className="text-xl text-red-400">Product on Clearance!</h1>
+              <p>{product.notes}</p>
+            </li>
+          )}
+          {product.sentOverNight && (
+            <li className="space-y-2">
+              <br />
+              <br />
+              <br />
+              <br />
+              <h1 className="text-lg font-semibold">Shipping recomendations:</h1>
+              <p className="text-sm text-[#788b9b]">
+                It is recommended that this product ships overnight due to
+                temperature sensitivity. Stat Surgical Supply is not
+                responsible for product damage or failure if the customer
+                chooses another shipping method.
+              </p>
+            </li>
+          )}
+        </ul>
+      </div>
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-4 p-6"> 
+        <div className="flex items-center justify-center">
           <div
             onMouseMove={(e) => {
               const rect = e.target.getBoundingClientRect();
@@ -261,29 +295,29 @@ useEffect(() => {
             <Image
               src={product.image}
               alt={product.name}
-              width={640}
-              height={640}
+              width={300}
+              height={300}
               className="rounded-lg hover:cursor-zoom-in no-drag" // <-- Added no-drag class here
               onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
               onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
             />
             {isHovered && (
               <div
-                className="hidden md:block"
+                className="hidden md:block absolute rounded-full border border-gray-400"
                 style={{
                   width: '100px',
                   height: '100px',
                   borderRadius: '50%',
                   position: 'absolute',
-                  top: cursorPos.y - 50,
-                  left: cursorPos.x - 50,
+                  top: cursorPos.y - 40,
+                  left: cursorPos.x - 40,
                   backgroundImage: `url(${product.image})`,
-                  backgroundPosition: `-${(cursorPos.x - 50) * 2}px -${
-                    (cursorPos.y - 80) * 2
+                  backgroundPosition: `-${(cursorPos.x - 40) * 2}px -${
+                    (cursorPos.y - 40) * 2
                   }px`,
-                  backgroundSize: '1280px 1280px',
+                  backgroundSize: '800px 800px',
                   border: '2px solid gray',
-                  transform: 'scale(2)',
+                  transform: 'scale(1.5)',
                   pointerEvents: 'none',
                 }}
               ></div>
@@ -301,42 +335,7 @@ useEffect(() => {
             }
           `}</style>
         </div>
-
-        <div className="space-y-4">
-          <ul className="space-y-2">
-            <li>
-              <h1 className="text-xl font-bold">{product.name}</h1>
-            </li>
-            <li>
-              <h1 className="text-xl font-bold">{product.manufacturer}</h1>
-            </li>
-            <li>
-              <h1 className="text-xl">{currentDescription}</h1>
-            </li>
-            {purchaseType === 'Clearance' && (
-              <li>
-                <h1 className="text-xl text-red-400">Product on Clearance!</h1>
-                <p>{product.notes}</p>
-              </li>
-            )}
-            {product.sentOverNight && (
-              <li className="space-y-2">
-                <br />
-                <br />
-                <br />
-                <br />
-                <h1 className="text-lg font-semibold">Shipping recomendations:</h1>
-                <p className="text-sm text-[#788b9b]">
-                  It is recommended that this product ships overnight due to
-                  temperature sensitivity. Stat Surgical Supply is not
-                  responsible for product damage or failure if the customer
-                  chooses another shipping method.
-                </p>
-              </li>
-            )}
-          </ul>
-        </div>
-        <div className="flex flex-col lg:justify-center lg:items-center min-h-screen w-full">
+        <div className="flex flex-col items-center justify-center">
           <div className="card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md">
             <div className="mb-2 flex items-center justify-center">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
