@@ -5,12 +5,10 @@ const handler = async (req, res) => {
   await db.connect();
 
   try {
-    const clearanceProducts = await Product.find({
-      isInClearance: true,
-    }).lean();
+    const clearanceProducts = await Product.find({ clearance: Object }).lean();
     const hasClearanceProducts = clearanceProducts.length > 0;
 
-    res.status(200).json({ hasClearanceProducts });
+    res.status(200).json({ hasClearanceProducts, clearanceProducts }); // Send clearance products
   } catch (error) {
     console.error('Failed to fetch clearance products:', error);
     res.status(500).json({ error: 'Failed to fetch clearance products' });

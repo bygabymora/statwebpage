@@ -25,13 +25,17 @@ const Navbar = () => {
     const fetchClearanceProducts = async () => {
       try {
         const response = await axios.get('/api/clearance');
-        console.log('Api response:', response.data);
-        setHasClearanceProducts(response.data.hasClearanceProducts);
+        console.log('Clearance response:', response); // Verify that the response is correct 
+        if (response.data) {
+          console.log('Productos en clearance:', response.data.clearanceProducts);
+        } else {
+          console.error('API did not return valid data');
+        }
       } catch (error) {
-        console.error('Error fetching clearance products:', error.response ? error.response.data : error.message);
+        console.error('Error fetching clearance products:', error);
       }
     };
-
+  
     fetchClearanceProducts();
   }, []);
 
@@ -40,7 +44,7 @@ const Navbar = () => {
       const yOffsetLargeScreen = -170;
       setTimeout(() => {
         const element = document.getElementById(section);
-        if (element) { // Verificar si el elemento existe
+        if (element) { // Check if the element exists
           const y =
             element.getBoundingClientRect().top +
             window.scrollY +

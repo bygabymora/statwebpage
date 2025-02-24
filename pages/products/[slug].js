@@ -257,7 +257,7 @@ useEffect(() => {
           </li>
           {purchaseType === 'Clearance' && (
             <li>
-              <h1 className="text-xl text-red-400">Product on Clearance!</h1>
+              <h1 className="text-xl text-red-500">Product on Clearance!</h1>
               <p>{product.notes}</p>
             </li>
           )}

@@ -89,7 +89,6 @@ const Header = () => {
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
-  console.log("Tipo de searchQuery:", typeof searchQuery);
   return (
     <header className="header">
       <nav className="nav container text-center flex-row-reverse ">
