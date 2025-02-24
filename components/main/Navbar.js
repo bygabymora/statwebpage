@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import { TbShoppingCartDiscount } from 'react-icons/tb';
 
 const Navbar = () => {
-  const [hasClearanceProducts, setHasClearanceProducts] = useState(false);
+  const [hasClearanceProducts] = useState(false);
   const router = useRouter();
   const [toggleMenu, setToggleMenu] = useState(false);
 
