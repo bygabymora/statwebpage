@@ -244,7 +244,64 @@ useEffect(() => {
           Back to products.
         </Link>
       </div>
-      <div className="mt-4 text-center">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-4 p-6"> 
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-6 p-6 bg-white shadow-lg rounded-xl">
+          <div
+            onMouseMove={(e) => {
+              const rect = e.target.getBoundingClientRect();
+              setCursorPos({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+              });
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative "
+          >
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={350}
+              height={350}
+              className="rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300" // <-- Added no-drag class here
+              onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
+              onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
+            />
+            {isHovered && (
+              <div
+                className="absolute hidden md:block rounded-full border border-gray-400 bg-cover transform scale-125"
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: cursorPos.y - 40,
+                  left: cursorPos.x - 40,
+                  backgroundImage: `url(${product.image})`,
+                  backgroundPosition: `-${(cursorPos.x - 40) * 2}px -${
+                    (cursorPos.y - 40) * 2
+                  }px`,
+                  backgroundSize: '800px 800px',
+                  border: '2px solid gray',
+                  transform: 'scale(1.5)',
+                  pointerEvents: 'none',
+                }}
+              ></div>
+            )}
+          </div>
+
+          <style jsx global>{`
+            .no-drag {
+              -webkit-user-drag: none;
+              user-drag: none;
+              -webkit-user-select: none;
+              user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+            }
+          `}</style>
+        </div>
+        <div className="w-full max-w-lg flex flex-col items-center lg:items-start">
         <ul className="space-y-2">
           <li>
             <h1 className="text-xl font-bold">{product.name}</h1>
@@ -278,63 +335,6 @@ useEffect(() => {
           )}
         </ul>
       </div>
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-4 p-6"> 
-        <div className="flex items-center justify-center">
-          <div
-            onMouseMove={(e) => {
-              const rect = e.target.getBoundingClientRect();
-              setCursorPos({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
-              });
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="relative"
-          >
-            <Image
-              src={product.image}
-              alt={product.name}
-              width={300}
-              height={300}
-              className="rounded-lg hover:cursor-zoom-in no-drag" // <-- Added no-drag class here
-              onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
-              onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
-            />
-            {isHovered && (
-              <div
-                className="hidden md:block absolute rounded-full border border-gray-400"
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  borderRadius: '50%',
-                  position: 'absolute',
-                  top: cursorPos.y - 40,
-                  left: cursorPos.x - 40,
-                  backgroundImage: `url(${product.image})`,
-                  backgroundPosition: `-${(cursorPos.x - 40) * 2}px -${
-                    (cursorPos.y - 40) * 2
-                  }px`,
-                  backgroundSize: '800px 800px',
-                  border: '2px solid gray',
-                  transform: 'scale(1.5)',
-                  pointerEvents: 'none',
-                }}
-              ></div>
-            )}
-          </div>
-
-          <style jsx global>{`
-            .no-drag {
-              -webkit-user-drag: none;
-              user-drag: none;
-              -webkit-user-select: none;
-              user-select: none;
-              -moz-user-select: none;
-              -ms-user-select: none;
-            }
-          `}</style>
-        </div>
         <div className="flex flex-col items-center justify-center">
           <div className="card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md">
             <div className="mb-2 flex items-center justify-center">
