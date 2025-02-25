@@ -207,6 +207,7 @@ export default function Home({ products }) {
     (product) =>
       product.each?.wpPrice > 0 && // Valid price greater than 0
       product.each?.description && 
+      product.each?.quickBooksQuantityOnHandProduction > 0 && // Valid quantity greater than 0
       product.each?.description.trim() !== '' // Non-empty description
   )
   .slice(0, 9);
