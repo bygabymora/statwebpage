@@ -147,17 +147,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     });
     setQty(1);
     toast.success('Item added to cart');
-
-    if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0)  < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
-    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0)  < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
-    } else if (
-      purchaseType === 'Clearance' &&
-      (data.clearance?.countInStock ?? 0) < quantity < quantity
-    ) {
-      alert("Sorry, we don't have enough of that item in stock.");
-    }
   };
 
   //-----------------EmailJS-----------------//
