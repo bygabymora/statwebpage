@@ -25,9 +25,7 @@ const Navbar = () => {
     const fetchClearanceProducts = async () => {
       try {
         const response = await axios.get('/api/clearance');
-        console.log('Clearance response:', response); // Verify that the response is correct 
         if (response.data) {
-          console.log('Productos en clearance:', response.data.clearanceProducts);
         } else {
           console.error('API did not return valid data');
         }

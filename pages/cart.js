@@ -23,14 +23,16 @@ function CartScreen() {
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+    console.log("Actualizando item:", item);
+    console.log("Nueva cantidad:", quantity);
 
     const { data } = await axios.get(`/api/products/${item._id}`);
 
-    if (data.purchaseType === 'Each' && item.countInStockEach < quantity) {
+    if (data.purchaseType === 'Each' && item.each?.quickBooksQuantityOnHandProduction < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
-    if (data.purchaseType === 'Bulk' && item.countInStockBulk < quantity) {
+    if (data.purchaseType === 'Bulk' && item.box?.quickBooksQuantityOnHandProduction < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
@@ -44,7 +46,6 @@ function CartScreen() {
       payload: { ...item, quantity},
     });
   };
-
   return (
     <Layout title="Cart">
       <h1 className="mb-4 text-xl">Shopping Cart</h1>
@@ -97,10 +98,10 @@ function CartScreen() {
                         <select
                           value={item.quantity}
                           onChange={(e) =>
-                            updateCartHandler(item, e.target.value)
+                            updateCartHandler(item, Number(e.target.value))
                           }
                         >
-                          {[...Array(item.countInStockEach).keys()].map((x) => (
+                          {[...Array(item.each?.quickBooksQuantityOnHandProduction).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
                               {x + 1}
                             </option>
@@ -113,10 +114,10 @@ function CartScreen() {
                         <select
                           value={item.quantity}
                           onChange={(e) =>
-                            updateCartHandler(item, e.target.value)
+                            updateCartHandler(item, Number(e.target.value))
                           }
                         >
-                          {[...Array(item.countInStockBulk).keys()].map((x) => (
+                          {[...Array(item.box?.quickBooksQuantityOnHandProduction).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
                               {x + 1}
                             </option>
@@ -129,7 +130,7 @@ function CartScreen() {
                         <select
                           value={item.quantity}
                           onChange={(e) =>
-                            updateCartHandler(item, e.target.value)
+                            updateCartHandler(item, Number(e.target.value))
                           }
                         >
                           {[...Array(item.countInStockClearance).keys()].map(
@@ -153,7 +154,7 @@ function CartScreen() {
               </tbody>
             </table>
           </div>
-          <div className="card p-5 mb-4">
+          <div className="card p-5 mb-4 max-h-60 overflow-y-auto">
             <ul>
               <li>
                 <div className="pb-3 font-xl">
