@@ -9,6 +9,8 @@ export default function Products() {
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
   const firstProductRef = useRef(null);
+  const manufacturersMap = new Map();
+  
 
   const [loading, setLoading] = useState(true);
   const fetchData = async () => {
@@ -29,15 +31,20 @@ export default function Products() {
     fetchData();
   }, []);
 
-  const manufacturers = [
-    ...new Set(products.map((product) => product.manufacturer)),
-  ];
+  products.forEach((product) => {
+    const normalized = product.manufacturer?.trim().toLowerCase(); // Elimina espacios y normaliza
+    if (!manufacturersMap.has(normalized)) {
+      manufacturersMap.set(normalized, product.manufacturer?.trim()); // Guarda el original
+    }
+  });
+  
+  const manufacturers = [...manufacturersMap.values()];
 
   const filteredProducts = selectedManufacturer
-    ? products.filter(
-        (product) => product.manufacturer === selectedManufacturer
-      )
-    : products;
+  ? products.filter(
+      (product) => product.manufacturer.trim().toLowerCase() === selectedManufacturer.trim().toLowerCase()
+    )
+  : products;
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
