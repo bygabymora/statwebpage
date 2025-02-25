@@ -59,7 +59,7 @@ export default function ProductScreen(props) {
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(); 
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clearance?.countInStock ?? null); // Add Clearance state
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(); 
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
   const [currentPrice, setCurrentPrice] = useState(product.each?.wpPrice || null);
