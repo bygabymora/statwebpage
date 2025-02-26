@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import Order from '../../../models/Order';
 import Product from '../../../models/Product';
-import User from '../../../models/user';
+import WpUser from '../../../models/WpUser';
 import db from '../../../utils/db';
 
 const handler = async (req, res) => {
@@ -14,7 +14,7 @@ const handler = async (req, res) => {
 
   const ordersCount = await Order.countDocuments();
   const productsCount = await Product.countDocuments();
-  const usersCount = await User.countDocuments();
+  const usersCount = await WpUser.countDocuments();
 
   const ordersPriceGroup = await Order.aggregate([
     {

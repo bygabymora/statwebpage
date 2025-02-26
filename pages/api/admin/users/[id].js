@@ -1,4 +1,4 @@
-import User from '../../../../models/user';
+import WpUser from '../../../../models/WpUser';
 import db from '../../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
@@ -23,7 +23,7 @@ const handler = async (req, res) => {
 
 const getHandler = async (req, res) => {
   await db.connect();
-  const user = await User.findById(req.query.id);
+  const user = await WpUser.findById(req.query.id);
   await db.disconnect();
   res.send(user);
 };
@@ -31,7 +31,7 @@ const getHandler = async (req, res) => {
 
 const putHandler = async (req, res) => {
   await db.connect();
-  const user = await User.findById(req.query.id);
+  const user = await WpUser.findById(req.query.id);
   if (user) {
     user.name = req.body.name;
     user.email = req.body.email;
@@ -50,7 +50,7 @@ const putHandler = async (req, res) => {
 
 const deleteHandler = async (req, res) => {
   await db.connect();
-  const user = await User.findById(req.query.id);
+  const user = await WpUser.findById(req.query.id);
   if (user) {
     if (user.isAdmin === true) {
       await db.disconnect();
@@ -58,7 +58,7 @@ const deleteHandler = async (req, res) => {
         .status(400)
         .send({ message: 'Cant delete admin' });
     }
-    await User.findByIdAndDelete(req.query.id);
+    await WpUser.findByIdAndDelete(req.query.id);
     await db.disconnect();
     res.send({ message: 'User deleted' });
   } else {

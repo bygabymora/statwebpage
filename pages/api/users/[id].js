@@ -1,4 +1,4 @@
-import User from '../../../models/user';
+import WpUser from '../../../models/WpUser';
 import db from '../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
@@ -17,7 +17,7 @@ const handler = async (req, res) => {
 
 const getHandler = async (req, res) => {
   await db.connect();
-  const user = await User.findById(req.query.id);
+  const user = await WpUser.findById(req.query.id);
   await db.disconnect();
   res.send(user);
 };

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema(
+const wpUserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
@@ -8,13 +8,14 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, required: true, default: false },
     companyName: { type: String, required: false },
     companyEinCode: { type: String, required: false },
-    active: { type: Boolean, required: true, default: false },
+    active: { type: Boolean, required: true, default: false }, 
+    approved: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,
   }
 );
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const WpUser = mongoose.models.WpUser || mongoose.model('WpUser', wpUserSchema);
 
-export default User;
+export default WpUser;

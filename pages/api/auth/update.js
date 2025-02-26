@@ -1,5 +1,5 @@
 import bcryptjs from 'bcryptjs';
-import User from '../../../models/user';
+import WpUser from '../../../models/WpUser';
 import db from '../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
@@ -28,7 +28,7 @@ async function handler(req, res) {
   }
 
   await db.connect();
-  const toUpdateUser = await User.findById(user._id);
+  const toUpdateUser = await WpUser.findById(user._id);
   toUpdateUser.name = name;
   toUpdateUser.email = email;
 

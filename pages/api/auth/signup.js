@@ -1,5 +1,5 @@
 import bcryptjs from 'bcryptjs';
-import User from '../../../models/user';
+import WpUser from '../../../models/WpUser';
 import db from '../../../utils/db';
 
 async function handler(req, res) {
@@ -22,14 +22,14 @@ async function handler(req, res) {
 
   await db.connect();
 
-  const existingUser = await User.findOne({ email: email });
+  const existingUser = await WpUser.findOne({ email: email });
   if (existingUser) {
     res.status(422).json({ message: 'User exists already!' });
     await db.disconnect();
     return;
   }
 
-  const newUser = new User({
+  const newUser = new WpUser({
     name,
     email,
     password: bcryptjs.hashSync(password),
