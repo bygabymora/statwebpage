@@ -79,7 +79,7 @@ export default function ProductScreen(props) {
       return 'Bulk';
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return 'Each';
-    } else if ((product.clearance?.countInStock ?? 0) > 0) {
+    } else if ((product.each?.clearanceCountInStock ?? 0) > 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -91,31 +91,35 @@ export default function ProductScreen(props) {
   }, [product.slug, product.manufacturer]);
 
   useEffect(() => {
-    if (product.countInStock === 0) {
+    if (product.countInStock || 0 ) {
       setPurchaseType('Bulk');
-      setCurrentPrice(product.box?.wpPrice);
-      setCurrentDescription(product.box?.description);
-      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction);
+      setCurrentPrice(product.box?.wpPrice || 0 );
+      setCurrentDescription(product.box?.description || '');
+      setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
     }
-  }, [purchaseType, product.box, product.countInStock]);
-
-useEffect(() => {
-    if (product.each?.quickBooksQuantityOnHandProduction === 0 && product.box?.quickBooksQuantityOnHandProduction === 0 && product.clearance?.countInStock === 0) {
-      setPurchaseType('Clearance');
-      setCurrentPrice(product.clearance?.price);
-      setCurrentDescription(product.clearance?.description|| "No description");
-      setCurrentCountInStock(product.clearance?.countInStock);
-    }
-  }, [product.clearance?.description, product.clearance?.price]);
+  }, [purchaseType, product.box]);
 
   useEffect(() => {
+    const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
+    const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
+    const clearanceStock = product.each?.clearanceCountInStock ?? 0 <= 0;
+    
+    if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
+      setPurchaseType('Clearance');
+      setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
+      setCurrentDescription(product.each?.description || "No description");
+      setCurrentCountInStock(clearanceStock);
+    }
+  }, [product]);
+  
+  useEffect(() => {
     if (purchaseType === 'Each') {
-      setCurrentPrice(product.each?.wpPrice);
+      setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || '');
-      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction);
+      setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? null);
     }
   }, [purchaseType, product.each]);
-
+  
   useEffect(() => {
     if (purchaseType === 'Each') {
       setCurrentPrice(product.each?.wpPrice ?? null);
@@ -128,7 +132,7 @@ useEffect(() => {
     } else if (purchaseType === 'Clearance') {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || 'No description');
-      setCurrentCountInStock(product.clearance?.countInStock ?? 0);
+      setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
     }
   }, [purchaseType, product]);
 
@@ -145,7 +149,7 @@ useEffect(() => {
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      (data.clearance?.countInStock ?? 0) < quantity
+      (product.each?.clearanceCountInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
@@ -167,7 +171,7 @@ useEffect(() => {
             : purchaseType === 'Bulk'
             ? product.box?.wpPrice
             : purchaseType === 'Clearance'
-            ? product.clearance?.price
+            ? product.clearance?.Price
             : product.Price,
         description:
           purchaseType === 'Each'
@@ -183,18 +187,12 @@ useEffect(() => {
             : purchaseType === 'Bulk'
             ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
-            ? product.clearance?.countInStock
-            : product.countInStock,
+            ? product.each?.clearanceCountInStock
+            : product.clearanceCountInStock,
       },
     });
     setQty(1);
     toast.success('Item added to cart');
-
-    if (purchaseType === 'Each' && data.countInStockEach < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
-    } else if (purchaseType === 'Bulk' && data.countInStockBulk < quantity) {
-      alert("Sorry, we don't have enough of that item in stock.");
-    }
     setShowPopup(true);
   };
 
@@ -337,33 +335,41 @@ useEffect(() => {
       </div>
         <div className="flex flex-col items-center justify-center">
           <div className="card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md">
-            <div className="mb-2 flex items-center justify-center">
-              <div className="font-bold mt-4">Quantity &nbsp;</div>
-              <div className="flex items-center flex-row">
-                <button
-                  className="border px-2 py-1 card"
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  disabled={qty <= 1}
-                >
-                  -
-                </button>
-                <span className="px-1 mt-4">
-                  {qty}
-                </span>
-                <button
-                  className="border px-2 py-1 card"
-                  onClick={() => {
-                    if (qty < currentCountInStock) {
-                      setQty(qty + 1);
-                    } else {
-                      setShowModal(true);
-                    }
-                  }}
-                >
-                  +
-                </button>
+            {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active && currentCountInStock > 0 && (
+              <div className="mb-2 flex items-center justify-center">
+                <div className="font-bold mt-4">Quantity &nbsp;</div>
+                <div className="flex items-center flex-row">
+                  <button
+                    className="border px-2 py-1 card"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    disabled={qty <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="px-1 mt-4">
+                    {qty}
+                  </span>
+                  <button
+                    className="border px-2 py-1 card"
+                    onClick={() => {
+                      if (qty < currentCountInStock) {
+                        setQty(qty + 1);
+                      } else {
+                        setShowModal(true);
+                      }
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
+            )}
+            {(isOutOfStock || isOutOfStockBulk || isOutOfStockClearance || currentCountInStock <= 0) && (
+            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
+              <div className="font-bold">Status</div>
+              <div className="">Out of Stock</div>
             </div>
+          )}
             {showModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
@@ -439,7 +445,8 @@ useEffect(() => {
           </div>
         ) : null
       ) : (
-        // If you only have Clearance, show it once without an "Add to Cart" button
+      // If you only have Clearance, show it once without an "Add to Cart" button
+      product.each?.clearanceCountInStock > 0 && (
         <div className="my-5 text-center">
           <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
           {active === "loading" ? (
@@ -453,46 +460,47 @@ useEffect(() => {
               </div>
             ) : null}
               <div className="text-[#414b53]">{product.notes}</div>
-        </div>
-          )}
-          {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-            product.box?.quickBooksQuantityOnHandProduction > 0) && (
-            <div>
-              <div className="mb-2 flex justify-between">
-                <div className="font-bold">Status</div>
-                <div>
+        </div>  
+      )
+      )}
+      {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
+        product.box?.quickBooksQuantityOnHandProduction > 0) && (
+        <div>
+          <div className="mb-2 flex justify-between">
+            <div className="font-bold">Status</div>
+              <div>
+                {(purchaseType === 'Each' && isOutOfStock) ||
+                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  ? 'Out of Stock'
+                  : 'In Stock'}
+              </div>
+            </div>
+            {active === "loading" ? (
+            "Loading"
+            ) : (
+              active && (
+                <button
+                  className="primary-button cart-button my-2"
+                  type="button"
+                  onClick={addToCartHandler}
+                  disabled={
+                    (purchaseType === 'Each' && isOutOfStock) ||
+                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  }
+                  >
                   {(purchaseType === 'Each' && isOutOfStock) ||
                   (purchaseType === 'Bulk' && isOutOfStockBulk) ||
                   (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'In Stock'}
-                </div>
-              </div>
-              {active === "loading" ? (
-              "Loading"
-              ) : (
-                active && (
-                  <button
-                    className="primary-button cart-button my-2"
-                    type="button"
-                    onClick={addToCartHandler}
-                    disabled={
-                      (purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    }
-                    >
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
-                  </button>
-                )
-              )}
-            </div>
-          )}
-        </div>
+                  ? 'Out of Stock'
+                  : 'Add to Cart'}
+                </button>
+              )
+            )}
+          </div>
+        )}
+      </div>
         )}
             {showPopup && (
               <div className="popup">
@@ -517,150 +525,54 @@ useEffect(() => {
                 </div>
               </div>
             )}
-            {purchaseType === 'Bulk' && isOutOfStockBulk && (
-              <form className="text-center " ref={form} onSubmit={sendEmail}>
-                <label className="mt-3 font-bold ">Join Our Wait List</label>
-                <input
-                  type="text"
-                  name="user_name"
-                  className="contact__form-input"
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                  placeholder="Name"
-                  required
-                />
-                <input
-                  type="email"
-                  name="user_email"
-                  className="contact__form-input mt-2"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  placeholder="Email"
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailSlug"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailSlug(e.target.value)}
-                  value={emailSlug}
-                  hidden
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailManufacturer"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailManufacturer(e.target.value)}
-                  value={emailManufacturer}
-                  hidden
-                  required
-                />
-                <button
-                  className="primary-button mt-3"
-                  type="submit"
-                  onClick={sendEmail}
-                >
-                  Submit
-                </button>
-              </form>
-            )}
-            {purchaseType === 'Each' && isOutOfStock && (
-              <form className="text-center" ref={form} onSubmit={sendEmail}>
-                <label className="mt-3 font-bold ">Join Our Wait List</label>
-                <input
-                  type="text"
-                  name="user_name"
-                  className="contact__form-input "
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                  placeholder="Name"
-                  required
-                />
-                <input
-                  type="email"
-                  name="user_email"
-                  className="contact__form-input mt-2"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  placeholder="Email"
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailSlug"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailSlug(e.target.value)}
-                  value={emailSlug}
-                  hidden
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailManufacturer"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailManufacturer(e.target.value)}
-                  value={emailManufacturer}
-                  hidden
-                  required
-                />
-                <button
-                  className="primary-button mt-3"
-                  type="submit"
-                  onClick={sendEmail}
-                >
-                  Submit
-                </button>
-              </form>
-            )}
-            {purchaseType === 'Clearance' && isOutOfStockClearance && (
-              <form className="text-center " ref={form} onSubmit={sendEmail}>
-                <label className="mt-3 font-bold ">Join Our Wait List</label>
-                <input
-                  type="text"
-                  name="user_name"
-                  className="contact__form-input"
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                  placeholder="Name"
-                  required
-                />
-                <input
-                  type="email"
-                  name="user_email"
-                  className="contact__form-input"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  placeholder="Email"
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailSlug"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailSlug(e.target.value)}
-                  value={emailSlug}
-                  hidden
-                  required
-                />
-                <input
-                  type="text"
-                  name="emailManufacturer"
-                  className="contact__form-input"
-                  onChange={(e) => setEmailManufacturer(e.target.value)}
-                  value={emailManufacturer}
-                  hidden
-                  required
-                />
-                <button
-                  className="primary-button mt-3"
-                  type="submit"
-                  onClick={sendEmail}
-                >
-                  Submit
-                </button>
-              </form>
-            )}
+        {(  
+            (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
+            (purchaseType === 'Bulk' && (isOutOfStockBulk || currentCountInStock <= 0)) ||
+            (purchaseType === 'Clearance' && isOutOfStockClearance)
+          ) && (
+          <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
+            <label className="mt-3 font-bold">Join Our Wait List</label>
+            <input
+              type="text"
+              name="user_name"
+              className="contact__form-input"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="Name"
+              required
+            />
+            <input
+              type="email"
+              name="user_email"
+              className="contact__form-input mt-2"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              placeholder="Email"
+              required
+            />
+            <input
+              type="text"
+              name="emailSlug"
+              className="contact__form-input"
+              onChange={(e) => setEmailSlug(e.target.value)}
+              value={emailSlug}
+              hidden
+              required
+            />
+            <input
+              type="text"
+              name="emailManufacturer"
+              className="contact__form-input"
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button className="primary-button mt-3" type="submit" onClick={sendEmail}>
+              Submit
+            </button>
+          </form>
+        )}
           </div>
           </div>
         </div>

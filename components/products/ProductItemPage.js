@@ -13,14 +13,14 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.clearance?.countInStock ?? 0);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.each?.clearanceCountInStock ?? 0);
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Bulk';
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Each';
-    } else if ((product.clearance?.countInStock ?? 0)> 0) {
+    } else if ((product.each?.clearanceCountInStock ?? 0)> 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -45,7 +45,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
     const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
-    const clearanceStock = product.clearance?.countInStock ?? 0;
+    const clearanceStock = product.each?.clearanceCountInStock ?? 0;
   
     if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
       setPurchaseType('Clearance');
@@ -72,7 +72,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(product.clearance?.countInStock ?? null);
+      setCurrentCountInStock(product.each?.clearanceCountInStock ?? null);
     }
   }, [clearancePurchaseType, product.clearance]);
 
@@ -88,7 +88,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     } else if (purchaseType === 'Clearance') {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || 'No description');
-      setCurrentCountInStock(product.clearance?.countInStock ?? 0);
+      setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
     }
   }, [purchaseType, product]);
 
@@ -107,7 +107,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       return;
     } else if (
       purchaseType === 'Clearance' &&
-      (data.clearance?.countInStock ?? 0) < quantity
+      (data.each?.clearanceCountInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
@@ -141,8 +141,8 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             : purchaseType === 'Bulk'
             ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
-            ? product.clearance?.countInStock
-            : product.countInStock,
+            ? product.each?.clearanceCountInStock
+            : product.clearanceCountInStock,
       },
     });
     setQty(1);
@@ -224,7 +224,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             </div>
           </Link>
           <div>
-          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active && (
+          {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active && currentCountInStock > 0 && (
             <div className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
               <div className="flex items-center flex-row">
@@ -271,20 +271,8 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               </div>
             </div>
           )}
-          </div>
-          {purchaseType === 'Each' && isOutOfStock && (
-            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
-              <div className="font-bold">Status</div>
-              <div className="">Out of Stock</div>
-            </div>
-          )}
-          {purchaseType === 'Bulk' && isOutOfStockBulk && (
-            <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
-              <div className="font-bold">Status</div>
-              <div className="">Out of Stock</div>
-            </div>
-          )}
-          {purchaseType === 'Clearance' && isOutOfStockClearance && (
+          </div> 
+          {(isOutOfStock || isOutOfStockBulk || isOutOfStockClearance || currentCountInStock <= 0) && (
             <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
               <div className="">Out of Stock</div>
@@ -292,150 +280,54 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           )}
         </div>
       </div>
-      {purchaseType === 'Bulk' && isOutOfStockBulk && (
-        <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input mt-2"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button
-            className="primary-button mt-3"
-            type="submit"
-            onClick={sendEmail}
-          >
-            Submit
-          </button>
-        </form>
-      )}
-      {purchaseType === 'Each' && isOutOfStock && (
-        <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input mt-2"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button
-            className="primary-button mt-3"
-            type="submit"
-            onClick={sendEmail}
-          >
-            Submit
-          </button>
-        </form>
-      )}
-      {purchaseType === 'Clearance' && isOutOfStockClearance && (
-        <form className="text-center " ref={form} onSubmit={sendEmail}>
-          <label className="mt-3 font-bold ">Join Our Wait List</label>
-          <input
-            type="text"
-            name="user_name"
-            className="contact__form-input"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            required
-          />
-          <input
-            type="email"
-            name="user_email"
-            className="contact__form-input"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="emailSlug"
-            className="contact__form-input"
-            onChange={(e) => setEmailSlug(e.target.value)}
-            value={emailSlug}
-            hidden
-            required
-          />
-          <input
-            type="text"
-            name="emailManufacturer"
-            className="contact__form-input"
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button
-            className="primary-button mt-3"
-            type="submit"
-            onClick={sendEmail}
-          >
-            Submit
-          </button>
-        </form>
-      )}
+        {(  
+            (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
+            (purchaseType === 'Bulk' && (isOutOfStockBulk || currentCountInStock <= 0)) ||
+            (purchaseType === 'Clearance' && isOutOfStockClearance)
+          ) && (
+          <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
+            <label className="mt-3 font-bold">Join Our Wait List</label>
+            <input
+              type="text"
+              name="user_name"
+              className="contact__form-input"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="Name"
+              required
+            />
+            <input
+              type="email"
+              name="user_email"
+              className="contact__form-input mt-2"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              placeholder="Email"
+              required
+            />
+            <input
+              type="text"
+              name="emailSlug"
+              className="contact__form-input"
+              onChange={(e) => setEmailSlug(e.target.value)}
+              value={emailSlug}
+              hidden
+              required
+            />
+            <input
+              type="text"
+              name="emailManufacturer"
+              className="contact__form-input"
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button className="primary-button mt-3" type="submit" onClick={sendEmail}>
+              Submit
+            </button>
+          </form>
+        )}
         {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
           <div>
             {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
@@ -462,7 +354,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       } else if (e.target.value === 'Clearance' && product.clearance) {
                         setCurrentPrice(product.clearance?.price || 0);
                         setCurrentDescription(product.clearance?.description || '');
-                        setCurrentCountInStock(product.clearance?.countInStock || 0);
+                        setCurrentCountInStock(product.each?.clearanceCountInStock || 0);
                       }
                     }}
                   >
@@ -472,7 +364,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                     {product.box?.quickBooksQuantityOnHandProduction > 0 && (
                       <option value="Bulk">Box</option>
                     )}
-                    {product.clearance?.countInStock > 0 && (
+                    {product.each?.clearanceCountInStock > 0 && (
                       <option value="Clearance">Clearance</option>
                     )}
                   </select>
@@ -493,20 +385,22 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         ) : null
       ) : (
         // If you only have Clearance, show it once without an "Add to Cart" button
-        <div className="my-5 text-center">
-          <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
-          {active === "loading" ? (
-          "Loading"
-          ) : active ? (
-            <div className="mb-2 flex justify-center">
-              <div className="font-bold">Price:</div>
-              <div className="ml-2 text-[#788b9b]">
-                $ {product.clearance?.price || 'Call for Price'}
+        product.each?.clearanceCountInStock > 0 && (
+          <div className="my-5 text-center">
+            <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+            {active === "loading" ? (
+              "Loading"
+            ) : active ? (
+              <div className="mb-2 flex justify-center">
+                <div className="font-bold">Price:</div>
+                <div className="ml-2 text-[#788b9b]">
+                  $ {product.clearance?.price || 'Call for Price'}
+                </div>
               </div>
-            </div>
-          ) : null}
-          <div className="text-[#414b53]">{product.notes}</div>
-        </div>
+            ) : null}
+            <div className="text-[#414b53]">{product.notes}</div>
+          </div>
+        )
           )}
           {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
             product.box?.quickBooksQuantityOnHandProduction > 0) && (
