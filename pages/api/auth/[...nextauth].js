@@ -23,9 +23,15 @@ export default NextAuth({
       if (user?.companyEinCode) {
         token.companyEinCode = user.companyEinCode;
       }
+      if (user?.active !== undefined) {
+        token.active = user.active;
+      }
+      if (user?.approved !== undefined) {
+        token.approved = user.approved;
+      }
       return token;
     },
-
+  
     async session({ session, token }) {
       if (token?._id) {
         session.user._id = token._id;
@@ -39,9 +45,14 @@ export default NextAuth({
       if (token?.companyEinCode) {
         session.user.companyEinCode = token.companyEinCode;
       }
-
+      if (token?.active !== undefined) {
+        session.user.active = token.active;
+      }
+      if (token?.approved !== undefined) {
+        session.user.approved = token.approved;
+      }
       return session;
-    },
+    }
   },
 
   providers: [
@@ -50,19 +61,32 @@ export default NextAuth({
         await db.connect();
         const user = await WpUser.findOne({ email: credentials.email });
         await db.disconnect();
-        if (user && bcryptjs.compareSync(credentials.password, user.password)) {
-          return {
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            companyName: user.companyName,
-            companyEinCode: user.companyEinCode,
-            image: 'f',
-            isAdmin: user.isAdmin,
-          };
+      
+        if (!user) {
+          throw new Error('Invalid email or password');
         }
-        throw new Error('Invalid email or password');
-      },
+      
+        if (!bcryptjs.compareSync(credentials.password, user.password)) {
+          throw new Error('Invalid email or password');
+        }
+      
+        // Validate if the user is approved and active
+        if (!user.active || !user.approved) {
+          throw new Error('Your account is not approved yet.');
+        }
+      
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          companyName: user.companyName,
+          companyEinCode: user.companyEinCode,
+          image: 'f',
+          isAdmin: user.isAdmin,
+          active: user.active,
+          approved: user.approved,
+        };
+      }
     }),
   ],
 });

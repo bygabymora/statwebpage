@@ -27,38 +27,21 @@ export default function LoginScreen() {
     }
   }, [router, session, redirect]);
 
-  const {
-    handleSubmit,
-    register,
-    getValues,
-    formState: { errors },
-  } = useForm();
-  const submitHandler = async ({
-    name,
-    email,
-    password,
-    companyName,
-    companyEinCode,
-  }) => {
+  const submitHandler = async ({ name, email, password, companyName, companyEinCode }) => {
     try {
+      // Create the user with active and approved set to false by default
       await axios.post('/api/auth/signup', {
         name,
         email,
         password,
         companyName,
         companyEinCode,
+        active: false, // These values ​​are added for security
+        approved: false,
       });
-
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-        companyName,
-        companyEinCode,
-      });
-      if (result.error) {
-        toast.error(result.error);
-      }
+  
+      toast.success("Account created successfully. Please wait for approval.");
+      router.push("/Login"); // Redirect to login without automatic login
     } catch (err) {
       toast.error(getError(err));
     }

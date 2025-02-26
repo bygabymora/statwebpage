@@ -36,6 +36,8 @@ async function handler(req, res) {
     isAdmin: false,
     companyName,
     companyEinCode,
+    active: false,
+    approved: false,
   });
 
   const user = await newUser.save();
