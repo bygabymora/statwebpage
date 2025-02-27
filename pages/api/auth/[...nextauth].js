@@ -70,11 +70,6 @@ export default NextAuth({
           throw new Error('Invalid email or password');
         }
       
-        // Validate if the user is approved and active
-        if (!user.active || !user.approved) {
-          throw new Error('Your account is not approved yet.');
-        }
-      
         return {
           _id: user._id,
           name: user.name,

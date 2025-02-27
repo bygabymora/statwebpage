@@ -22,7 +22,7 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
 
-  const active = session?.user?.active || status === "authenticated";
+  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
   useEffect(() => {
     setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));

@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,8 +11,27 @@ import {
   generateMainPageJSONLD,
 } from '../../utils/seo';
 import Logo from '../../public/images/assets/logo2.png';
+import StatusMessage from './StatusMessage';
+import { useSession } from 'next-auth/react';
+import CustomAlertModal from './CustomAlertModal';
 
-export default function Layout({ title, children, news, product }) {
+export default function Layout({ title, children, news, product }) { 
+  const [isStatusVisible, setIsStatusVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {data: session} = useSession();
+  const message = {
+    title: 'Account Verification',
+    body: 'Thank you for trusting us and considering our services. We will work to approve and activate your account within 24 hours.',
+    warning: 'If it takes longer than expected, please contact us for more information. Thank you for choosing us!',
+  };
+
+  useEffect(() => {
+    if (session?.user && (!session.user?.active || !session.user?.approved)) {
+      setIsStatusVisible(true); // small message
+      setIsModalVisible(true); // Modal
+    }
+  }, [session]);
+
   return (
     <div className="w-full" lang="en">
       <Analytics />
@@ -84,11 +103,11 @@ export default function Layout({ title, children, news, product }) {
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
         <Header />
-
+         <StatusMessage type='error' message={message.body} isVisible={isStatusVisible} />
         <main className="main container  m-auto mt-11 px-4">{children}</main>
-
         <Footer />
       </div>
+      <CustomAlertModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} message={message} />
     </div>
   );
 }

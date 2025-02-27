@@ -525,7 +525,7 @@ export default function ProductScreen(props) {
                 </div>
               </div>
             )}
-        {(  
+        {( 
             (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
             (purchaseType === 'Bulk' && (isOutOfStockBulk || currentCountInStock <= 0)) ||
             (purchaseType === 'Clearance' && isOutOfStockClearance)

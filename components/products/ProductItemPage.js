@@ -31,7 +31,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
   const [showModal, setShowModal] = useState(false);
 
-  const active = session?.user?.active || status === "authenticated";
+  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
   useEffect(() => {
     if (product.countInStock || 0 ) {
