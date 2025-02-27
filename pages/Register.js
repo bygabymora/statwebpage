@@ -43,7 +43,7 @@ export default function LoginScreen() {
         password,
         companyName,
         companyEinCode,
-        active: false, // These values ​​are added for security
+        active: false,
         approved: false,
       });
   
