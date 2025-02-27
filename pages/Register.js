@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
+import { useSession } from 'next-auth/react';
 import Layout from '../components/main/Layout';
 import { getError } from '../utils/error';
 import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
