@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import {useSession } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
 import Layout from '../components/main/Layout';
 import { getError } from '../utils/error';
 import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
@@ -25,6 +26,13 @@ export default function LoginScreen() {
       router.push(redirect || '/');
     }
   }, [router, session, redirect]);
+
+  const {
+    handleSubmit,
+    register,
+    getValues,
+    formState: { errors },
+  } = useForm();
 
   const submitHandler = async ({ name, email, password, companyName, companyEinCode }) => {
     try {
