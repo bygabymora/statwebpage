@@ -17,7 +17,7 @@ const Banner = () => {
 
   useEffect(() => {
     const imageContainer = document.querySelector('.image-container');
-    imageContainer.classList.add('fade-in-right');
+    imageContainer.classList.add('fade-in-scale');
 
     const animationDuration = 1000;
     setTimeout(() => {
