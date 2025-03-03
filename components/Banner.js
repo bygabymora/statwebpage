@@ -17,7 +17,7 @@ const Banner = () => {
 
   useEffect(() => {
     const imageContainer = document.querySelector('.image-container');
-    imageContainer.classList.add('fade-in-scale');
+    imageContainer.classList.add('fade-in-right');
 
     const animationDuration = 1000;
     setTimeout(() => {
@@ -32,8 +32,8 @@ const Banner = () => {
   const handleLinkClick = (section) => {
     if (window.innerWidth >= 800) {
       const yOffsetLargeScreen = -170;
-      setTimeout(() => {
-        const element = document.getElementById(section);
+    setTimeout(() => {
+      const element = document.getElementById(section);
         const y =
           element.getBoundingClientRect().top +
           window.scrollY +
@@ -50,8 +50,8 @@ const Banner = () => {
           element.getBoundingClientRect().top +
           window.scrollY +
           yOffsetSmallScreen;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 200);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }, 200);
     }
   };
 
@@ -143,12 +143,12 @@ const Banner = () => {
         </div>
         <div className="image-container">
           {audience === 'hospital' ? (
-            <Image
+          <Image
               className="image-container-image"
               src={Banner2}
-              alt="Banner"
-              width={500}
-              height={500}
+            alt="Banner"
+            width={500}
+            height={500}
               quality={5}
             />
           ) : audience === 'manufacturer' ? (
