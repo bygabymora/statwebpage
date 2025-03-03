@@ -19,15 +19,10 @@ const StaticBanner = () => {
           Stat Surgical Supply is looking to fill our customer demand. We pay
           top dollar for in-date high-end surgical disposables.
         </p>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
           <Link className="flex justify-center items-center gap-2 bg-[#03793d] text-white px-6 py-3 rounded-lg shadow-lg hover:bg-[#144e8b] transition duration-300" href="/ManufacturerForm">
             <span className="font-semibold">Send us your list</span>
             <AiOutlineSend className="text-xl" />
           </Link>
-        </motion.div>
       </div>
     </motion.div>
   );

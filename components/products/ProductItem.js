@@ -142,7 +142,12 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       },
     });
     setQty(1);
-    toast.success('Item added to cart');
+    toast.success('Item added to cart', { 
+      autoClose: 1,
+      closeOnClick: true,
+      hideProgressBar: true,
+      pauseOnHover: false,
+    });
   };
   
   //-----------------EmailJS-----------------//
