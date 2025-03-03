@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { BiMessageAdd } from 'react-icons/bi';
+import { motion } from 'framer-motion';
 
 const ContactUs = () => {
   const form = useRef();
@@ -32,10 +33,17 @@ const ContactUs = () => {
     setEmail('');
     setMessage('');
   };
+
   const tab = <>&nbsp;&nbsp;</>;
 
   return (
-    <div className="contact__content">
+    <motion.div 
+      className="contact__content"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      viewport={{ once: true }}
+    >
       <h3 className="contact__title">Send a message</h3>
 
       <form className="contact__form" ref={form} onSubmit={sendEmail}>
@@ -82,12 +90,16 @@ const ContactUs = () => {
             required
           />
         </div>
-        <button className="button button--flex btn-contact">
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="button button--flex btn-contact"
+        >
           <span className=" text-white">Send Message {tab} </span>
           <BiMessageAdd className=" text-white" />
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
