@@ -83,12 +83,12 @@ export default function AdminOrderScreen() {
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order._id} className="border-b hover:bg-gray-100">
-                      <td className="border border-collapse p-5">{order._id.substring(20, 24)}</td>
+                      <td className="border border-collapse p-5">{order?._id ? order._id.substring(20, 24):'No ID'}</td>
                       <td className="border border-collapse p-5">
-                        {order.user ? order.user.name : 'DELETED USER'}
+                      {order?.WpUser?.name ? order.WpUser.name : 'DELETED USER'}
                       </td>
                       <td className="border border-collapse p-5">
-                        {order.createdAt.substring(0, 10)}
+                      {order?.createdAt ? order.createdAt.substring(0, 10) : 'No Date'}
                       </td>
                       <td className="border border-collapse p-5">${order.totalPrice}</td>
                       <td className="border border-collapse p-5">
