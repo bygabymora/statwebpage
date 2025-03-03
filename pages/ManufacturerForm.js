@@ -1,148 +1,108 @@
 import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { BiMessageAdd } from 'react-icons/bi';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Layout from '../components/main/Layout';
 
 export default function ManufacturerForm() {
   const form = useRef();
   const fileInputRef = useRef();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    phone: '',
+    message: '',
+  });
+  const [file, setFile] = useState(null);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [company, setCompany] = useState('');
-  const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
-  const [file, setFile] = useState([]);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const sendEmail = (e) => {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const sendEmail = async (e) => {
     e.preventDefault();
 
-    const fileInput = fileInputRef.current.files[0];
+    if (!file) {
+      toast.error('Please select a file');
+      return;
+    }
 
-    if (fileInput) {
-      const formData = new FormData();
-      formData.append('user_name', name);
-      formData.append('user_email', email);
-      formData.append('company', company);
-      formData.append('phone', phone);
-      formData.append('message', message);
-      formData.append('my_file', fileInput);
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append('my_file', file);
 
-      emailjs
-        .sendForm(
-          'service_ej3pm1k',
-          'template_6uwfj0h',
-          form.current,
-          'cKdr3QndIv27-P67m'
-        )
-        .then(
-          (result) => {
-            alert('Message sent, thank you for contacting us!');
-            console.log('Email sent', result.text);
-          },
-          (error) => {
-            console.log('Error sendingemail', error.text);
-          }
-        );
-
-      setName('');
-      setEmail('');
-      setCompany('');
-      setPhone('');
-      setMessage('');
-      setFile('');
-    } else {
-      alert('Please select a file');
+    try {
+      await emailjs.sendForm(
+        'service_ej3pm1k',
+        'template_6uwfj0h',
+        form.current,
+        'cKdr3QndIv27-P67m'
+      );
+      toast.success('Message sent successfully!');
+      setFormData({ name: '', email: '', company: '', phone: '', message: '' });
+      setFile(null);
+      fileInputRef.current.value = '';
+    } catch (error) {
+      toast.error('Failed to send message');
     }
   };
-  const tab = <>&nbsp;&nbsp;</>;
 
   return (
     <Layout title="Manufacturer Form">
-      <div className="manufacturer__content">
-        <h3 className="manufacturer__title">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 my-8">
+        <h3 className="text-xl text-center font-semibold text-[#144e8b] mb-6">
           For the most accurate quote, please provide us with a list that
           includes reference numbers, quantities(each/box), and expiration
           dating.
         </h3>
-
-        <form className="manufacturer__form" ref={form} onSubmit={sendEmail}>
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Name*</label>
-            <input
-              type="text"
-              name="user_name"
-              className="manufacturer__form-input"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              required
-            />
-          </div>
-
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Email*</label>
-            <input
-              type="email"
-              name="user_email"
-              className="manufacturer__form-input"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              required
-            />
-          </div>
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Phone</label>
-            <input
-              type="phone"
-              name="user_phone"
-              className="manufacturer__form-input"
-              onChange={(e) => setPhone(e.target.value)}
-              value={phone}
-            />
-          </div>
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Company</label>
-            <input
-              type="company"
-              name="user_company"
-              className="manufacturer__form-input "
-              onChange={(e) => setCompany(e.target.value)}
-              value={company}
-            />
-          </div>
-
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Message*</label>
+        <form ref={form} onSubmit={sendEmail} className="space-y-6">
+          {['name', 'email', 'company', 'phone'].map((field) => (
+            <div key={field}>
+              <label className="block text-[#144e8b] mb-2 capitalize">{field}*</label>
+              <input
+                type={field === 'email' ? 'email' : 'text'}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                required={field !== 'company' && field !== 'phone'}
+                className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
+              />
+            </div>
+          ))}
+          <div>
+            <label className="block text-[#144e8b] mb-2">Message*</label>
             <textarea
               name="message"
-              className="manufacturer__form-input contact__message"
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
+              value={formData.message}
+              onChange={handleChange}
               required
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
             />
           </div>
-
-          <div className="manufacturer__form-div">
-            <label className="manufacturer__form-tag">Upload File</label>
+          <div>
+            <label className="block text-[#144e8b] mb-2">Upload File*</label>
             <input
               type="file"
               name="my_file"
-              onChange={(e) => setFile(e.target.value)}
-              className="manufacturer__form-input"
               ref={fileInputRef}
-              value={file}
+              onChange={handleFileChange}
+              className="w-full p-3 border rounded-lg"
             />
           </div>
-
           <button
-            className="button button-flex rounded py-2 px-4 shadow outline-none hover:bg-gray-400 active:bg-gray-500 text-white w-full mb-3"
             type="submit"
-            value="Send"
+            className="w-full bg-[#144e8b] hover:bg-[#788b9b] text-white py-3 rounded-lg flex items-center justify-center gap-2"
           >
-            <span className="flex items-center justify-center text-white ">
-              Send {tab}
-              <BiMessageAdd className="ml-2" />
-            </span>
+            Send
+            <BiMessageAdd />
           </button>
         </form>
       </div>
