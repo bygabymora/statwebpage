@@ -93,8 +93,8 @@ export default function AdminProductsScreen() {
           <div className="overflow-x-auto">
             <br />
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-gray-100 border border-collapse">
-                <tr>
+              <thead className="bg-gray-100 border border-collapse sticky top-0 z-10">
+                <tr className='sticky top-0'>
                   <th className="p-4 text-left uppercase border border-collapse sticky top-0">
                     REF
                     <br />
@@ -131,6 +131,7 @@ export default function AdminProductsScreen() {
                           height={100}
                           src={product.image}
                           alt={product.name}
+                          className="rounded-lg shadow-lg hover:scale-105 transition-all duration-300" 
                         />
                       </div>
                     </td>

@@ -204,7 +204,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
             <Image
               src={product.image}
               alt={currentDescription}
-              className="product-image no-drag rounded-lg"
+              className="rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
               width={800}
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
