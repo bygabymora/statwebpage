@@ -52,7 +52,7 @@ const Navbar = () => {
         } else {
           console.error(`Element with id "${section}" not found.`);
         }
-      }, 200);
+      }, 2000);
     } else {
       const yOffsetSmallScreen = -50;
       setTimeout(() => {
@@ -68,7 +68,7 @@ const Navbar = () => {
         } else {
           console.error(`Element with id "${section}" not found.`);
         }
-      }, 200);
+      }, 2000);
     }
   };
   

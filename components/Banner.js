@@ -39,7 +39,7 @@ const Banner = () => {
           window.scrollY +
           yOffsetLargeScreen;
         window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 200);
+      }, 2000);
     } else {
       const yOffsetSmallScreen = -50;
       setTimeout(() => {
@@ -51,7 +51,7 @@ const Banner = () => {
           window.scrollY +
           yOffsetSmallScreen;
       window.scrollTo({ top: y, behavior: 'smooth' });
-    }, 200);
+    }, 2000);
     }
   };
 
