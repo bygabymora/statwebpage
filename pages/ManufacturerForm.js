@@ -50,7 +50,7 @@ export default function ManufacturerForm() {
       setFormData({ name: '', email: '', company: '', phone: '', message: '' });
       setFile(null);
       fileInputRef.current.value = '';
-    } catch (error) {
+    } catch {
       toast.error('Failed to send message');
     }
   };
