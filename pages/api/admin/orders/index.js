@@ -9,7 +9,7 @@ const handler = async (req, res) => {
   }
   if (req.method === 'GET') {
     await db.connect();
-    const orders = await Order.findById(id).populate('WpUser', 'name email');
+    const orders = await Order.find({}).populate('WpUser', 'name email').sort({ createdAt: -1 });
     await db.disconnect();
     res.send(orders);
   } else {
