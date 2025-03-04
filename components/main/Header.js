@@ -39,13 +39,10 @@ const Header = () => {
 
   const handleSearchInputChange = async (e) => {
     setSearchQuery(e.target.value);
-  
     if (e.target.value.length >= 2) {
       try {
         const { data } = await axios.get('/api/search', {
-          params: {
-            keyword: e.target.value,
-          },
+          params: { keyword: e.target.value },
         });
         setSuggestions(data);
       } catch (error) {
@@ -58,20 +55,14 @@ const Header = () => {
 
   const handleSearch = async (query = '') => {
     const searchWord = query || searchQuery.trim();
-  
-    if (!searchWord) {
-      console.warn("Search is empty.");
-      return;
-    }
-  
+    if (!searchWord) return;
     try {
       await axios.post('/api/searched', {
         searchedWord: searchWord,
         manufacturer: 'raw-search',
         name: 'raw-search',
-        email: 'raw-search', 
+        email: 'raw-search',
       });
-
       router.push(`/search?query=${encodeURIComponent(searchWord)}`);
     } catch (error) {
       console.error("Error in the search:", error.response?.data || error.message);
@@ -79,9 +70,7 @@ const Header = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+    if (e.key === 'Enter') handleSearch();
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -89,100 +78,53 @@ const Header = () => {
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
+
   return (
-    <header className="header">
-      <nav className="nav container text-center flex-row-reverse ">
-        <div className="search-field relative flex col-span-2 text-center ml-4 mr-4">
-          <div className="flex flex-col items-center w-full">
-            <div className="flex flex-row w-full">
-              <input
-                value={searchQuery}
-                onChange={handleSearchInputChange}
-                onKeyDown={handleKeyDown}
-                type="text"
-                className="bg-transparent border-b-2 border-blue-900 outline-none focus:bg-white focus:border-blue-900 md:ml-4 w-full text-blue-900"
-                placeholder="Search..."
-                onBlur={() => setSuggestions([])}
-              />
-              <button
-                className="nav__search-button"
-                onClick={() => handleSearch()}
-                aria-label="search"
-              >
-                <BiSearch className="nav__search-icon" />
-              </button>
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <nav className="container mx-auto flex justify-between items-center py-4 px-6">
+        <div className="flex items-center gap-4">
+          <Link href="/" onClick={handleHomeClick} aria-label="Home">
+           <div className="block md:hidden">
+              <Image src={Logo} alt="logo" width={100} height={50} className="object-contain"/>
+           </div>
+            <div className="hidden md:block">
+              <Image src={Logo2} alt="logo" width={55} height={50} className="object-contain"/>
             </div>
-
-            {suggestions.length > 1 && (
-              <div className="suggestions-list absolute top-full w-full mt-1 bg-white shadow-lg z-10">
-                {suggestions.map((product, idx) => (
-                  <div
-                    key={idx}
-                    className="suggestion-item px-3 py-2 hover:bg-gray-200"
-                    onMouseDown={() => handleSuggestionClick(product.name)}
-                  >
-                    {product.name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          </Link>
         </div>
-        <div className="flex h-12 items-center nav-field">
-          <div className="flex h-12 items-center">
-            <Link href="/" className="nav__logo logo" onClick={handleHomeClick}>
-              <div className="r__logo r__logo-1 overflow-hidden ">
-                <Image 
-                src={Logo2} 
-                alt="logo" 
-                width={500} 
-               
-                quality={5} />
-              </div>
-            </Link>
-            <Link
-              href="/"
-              className="nav__logo_2 logo"
-              onClick={handleHomeClick}
-            >
-              <div className="r__logo r__logo-2 overflow-hidden h-10 w-10 md:w-18">
-                <Image 
-                src={Logo} 
-                alt="logo" 
-                className='max-w-full h-auto object-contain'
-                width={200} 
-                />
-              </div>
-            </Link>
+        <div className="relative w-full max-w-lg">
+          <div className="flex items-center border-b-2 border-[#03793d]">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+              onKeyDown={handleKeyDown}
+              className="w-full p-2 outline-none text-[#144e8b]"
+              placeholder="Search..."
+            />
+            <button onClick={() => handleSearch()} aria-label="Search">
+              <BiSearch className="text-[#03793d] text-xl" />
+            </button>
           </div>
-
-          <div className="nav-reverse flex h-12 place-items-center gap-4">
-          {active === "loading" ? (
-            "Loading"
-          ) : (
-            active && (
-            <div className="flex h-12 items-center">
-              <Link
-                href={{ pathname: '/cart' }}
-                className="flex text-xl font-bold p-2"
-                aria-label="cart"
-              >
-                <BsCart2 />
-              </Link>
-              {cartItemsCount > 0 && (
-                <sub
-                  className="cart-badge"
-                  onClick={() => router.push('/cart')}
-                >
-                  {cartItemsCount}
-                </sub>
-              )}
+          {suggestions.length > 0 && (
+            <div className="suggestions-list absolute w-full mt-1 bg-white shadow-md top-full">
+              {suggestions.map((product, idx) => (
+                <div key={idx} className="p-2 hover:bg-blue-100 cursor-pointer" onMouseDown={() => handleSuggestionClick(product.name)}>
+                  {product.name}
+                </div>
+              ))}
             </div>
-             )
-            )}
-            <Signupbutton aria-label="profile" />
-            <Navbar />
-          </div>
+          )}
+        </div>
+        <div className="flex items-center gap-6">
+          {active && (
+            <Link href="/cart" aria-label="Carrito" className="relative">
+              <BsCart2 className="text-2xl text-[#144e8b]"/>
+              {cartItemsCount > 0 && <span className="absolute -top-2 -right-2 bg-[#03793d] text-white rounded-full text-xs px-2">{cartItemsCount}</span>}
+            </Link>
+          )}
+          <Signupbutton aria-label="profile"/>
+          <Navbar />
         </div>
       </nav>
     </header>

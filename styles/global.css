@@ -157,8 +157,9 @@ img {
   margin-right: auto;
 }
 .main {
-  margin-top: 8rem;
+  margin-top: 1rem;
 }
+
 .grid {
   display: grid;
   gap: 1.5rem;
