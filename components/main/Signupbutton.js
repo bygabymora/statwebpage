@@ -30,18 +30,6 @@ const SignupButton = () => {
     setMenuOpen(!menuOpen);
   };
 
-  const menuStyle = {
-    position: 'absolute',
-    top: '-120%',
-    right: 0,
-    width: '8rem',
-    marginTop: '0.5rem',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-    backgroundColor: '#fff',
-    borderRadius: '0.375rem',
-    zIndex: 10,
-  };
-
   const logoutClickHandler = () => {
     Cookies.remove('cart');
     dispatch({ type: 'CART_RESET' });
@@ -61,7 +49,7 @@ const SignupButton = () => {
         {menuOpen && (
           <div
             ref={menuRef}
-            style={menuStyle}
+            className="absolute top-12 right-0 w-32 mt-2 bg-white rounded-md shadow-lg z-10"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -69,56 +57,48 @@ const SignupButton = () => {
             {status === 'loading' ? (
               'Loading'
             ) : session?.user ? (
-              <>
-                <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
-                  <div className="font-bold ml-2">
-                    Hello! {session.user.name}
-                  </div>
+              <Menu.Items className="bg-white grid grid-cols-1">
+                <div className="font-bold p-2">Hello! {session.user.name}</div>
+                <Menu.Item>
+                  <DropdownLink href="/profile" className="dropdown-link">
+                    Profile
+                  </DropdownLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <DropdownLink href="/order-history" className="dropdown-link">
+                    Order History
+                  </DropdownLink>
+                </Menu.Item>
+                {session.user.isAdmin && (
                   <Menu.Item>
-                    <DropdownLink href="/profile" className="dropdown-link">
-                      Profile
+                    <DropdownLink href="/admin/dashboard" className="dropdown-link">
+                      Admin Dashboard
                     </DropdownLink>
                   </Menu.Item>
-                  <Menu.Item className="dropdown-link">
-                    <DropdownLink href="/order-history">
-                      Order History
-                    </DropdownLink>
-                  </Menu.Item>
-                  {session.user.isAdmin && (
-                    <Menu.Item className="dropdown-link ">
-                      <div>
-                        <DropdownLink href="/admin/dashboard">
-                          Admin Dashboard
-                        </DropdownLink>
-                      </div>
-                    </Menu.Item>
-                  )}
-                  <Menu.Item>
-                    <DropdownLink
-                      href="/"
-                      className="dropdown-link font-bold"
-                      onClick={logoutClickHandler}
-                    >
-                      Log Out
-                    </DropdownLink>
-                  </Menu.Item>
-                </Menu.Items>
-              </>
+                )}
+                <Menu.Item>
+                  <DropdownLink
+                    href="/"
+                    className="dropdown-link font-bold"
+                    onClick={logoutClickHandler}
+                  >
+                    Log Out
+                  </DropdownLink>
+                </Menu.Item>
+              </Menu.Items>
             ) : (
-              <>
-                <Menu.Items className="bg-white grid grid-cols-1 dropdown-menu">
-                  <Menu.Item>
-                    <DropdownLink href="/Login" className="dropdown-link">
-                      Login
-                    </DropdownLink>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <DropdownLink href="/Register" className="dropdown-link">
-                      Register
-                    </DropdownLink>
-                  </Menu.Item>
-                </Menu.Items>
-              </>
+              <Menu.Items className="bg-white grid grid-cols-1">
+                <Menu.Item>
+                  <DropdownLink href="/Login" className="dropdown-link">
+                    Login
+                  </DropdownLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <DropdownLink href="/Register" className="dropdown-link">
+                    Register
+                  </DropdownLink>
+                </Menu.Item>
+              </Menu.Items>
             )}
           </div>
         )}
