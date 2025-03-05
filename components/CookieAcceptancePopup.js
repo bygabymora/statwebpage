@@ -10,7 +10,6 @@ const CookieAcceptancePopup = () => {
     setIsClient(true);
   }, []);
 
-
   if (!isClient || state.cookieAccepted) {
     return null;
   }
@@ -20,7 +19,7 @@ const CookieAcceptancePopup = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full p-6 bg-gray-500 bg-opacity-70 backdrop-blur-md shadow-md text-white z-50 sm:bottom-auto sm:top-0">
+    <div className="fixed bottom-0 left-0 w-full p-6 bg-gray-500 bg-opacity-70 backdrop-blur-md shadow-md text-white z-50 sm:bottom-0 sm:top-auto">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-center md:text-left">
