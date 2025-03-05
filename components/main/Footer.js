@@ -69,7 +69,7 @@ export default function Footer() {
               height={100}
             />
             <div className="font-bold footer-copyright ml-4">
-              <p>&copy; 2023 STAT Surgical Supply. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} STAT Surgical Supply. All rights reserved.</p>
             </div>
           </div>
         </div>
