@@ -80,7 +80,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white shadow-md sticky top-0 z-[9999]">
       <nav className="container mx-auto flex justify-between items-center py-4 px-6">
         <div className="flex items-center gap-4">
           <Link href="/" onClick={handleHomeClick} aria-label="Home">
