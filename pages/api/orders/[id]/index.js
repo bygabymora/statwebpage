@@ -9,7 +9,7 @@ const handler = async (req, res) => {
     return res.status(401).send('signin required');
   }
 
-  const { id } = req.query; // Aquí va la magia ✨
+  const { id } = req.query;
 
   await db.connect();
 
