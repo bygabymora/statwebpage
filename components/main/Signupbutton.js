@@ -11,6 +11,7 @@ const SignupButton = () => {
   const { dispatch } = useContext(Store);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -58,9 +59,15 @@ const SignupButton = () => {
                 <Menu.Item>
                   <DropdownLink href="/profile" className="block px-4 py-2 hover:bg-[#f4f4f4]">Profile</DropdownLink>
                 </Menu.Item>
+                {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
                 <Menu.Item>
                   <DropdownLink href="/order-history" className="block px-4 py-2 hover:bg-[#f4f4f4]">Order History</DropdownLink>
                 </Menu.Item>
+                )
+              )}
                 {session.user.isAdmin && (
                   <Menu.Item>
                     <DropdownLink href="/admin/dashboard" className="block px-4 py-2 hover:bg-[#f4f4f4]">Admin Dashboard</DropdownLink>

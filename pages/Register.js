@@ -43,12 +43,18 @@ export default function LoginScreen() {
         password,
         companyName,
         companyEinCode,
-        active: false,
+        active: true,
         approved: false,
       });
   
       toast.success("Account created successfully. Please wait for approval.");
-      router.push("/Login"); // Redirect to login without automatic login
+      const result = await axios.post('/api/auth/signin', {
+        email,
+        password,
+      });
+      if (result.status === 200) {
+        router.push(redirect || '/');
+      }
     } catch (err) {
       toast.error(getError(err));
     }

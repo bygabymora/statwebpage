@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export default function ProfileScreen() {
   const { data: session } = useSession();
-
+  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
   const {
     handleSubmit,
     register,
@@ -84,9 +84,15 @@ export default function ProfileScreen() {
             <strong>Company EIN:</strong>
             <div>{session.user.companyEinCode}</div>
           </div>
-          <Link href={'/order-history'} className="font-bold underline" style={{ color: '#144e8b' }} >
-            Order History
-          </Link>
+          {active === "loading" ? (
+            "Loading"
+          ) : (
+            active && (
+              <Link href={'/order-history'} className="font-bold underline" style={{ color: '#144e8b' }} >
+                Order History
+              </Link>
+            )
+          )}
         </div>
       </section>
       

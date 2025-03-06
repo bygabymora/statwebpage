@@ -21,14 +21,19 @@ export default function Layout({ title, children, news, product }) {
   const {data: session} = useSession();
   const message = {
     title: 'Account Verification',
-    body: 'Thank you for trusting us and considering our services. We will work to approve and activate your account within 24 hours.',
+    body: 'Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.',
     warning: 'If it takes longer than expected, please contact us for more information. Thank you for choosing us!',
   };
 
   useEffect(() => {
+    const hasModalBeenShown = localStorage.getItem('accountVerificationModal');
     if (session?.user && (!session.user?.active || !session.user?.approved)) {
       setIsStatusVisible(true); // small message
-      setIsModalVisible(true); // Modal
+      if (!hasModalBeenShown) {
+        setIsModalVisible(true); // Modal
+        localStorage.setItem('accountVerificationModal', 'true');
+      }
+   
     }
   }, [session]);
 

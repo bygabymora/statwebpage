@@ -36,7 +36,7 @@ async function handler(req, res) {
     isAdmin: false,
     companyName,
     companyEinCode,
-    active: false,
+    active: true,
     approved: false,
   });
 
