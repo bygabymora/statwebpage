@@ -369,11 +369,10 @@ function OrderScreen() {
 
   return (
     <Layout
-      title={`Order ${orderId ? `Order ${orderId.substring(orderId.length - 8).toUpperCase()}` : ''}`}  
+      title=  {`Order ${
+        orderId ? `Order ${orderId.substring(orderId.length - 8).toUpperCase()}` : ''}`}  
     >
-      <h1 className="mb-1 text-xl font-bold">{`Order ${orderId
-        .substring(orderId.length - 8)
-        .toUpperCase()}`}</h1>
+      <h1 className="mb-1 text-xl font-bold">{`Order ${orderId ? orderId.substring(orderId.length - 8).toUpperCase() : ''}`}</h1>
       <br />
       <div>
         <h2>Thank you for your order!</h2>
