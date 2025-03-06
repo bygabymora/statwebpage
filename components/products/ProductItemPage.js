@@ -13,14 +13,14 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.each?.clearanceCountInStock ?? 0);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Bulk';
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0)> 0) {
       return 'Each';
-    } else if ((product.each?.clearanceCountInStock ?? 0)> 0) {
+    } else if (product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -72,7 +72,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(product.each?.clearanceCountInStock ?? null);
+      setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
     }
   }, [clearancePurchaseType, product.clearance]);
 
@@ -88,7 +88,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     } else if (purchaseType === 'Clearance') {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || 'No description');
-      setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
+      setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
     }
   }, [purchaseType, product]);
 
@@ -359,7 +359,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                       } else if (e.target.value === 'Clearance' && product.clearance) {
                         setCurrentPrice(product.clearance?.price || 0);
                         setCurrentDescription(product.clearance?.description || '');
-                        setCurrentCountInStock(product.each?.clearanceCountInStock || 0);
+                        setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
                       }
                     }}
                   >
@@ -369,7 +369,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
                     {product.box?.quickBooksQuantityOnHandProduction > 0 && (
                       <option value="Bulk">Box</option>
                     )}
-                    {product.each?.clearanceCountInStock > 0 && (
+                    {product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
                       <option value="Clearance">Clearance</option>
                     )}
                   </select>
@@ -390,7 +390,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         ) : null
       ) : (
         // If you only have Clearance, show it once without an "Add to Cart" button
-        product.each?.clearanceCountInStock > 0 && (
+        product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
           <div className="my-5 text-center">
             <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
             {active === "loading" ? (

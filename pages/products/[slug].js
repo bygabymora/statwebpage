@@ -73,7 +73,7 @@ export default function ProductScreen(props) {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const active = session?.user?.active || status === "authenticated";
+  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
     const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return 'Bulk';

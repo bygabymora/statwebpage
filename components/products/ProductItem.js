@@ -13,14 +13,14 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBulk, setIsOutOfStockBulk] = useState();
-  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(product.each?.clearanceCountInStock ?? 0);
+  const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
   const [qty, setQty] = useState(1);
   const [purchaseType, setPurchaseType] = useState(() => {
     if (product.box?.quickBooksQuantityOnHandProduction > 0) {
       return 'Bulk';
     } else if (product.each?.quickBooksQuantityOnHandProduction > 0) {
       return 'Each';
-    } else if (product.each?.clearanceCountInStock > 0) {
+    } else if (product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0) {
       return 'Clearance';
     }
     return 'Each';
@@ -45,7 +45,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
     } else if (purchaseType === 'Clearance') {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || 'No description');
-      setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
+      setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
     }
   }, [purchaseType, product]);
 
@@ -61,13 +61,29 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
     const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
-    const clearanceStock = product.each?.clearanceCountInStock ?? 0;
-
-    if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
+    const clearanceStockEach = product.each?.clearanceCountInStock ?? 0;
+    const clearanceStockBox = product.box?.clearanceCountInStock ?? 0;
+  
+    if (eachStock === 0 && boxStock === 0 && (clearanceStockEach > 0 || clearanceStockBox > 0)) {
       setPurchaseType('Clearance');
-      setCurrentPrice(product.clearance?.price ? `$${product.clearance?.price}` : "Contact us for price");
-      setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(clearanceStock);
+  
+      setCurrentPrice(
+        product.each?.clearanceCountInStock > 0
+          ? `$${product.each?.wpPrice || 'Call for Price'}`
+          : `$${product.box?.wpPrice || 'Call for Price'}`
+      );
+  
+      setCurrentDescription(
+        product.each?.clearanceCountInStock > 0
+          ? product.each?.description || "No description"
+          : product.box?.description || "No description"
+      );
+  
+      setCurrentCountInStock(
+        product.each?.clearanceCountInStock > 0
+          ? product.each?.clearanceCountInStock
+          : product.box?.clearanceCountInStock
+      );
     }
   }, [product]);
 
@@ -84,7 +100,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.clearance?.description || "No description");
-      setCurrentCountInStock(product.each?.clearanceCountInStock ?? null);
+      setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
     }
   }, [clearancePurchaseType, product.clearance]);
 
@@ -310,7 +326,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                           } else if (e.target.value === 'Clearance' && product.clearance) {
                             setCurrentPrice(product.clearance?.price || 0);
                             setCurrentDescription(product.clearance?.description || '');
-                            setCurrentCountInStock(product.each?.clearanceCountInStock > 0);
+                            setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
                           }
                         }}
                       >
@@ -320,7 +336,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
                         {product.box?.quickBooksQuantityOnHandProduction > 0 && (
                           <option value="Bulk">Box</option>
                         )}
-                        {product.each?.clearanceCountInStock > 0 && (
+                        {(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0) && (
                           <option value="Clearance">Clearance</option>
                         )}
                       </select>
@@ -341,7 +357,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             ) : null
           ) : (
           // If you only have Clearance, show it once without an "Add to Cart" button
-          product.each?.clearanceCountInStock > 0 && ( 
+          product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && ( 
             <div className="my-5 text-center">
               <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
               {active === "loading" ? (

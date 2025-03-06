@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import { TbShoppingCartDiscount } from 'react-icons/tb';
 
 const Navbar = () => {
-  const [hasClearanceProducts] = useState(false);
+  const [hasClearanceProducts, setHasClearanceProducts] = useState(false);
   const router = useRouter();
   const [toggleMenu, setToggleMenu] = useState(false);
 
@@ -25,10 +25,9 @@ const Navbar = () => {
     const fetchClearanceProducts = async () => {
       try {
         const response = await axios.get('/api/clearance');
-        if (response.data) {
-          console.log('Clearance products:', response.data.clearanceProducts);
-        } else {
-          console.error('API did not return valid data');
+        console.log("Respuesta API Clearance:", response.data);
+        if (response.data && response.data.hasClearanceProducts) {
+          setHasClearanceProducts(true);
         }
       } catch (error) {
         console.error('Error fetching clearance products:', error);

@@ -5,7 +5,13 @@ const handler = async (req, res) => {
   await db.connect();
 
   try {
-    const clearanceProducts = await Product.find({ clearance: Object }).lean();
+    const clearanceProducts = await Product.find({
+      $or: [
+        { "each.clearanceCountInStock": { $gt: 0 } },
+        { "box.clearanceCountInStock": { $gt: 0 } }
+      ]
+    }).lean();
+
     const hasClearanceProducts = clearanceProducts.length > 0;
 
     res.status(200).json({ hasClearanceProducts, clearanceProducts }); // Send clearance products
