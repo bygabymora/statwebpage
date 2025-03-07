@@ -27,22 +27,22 @@ export default function Layout({ title, children, news, product }) {
 
   useEffect(() => {
     if (session?.user) {
-      // Check if the modal was already shown in this user session
       const hasModalBeenShown = sessionStorage.getItem(`accountVerificationModal_${session.user.email}`);
   
       if (!session.user?.active || !session.user?.approved) {
-        setIsStatusVisible(true); // Show small message
+        setIsStatusVisible(true); // El mensaje pequeño siempre visible
   
         if (!hasModalBeenShown) {
-          setIsModalVisible(true); // Show modal
-          sessionStorage.setItem(`accountVerificationModal_${session.user.email}`, 'true'); // Save to sessionStorage
+          setIsModalVisible(true);
         }
       }
-    } else {
-      // If the session is closed, remove the indicator so that it is shown again at the next login
-      sessionStorage.removeItem(`accountVerificationModal_${session?.user?.email}`);
     }
   }, [session]);
+  
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    sessionStorage.setItem(`accountVerificationModal_${session.user.email}`, 'true'); // Solo guarda al cerrar
+  };
 
   return (
     <div className="w-full" lang="en">
@@ -119,7 +119,7 @@ export default function Layout({ title, children, news, product }) {
         <main className="main container  m-auto mt-11 px-4">{children}</main>
         <Footer />
       </div>
-      <CustomAlertModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} message={message} />
+      <CustomAlertModal isOpen={isModalVisible} onClose={handleModalClose} message={message} />
     </div>
   );
 }
