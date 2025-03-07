@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import WpUser from '../../../../models/WpUser';
 import db from '../../../../utils/db';
 import { getToken } from 'next-auth/jwt';
