@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import emailjs from '@emailjs/browser';
+import { useRouter } from 'next/router';
 
 export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
@@ -157,6 +158,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   //-----------------EmailJS-----------------//
 
   const form = useRef();
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailSlug, setEmailSlug] = useState('');
