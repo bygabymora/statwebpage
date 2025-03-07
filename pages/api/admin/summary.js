@@ -7,7 +7,7 @@ import db from '../../../utils/db';
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || (user && !user.isAdmin)) {
-    return res.status(401).send('Registro requerido');
+    return res.status(401).send('Registration required');
   }
 
   await db.connect();

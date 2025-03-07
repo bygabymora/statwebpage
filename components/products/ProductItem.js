@@ -456,7 +456,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
             hidden
             required
           />
-          <button className="primary-button mt-3" type="submit" onClick={sendEmail}>
+          <button className="primary-button mt-3" type="submit">
             Submit
           </button>
         </form>

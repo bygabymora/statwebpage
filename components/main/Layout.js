@@ -30,7 +30,7 @@ export default function Layout({ title, children, news, product }) {
       const hasModalBeenShown = sessionStorage.getItem(`accountVerificationModal_${session.user.email}`);
   
       if (!session.user?.active || !session.user?.approved) {
-        setIsStatusVisible(true); // El mensaje pequeño siempre visible
+        setIsStatusVisible(true); // The small message always visible
   
         if (!hasModalBeenShown) {
           setIsModalVisible(true);

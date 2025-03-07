@@ -40,7 +40,7 @@ const putHandler = async (req, res) => {
   try {
     const user = await WpUser.findById(req.query.id);
     if (!user) {
-      return res.status(404).json({ type: 'error', message: 'Usuario no encontrado' });
+      return res.status(404).json({ type: 'error', message: 'User not found' });
     }
 
     user.name = req.body.name ?? user.name;

@@ -15,7 +15,7 @@ const handler = async (req, res) => {
     return res.status(400).send({ message: 'Method not allowed' });
   }
 };
-const postHandler = async (req, res) => {
+const postHandler = async (res) => {
   await db.connect();
   const newProduct = new Product({
     name: 'sample name',

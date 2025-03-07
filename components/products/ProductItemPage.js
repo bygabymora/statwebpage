@@ -167,6 +167,26 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
     setEmailManufacturer(product.manufacturer);
   }, [product.slug, product.manufacturer]);
 
+  const handleLinkClick = (section) => {
+    if (window.innerWidth >= 800) {
+      const yOffsetSmallScreen = -50;
+      setTimeout(() => {
+        const path = `/#${section}`;
+        router.push(path);
+        const element = document.getElementById(section);
+        if (element) { 
+          const y =
+            element.getBoundingClientRect().top +
+            window.scrollY +
+            yOffsetSmallScreen;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        } else {
+          console.error(`Element with id "${section}" not found.`);
+        }
+      }, 2000);
+    }
+  };
+
   const sendEmail = (e) => {
     e.preventDefault();
     emailjs
@@ -328,9 +348,15 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               hidden
               required
             />
-            <button className="primary-button mt-3" type="submit" onClick={sendEmail}>
-              Submit
-            </button>
+            <Link
+              href="/#contact"
+              onClick={() => handleLinkClick('contact')}
+              lassName="nav__link"
+            >
+              <button className="primary-button mt-3" type="submit">
+                Submit
+              </button>
+            </Link>
           </form>
         )}
         {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
