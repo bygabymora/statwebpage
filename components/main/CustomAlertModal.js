@@ -1,6 +1,6 @@
 import React from "react";
 
-const CustomAlertModal = ({ isOpen, onClose, message }) => {
+const CustomAlertModal = ({ isOpen, onClose, message, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -10,10 +10,10 @@ const CustomAlertModal = ({ isOpen, onClose, message }) => {
         <p className="mb-4">{message.body}</p>
         <p className="mb-4 font-bold">{message.warning}</p>
         <div className="flex justify-end">
-          <button
+          <button 
             data-ignore-context
             onClick={(e) => {
-              e.preventDefault(), onClose();
+              e.preventDefault(), onClose(), onConfirm();
             }}
             className="primary-button py-2 px-4 rounded hover:bg-gray-300"
           >

@@ -26,14 +26,21 @@ export default function Layout({ title, children, news, product }) {
   };
 
   useEffect(() => {
-    const hasModalBeenShown = localStorage.getItem('accountVerificationModal');
-    if (session?.user && (!session.user?.active || !session.user?.approved)) {
-      setIsStatusVisible(true); // small message
-      if (!hasModalBeenShown) {
-        setIsModalVisible(true); // Modal
-        localStorage.setItem('accountVerificationModal', 'true');
+    if (session?.user) {
+      // Check if the modal was already shown in this user session
+      const hasModalBeenShown = sessionStorage.getItem(`accountVerificationModal_${session.user.email}`);
+  
+      if (!session.user?.active || !session.user?.approved) {
+        setIsStatusVisible(true); // Show small message
+  
+        if (!hasModalBeenShown) {
+          setIsModalVisible(true); // Show modal
+          sessionStorage.setItem(`accountVerificationModal_${session.user.email}`, 'true'); // Save to sessionStorage
+        }
       }
-   
+    } else {
+      // If the session is closed, remove the indicator so that it is shown again at the next login
+      sessionStorage.removeItem(`accountVerificationModal_${session?.user?.email}`);
     }
   }, [session]);
 

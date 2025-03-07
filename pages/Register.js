@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form';
 import Layout from '../components/main/Layout';
 import { getError } from '../utils/error';
 import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
-import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import CustomAlertModal from '../components/main/CustomAlertModal';
 
 export default function LoginScreen() {
   const { data: session } = useSession();
@@ -16,6 +16,9 @@ export default function LoginScreen() {
   const { redirect } = router.query;
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({ title: '', body: '' });
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -47,17 +50,28 @@ export default function LoginScreen() {
         approved: false,
       });
   
-      toast.success("Account created successfully. Please wait for approval.");
-      const result = await axios.post('/api/auth/signin', {
-        email,
-        password,
+      setAlertMessage({
+        title: 'Your account has been created successfully!',
+        body: 'We are reviewing your information, you will receive a notification when your account is approved.',
       });
-      if (result.status === 200) {
-        router.push(redirect || '/');
-      }
+      setIsModalOpen(true);
+      setShouldRedirect(true);
     } catch (err) {
-      toast.error(getError(err));
+      setAlertMessage({
+        title: 'Error',
+        body: getError(err),
+      });
+      setIsModalOpen(true);
+      setShouldRedirect(false);
     }
+  };
+
+  const handleModalConfirm = () => {
+    console.log("Redirecting to Login...");
+    if (shouldRedirect) {
+      router.push("/Login");
+    }
+    setIsModalOpen(false);
   };
   return (
     <Layout title="Create Account">
@@ -259,6 +273,12 @@ export default function LoginScreen() {
           </Link>
         </div>
       </form>
+      <CustomAlertModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleModalConfirm}
+        message={alertMessage}
+      />
     </Layout>
   );
 }

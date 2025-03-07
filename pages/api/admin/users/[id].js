@@ -1,69 +1,84 @@
+import React, { useState } from 'react';
 import WpUser from '../../../../models/WpUser';
 import db from '../../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
+
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || !user.isAdmin) {
-    return res
-      .status(401)
-      .send('Login required as an admin');
+    return res.status(401).json({ type: 'error', message: 'Login required as an admin' });
   }
 
   if (req.method === 'GET') {
-    return getHandler(req, res, user);
+    return getHandler(req, res);
   } else if (req.method === 'PUT') {
-    return putHandler(req, res, user);
+    return putHandler(req, res);
   } else if (req.method === 'DELETE') {
-    return deleteHandler(req, res, user);
+    return deleteHandler(req, res);
   } else {
-    return res.status(400).send({ message: 'Method not allowed' });
+    return res.status(400).json({ type: 'error', message: 'Method not allowed' });
   }
 };
 
 const getHandler = async (req, res) => {
   await db.connect();
-  const user = await WpUser.findById(req.query.id);
-  await db.disconnect();
-  res.send(user);
+  try {
+    const user = await WpUser.findById(req.query.id);
+    if (!user) {
+      return res.status(404).json({ type: 'error', message: 'User not found' });
+    }
+    return res.json({ type: 'success', user });
+  } catch (error) {
+    return res.status(500).json({ type: 'error', message: 'Error fetching user' });
+  } finally {
+    await db.disconnect();
+  }
 };
-  
 
 const putHandler = async (req, res) => {
   await db.connect();
-  const user = await WpUser.findById(req.query.id);
-  if (user) {
-    user.name = req.body.name;
-    user.email = req.body.email;
-    user.companyName = req.body.companyName;
-    user.companyEinCode = req.body.companyEinCode;
-    user.isAdmin = Boolean(req.body.isAdmin);
-    await user.save();
+  try {
+    const user = await WpUser.findById(req.query.id);
+    if (!user) {
+      return res.status(404).json({ type: 'error', message: 'Usuario no encontrado' });
+    }
 
+    user.name = req.body.name ?? user.name;
+    user.email = req.body.email ?? user.email;
+    user.companyName = req.body.companyName ?? user.companyName;
+    user.companyEinCode = req.body.companyEinCode ?? user.companyEinCode;
+    user.isAdmin = req.body.isAdmin !== undefined ? Boolean(req.body.isAdmin) : user.isAdmin;
+    user.active = req.body.active !== undefined ? Boolean(req.body.active) : user.active;
+    user.approved = req.body.approved !== undefined ? Boolean(req.body.approved) : user.approved;
+
+    await user.save();
+    return res.json({ type: 'success', message: 'User updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ type: 'error', message: 'Error updating user' });
+  } finally {
     await db.disconnect();
-    res.send({ message: 'User updated successfully' });
-  } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'Usuario no encontrado' });
   }
 };
 
 const deleteHandler = async (req, res) => {
   await db.connect();
-  const user = await WpUser.findById(req.query.id);
-  if (user) {
-    if (user.isAdmin === true) {
-      await db.disconnect();
-      return res
-        .status(400)
-        .send({ message: 'Cant delete admin' });
+  try {
+    const user = await WpUser.findById(req.query.id);
+    if (!user) {
+      return res.status(404).json({ type: 'error', message: 'User not found' });
     }
+
+    if (user.isAdmin) {
+      return res.status(400).json({ type: 'error', message: 'Cannot delete admin' });
+    }
+
     await WpUser.findByIdAndDelete(req.query.id);
+    return res.json({ type: 'success', message: 'User deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ type: 'error', message: 'Error deleting user' });
+  } finally {
     await db.disconnect();
-    res.send({ message: 'User deleted' });
-  } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'User not found' });
   }
 };
 

@@ -16,8 +16,7 @@ function reducer(state, action) {
       return { ...state, loading: false, users: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-
-      case 'DELETE_REQUEST':
+    case 'DELETE_REQUEST':
       return { ...state, loadingDelete: true };
     case 'DELETE_SUCCESS':
       return { ...state, loadingDelete: false, successDelete: true };
@@ -76,13 +75,25 @@ function AdminUsersScreen() {
     }
     setShowModal(false);
   };
-   
+
+  const toggleStatus = async (userId, field, value) => {
+    try {
+      await axios.put(`/api/admin/users/${userId}`, { [field]: value });
+      toast.success(`${field} updated successfully`);
+      dispatch({ type: 'FETCH_REQUEST' });
+      const { data } = await axios.get(`/api/admin/users`);
+      dispatch({ type: 'FETCH_SUCCESS', payload: data });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+
   const links = [
-    { href: '/admin/dashboard', label: 'Dashboard'},
-    { href: '/admin/orders', label: 'Orders'},
-    { href: '/admin/products', label: 'Products'},
-    { href: '/admin/users', label: 'Users', isBold: true},
-    { href: '/admin/news', label: 'News'},
+    { href: '/admin/dashboard', label: 'Dashboard' },
+    { href: '/admin/orders', label: 'Orders' },
+    { href: '/admin/products', label: 'Products' },
+    { href: '/admin/users', label: 'Users', isBold: true },
+    { href: '/admin/news', label: 'News' },
   ];
 
   return (
@@ -91,14 +102,9 @@ function AdminUsersScreen() {
         <ul className="flex space-x-4 my-3 lg:text-lg w-full">
           {links.map(({ href, label, isBold }) => (
             <li key={href} className="w-full">
-              <Link href={href}
-              className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition 
-                ${isBold ? 'font-semibold' : ''}`}
-              > 
-                {label}
-              </Link>
+              <Link href={href} className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition ${isBold ? 'font-semibold' : ''}`}>{label}</Link>
             </li>
-          ))}     
+          ))}
         </ul>
       </div>
       <div className="md:col-span-3 p-4">
@@ -113,10 +119,8 @@ function AdminUsersScreen() {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
               <thead className="bg-gray-100 border border-collapse">
                 <tr>
-                  {['ID', 'Name', 'Email', 'Company', 'EIN', 'Admin', 'Actions'].map((header) => (
-                    <th key={header} className="p-4 text-left uppercase border border-collapse">
-                      {header}
-                    </th>
+                  {['ID', 'Name', 'Email', 'Company', 'EIN', 'Active', 'Approved', 'Admin', 'Actions'].map((header) => (
+                    <th key={header} className="p-4 text-left uppercase border border-collapse">{header}</th>
                   ))}
                 </tr>
               </thead>
@@ -128,20 +132,26 @@ function AdminUsersScreen() {
                     <td className="border border-collapse p-4">{user.email}</td>
                     <td className="border border-collapse p-4">{user.companyName || '—'}</td>
                     <td className="border border-collapse p-4">{user.companyEinCode || '—'}</td>
-                    <td className="border border-collapse p-4">{user.isAdmin ? '✅' : '❌'}</td>
-                    <td className="border border-collapse p-4 flex flex-col items-center space-y-2 md:space-x-2 md:flex-row">
-                      <button
-                        onClick={() => router.push(`/admin/user/${user._id}`)}
-                        className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10"
-                        title="Edit User"
-                      >
+                    <td className="border border-collapse p-4">
+                      <input
+                        type="checkbox"
+                        checked={user.active}
+                        onChange={(e) => toggleStatus(user._id, 'active', e.target.checked)}
+                      />
+                    </td>
+                    <td className="border border-collapse p-4">
+                      <input
+                        type="checkbox"
+                        checked={user.approved}
+                        onChange={(e) => toggleStatus(user._id, 'approved', e.target.checked)}
+                      />
+                    </td>
+                    <td className="border p-4">{user.isAdmin ? '✅' : '❌'}</td>
+                    <td className="p-4 flex flex-col items-center space-y-2 md:space-x-2 md:flex-row">
+                      <button onClick={() => router.push(`/admin/user/${user._id}`)} className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10" title="Edit User">
                         <BiSolidEdit />
                       </button>
-                      <button
-                        onClick={() => confirmDelete(user._id)}
-                        className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10"
-                        title="Delete User"
-                      >
+                      <button onClick={() => confirmDelete(user._id)} className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10" title="Delete User">
                         <BsTrash3 />
                       </button>
                     </td>
@@ -174,7 +184,7 @@ function AdminUsersScreen() {
           </div>
         )}
       </div>
-  </Layout>
+    </Layout>
   );
 }
 
