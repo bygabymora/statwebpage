@@ -2,7 +2,6 @@ import WpUser from '../../../../models/WpUser';
 import db from '../../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
-
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || !user.isAdmin) {
@@ -29,6 +28,7 @@ const getHandler = async (req, res) => {
     }
     return res.json({ type: 'success', user });
   } catch (error) {
+    console.error('Error fetching user:', error);
     return res.status(500).json({ type: 'error', message: 'Error fetching user' });
   } finally {
     await db.disconnect();
@@ -54,6 +54,7 @@ const putHandler = async (req, res) => {
     await user.save();
     return res.json({ type: 'success', message: 'User updated successfully' });
   } catch (error) {
+    console.error('Error updating user:', error);
     return res.status(500).json({ type: 'error', message: 'Error updating user' });
   } finally {
     await db.disconnect();
@@ -75,6 +76,7 @@ const deleteHandler = async (req, res) => {
     await WpUser.findByIdAndDelete(req.query.id);
     return res.json({ type: 'success', message: 'User deleted successfully' });
   } catch (error) {
+    console.error('Error deleting user:', error);
     return res.status(500).json({ type: 'error', message: 'Error deleting user' });
   } finally {
     await db.disconnect();
