@@ -13,7 +13,8 @@ const CustomAlertModal = ({ isOpen, onClose, message, onConfirm }) => {
           <button 
             data-ignore-context
             onClick={(e) => {
-              e.preventDefault(), onClose(), onConfirm();
+              e.preventDefault(); onClose();  
+              if (onConfirm) onConfirm();
             }}
             className="primary-button py-2 px-4 rounded hover:bg-gray-300"
           >

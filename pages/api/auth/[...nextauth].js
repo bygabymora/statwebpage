@@ -11,48 +11,51 @@ export default NextAuth({
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user?._id) {
+      if (user) {
+        // Newly authenticated user
         token._id = user._id;
-      }
-      if (user?.isAdmin) {
         token.isAdmin = user.isAdmin;
-      }
-      if (user?.companyName) {
         token.companyName = user.companyName;
-      }
-      if (user?.companyEinCode) {
         token.companyEinCode = user.companyEinCode;
-      }
-      if (user?.active !== undefined) {
         token.active = user.active;
-      }
-      if (user?.approved !== undefined) {
         token.approved = user.approved;
+      } else {
+        // Check the database if the user is still active
+        await db.connect();
+        const dbUser = await WpUser.findById(token._id).select('active approved');
+        await db.disconnect();
+
+        if (dbUser) {
+          token.active = dbUser.active;
+          token.approved = dbUser.approved;
+        } else {
+          token.active = false;
+        }
       }
+
       return token;
     },
-  
+
     async session({ session, token }) {
-      if (token?._id) {
-        session.user._id = token._id;
-      }
-      if (token?.isAdmin) {
-        session.user.isAdmin = token.isAdmin;
-      }
-      if (token?.companyName) {
-        session.user.companyName = token.companyName;
-      }
-      if (token?.companyEinCode) {
-        session.user.companyEinCode = token.companyEinCode;
-      }
-      if (token?.active !== undefined) {
-        session.user.active = token.active;
-      }
-      if (token?.approved !== undefined) {
-        session.user.approved = token.approved;
-      }
+      session.user = {
+        _id: token._id,
+        isAdmin: token.isAdmin,
+        companyName: token.companyName,
+        companyEinCode: token.companyEinCode,
+        active: token.active,
+        approved: token.approved,
+      };
+
       return session;
     }
+  },
+
+  events: {
+    async session({ session }) {
+      if (!session.user.active) {
+        throw new Error('Your account is inactive.');
+      }
+    },
   },
 
   providers: [
@@ -69,7 +72,11 @@ export default NextAuth({
         if (!bcryptjs.compareSync(credentials.password, user.password)) {
           throw new Error('Invalid email or password');
         }
-      
+
+        if (!user.active) {
+          throw new Error('Your account is inactive. Please contact support.');
+        }
+
         return {
           _id: user._id,
           name: user.name,
