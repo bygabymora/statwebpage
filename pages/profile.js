@@ -8,7 +8,7 @@ import Layout from '../components/main/Layout';
 import Link from 'next/link';
 
 export default function ProfileScreen() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
   const {
     handleSubmit,
