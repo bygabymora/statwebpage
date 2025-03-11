@@ -114,7 +114,7 @@ export default function PlaceOrderScreen() {
   };
   const cartItemsWithPrice = cartItems.map(item => ({
   ...item,
-  wpPrice: item.wpPrice || item.price, // Si falta, usa el precio como mínimo
+  wpPrice: item.wpPrice || item.price, // If missing, use the price as a minimum
 }));
   
   const placeOrderHandler = async () => {
@@ -155,87 +155,72 @@ export default function PlaceOrderScreen() {
   return (
     <Layout title="Confirm Order">
       <CheckoutWizard activeStep={3} />
-      <h1 className="mb-4 text-xl">Confirm Order</h1>
-      {cartItems.length === 0 ? (
-        <div>
-          Cart is empty.{' '}
-          <Link href="/products" className="underline font-bold">
-            Go shopping
-          </Link>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
+        <h1 className="mb-6 text-2xl font-bold text-[#144e8b] text-center">Confirm Your Order</h1>
+        {cartItems.length === 0 ? (
+          <div className="text-center text-gray-600 text-lg my-5">
+            Your cart is empty.{' '}
+            <Link href="/products" className="underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition">
+              Go shopping
+            </Link>
+          </div>
+        ) : (
+        <div className="grid md:grid-cols-4 md:gap-6">
           <div className="overflow-x-auto md:col-span-3">
-            <div className="card  p-5">
+            <div className="card bg-white shadow-lg p-6 rounded-lg border">
               {cartItems && cartItems.some((item) => item.sentOverNight) && (
-                <div className="alert-error">
+                <div className="alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+                  <p className="font-semibold">Important Notice:</p>
+                  Some products require overnight shipping due to temperature sensitivity. 
                   It is recommended that some of the products on this order ship
-                  overnight due to temperature sensitivity. Stat Surgical Supply
+                  overnight. Stat Surgical Supply
                   is not responsible for product damage or failure if you choose
                   another shipping method.
-                  <div className="mt-2">
-                    <button className="underline font-bold flex flex-row align-middle justify-center items-center">
-                      Products for Overnight Delivery
+                  <div className="mt-3">
+                    <button className="underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]">
+                    Products For Overnight Delivery
                     </button>
-                    {cartItems
+                    <ul className="list-disc ml-6 text-sm text-gray-700 mt-2">
+                      {cartItems
                       .filter((item) => item.sentOverNight)
                       .map((product, index) => (
-                        <div key={index}>{product.name}</div>
+                        <li key={index}>{product.name}</li>
                       ))}
+                    </ul>
                   </div>
                 </div>
               )}
-              <h2 className="mb-2 text-lg">Shipping Address</h2>
-              <div>
-                {shippingAddress.fullName},{' '}
-                {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
-                {shippingAddress.phone}, {shippingAddress.address},{' '}
-                {shippingAddress.city}, {shippingAddress.postalCode}{' '}
-                <h2 className="mb-2 text-lg">Billing Address</h2>
-                <div>
-                {billingAddress?.companyB && <>{billingAddress.companyB},</>}
-                {billingAddress?.phoneB}
-                {billingAddress?.addressB}
-                {billingAddress?.cityB}
-                {billingAddress?.postalCodeB}
-                </div>
+              <h2 className="mb-4 text-xl font-semibold text-[#144e8b]">Shipping Address</h2>
+              <div className="text-gray-700">
+                {shippingAddress.fullName}, 
+                {shippingAddress.company && <>{shippingAddress.company},</>}
+                {shippingAddress.phone}, {shippingAddress.address},
+                {shippingAddress.city}, {shippingAddress.postalCode}
                 {shippingAddress.notes && (
-                  <>
-                    <br />
-                    <h1>Shipping instructions</h1>
-                    {shippingAddress.notes}
-                  </>
+                  <div className="mt-3 p-3 bg-gray-100 border-l-4 border-gray-500 rounded-lg">
+                    <h3 className="font-bold">Shipping Instructions</h3>
+                    <p>{shippingAddress.notes}</p>
+                  </div>
                 )}
               </div>
-
-              <div>
-                <Link className="underline font-bold" href="/shipping">
-                  Edit
-                </Link>
-              </div>
+              <Link className="underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition" href="/shipping">
+                Edit
+              </Link>
             </div>
-            <div className="card  p-5">
-              <h2 className="mb-2 text-lg">Payment Method</h2>
-              {paymentMethod === 'Stripe' ? (
-                <div>Credit Card (Powered by Stripe)</div>
-              ) : (
-                <div>{paymentMethod}</div>
-              )}
-              <div>
-                <Link className="underline font-bold" href="/payment">
-                  Edit
-                </Link>
-              </div>
+            <div className="card bg-white shadow-lg p-6 rounded-lg border mt-5">
+              <h2 className="mb-4 text-xl font-semibold text-[#144e8b]">Payment Method</h2>
+              <p className="text-gray-700">{paymentMethod === 'Stripe' ? 'Credit Card (Powered by Stripe)' : paymentMethod}</p>
+              <Link className="underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition" href="/payment">
+                Edit
+              </Link>
             </div>
-            <div className="card overflow-x-auto p-5 mb-3">
-              <h2 className="mb-2 text-lg">Order Items</h2>
-              <table className="min-w-full">
-                <thead className="border-b">
+            <div className="card bg-white shadow-lg p-6 rounded-lg border mt-5">
+              <h2 className="mb-4 text-xl font-semibold text-[#144e8b]">Order Items</h2>
+              <table className="min-w-full border border-gray-300">
+                <thead className="bg-gray-100 border-b">
                   <tr>
-                    <th className="px-5 text-left">Item</th>
+                    <th className="px-5 py-3 text-left">Item</th>
                     <th className="p-5 text-right">Type</th>
-                    <th className="p-5 text-right">Quantity</th>
-
+                    <th className="p-5 text-right">Qty</th>
                     <th className="p-5 text-right">Price</th>
                     <th className="p-5 text-right">Subtotal</th>
                   </tr>
@@ -244,87 +229,59 @@ export default function PlaceOrderScreen() {
                   {cartItems.map((item) => (
                     <tr key={item._id} className="border-b">
                       <td>
-                        <Link
-                          href={`/products/${item.slug}`}
-                          className="flex items-center p-2"
-                        > &nbsp;
-                          <Image
-                            src={item.image}
-                            alt={item.slug}
-                            width={50}
-                            height={50}
-                            style={{
-                              maxWidth: '100%',
-                              height: 'auto',
-                            }}
-                          ></Image>
-                          &nbsp;
-                           {item.name}
+                        <Link href={`/products/${item.slug}`} className="flex items-center p-2">
+                          <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded-lg" />
+                          <span className="ml-2 font-medium text-gray-700">{item.name}</span>
                         </Link>
                       </td>
                       <td className="p-5 text-right">{item.purchaseType}</td>
-                      <td className=" p-5 text-right">{item.quantity}</td>
+                      <td className="p-5 text-right">{item.quantity}</td>
                       <td className="p-5 text-right">${item.price}</td>
-                      <td className="p-5 text-right">
-                        ${item.quantity * item.price}
+                      <td className="p-5 text-right font-bold text-[#144e8b]">
+                        ${(item.quantity * item.price).toFixed(2)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div>
-                <Link className="underline font-bold active:text-[#144e8b]" href="/cart">
-                  Edit
-                </Link>
-              </div>
+              <Link className="underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition mt-3 block" href="/cart">
+                Edit Cart
+              </Link>
             </div>
           </div>
           <div>
-            <div className="card  p-5">
-              <h2 className="mb-2 text-lg">Order Summary</h2>
-              <ul>
-                <li>
-                  <div className="mb-2 flex justify-between">
-                    <div>Items</div>
-                    <div>${itemsPrice}</div>
-                  </div>
+          <div className="card bg-white shadow-lg p-6 rounded-lg border my-5">
+            <h2 className="mb-4 text-xl font-semibold text-[#144e8b]">Order Summary</h2>
+            <ul className="text-gray-700">
+              <li className="mb-2 flex justify-between text-lg">
+                <span>Items</span>
+                <span>${itemsPrice}</span>
+              </li>
+              {isPayByWire && (
+                <li className="mb-2 flex justify-between text-lg text-green-600">
+                  <span>Discount ({discountPercentage}%)</span>
+                  <span>- ${discountAmount.toFixed(2)}</span>
                 </li>
-
-                {isPayByWire && (
-                  <li>
-                    <div className="mb-2 flex justify-between">
-                      <div>Discount ({discountPercentage}%)</div>
-                      <div>- ${discountAmount.toFixed(2)}</div>
-                    </div>
-                  </li>
-                )}
-                <li>
-                  <div className="mb-2 flex justify-between">
-                    <div>Total</div>
-                    <div>${totalPrice}</div>
-                  </div>
-                </li>
-                <li>
-                  <button
-                    disabled={loading}
-                    onClick={placeOrderHandler}
-                    className="primary-button w-full"
-                  >
-                    {loading ? 'Loading...' : 'Confirm Order'}
-                  </button>
-                </li>
-                <li>
-                  <br />
-                  <div className="mb-2 flex justify-between">
-                    <div>
-                      We will contact you for more information depending on your
-                      shipping preference selection.
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+              )}
+              <li className="mb-4 flex justify-between text-xl font-bold">
+                <span>Total</span>
+                <span className="text-[#144e8b]">${totalPrice}</span>
+              </li>
+              <li>
+                <button
+                  disabled={loading}
+                  onClick={placeOrderHandler}
+                  className="w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition"
+                >
+                  {loading ? 'Processing...' : 'Confirm Order'}
+                </button>
+              </li>
+              <li className="mt-3 text-gray-600 text-sm">
+                We will contact you for more information depending on your shipping preference selection.
+              </li>
+            </ul>
           </div>
+        </div>
           <form ref={form} hidden>
             <input type="text" name="user_name" value={emailName} readOnly />
             <input type="text" name="user_phone" value={emailPhone} readOnly />
@@ -353,9 +310,9 @@ export default function PlaceOrderScreen() {
             />
             <input type="text" name="user_email" value={email} />
           </form>
-        </div>
-      )}
-    </Layout>
+      </div>
+    )}
+  </Layout>
   );
 }
 

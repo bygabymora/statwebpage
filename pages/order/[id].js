@@ -8,6 +8,9 @@ import { getError } from '../../utils/error';
 import { useSession } from 'next-auth/react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
+import { BsTruck, BsCreditCard2Back, BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs';
+import { FaRegSadCry, FaRegBell } from 'react-icons/fa';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
@@ -164,6 +167,11 @@ function OrderScreen() {
   };
 
   const createOrder = (data, actions) => {
+    if (!actions || !actions.order) {
+      toast.error("PayPal SDK is not loaded properly. Please refresh the page.");
+      return;
+    }
+  
     return actions.order
       .create({
         purchase_units: [
@@ -174,9 +182,7 @@ function OrderScreen() {
           },
         ],
       })
-      .then((orderID) => {
-        return orderID;
-      });
+      .then((orderID) => orderID);
   };
 
   function onApprove(data, actions) {
@@ -369,90 +375,100 @@ function OrderScreen() {
 
   return (
     <Layout
-      title=  {`Order ${
-        orderId ? `Order ${orderId.substring(orderId.length - 8).toUpperCase()}` : ''}`}  
+      title={`Order ${orderId ? `Order ${orderId.substring(orderId.length - 8).toUpperCase()}` : ""}`}
     >
-      <h1 className="mb-1 text-xl font-bold">{`Order ${orderId ? orderId.substring(orderId.length - 8).toUpperCase() : ''}`}</h1>
-      <br />
-      <div>
-        <h2>Thank you for your order!</h2>
-        <p>
-          If you have any questions, please reach out to us at &nbsp;
-          <a
-            href="mailto:sales@statsurgicalsupply.com"
-            target="_blank"
-            className="font-bold underline" style={{ color: '#144e8b' }}
-          >
-            sales@statsurgicalsupply.com
-          </a>{' '}
-          or call us at &nbsp;
-          <a
-            href="tel:8132520727"
-            onClick={handleCallButtonClick}
-            className="font-bold underline" style={{ color: '#144e8b' }}
-            target="_blank"
-          >
-            813-252-0727
-          </a>
-          .
-        </p>
+    <h1 className="mb-4 text-2xl font-bold text-center text-[#144e8b]">
+      Order {orderId ? orderId.substring(orderId.length - 8).toUpperCase() : ""}
+    </h1>
+    <div className="text-center">
+      <h2 className="text-xl font-semibold text-green-600">
+        Thank you for your order!
+      </h2>
+      <p className="mt-2 text-gray-700">
+        If you have any questions, contact us at{" "}
+        <a 
+        href="mailto:sales@statsurgicalsupply.com"
+        target="_blank"
+        className="font-bold underline text-[#144e8b]">
+          sales@statsurgicalsupply.com
+        </a>{" "}
+        or call us at{" "}
+        <a 
+        href="tel:8132520727" 
+        onClick={handleCallButtonClick}
+        className="font-bold underline text-[#144e8b]"
+        target="_blank"
+        >
+          813-252-0727
+        </a>.
+      </p>
+    </div>
+    {/* Loading and error messages */}
+    {loading ? (
+      <div className="alert-info">Loading...</div>
+    ) : error ? (
+      <div className="alert-error">{error}</div>
+    ) : paymentComplete ? (
+      <div className="alert-success flex items-center gap-2">
+        <AiOutlineCheckCircle className="text-green-500 text-2xl" />
+        Payment completed successfully. Reloading...
       </div>
-      <br />
-
-      {loading ? (
-        <div>Loading... </div>
-      ) : error ? (
-        <div className="alert-error">{error}</div>
-      ) : paymentComplete ? (
-        <div className="alert-success">
-          Payment completed successfully. Reloading...
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-4 md:gap-2">
-          <div className="overflow-x-auto md:col-span-3">
-            <div className="card  p-3">
-              {orderItems && orderItems.some((item) => item.sentOverNight) && (
-                <div className="alert-error">
+    ) : (
+      <div className="grid md:grid-cols-4 md:gap-4">
+        <div className="overflow-x-auto md:col-span-3">
+          <div className="card p-4">
+            {/* Warning about urgent shipments */}
+            {orderItems && orderItems.some((item) => item.sentOverNight) && (
+              <div className="alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+                <p className="font-semibold">Important</p>
+                  Some products require overnight shipping due to temperature sensitivity. 
                   It is recommended that some of the products on this order ship
-                  overnight due to temperature sensitivity. Stat Surgical Supply
+                  overnight. Stat Surgical Supply
                   is not responsible for product damage or failure if you choose
                   another shipping method.
-                  <div className="mt-2">
-                    <button className="underline font-bold flex flex-row align-middle justify-center items-center">
-                      Products for Overnight Delivery &nbsp;
-                    </button>
+                <div className="mt-3">
+                  <button className="underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]">
+                    Products For Overnight Delivery
+                  </button>
+                  <ul className="list-disc ml-6 text-sm text-gray-700 mt-2">
                     {orderItems
                       .filter((item) => item.sentOverNight)
                       .map((product, index) => (
-                        <div key={index}>{product.name} &nbsp;</div>
-                      ))}
-                  </div>
+                      <li key={index}>{product.name}</li>
+                    ))}
+                  </ul>
                 </div>
-              )}
-              <h2 className="mb-2 text-lg">Shipping Address</h2>
-              <div>
-                {shippingAddress.fullName},{' '}
-                {shippingAddress.company && <>{shippingAddress.company},</>}{' '}
-                {shippingAddress.phone}, {shippingAddress.address},{' '}
-                {shippingAddress.city}, {shippingAddress.postalCode}{' '}
-                <h2 className="mb-2 text-lg">Billing Address</h2>
-                <div>
-                  {billingAddress.fullNameB},{' '}
-                  {billingAddress.companyB && <>{billingAddress.companyB},</>}{' '}
-                  {billingAddress.phoneB}, {billingAddress.addressB},{' '}
-                  {billingAddress.cityB}, {billingAddress.postalCodeB}{' '}
-                </div>
-                {shippingAddress.notes && (
-                  <>
-                    <br />
-                    <h1>Shipping instructions</h1>
-                    {shippingAddress.notes}
-                  </>
-                )}
               </div>
+            )}
+            {/* Address information */}
+            <h2 className="mt-4 mb-2 text-lg flex items-center gap-2">
+              <BsTruck className="text-blue-500" /> Shipping Address
+            </h2>
+            <div className="bg-gray-100 p-3 rounded-md">
+              {shippingAddress.fullName}, {shippingAddress.company && `${shippingAddress.company},`} {shippingAddress.phone}, {shippingAddress.address}, {shippingAddress.city}, {shippingAddress.postalCode}
+            </div>
+            <h2 className="mt-4 mb-2 text-lg flex items-center gap-2">
+              <BsCreditCard2Back className="text-blue-500" /> Billing Address
+            </h2>
+            <div className="bg-gray-100 p-3 rounded-md">
+              {billingAddress.fullNameB}, 
+              {billingAddress.companyB && 
+              `${billingAddress.companyB},`} 
+              {billingAddress.phoneB}, {billingAddress.addressB}, 
+              {billingAddress.cityB}, {billingAddress.postalCodeB}
+            </div>
+            {shippingAddress.notes && (
+              <div className="mt-4">
+                <h3 className="text-lg font-bold">📦 Shipping Instructions</h3>
+                <p className="text-gray-700">{shippingAddress.notes}</p>
+              </div>
+            )}
+            {/* Order status */}
+            <div className="mt-4">
               {isDelivered ? (
-                <div className="alert-success">
-                  Processed at{' '}
+                <div className="alert-success flex items-center">
+                  <AiOutlineCheckCircle className="text-green-500 text-xl" />
+                  Processed at{" "}
                   <span className="font-bold">
                     {new Date(deliveredAt).toLocaleDateString()}{' '}
                   </span>
@@ -476,7 +492,10 @@ function OrderScreen() {
                   </Link>
                 </div>
               ) : (
-                <div className="alert-error">Not Processed</div>
+                <div className="alert-error flex items-center">
+                <FaRegSadCry className="text-red-500 text-xl" /> &nbsp;
+                Not Processed
+              </div>
               )}
               {isAtCostumers ? (
                 <div className="alert-success">
@@ -486,12 +505,13 @@ function OrderScreen() {
                   </span>
                 </div>
               ) : (
-                <div className="alert-error">Delivery Pending</div>
+                <div className="alert-error flex items-center">
+                  <FaRegBell className="text-red-500 text-xl" /> &nbsp;
+                  Delivery Pending
+                </div>
               )}
-            </div>
-            
-            <div className="card p-5">
-              <h2 className="mb-2 text-lg">Payment Method</h2>
+              <div className="mt-4">
+              <h2 className="mt-2 text-lg font-bold">Payment Method</h2>
               {paymentMethod === 'Stripe' ? (
                 <div>Credit Card (Powered by Stripe)</div>
               ) : (
@@ -507,63 +527,57 @@ function OrderScreen() {
                   </span>
                 </div>
               ) : (
-                <div className="alert-error">Not paid</div>
+                <div className="alert-error flex items-center">
+                  <BsCurrencyDollar className="text-red-500 text-xl" /> &nbsp;
+                  Not Paid
+                </div>
               )}
             </div>
-
-            <div className="card overflow-x-auto p-5 mb-4">
-              <h2 className="mb-2 text-lg">Order Items</h2>
-              <table className="table-auto min-w-full border-collapse border">
-                <thead className="border">
-                  <tr>
-                    <th className="px-5 border text-left">Item</th>
-                    <th className="p-5 border text-right">Quantity</th>
-                    <th className="p-5 border py-2 text-right">Type</th>
-                    <th className="p-5 border text-right">Price</th>
-                    <th className="p-5 border text-right">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orderItems.map((item) => (
-                    <tr key={item._id} className="border">
-                      <td>
-                        <Link
-                          href={`/products/${item.name}`}
-                          className="flex flex-col items-center"
-                        >
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={50}
-                            height={50}
-                            className="mb-1"
-                          ></Image>
-                           <span className="text-center">{item.name}</span>
-                        </Link>
-                      </td>
-                      <td className="p-5 border text-right">{item.quantity}</td>
-                      <td className="p-5 border text-right">{item.purchaseType}</td>
-                      <td className="p-5 border text-right">${item.price}</td>
-                      <td className="p-5 text-right">
-                        ${item.quantity * item.price}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
-          <div>
-            <div className="card p-2 mb-4">
-              <h2 className="mb-2 text-lg">Order Summary</h2>
-              <ul>
-                <li>
-                  <div className="mb-2 px-3 flex justify-between">
-                    <div>Items</div>
-                    <div>${itemsPrice}</div>
-                  </div>
-                </li>
-
+          <div className="card p-5 mt-4 my-5">
+            <h2 className="mb-2 text-lg flex items-center gap-2">
+              <BsBoxSeam className="text-blue-500" /> Order Items
+            </h2>
+            <table className="table-auto w-full border-collapse border">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-3 border text-left">Item</th>
+                  <th className="p-3 border text-center">Quantity</th>
+                  <th className="p-3 border text-center">Type</th>
+                  <th className="p-3 border text-right">Price</th>
+                  <th className="p-3 border text-right">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderItems.map((item) => (
+                  <tr key={item._id} className="border">
+                    <td className="p-3 flex items-center gap-2">
+                      <Image src={item.image} alt={item.name} width={50} height={50} className="rounded" />
+                      <Link href={`/products/${item.name}`} className="text-[#144e8b] font-bold">
+                        {item.name}
+                      </Link>
+                    </td>
+                    <td className="p-3 text-center">{item.quantity}</td>
+                    <td className="p-3 text-center">{item.purchaseType}</td>
+                    <td className="p-3 text-right">${item.price}</td>
+                    <td className="p-3 text-right">
+                      ${(item.quantity * item.price).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div className="card p-5 my-5">
+            <h2 className="mb-2 text-lg font-semibold">Order Summary</h2>
+            <ul>
+              <li className="mb-2 flex justify-between">
+                <span>Items</span>
+                <span>${itemsPrice.toFixed(2)}</span>
+              </li>
                 {paymentMethod === 'Pay by Wire' ? (
                   <li>
                     <div className="mb-2 px-3 flex justify-between">
@@ -708,62 +722,62 @@ function OrderScreen() {
                     </li>
                   )}
                 <br />
-                <li>
-                  <div className="mb-2 px-3 flex justify-between text-center">
-                    {!session.user.isAdmin && (
-                      <div>
-                        We will contact you for more information depending on
-                        your shipping preference selection.
-                      </div>
-                    )}
-                  </div>
-                </li>
-              </ul>
-            </div>
+              <li>
+                <div className="mb-2 px-3 flex justify-between text-center">
+                  {!session.user.isAdmin && (
+                    <div>
+                      We will contact you for more information depending on
+                      your shipping preference selection.
+                    </div>
+                  )}
+                </div>
+              </li>
+            </ul>
           </div>
-          <form ref={form} hidden>
-            <input
-              type="hidden"
-              name="order_id"
-              value={orderId.substring(orderId.length - 8).toUpperCase()}
-              readOnly
-            />
-            <input
-              type="hidden"
-              name="user_name"
-              value={shippingAddress.fullName}
-              readOnly
-            />
-            <input
-              type="hidden"
-              name="user_phone"
-              value={shippingAddress.phone}
-              readOnly
-            />
-            <input type="hidden" name="user_email" value={userEmail} readOnly />
-            <input
-              type="hidden"
-              name="total_order"
-              value={totalPrice}
-              readOnly
-            />
-            <input
-              type="hidden"
-              name="payment_method"
-              value={paymentMethod}
-              readOnly
-            />
-            <input
-              type="hidden"
-              name="shipping_preference"
-              value={shippingAddress.notes}
-              readOnly
-            />
-          </form>
         </div>
-      )}
-    </Layout>
-  );
+        <form ref={form} hidden>
+          <input
+            type="hidden"
+            name="order_id"
+            value={orderId.substring(orderId.length - 8).toUpperCase()}
+            readOnly
+          />
+          <input
+            type="hidden"
+            name="user_name"
+            value={shippingAddress.fullName}
+            readOnly
+          />
+          <input
+            type="hidden"
+            name="user_phone"
+            value={shippingAddress.phone}
+            readOnly
+          />
+          <input type="hidden" name="user_email" value={userEmail} readOnly />
+          <input
+            type="hidden"
+            name="total_order"
+            value={totalPrice}
+            readOnly
+          />
+          <input
+            type="hidden"
+            name="payment_method"
+            value={paymentMethod}
+            readOnly
+          />
+          <input
+            type="hidden"
+            name="shipping_preference"
+            value={shippingAddress.notes}
+            readOnly
+          />
+        </form>
+      </div>
+    )}
+  </Layout>
+ );
 }
 
 OrderScreen.auth = true;

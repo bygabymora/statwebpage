@@ -14,7 +14,7 @@ export default function CheckoutWizard({ activeStep = 0 }) {
             animate={{ scale: index <= activeStep ? 1.2 : 1 }}
             transition={{ duration: 0.3 }}
             className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold 
-            ${index <= activeStep ? 'bg-green-600 shadow-lg' : 'bg-gray-400'}`}
+            ${index <= activeStep ? 'bg-[#03793d] shadow-lg' : 'bg-gray-400'}`}
           >
             {index < activeStep ? <CheckCircleIcon className="w-6 h-6 text-white" /> : index + 1}
           </motion.div>
