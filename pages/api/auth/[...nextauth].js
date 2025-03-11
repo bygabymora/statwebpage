@@ -14,18 +14,22 @@ export default NextAuth({
       if (user) {
         // Newly authenticated user
         token._id = user._id;
+        token.name = user.name;
+        token.email = user.email;
         token.isAdmin = user.isAdmin;
         token.companyName = user.companyName;
         token.companyEinCode = user.companyEinCode;
         token.active = user.active;
         token.approved = user.approved;
-      } else {
+      } else if (token._id) {
         // Check the database if the user is still active
         await db.connect();
-        const dbUser = await WpUser.findById(token._id).select('active approved');
+        const dbUser = await WpUser.findById(token._id).select('name email active approved');
         await db.disconnect();
 
         if (dbUser) {
+          token.name = dbUser.name;
+          token.email = dbUser.email;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
         } else {
@@ -39,6 +43,8 @@ export default NextAuth({
     async session({ session, token }) {
       session.user = {
         _id: token._id,
+        name: token.name, 
+        email: token.email, 
         isAdmin: token.isAdmin,
         companyName: token.companyName,
         companyEinCode: token.companyEinCode,
@@ -48,14 +54,6 @@ export default NextAuth({
 
       return session;
     }
-  },
-
-  events: {
-    async session({ session }) {
-      if (!session.user.active) {
-        throw new Error('Your account is inactive.');
-      }
-    },
   },
 
   providers: [
