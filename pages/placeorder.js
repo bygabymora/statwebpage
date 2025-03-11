@@ -213,37 +213,40 @@ export default function PlaceOrderScreen() {
                 Edit
               </Link>
             </div>
-            <div className="card bg-white shadow-lg p-6 rounded-lg border mt-5">
+            <div className="card bg-white shadow-lg p-6 rounded-lg border mt-5 my-5">
               <h2 className="mb-4 text-xl font-semibold text-[#144e8b]">Order Items</h2>
-              <table className="min-w-full border border-gray-300">
-                <thead className="bg-gray-100 border-b">
-                  <tr>
-                    <th className="px-5 py-3 text-left">Item</th>
-                    <th className="p-5 text-right">Type</th>
-                    <th className="p-5 text-right">Qty</th>
-                    <th className="p-5 text-right">Price</th>
-                    <th className="p-5 text-right">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cartItems.map((item) => (
-                    <tr key={item._id} className="border-b">
-                      <td>
-                        <Link href={`/products/${item.slug}`} className="flex items-center p-2">
-                          <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded-lg" />
-                          <span className="ml-2 font-medium text-gray-700">{item.name}</span>
-                        </Link>
-                      </td>
-                      <td className="p-5 text-right">{item.purchaseType}</td>
-                      <td className="p-5 text-right">{item.quantity}</td>
-                      <td className="p-5 text-right">${item.price}</td>
-                      <td className="p-5 text-right font-bold text-[#144e8b]">
-                        ${(item.quantity * item.price).toFixed(2)}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full border border-gray-300 min-w-[600px]">
+                  <thead className="bg-gray-100 border-b">
+                    <tr>
+                      <th className="px-5 py-3 text-left">Item</th>
+                      <th className="p-5 text-right">Type</th>
+                      <th className="p-5 text-right">Qty</th>
+                      <th className="p-5 text-right">Price</th>
+                      <th className="p-5 text-right">Subtotal</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {cartItems.map((item) => (
+                      <tr key={item._id} className="border-b">
+                        <td>
+                          <Link href={`/products/${item.slug}`} className="flex items-center p-2">
+                            <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded-lg" />
+                            <span className="ml-2 font-medium text-gray-700">{item.name}</span>
+                          </Link>
+                        </td>
+                        <td className="p-5 text-right">{item.purchaseType}</td>
+                        <td className="p-5 text-right">{item.quantity}</td>
+                        <td className="p-5 text-right">${item.price}</td>
+                        <td className="p-5 text-right font-bold text-[#144e8b]">
+                          ${(item.quantity * item.price).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+ 
               <Link className="underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition mt-3 block" href="/cart">
                 Edit Cart
               </Link>

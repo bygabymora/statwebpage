@@ -72,7 +72,7 @@ export default NextAuth({
         }
 
         if (!user.active) {
-          throw new Error('Your account is inactive. Please contact support.');
+          throw new Error('Your account is inactive. Contact us for more information.');
         }
 
         return {

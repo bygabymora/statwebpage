@@ -9,10 +9,12 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
+import { FaTruckMoving, FaClipboardCheck, FaBuilding } from 'react-icons/fa';
+import { AiFillCheckCircle } from 'react-icons/ai';
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
-  const [name, setName] = useState('');
+  const [setName] = useState('');
 
   const usStates = [
     'Alabama',
@@ -81,23 +83,7 @@ export default function ShippingScreen() {
   const [shippingPaymentMethod, setPaymentMethod] = useState('Bill me');
   const [accountNumber, setAccountNumber] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
-  const [sameAddress, setSameAddress] = useState(true);
-
-  const handleShippingSpeedChange = (event) => {
-    setShippingSpeed(event.target.value);
-  };
-
-  const handleShippingCompanyChange = (event) => {
-    setShippingCompany(event.target.value);
-  };
-
-  const handlePaymentMethodChange = (event) => {
-    setPaymentMethod(event.target.value);
-  };
-
-  const handleAccountNumberChange = (event) => {
-    setAccountNumber(event.target.value);
-  };
+  const [sameAddress] = useState(true);
 
   const handleSpecialNotesChange = (event) => {
     setSpecialNotes(event.target.value);
@@ -108,22 +94,6 @@ export default function ShippingScreen() {
       setName(session.user.name);
     }
   }, [session, session.user.name]);
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleShippingInstructions = () => {
-    const instructions = `Shipping Speed: ${shippingSpeed}, \nShipping Company: ${shippingCompany}, \nPayment Method: ${shippingPaymentMethod},  
-    \n${
-      shippingPaymentMethod === 'use my account'
-        ? ` (Account Number: ${accountNumber})`
-        : ''
-    } 
-     \n${specialNotes !== '' ? ` Specific Instructions: ${specialNotes}` : ''}`;
-
-    setValue('notes', instructions); // Update the form value for 'notes' field
-  };
 
   const handleStateChange = (event) => {
     const inputValue = event.target.value.toLowerCase();
@@ -225,16 +195,16 @@ export default function ShippingScreen() {
         cityB = city;
         postalCodeB = postalCode;
       }
-      dispatch({
-        type: 'SAVE_SHIPPING_ADDRESS',
-        payload: {
-          fullName,
-          company,
-          phone,
-          address,
-          state,
-          city,
-          postalCode,
+    dispatch({
+      type: 'SAVE_SHIPPING_ADDRESS',
+      payload: {
+        fullName,
+        company,
+        phone,
+        address,
+        state,
+        city,
+        postalCode,
           fullNameB,
           companyB,
           phoneB,
@@ -242,23 +212,24 @@ export default function ShippingScreen() {
           stateB,
           cityB,
           postalCodeB,
+        notes,
+      },
+    });
+
+    Cookies.set(
+      'cart',
+      JSON.stringify({
+        ...cart,
+        shippingAddress: {
+          fullName,
+          company,
+          phone,
+          address,
+          state,
+          city,
+          postalCode,
           notes,
         },
-      });
-      Cookies.set(
-        'cart',
-        JSON.stringify({
-          ...cart,
-          shippingAddress: {
-            fullName,
-            company,
-            phone,
-            address,
-            state,
-            city,
-            postalCode,
-            notes,
-          },
           billingAddress: {
             fullNameB,
             companyB,
@@ -268,11 +239,11 @@ export default function ShippingScreen() {
             cityB,
             postalCodeB,
           },
-        })
-      );
+      })
+    );
 
       // Redirect to the payment page
-      router.push('/payment');
+    router.push('/payment');
     } catch (error) {
       // Handle errors (e.g., user not found, network issues)
       toast.error(
@@ -330,24 +301,14 @@ export default function ShippingScreen() {
     }
   }, [sameAddress, setValue, shippingAddress]);
 
-  const handleSameAddressChange = (event) => {
-    setSameAddress(event.target.checked);
-    console.log('Checkbox Checked:', event.target.checked);
-  };
-
   return (
     <Layout title="Shipping Address">
-      <CheckoutWizard activeStep={1}></CheckoutWizard>
-
-      <form
-        className="mx-auto max-w-screen-md w-full "
-        onSubmit={handleSubmit(submitHandler)}
-      >
-        <div>
-          <h1 className="text-2xl font-bold section__title">
-            Shipping & Billing Addresses
-          </h1>
-          <p className="text-center font-semibold m-5 ">
+      <CheckoutWizard activeStep={1} />
+      <div className="mx-auto max-w-2xl">
+        <h1 className="text-3xl font-bold text-center text-[#144e8b] mb-6">
+          Shipping & Billing Information
+        </h1>
+        <p className="text-center font-semibold m-5 ">
             Shipping charges are not included. We can either bill your shipping
             account, or ship on our account for an additional fee. If you would
             like us to bill you shipping, please understand that your order will
@@ -385,150 +346,17 @@ export default function ShippingScreen() {
               </div>
             </div>
           )}
-        </div>
-        <div>
-          <h1 className="mb-4 text-xl">Shipping Address</h1>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="fullName">Full Name*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="fullName"
-              placeholder="Enter Full Name"
-              {...register('fullName', { required: true, minLength: 3 })}
-              autoFocus
-              autoCapitalize="true"
-              value={name}
-              onChange={handleNameChange}
-              required
-            />
-            {errors.fullName && (
-              <p className="text-red-500">Full Name is required.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="company">Company*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="company"
-              placeholder="Company's Name"
-              {...register('company', { required: false, minLength: 3 })}
-              autoCapitalize="true"
-              value={session.user.companyName}
-            />
-            {errors.company && (
-              <p className="text-red-500">Please check Company{"'"}s name.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="phone">Phone Number*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="phone"
-              placeholder="Enter Phone Number"
-              {...register('phone', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-            />
-            {errors.phone && (
-              <p className="text-red-500">Phone Number is required.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="address">Address*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="address"
-              placeholder="Enter address"
-              {...register('address', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.address && (
-              <p className="text-red-500">Address is required.</p>
-            )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="state">State*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="state"
-              placeholder="Enter state"
-              {...register('state', { required: true, minLength: 3 })}
-              onChange={handleStateChange}
-              onFocus={() => setShowSuggestions(true)}
-              onKeyDown={handleKeyDown} // Add the onKeyDown event handler
-              autoCapitalize="true"
-              required
-            />
-            {errors.state && <p className="text-red-500">State is required.</p>}
-            {filteredStates.length > 0 &&
-              inputValue.length >= 3 &&
-              showSuggestions && (
-                <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
-                  {filteredStates.map((state, index) => (
-                    <div
-                      key={index}
-                      className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
-                        index === selectedSuggestion ? 'bg-gray-200' : ''
-                      }`} // Highlight the selected suggestion
-                      onClick={() => handleSelectState(state)}
-                    >
-                      {state}
-                    </div>
-                  ))}
-                </div>
-              )}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="city">City*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="city"
-              placeholder="Enter city"
-              {...register('city', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.city && <p className="text-red-500">City is required.</p>}
-          </div>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="postalCode">Postal Code*</label>
-            <input
-              className="w-full contact__form-input"
-              type="text"
-              id="postalCode"
-              placeholder="Enter postal code"
-              {...register('postalCode', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-              required
-            />
-            {errors.postalCode && (
-              <p className="text-red-500">Postal Code is required.</p>
-            )}
-          </div>
-        </div>
-        <div className="mx-auto max-w-screen-md">
-          <h1 className="text-2xl font-bold">Billing Address</h1>
-          <div className="mb-4 contact__form-div">
-            <label htmlFor="sameAddress">Same as Shipping Address</label> &nbsp;
-            <div>
-              <input
-                type="checkbox"
-                checked={sameAddress}
-                onChange={handleSameAddressChange}
-              />
-            </div>
-          </div>
-
-          {!sameAddress && (
-            <>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="fullNameB">Full Name*</label>
+        <form className="space-y-6 my-5" onSubmit={handleSubmit(submitHandler)}>
+          {/* SHIPPING ADDRESS */}
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
+              <FaTruckMoving className="text-blue-500" />
+              Shipping Address
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              
+              <div>
+                <label className="block font-medium">Full Name*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -542,8 +370,8 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Full Name is required.</p>
                 )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="companyB">Company</label>
+              <div>
+                <label className="block font-medium">Company</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -560,8 +388,8 @@ export default function ShippingScreen() {
                   </p>
                 )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="phoneB">Phone Number*</label>
+              <div>
+                <label className="block font-medium">Phone Number*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -575,8 +403,8 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Phone Number is required.</p>
                 )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="addressB">Address*</label>
+              <div>
+                <label className="block font-medium">Address*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -590,8 +418,8 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Address is required.</p>
                 )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="stateB">State*</label>
+              <div>
+                <label className="block font-medium">State*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -625,8 +453,8 @@ export default function ShippingScreen() {
                     </div>
                   )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="cityB">City*</label>
+              <div>
+                <label className="block font-medium">City*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -640,8 +468,8 @@ export default function ShippingScreen() {
                   <p className="text-red-500">City is required.</p>
                 )}
               </div>
-              <div className="mb-4 contact__form-div">
-                <label htmlFor="postalCodeB">Postal Code*</label>
+              <div>
+                <label className="block font-medium">Postal Code*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
@@ -658,120 +486,65 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Postal Code is required.</p>
                 )}
               </div>
-            </>
-          )}
-        </div>
-        <div className="mx-auto max-w-screen-md">
-          <h2 className="text-2xl font-bold">Shipping preferences</h2>
-          <div className="mb-4 ">
-            <h2 className="">Shipping Speed:</h2>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingSpeed"
-                value="Overnight"
-                checked={shippingSpeed === 'Overnight'}
-                onChange={handleShippingSpeedChange}
-              />
-              &nbsp;
-              <label className="p-2">Overnight</label>
-            </div>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingSpeed"
-                value="2-day"
-                checked={shippingSpeed === '2-day'}
-                onChange={handleShippingSpeedChange}
-              />
-              &nbsp;
-              <label className="p-2">2-day</label>
-            </div>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingSpeed"
-                value="3-day"
-                checked={shippingSpeed === '3-day'}
-                onChange={handleShippingSpeedChange}
-              />
-              &nbsp;
-              <label className="p-2">3-day</label>
-            </div>
-
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingSpeed"
-                value="Ground"
-                checked={shippingSpeed === 'Ground'}
-                onChange={handleShippingSpeedChange}
-              />
-              &nbsp;
-              <label className="p-2">Ground</label>
             </div>
           </div>
 
-          <div className="mb-4 contact__form-div mt-4 flex flex-col">
-            <h1 className="mb-4 ">Shipping Company:</h1>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingCompany"
-                value="FedEx"
-                checked={shippingCompany === 'FedEx'}
-                onChange={handleShippingCompanyChange}
-              />
-              <label className="p-2">FedEx</label>
+          {/* SHIPPING PREFERENCES */}
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
+              <FaClipboardCheck className="text-blue-500" />
+              Shipping Preferences
+            </h2>
+            <div className="mt-4">
+              <h3 className="font-semibold">Shipping Speed</h3>
+              <select
+                className="input-field"
+                value={shippingSpeed}
+                onChange={(e) => setShippingSpeed(e.target.value)}
+              >
+                <option value="Overnight">Overnight</option>
+                <option value="2-day">2-day</option>
+                <option value="3-day">3-day</option>
+                <option value="Ground">Ground</option>
+              </select>
             </div>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingCompany"
-                value="UPS"
-                checked={shippingCompany === 'UPS'}
-                onChange={handleShippingCompanyChange}
-              />
-              <label className="p-2">UPS</label>
+
+            <div className="mt-4">
+              <h3 className="font-semibold">Shipping Company</h3>
+              <select
+                className="input-field"
+                value={shippingCompany}
+                onChange={(e) => setShippingCompany(e.target.value)}
+              >
+                <option value="FedEx">FedEx</option>
+                <option value="UPS">UPS</option>
+              </select>
             </div>
           </div>
-          <div className="mb-4 contact__form-div flex flex-col">
-            <h1 className="mb-4 ">Payment:</h1>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingPaymentMethod"
-                value="Bill me"
-                checked={shippingPaymentMethod === 'Bill me'}
-                onChange={handlePaymentMethodChange}
-              />
-              <label className="p-2">Bill me</label>
-            </div>
-            <div>
-              <input
-                className="p-2 outline-none focus:ring-0"
-                type="radio"
-                name="shippingPaymentMethod"
-                value="use my account"
-                checked={shippingPaymentMethod === 'use my account'}
-                onChange={handlePaymentMethodChange}
-              />
-              <label className="p-2">Use my account</label>
 
+          {/* PAYMENT METHOD */}
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
+              <FaBuilding className="text-blue-500" />
+              Payment Method
+            </h2>
+            <div className="mt-4">
+              <label className="block font-semibold">Select a payment method:</label>
+              <select
+                className="input-field"
+                value={shippingPaymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="Bill me">Bill me</option>
+                <option value="use my account">Use my account</option>
+              </select>
               {shippingPaymentMethod === 'use my account' && (
                 <input
-                  className="w-full contact__form-input"
+                  className="input-field mt-2"
                   type="text"
-                  placeholder="Please enter your account number"
+                  placeholder="Enter your account number"
                   value={accountNumber}
-                  onChange={handleAccountNumberChange}
+                  onChange={(e) => setAccountNumber(e.target.value)}
                 />
               )}
             </div>
@@ -785,8 +558,7 @@ export default function ShippingScreen() {
                 onChange={handleSpecialNotesChange}
               />
             </div>
-          </div>
-          <div className="mb-4 contact__form-div" hidden>
+            <div className="mb-4 contact__form-div" hidden>
             <label htmlFor="notes">Shipping Instructions</label>
             <textarea
               className="w-full contact__form-input contact__message"
@@ -796,18 +568,15 @@ export default function ShippingScreen() {
               autoCapitalize="true"
             />
           </div>
-        </div>
-        <br />
-        <div className="mb-4 contact__form-div">
-          <button
-            className="primary-button w-full"
-            type="submit"
-            onClick={handleShippingInstructions}
-          >
+          </div>
+
+          {/* SUBMIT BUTTON */}
+          <button className="primary-button w-full flex items-center justify-center gap-2">
+            <AiFillCheckCircle className="text-xl" />
             Continue
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </Layout>
   );
 }
