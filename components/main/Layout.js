@@ -136,6 +136,7 @@ export default function Layout({ title, children, news, product}) {
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
+        {console.log('session', session)}
         <Header />
         <main className="main container  m-auto mt-11 px-4">{children}</main>
         <Footer />

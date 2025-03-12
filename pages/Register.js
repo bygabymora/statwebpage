@@ -8,6 +8,8 @@ import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import CustomAlertModal from '../components/main/CustomAlertModal';
+import { messageManagement } from '../utils/alertSystem/customers/messageManagement';
+import handleSendEmails from '../utils/alertSystem/documentRelatedEmail';
 
 export default function LoginScreen() {
   const { data: session } = useSession();
@@ -56,6 +58,15 @@ export default function LoginScreen() {
       });
       setIsModalOpen(true);
       setShouldRedirect(true);
+      const contactToEmail = {
+        name,
+        email,
+      }
+      const emailmessage = messageManagement(contactToEmail, "Register");
+      handleSendEmails( 
+        emailmessage,
+        contactToEmail,
+      );
     } catch (err) {
       setAlertMessage({
         title: 'Error',
@@ -73,6 +84,7 @@ export default function LoginScreen() {
     }
     setIsModalOpen(false);
   };
+
   return (
     <Layout title="Create Account">
       <form

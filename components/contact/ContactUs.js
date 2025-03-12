@@ -1,38 +1,38 @@
-import React, { useRef, useState } from 'react';
-import emailjs from '@emailjs/browser';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { BiMessageAdd } from 'react-icons/bi';
 import { motion } from 'framer-motion';
+import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
+import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
+import { useModalContext } from '../context/ModalContext';
 
 const ContactUs = () => {
   const form = useRef();
-
+  const [message, setMessage] = useState('');
+  const {contact, showStatusMessage} = useModalContext();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
 
   const sendEmail = (e) => {
+    const contactToEmail = {name, email};
+    if (!name || !email || !message) {
+      showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
     e.preventDefault();
 
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_ml8ohai',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          alert('Message sent, thank you for contacting us');
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
-    setName('');
-    setEmail('');
-    setMessage('');
+    const emailmessage = messageManagement(contactToEmail, "Contact Us", message);
+    handleSendEmails( 
+      emailmessage,
+      contactToEmail,
+    );
   };
+
+  useEffect(() => {
+    if (contact) {
+      setName(contact.name);
+      setEmail(contact.email);
+    }
+  }, [contact]);
 
   const tab = <>&nbsp;&nbsp;</>;
 

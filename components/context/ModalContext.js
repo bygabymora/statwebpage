@@ -1,16 +1,25 @@
-import React, { createContext, useCallback, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 import StatusMessage from '../main/StatusMessage';
 import { useContext } from 'react';
 import CustomAlertModal from '../main/CustomAlertModal';
+import { useSession } from 'next-auth/react';
 const ModalContext = createContext();
 export const useModalContext = () => useContext(ModalContext);
 export const ModalProvider = ({children}) => {
+  const {data: session} = useSession();
   const [isvisible, setIsVisible] = useState(false);
   const [statusMessage, setStatusMessage] = useState(" ");
   const [messageType, setMessageType] = useState("success");
   const [alertMessage, setAlertMessage] = useState({});
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [alertAction, setAlertAction] = useState(null);
+  const [contact, setContact] = useState({});
+  
+  useEffect(() => {
+    if (session) {
+      setContact(session.user);
+    }
+  },[session]);
 
   const openAlertModal = (message, action) => {
     setAlertMessage(message);
@@ -29,7 +38,7 @@ export const ModalProvider = ({children}) => {
   };
 
   return (
-    <ModalContext.Provider value={{showStatusMessage, openAlertModal}}> 
+    <ModalContext.Provider value={{showStatusMessage, openAlertModal, contact}}> 
         
       {children}
         <StatusMessage
