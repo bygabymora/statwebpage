@@ -12,6 +12,7 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        console.log('Usuario autenticado, almacenando en token:', user);
         // Newly authenticated user
         token._id = user._id;
         token.name = user.name;
@@ -51,7 +52,7 @@ export default NextAuth({
         active: token.active,
         approved: token.approved,
       };
-
+      console.log('Session final:', session);
       return session;
     }
   },
