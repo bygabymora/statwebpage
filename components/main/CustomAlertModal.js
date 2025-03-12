@@ -1,6 +1,6 @@
 import React from "react";
 
-const CustomAlertModal = ({ isOpen, onClose, message, onConfirm }) => {
+const CustomAlertModal = ({ isOpen, message, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -13,7 +13,7 @@ const CustomAlertModal = ({ isOpen, onClose, message, onConfirm }) => {
           <button 
             data-ignore-context
             onClick={(e) => {
-              e.preventDefault(); onClose();  
+              e.preventDefault();  
               if (onConfirm) onConfirm();
             }}
             className="primary-button py-2 px-4 rounded hover:bg-gray-300"

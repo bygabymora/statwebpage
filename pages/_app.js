@@ -8,6 +8,7 @@ import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
 import ReactGA from 'react-ga';
 import Script from 'next/script';
 import { reportWebVitals } from '../utils/reportWebVitals';
+import { ModalProvider } from '../components/context/ModalContext';
 
 // Initialize Google Analytics with your tracking ID
 ReactGA.initialize('G-DZ8WE2HZH9', {
@@ -24,6 +25,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
   return (
     <SessionProvider session={session}>
+      <ModalProvider>
       <StoreProvider>
         <CookieAcceptancePopup />
         <Script
@@ -50,6 +52,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           )}
         </PayPalScriptProvider>
       </StoreProvider>
+      </ModalProvider>
     </SessionProvider>
   );
 }

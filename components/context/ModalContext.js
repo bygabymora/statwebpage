@@ -1,0 +1,48 @@
+import React, { createContext, useCallback, useState } from 'react'
+import StatusMessage from '../main/StatusMessage';
+import { useContext } from 'react';
+import CustomAlertModal from '../main/CustomAlertModal';
+const ModalContext = createContext();
+export const useModalContext = () => useContext(ModalContext);
+export const ModalProvider = ({children}) => {
+  const [isvisible, setIsVisible] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(" ");
+  const [messageType, setMessageType] = useState("success");
+  const [alertMessage, setAlertMessage] = useState({});
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertAction, setAlertAction] = useState(null);
+
+  const openAlertModal = (message, action) => {
+    setAlertMessage(message);
+    setAlertAction(()=>action);
+    setIsAlertVisible(true);
+  };
+  const showStatusMessage = useCallback((type, message) => {
+    setStatusMessage(message);
+    setMessageType(type);
+    setIsVisible(true);
+   },[]);
+
+   const handleAlertConfirm = () => {
+    setIsAlertVisible(false);
+    if (alertAction) alertAction();
+  };
+
+  return (
+    <ModalContext.Provider value={{showStatusMessage, openAlertModal}}> 
+        
+      {children}
+        <StatusMessage
+          type={messageType}
+          message={statusMessage}
+          isVisible={isvisible}
+        />
+        <CustomAlertModal 
+          isOpen={isAlertVisible}
+            message={alertMessage}
+            onConfirm={handleAlertConfirm}
+        />
+    </ModalContext.Provider>
+  )
+}
+
