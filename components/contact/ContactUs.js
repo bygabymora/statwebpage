@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BiMessageAdd } from 'react-icons/bi';
 import { motion } from 'framer-motion';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   BiHomeSmile,
@@ -10,7 +9,6 @@ import {
 } from 'react-icons/bi';
 import { MdOutlineWavingHand } from 'react-icons/md';
 import { useRouter } from 'next/router';
-import { TbShoppingCartDiscount } from 'react-icons/tb';
 
 const Navbar = () => {
   const router = useRouter();
