@@ -8,10 +8,13 @@ import { getError } from '../utils/error';
 import { useSession } from 'next-auth/react';
 import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { useRouter } from 'next/router';
+import CustomAlertModal from "../components/main/CustomAlertModal";
 
 export default function Login() {
   const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState({ title: '', body: '', warning: '' });
 
   const router = useRouter();
   const { redirect } = router.query;
@@ -40,10 +43,19 @@ export default function Login() {
         password,
       });
       if (result.error) {
-        toast.error(result.error);
+        if (result.error === "Your account is inactive. Please contact support.") {
+          setAlertMessage({
+            title: 'Account Inactive',
+            body: 'Your account is currently inactive.',
+            warning: 'Please contact support to reactivate your account.',
+          });
+          setIsAlertOpen(true);
+        } else {
+          toast.error(result.error);
+        }
       }
-    } catch (err) {
-      toast.error(getError(err));
+    } catch (error) {
+      toast.error(getError(error));
     }
   };
 
@@ -130,6 +142,7 @@ export default function Login() {
           </Link>
         </div>
       </form>
+      <CustomAlertModal isOpen={isAlertOpen} message={alertMessage} onConfirm={() => setIsAlertOpen(false)} />
     </Layout>
   );
 }

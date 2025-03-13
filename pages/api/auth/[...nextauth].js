@@ -12,7 +12,6 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('Usuario autenticado, almacenando en token:', user);
         // Newly authenticated user
         token._id = user._id;
         token.name = user.name;
@@ -67,13 +66,13 @@ export default NextAuth({
         if (!user) {
           throw new Error('Invalid email or password');
         }
+
+        if (!user.active) {
+          throw new Error('Your account is inactive. Please contact support.');
+        }
       
         if (!bcryptjs.compareSync(credentials.password, user.password)) {
           throw new Error('Invalid email or password');
-        }
-
-        if (!user.active) {
-          throw new Error('Your account is inactive. Contact us for more information.');
         }
 
         return {
