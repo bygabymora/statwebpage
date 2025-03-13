@@ -11,6 +11,7 @@ const ContactUs = () => {
   const {contact, showStatusMessage} = useModalContext();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [formData] = useState({ name: '', email: '', message: '' });
 
   const sendEmail = (e) => {
     const contactToEmail = {name, email};
@@ -56,7 +57,7 @@ const ContactUs = () => {
             name="user_name"
             className="contact__form-input"
             onChange={(e) => setName(e.target.value)}
-            value={name}
+            value={formData.name ?? " "}
             id="user_name"
             required
           />
@@ -71,7 +72,7 @@ const ContactUs = () => {
             name="user_email"
             className="contact__form-input"
             onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            value={formData.email ?? " "}
             id="user_email"
             required
           />
@@ -85,7 +86,7 @@ const ContactUs = () => {
             name="message"
             className="contact__form-input contact__message"
             onChange={(e) => setMessage(e.target.value)}
-            value={message}
+            value={formData.message ?? " "}
             id="message"
             required
           />
