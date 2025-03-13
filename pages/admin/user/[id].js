@@ -28,7 +28,7 @@ function reducer(state, action) {
 }
 
 export default function AdminUserEditScreen() {
-  const [originalData, setOriginalData] = useState(null); // 📌 Estado para guardar el usuario original
+  const [originalData, setOriginalData] = useState(null); // Status to save the original user data
   const [isAdmin, setEsAdmin] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
@@ -45,9 +45,8 @@ export default function AdminUserEditScreen() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     setValue,
-    getValues,
+
   } = useForm();
 
   useEffect(() => {
@@ -58,10 +57,10 @@ export default function AdminUserEditScreen() {
         const data = response.data.user;
         dispatch({ type: 'FETCH_SUCCESS' });
 
-        // 📌 Guardar datos originales para comparar después
+        // Save original data to compare later
         setOriginalData(data);
 
-        // 📌 Establecer valores en el formulario
+        // Set values ​​in the form
         setValue('name', data.name);
         setValue('email', data.email);
         setValue('companyName', data.companyName);
@@ -100,7 +99,7 @@ export default function AdminUserEditScreen() {
 
       dispatch({ type: 'UPDATE_SUCCESS' });
 
-      // 📌 Generar mensaje personalizado según los cambios hechos
+      // Generate personalized message according to the changes made
       generateCustomMessage(formData);
 
       setShowModal(true);
