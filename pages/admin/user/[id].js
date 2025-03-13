@@ -45,7 +45,9 @@ export default function AdminUserEditScreen() {
   const {
     register,
     handleSubmit,
+    formState: { errors },
     setValue,
+    getValues,
   } = useForm();
 
   useEffect(() => {
@@ -144,18 +146,10 @@ export default function AdminUserEditScreen() {
       <div className="grid md:grid-cols-4 md:gap-5">
         <div>
           <ul>
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users" className="font-bold">Usuarios</Link>
-              </li>
+            <li><Link href="/admin/dashboard">Dashboard</Link></li>
+            <li><Link href="/admin/orders">Orders</Link></li>
+            <li><Link href="/admin/products">Products</Link></li>
+            <li><Link href="/admin/users" className="font-bold">Usuarios</Link></li>
           </ul>
         </div>
         <div className="md:col-span-3">
@@ -164,79 +158,32 @@ export default function AdminUserEditScreen() {
           ) : error ? (
             <div className="alert-error">{error}</div>
           ) : (
-            <form 
-              className="mx-auto max-w-screen-md" 
-              onSubmit={handleSubmit(submitHandler)}
-            >
-              <h1 className="mb-4 text-xl">{`Edit User ${userId
-                .substring(userId.length - 8)
-                .toUpperCase()}`}
-              </h1>
+            <form className="mx-auto max-w-screen-md" onSubmit={handleSubmit(submitHandler)}>
+              <h1 className="mb-4 text-xl">{`Edit User ${userId.substring(userId.length - 8).toUpperCase()}`}</h1>
 
               <div className="flex gap-4 my-4">
                 <label>
-                  <input 
-                  type="checkbox" 
-                  {...register('isAdmin')}
-                   checked={isAdmin} 
-                   onChange={(e) => 
-                   setEsAdmin(e.target.checked)}
-                    />
+                  <input type="checkbox" {...register('isAdmin')} checked={isAdmin} onChange={(e) => setEsAdmin(e.target.checked)} />
                   &nbsp; Is Admin?
                 </label>
                 <label>
-                  <input 
-                  type="checkbox" 
-                  {...register('active')}
-                   checked={isActive} 
-                   onChange={(e) => 
-                   setIsActive(e.target.checked)}
-                    />
+                  <input type="checkbox" {...register('active')} checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                   &nbsp; Is Active?
                 </label>
                 <label>
-                  <input 
-                  type="checkbox" 
-                  {...register('approved')} 
-                  checked={isApproved} 
-                  onChange={(e) => 
-                  setIsApproved(e.target.checked)}
-                   />
+                  <input type="checkbox" {...register('approved')} checked={isApproved} onChange={(e) => setIsApproved(e.target.checked)} />
                   &nbsp; Is Approved?
                 </label>
               </div>
 
-              <div className="mb-4">
-                <label>Name</label>
-                <input {...register('name')}
-                 className="w-full px-3 py-2 border rounded" 
-                />
-                 </div>
-              <div className="mb-4">
-                <label>Email</label>
-                <input {...register('email')} 
-                className="w-full px-3 py-2 border rounded" />
-                </div>
-              <div className="mb-4">
-                <label>Company Name</label>
-                <input {...register('companyName')} 
-                className="w-full px-3 py-2 border rounded" />
-                </div>
-              <div className="mb-4"><label>Company EIN Code</label>
-              <input {...register('companyEinCode')} 
-              className="w-full px-3 py-2 border rounded" />
-              </div>
+              <div className="mb-4"><label>Name</label><input {...register('name')} className="w-full px-3 py-2 border rounded" /></div>
+              <div className="mb-4"><label>Email</label><input {...register('email')} className="w-full px-3 py-2 border rounded" /></div>
+              <div className="mb-4"><label>Company Name</label><input {...register('companyName')} className="w-full px-3 py-2 border rounded" /></div>
+              <div className="mb-4"><label>Company EIN Code</label><input {...register('companyEinCode')} className="w-full px-3 py-2 border rounded" /></div>
 
-              <div className="flex flex-row my-4">
-                <button
-                 disabled={loadingUpdate} 
-                 className="primary-button mr-2">
-                  {loadingUpdate ? 'Loading' : 'Update'}
-                  </button>
-                <button 
-                onClick={() => router.push(`/admin/users`)} 
-                className="primary-button">Back
-                </button>
+              <div className="flex flex-row">
+                <button disabled={loadingUpdate} className="primary-button mr-2">{loadingUpdate ? 'Loading' : 'Update'}</button>
+                <button onClick={() => router.push(`/`)} className="primary-button">Back</button>
               </div>
             </form>
           )}
