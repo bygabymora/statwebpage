@@ -45,9 +45,7 @@ export default function AdminUserEditScreen() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     setValue,
-    getValues,
   } = useForm();
 
   useEffect(() => {
