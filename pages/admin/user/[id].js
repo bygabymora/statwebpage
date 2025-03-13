@@ -59,7 +59,6 @@ export default function AdminUserEditScreen() {
         // Save original data to compare later
         setOriginalData(data);
 
-        // Set values ​​in the form
         setValue('name', data.name);
         setValue('email', data.email);
         setValue('companyName', data.companyName);
