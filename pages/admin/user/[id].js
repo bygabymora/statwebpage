@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/main/Layout';
@@ -39,56 +39,41 @@ function reducer(state, action) {
   }
 }
 export default function AdminUserEditScreen() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setEsAdmin] = useState(false);
   const { query } = useRouter();
-  const [loaded, setLoaded] = useState(false);
   const userId = query.id;
   const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
   });
-  
 
- const defaultValues = useMemo(() => ({
-  name: '',
-  email: '',
-  companyName: '',
-  companyEinCode: '',
-  isAdmin: false,
-  active: false,
-  approved: false,
-}), []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
 
-const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues });
   useEffect(() => {
-    if (!userId || loaded) return;  // Avoid loading data more than once  
-  
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/users/${userId}`);
-        console.log('Datos recibidos:', data); 
-  
-        reset({
-          name: data.name || '',
-          email: data.email || '',
-          companyName: data.companyName || '',
-          companyEinCode: data.companyEinCode || '',
-          isAdmin: data.isAdmin || false,
-          active: data.active ?? false,
-          approved: data.approved ?? false,
-        });
-  
-        setIsAdmin(data.isAdmin || false);
-        setLoaded(true); //  Mark as charged to avoid unnecessary reloads 
+        const response = await axios.get(`/api/admin/users/${userId}`);
+        const data = response.data.user;
         dispatch({ type: 'FETCH_SUCCESS' });
+        setValue('name', data.name);
+        setValue('email', data.email);
+        setValue('companyName', data.companyName);
+        setValue('companyEinCode', data.companyEinCode);
+        setValue('isAdmin', data.isAdmin);
+        setEsAdmin(data.isAdmin);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
-  
+
     fetchData();
-  }, [userId, reset]);
+  }, [userId, setValue]);
 
   const router = useRouter();
 
@@ -214,8 +199,13 @@ const { register, handleSubmit, formState: { errors }, reset } = useForm({ defau
                 &nbsp;
                 <input
                   type="checkbox"
-                  id="isAdmin"
+                  id="esAdmin"
                   {...register('isAdmin')}
+                  checked={isAdmin}
+                  onChange={(e) => {
+                    setValue('isAdmin', e.target.checked);
+                    setEsAdmin(e.target.checked);
+                  }}
                 />
               </div>
 
