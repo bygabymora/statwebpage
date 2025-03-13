@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Layout from '../../../components/main/Layout';
 import { getError } from '../../../utils/error';
+import CustomAlertModal from '../../../components/main/CustomAlertModal';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -40,6 +41,9 @@ function reducer(state, action) {
 }
 export default function AdminUserEditScreen() {
   const [isAdmin, setEsAdmin] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const [ showModal, setShowModal ] = useState(false);
   const { query } = useRouter();
   const userId = query.id;
   const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
@@ -66,9 +70,13 @@ export default function AdminUserEditScreen() {
         setValue('companyName', data.companyName);
         setValue('companyEinCode', data.companyEinCode);
         setValue('isAdmin', data.isAdmin);
+        setValue('active', data.active);
+        setValue('approved', data.approved);
         setEsAdmin(data.isAdmin);
-      } catch (err) {
-        dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+        setIsActive(data.active);
+        setIsApproved(data.approved);
+      } catch (error) {
+        dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
     };
 
@@ -87,14 +95,20 @@ export default function AdminUserEditScreen() {
         companyName: companyName || '',
         companyEinCode: companyEinCode || '',
         isAdmin,
+        active: isActive,
+        approved: isApproved,
       });
-      dispatch({ type: 'UPDATE_SUCCESS' });
-      toast.success('User updated successfully');
-      router.push('/admin/users');
-    } catch (err) {
-      dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
-      toast.error(getError(err));
+      dispatch({ type: 'UPDATE_SUCCESS' }); 
+      setShowModal(true);
+    } catch (error) {
+      dispatch({ type: 'UPDATE_FAIL', payload: getError(error) });
+      toast.error(getError(error));
     }
+  };
+
+  const handleAlertConfirm = () => {
+    setShowModal(false);
+    router.push('/admin/users');
   };
 
   return (
@@ -131,6 +145,55 @@ export default function AdminUserEditScreen() {
               <h1 className="mb-4 text-xl">{`Edit User ${userId
                 .substring(userId.length - 8)
                 .toUpperCase()}`}</h1>
+                <div className="flex gap-4 my-4">
+                  <label htmlFor="isAdmin">
+                    &nbsp;
+                    <input
+                      type="checkbox"
+                      id="esAdmin"
+                      {...register('isAdmin')}
+                      checked={isAdmin}
+                      onChange={(e) => {
+                        setValue('isAdmin', e.target.checked);
+                        setEsAdmin(e.target.checked);
+                      }}
+                    />
+                     &nbsp;
+                    <span>Is Admin?</span>
+                  </label>
+                  <label htmlFor="active">
+                    &nbsp;
+                    <input
+                      type="checkbox"
+                      id="active"
+                     {...register('active')}
+                      checked={isActive}
+                      onChange={(e) => {
+                        setValue('active', e.target.checked);
+                        setIsActive(e.target.checked);
+                      }}
+                    />
+                     &nbsp;
+                    <span>Is Active?</span>
+                  </label>
+
+                  <label htmlFor="approved">
+                    &nbsp;
+                    <input
+                      type="checkbox"
+                      id="approved"
+                      {...register('approved')}
+                      checked={isApproved}
+                      onChange={(e) => {
+                        setValue('approved', e.target.checked);
+                        setIsApproved(e.target.checked);
+                      }}
+                    />
+                     &nbsp;
+                    <span>Is Approved?</span>
+                  </label>
+                </div>
+
               <div className="mb-4">
                 <label htmlFor="name">Name</label>
                 <input
@@ -194,21 +257,6 @@ export default function AdminUserEditScreen() {
                 )}
               </div>
 
-              <div className="mb-4">
-                <label htmlFor="isAdmin">Is Admin?</label>
-                &nbsp;
-                <input
-                  type="checkbox"
-                  id="esAdmin"
-                  {...register('isAdmin')}
-                  checked={isAdmin}
-                  onChange={(e) => {
-                    setValue('isAdmin', e.target.checked);
-                    setEsAdmin(e.target.checked);
-                  }}
-                />
-              </div>
-
               <div className="flex flex-row">
                 <div className="mb-4">
                   <button
@@ -231,6 +279,15 @@ export default function AdminUserEditScreen() {
           )}
         </div>
       </div>
+      <CustomAlertModal 
+        isOpen={showModal}
+        message={{
+          title: 'User Updated Successfully',
+          body: 'The changes have been saved correctly.',
+          warning: 'This action can be modified later.',
+        }}
+        onConfirm={handleAlertConfirm}
+      />
     </Layout>
   );
 }

@@ -48,8 +48,8 @@ export const ModalProvider = ({children}) => {
         />
         <CustomAlertModal 
           isOpen={isAlertVisible}
-            message={alertMessage}
-            onConfirm={handleAlertConfirm}
+          message={alertMessage}
+          onConfirm={handleAlertConfirm}
         />
     </ModalContext.Provider>
   )
