@@ -16,6 +16,10 @@ export default function ShippingScreen() {
   const { data: session } = useSession();
   const [name, setName] = useState('');
 
+  useEffect(() => {
+    console.log(name); 
+  }, [name]);
+
   const usStates = [
     'Alabama',
     'Alaska',
