@@ -267,7 +267,6 @@ export default function ShippingScreen() {
                   placeholder="Enter Full Name"
                   {...register('fullName', { required: true, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.fullName && (
                   <p className="text-red-500">Full Name is required.</p>
@@ -296,7 +295,6 @@ export default function ShippingScreen() {
                   placeholder="Enter Phone Number"
                   {...register('phone', { required: true, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.phone && (
                   <p className="text-red-500">Phone Number is required.</p>
@@ -311,7 +309,6 @@ export default function ShippingScreen() {
                   placeholder="Enter address"
                   {...register('address', { required: true, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.address && (
                   <p className="text-red-500">Address is required.</p>
@@ -329,7 +326,6 @@ export default function ShippingScreen() {
                   onFocus={() => setShowSuggestions(true)}
                   onKeyDown={handleKeyDown}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.state && <p className="text-red-500">State is required.</p>}
                 {filteredStates.length > 0 && inputValue.length >= 3 && showSuggestions && (
@@ -357,7 +353,6 @@ export default function ShippingScreen() {
                   placeholder="Enter city"
                   {...register('city', { required: true, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.city && <p className="text-red-500">City is required.</p>}
               </div>
@@ -370,7 +365,6 @@ export default function ShippingScreen() {
                   placeholder="Enter postal code"
                   {...register('postalCode', { required: true, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
                 {errors.postalCode && (
                   <p className="text-red-500">Postal Code is required.</p>
