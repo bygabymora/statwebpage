@@ -6,8 +6,9 @@ import { Store } from '../../utils/Store';
 import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import emailjs from '@emailjs/browser';
-import { useRouter } from 'next/router';
+import { useModalContext } from '../context/ModalContext';
+import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
+import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
 export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
   const { state, dispatch } = useContext(Store);
@@ -158,59 +159,37 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   //-----------------EmailJS-----------------//
 
   const form = useRef();
-  const router = useRouter();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailSlug, setEmailSlug] = useState('');
-  const [emailManufacturer, setEmailManufacturer] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const {showStatusMessage } = useModalContext();
+  const [emailName, setEmailName] = useState("");
+  const [emailManufacturer, setEmailManufacturer] = useState("");
 
+  // Prefill product data when available
   useEffect(() => {
-    setEmailSlug(product.slug);
-    setEmailManufacturer(product.manufacturer);
-  }, [product.slug, product.manufacturer]);
-
-  const handleLinkClick = (section) => {
-    if (window.innerWidth >= 800) {
-      const yOffsetSmallScreen = -50;
-      setTimeout(() => {
-        const path = `/#${section}`;
-        router.push(path);
-        const element = document.getElementById(section);
-        if (element) { 
-          const y =
-            element.getBoundingClientRect().top +
-            window.scrollY +
-            yOffsetSmallScreen;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        } else {
-          console.error(`Element with id "${section}" not found.`);
-        }
-      }, 2000);
+    if (product) {
+      setEmailName(product.name || "");
+      setEmailManufacturer(product.manufacturer || "");
     }
-  };
+  }, [product]);
 
   const sendEmail = (e) => {
     e.preventDefault();
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_5bjn7js',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          alert('Thank you for joining the wait list!');
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
-    setName('');
-    setEmail('');
-    setEmailSlug('');
-    setEmailManufacturer('');
+    const contactToEmail = { name, email, emailName, emailManufacturer };
+
+    if (!name || !email || !emailName || !emailManufacturer) {
+      showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
+
+    const emailMessage = messageManagement(contactToEmail, "Product Wait List");
+    handleSendEmails(emailMessage, contactToEmail);
+
+    // Clear form fields after submission
+    setName("");
+    setEmail("");
+    setEmailName("");
+    setEmailManufacturer("");
   };
   //-----------//
   return (
@@ -314,6 +293,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
           ) && (
           <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
             <label className="mt-3 font-bold">Join Our Wait List</label>
+
             <input
               type="text"
               name="user_name"
@@ -323,6 +303,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               placeholder="Name"
               required
             />
+
             <input
               type="email"
               name="user_email"
@@ -332,33 +313,27 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               placeholder="Email"
               required
             />
+
             <input
               type="text"
               name="emailSlug"
               className="contact__form-input"
-              onChange={(e) => setEmailSlug(e.target.value)}
-              value={emailSlug}
+              value={emailName}
+              disabled
               hidden
-              required
             />
+
             <input
               type="text"
               name="emailManufacturer"
               className="contact__form-input"
-              onChange={(e) => setEmailManufacturer(e.target.value)}
               value={emailManufacturer}
+              disabled
               hidden
-              required
             />
-            <Link
-              href="/#contact"
-              onClick={() => handleLinkClick('contact')}
-              lassName="nav__link"
-            >
               <button className="primary-button mt-3" type="submit">
                 Submit
               </button>
-            </Link>
           </form>
         )}
         {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (

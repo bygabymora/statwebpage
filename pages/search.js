@@ -5,11 +5,12 @@ import Layout from '../components/main/Layout';
 import { BiMessageAdd } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error.js';
-import emailjs from '@emailjs/browser';
+import { messageManagement } from '../utils/alertSystem/customers/messageManagement';
+import handleSendEmails from '../utils/alertSystem/documentRelatedEmail';
+import { useModalContext } from '../components/context/ModalContext';
 
 const SearchPage = ({ query }) => {
   const form = useRef();
-
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [products, setProducts] = useState([]);
@@ -18,6 +19,7 @@ const SearchPage = ({ query }) => {
   const [manufacturer, setManufacturer] = useState('');
   const [phone, setPhone] = useState('');
   const [searchedWord, setSearchedWord] = useState('');
+  const { contact, showStatusMessage } = useModalContext(); 
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -46,49 +48,36 @@ const SearchPage = ({ query }) => {
         phone,
         message,
       });
-      sendEmail();
+      sendEmail(e); 
       form.current.reset();
       toast.success('Message sent successfully');
     } catch (err) {
       toast.error(getError(err));
     }
   };
+
   //----- EmailJS-----//
 
-  const sendEmail = () => {
-    const formData = new FormData();
-    formData.append('searchedWord', searchedWord);
-    formData.append('name', name);
-    formData.append('manufacturer', manufacturer);
-    formData.append('quantity', quantity);
-    formData.append('email', email);
-    formData.append('phone', phone);
-    formData.append('message', message);
-
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_yd7qkvf',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          alert('Message sent, thank you for contacting us!');
-          console.log('Email sent', result.text);
-        },
-        (error) => {
-          console.log('Error sendingemail', error.text);
-        }
-      );
-
-    setName('');
-    setEmail('');
-    setPhone('');
-    setManufacturer('');
-    setPhone('');
-    setMessage('');
+  const sendEmail = (e) => {
+    e.preventDefault();
+    
+    if (!name || !email || !phone || !manufacturer || !quantity || !message) {
+      showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
+  
+    const contactToEmail = { name, email, phone, manufacturer, quantity, searchedWord };
+    const emailMessage = messageManagement(contactToEmail, "Product Request", message);
+  
+    handleSendEmails(emailMessage, contactToEmail);
   };
+
+  useEffect(() => {
+    if (contact) {
+      setName(contact.name);
+      setEmail(contact.email);
+    }
+  }, [contact]);
 
   //----------//
 

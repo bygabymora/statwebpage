@@ -12,10 +12,11 @@ const handler = async (req, res) => {
     createdAt: -1,
   });
   await db.disconnect();
+
   if (lastOrder) {
     res.send(lastOrder);
   } else {
-    res.status(404).send({ message: 'Order not found' });
+    res.status(200).send({ message: 'No orders found', warning: true });
   }
 };
 

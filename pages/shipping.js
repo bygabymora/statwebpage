@@ -14,7 +14,7 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
-  const [setName] = useState('');
+  const [name, setName] = useState('');
 
   const usStates = [
     'Alabama',
@@ -148,14 +148,14 @@ export default function ShippingScreen() {
   const { shippingAddress } = cart;
 
   useEffect(() => {
-    setValue('fullName', shippingAddress.fullName);
-    setValue('company', shippingAddress.company);
-    setValue('phone', shippingAddress.phone);
-    setValue('address', shippingAddress.address);
-    setValue('state', shippingAddress.state);
-    setValue('city', shippingAddress.city);
-    setValue('postalCode', shippingAddress.postalCode);
-    setValue('notes', shippingAddress.notes);
+    setValue('fullName', shippingAddress?.fullName);
+    setValue('company', shippingAddress?.company);
+    setValue('phone', shippingAddress?.phone);
+    setValue('address', shippingAddress?.address);
+    setValue('state', shippingAddress?.state);
+    setValue('city', shippingAddress?.city);
+    setValue('postalCode', shippingAddress?.postalCode);
+    setValue('notes', shippingAddress?.notes);
   }, [setValue, shippingAddress]);
 
   const submitHandler = async ({
@@ -259,8 +259,9 @@ export default function ShippingScreen() {
         const { data } = await axios.get('/api/orders/lastOrder');
 
         setLastOrder(data);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        toast.error('An error occurred while fetching the last order.');
+        console.error(error);
       }
     };
 
@@ -270,35 +271,36 @@ export default function ShippingScreen() {
   useEffect(() => {
     if (useLastAddress && lastOrder) {
       const { shippingAddress } = lastOrder;
-      setValue('fullName', shippingAddress.fullName);
-      setValue('company', shippingAddress.company);
-      setValue('phone', shippingAddress.phone);
-      setValue('address', shippingAddress.address);
-      setValue('state', shippingAddress.state);
-      setValue('city', shippingAddress.city);
-      setValue('postalCode', shippingAddress.postalCode);
-      setValue('notes', shippingAddress.notes);
+      setValue('fullName', shippingAddress?.fullName);
+      setValue('company', shippingAddress?.company);
+      setValue('phone', shippingAddress?.phone);
+      setValue('address', shippingAddress?.address);
+      setValue('state', shippingAddress?.state);
+      setValue('city', shippingAddress?.city);
+      setValue('postalCode', shippingAddress?.postalCode);
+      setValue('notes', shippingAddress?.notes);
     }
   }, [lastOrder, setValue, useLastAddress]);
 
   useEffect(() => {
     if (sameAddress) {
       if (
-        shippingAddress.fullName &&
-        shippingAddress.address &&
-        shippingAddress.city &&
-        shippingAddress.state &&
-        shippingAddress.postalCode
+        shippingAddress?.fullName &&
+        shippingAddress?.address &&
+        shippingAddress?.city &&
+        shippingAddress?.state &&
+        shippingAddress?.postalCode
       ) {
-        setValue('fullNameB', shippingAddress.fullName);
-        setValue('companyB', shippingAddress.company);
-        setValue('phoneB', shippingAddress.phone);
-        setValue('addressB', shippingAddress.address);
-        setValue('stateB', shippingAddress.state);
-        setValue('cityB', shippingAddress.city);
-        setValue('postalCodeB', shippingAddress.postalCode);
+        setValue('fullNameB', shippingAddress?.fullName);
+        setValue('companyB', shippingAddress?.company);
+        setValue('phoneB', shippingAddress?.phone);
+        setValue('addressB', shippingAddress?.address);
+        setValue('stateB', shippingAddress?.state);
+        setValue('cityB', shippingAddress?.city);
+        setValue('postalCodeB', shippingAddress?.postalCode);
       }
     }
+  
   }, [sameAddress, setValue, shippingAddress]);
 
   return (
@@ -319,28 +321,18 @@ export default function ShippingScreen() {
           </p>
           {lastOrder && (
             <div className="mb-2 mt-2">
-              <label htmlFor="useLastAddress" className="font-bold">
-                Use last used address?
-              </label>{' '}
-              &nbsp;
-              <input
-                type="checkbox"
-                id="useLastAddress"
-                checked={useLastAddress}
-                onChange={(e) => setUseLastAddress(e.target.checked)}
-              />
               <div className="mb-2">
                 <p className="text-sm">
-                  {lastOrder.shippingAddress.fullName}
+                  {lastOrder.shippingAddress?.fullName}
                   <br />
-                  {lastOrder.shippingAddress.company}
+                  {lastOrder.shippingAddress?.company}
                   <br />
-                  {lastOrder.shippingAddress.phone}
+                  {lastOrder.shippingAddress?.phone}
                   <br />
-                  {lastOrder.shippingAddress.address}
-                  <br /> {lastOrder.shippingAddress.state}
-                  <br /> {lastOrder.shippingAddress.city}
-                  <br /> {lastOrder.shippingAddress.postalCode}
+                  {lastOrder.shippingAddress?.address}
+                  <br /> {lastOrder.shippingAddress?.state}
+                  <br /> {lastOrder.shippingAddress?.city}
+                  <br /> {lastOrder.shippingAddress?.postalCode}
                   <br />{' '}
                 </p>
               </div>
@@ -350,7 +342,7 @@ export default function ShippingScreen() {
           {/* SHIPPING ADDRESS */}
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
-              <FaTruckMoving className="text-blue-500" />
+              <FaTruckMoving className="text-[#144e8b]" />
               Shipping Address
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -486,13 +478,25 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Postal Code is required.</p>
                 )}
               </div>
+              <div>
+                <label htmlFor="useLastAddress" className="font-bold">
+                  Use last used address?
+                </label>{' '}
+                 &nbsp;
+                <input
+                  type="checkbox"
+                  id="useLastAddress"
+                  checked={useLastAddress}
+                  onChange={(e) => setUseLastAddress(e.target.checked)}
+                />
+              </div>
             </div>
           </div>
 
           {/* SHIPPING PREFERENCES */}
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
-              <FaClipboardCheck className="text-blue-500" />
+              <FaClipboardCheck className="text-[#144e8b]" />
               Shipping Preferences
             </h2>
             <div className="mt-4">
@@ -525,7 +529,7 @@ export default function ShippingScreen() {
           {/* PAYMENT METHOD */}
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-700">
-              <FaBuilding className="text-blue-500" />
+              <FaBuilding className="text-[#144e8b]" />
               Payment Method
             </h2>
             <div className="mt-4">
@@ -570,8 +574,10 @@ export default function ShippingScreen() {
           </div>
           </div>
 
-          {/* SUBMIT BUTTON */}
-          <button className="primary-button w-full flex items-center justify-center gap-2">
+          <button  
+            type="submit"
+            className="primary-button w-full flex items-center justify-center gap-2"
+          >
             <AiFillCheckCircle className="text-xl" />
             Continue
           </button>

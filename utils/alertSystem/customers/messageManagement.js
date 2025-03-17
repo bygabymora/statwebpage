@@ -23,6 +23,25 @@ export const messageManagement = (contact, actionName, message) => {
       };
       break;
 
+      case "Product Wait List":
+      emailMessage = {
+        ...emailMessage,
+        subject: `${contact.name} is inquiring about a product`,
+        p1: `<div style="font-size: 20px; color: #333333;">Customer ${contact.name} is interested in the product:</div>`,
+        p2: `<div style="font-weight: bold; font-size: 18px;">${contact.emailName} by ${contact.emailManufacturer}</div>`,
+      };
+      break;
+
+      case "Product Request":
+      emailMessage = {
+        ...emailMessage,
+        subject: `Product Request from ${contact.name}`,
+        p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">A customer has requested a product:</div>`,
+        p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">Product: ${contact.searchedWord} <br> Manufacturer: ${contact.manufacturer} <br> Quantity: ${contact.quantity}</div>`,
+        p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Additional Message: ${message}</div>`,
+      };
+      break;
+
     default:
       emailMessage = {
         ...emailMessage,
