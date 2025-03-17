@@ -14,7 +14,7 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
-  const [ name, setName] = useState('');
+  const [name, setName] = useState('');
 
   const usStates = [
     'Alabama',
@@ -71,13 +71,10 @@ export default function ShippingScreen() {
 
   const [lastOrder, setLastOrder] = useState(null);
   const [useLastAddress, setUseLastAddress] = useState(false);
-
   const [filteredStates, setFilteredStates] = useState(usStates);
-
   const [inputValue, setInputValue] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false); // Add state for tracking the visibility of suggestions
-
-  const [selectedSuggestion, setSelectedSuggestion] = useState(-1); // Initialize to -1, meaning no suggestion is selected
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
   const [shippingSpeed, setShippingSpeed] = useState('Overnight');
   const [shippingCompany, setShippingCompany] = useState('FedEx');
   const [shippingPaymentMethod, setPaymentMethod] = useState('Bill me');
@@ -89,12 +86,34 @@ export default function ShippingScreen() {
     setSpecialNotes(event.target.value);
   };
 
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue,
+  } = useForm();
+
+  const router = useRouter();
+  const { state, dispatch } = useContext(Store);
+  const { cart } = state;
+  const { shippingAddress } = cart;
+
   useEffect(() => {
     if (session && session.user && session.user.name) {
       setName(session.user.name);
     }
-    console.log('User Name:', name);
-  }, [session, session.user.name]);
+  }, [session]);
+
+  useEffect(() => {
+    setValue('fullName', shippingAddress?.fullName);
+    setValue('company', shippingAddress?.company);
+    setValue('phone', shippingAddress?.phone);
+    setValue('address', shippingAddress?.address);
+    setValue('state', shippingAddress?.state);
+    setValue('city', shippingAddress?.city);
+    setValue('postalCode', shippingAddress?.postalCode);
+    setValue('notes', shippingAddress?.notes);
+  }, [setValue, shippingAddress]);
 
   const handleStateChange = (event) => {
     const inputValue = event.target.value.toLowerCase();
@@ -135,121 +154,36 @@ export default function ShippingScreen() {
     }
   };
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    setValue,
-  } = useForm();
-
-  const router = useRouter();
-
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
-  const { shippingAddress } = cart;
-
-  useEffect(() => {
-    setValue('fullName', shippingAddress?.fullName);
-    setValue('company', shippingAddress?.company);
-    setValue('phone', shippingAddress?.phone);
-    setValue('address', shippingAddress?.address);
-    setValue('state', shippingAddress?.state);
-    setValue('city', shippingAddress?.city);
-    setValue('postalCode', shippingAddress?.postalCode);
-    setValue('notes', shippingAddress?.notes);
-  }, [setValue, shippingAddress]);
-
-  const submitHandler = async ({
-    fullName,
-    company,
-    phone,
-    address,
-    state,
-    city,
-    postalCode,
-    fullNameB,
-    companyB,
-    phoneB,
-    addressB,
-    stateB,
-    cityB,
-    postalCodeB,
-    notes,
-  }) => {
+  const submitHandler = async (data) => {
     try {
-      // Fetch user info from the database
       const response = await axios.get(`api/users/${session.user._id}`);
       const userData = response.data;
 
       if (!userData) {
-        toast.error('User not found, please try to login again');
-        return; // Prevent form submission
+        toast.error('User  not found, please try to login again');
+        return;
       }
 
-      // Continue with the form submission logic
       if (sameAddress) {
-        fullNameB = fullName;
-        companyB = company;
-        phoneB = phone;
-        addressB = address;
-        stateB = state;
-        cityB = city;
-        postalCodeB = postalCode;
+        data.fullNameB = data.fullName;
+        data.companyB = data.company;
+        data.phoneB = data.phone;
+        data.addressB = data.address;
+        data.stateB = data.state;
+        data.cityB = data.city;
+        data.postalCodeB = data.postalCode;
       }
-    dispatch({
-      type: 'SAVE_SHIPPING_ADDRESS',
-      payload: {
-        fullName,
-        company,
-        phone,
-        address,
-        state,
-        city,
-        postalCode,
-          fullNameB,
-          companyB,
-          phoneB,
-          addressB,
-          stateB,
-          cityB,
-          postalCodeB,
-        notes,
-      },
-    });
 
-    Cookies.set(
-      'cart',
-      JSON.stringify({
-        ...cart,
-        shippingAddress: {
-          fullName,
-          company,
-          phone,
-          address,
-          state,
-          city,
-          postalCode,
-          notes,
-        },
-          billingAddress: {
-            fullNameB,
-            companyB,
-            phoneB,
-            addressB,
-            stateB,
-            cityB,
-            postalCodeB,
-          },
-      })
-    );
+      dispatch({
+        type: 'SAVE_SHIPPING_ADDRESS',
+        payload: data,
+      });
 
-      // Redirect to the payment page
-    router.push('/payment');
+      Cookies.set('cart', JSON.stringify({ ...cart, shippingAddress: data }));
+
+      router.push('/payment');
     } catch (error) {
-      // Handle errors (e.g., user not found, network issues)
-      toast.error(
-        'An error occurred while fetching user data, please check your session information or login again.'
-      );
+      toast.error('An error occurred while fetching user data.');
       console.error(error);
     }
   };
@@ -258,10 +192,8 @@ export default function ShippingScreen() {
     const fetchLastOrder = async () => {
       try {
         const { data } = await axios.get('/api/orders/lastOrder');
-
         setLastOrder(data);
       } catch (error) {
-        toast.error('An error occurred while fetching the last order.');
         console.error(error);
       }
     };
@@ -283,27 +215,6 @@ export default function ShippingScreen() {
     }
   }, [lastOrder, setValue, useLastAddress]);
 
-  useEffect(() => {
-    if (sameAddress) {
-      if (
-        shippingAddress?.fullName &&
-        shippingAddress?.address &&
-        shippingAddress?.city &&
-        shippingAddress?.state &&
-        shippingAddress?.postalCode
-      ) {
-        setValue('fullNameB', shippingAddress?.fullName);
-        setValue('companyB', shippingAddress?.company);
-        setValue('phoneB', shippingAddress?.phone);
-        setValue('addressB', shippingAddress?.address);
-        setValue('stateB', shippingAddress?.state);
-        setValue('cityB', shippingAddress?.city);
-        setValue('postalCodeB', shippingAddress?.postalCode);
-      }
-    }
-  
-  }, [sameAddress, setValue, shippingAddress]);
-
   return (
     <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1} />
@@ -312,33 +223,29 @@ export default function ShippingScreen() {
           Shipping & Billing Information
         </h1>
         <p className="text-center font-semibold m-5 ">
-            Shipping charges are not included. We can either bill your shipping
-            account, or ship on our account for an additional fee. If you would
-            like us to bill you shipping, please understand that your order will
-            not ship until shipping fees are paid.
-          </p>
-          <p className="text-xl text-center font-bold mb-5">
-            Please select your preferences at the end.
-          </p>
-          {lastOrder && (
-            <div className="mb-2 mt-2">
-              <div className="mb-2">
-                <p className="text-sm">
-                  {lastOrder.shippingAddress?.fullName}
-                  <br />
-                  {lastOrder.shippingAddress?.company}
-                  <br />
-                  {lastOrder.shippingAddress?.phone}
-                  <br />
-                  {lastOrder.shippingAddress?.address}
-                  <br /> {lastOrder.shippingAddress?.state}
-                  <br /> {lastOrder.shippingAddress?.city}
-                  <br /> {lastOrder.shippingAddress?.postalCode}
-                  <br />{' '}
-                </p>
-              </div>
+          Shipping charges are not included. We can either bill your shipping
+          account, or ship on our account for an additional fee. If you would
+          like us to bill you shipping, please understand that your order will
+          not ship until shipping fees are paid.
+        </p>
+        <p className="text-xl text-center font-bold mb-5">
+          Please select your preferences at the end.
+        </p>
+        {lastOrder && (
+          <div className="mb-2 mt-2">
+            <div className="mb-2">
+              <p className="text-sm">
+                {lastOrder.shippingAddress?.fullName}
+                {lastOrder.shippingAddress?.company}
+                {lastOrder.shippingAddress?.phone}
+                {lastOrder.shippingAddress?.address}
+                {lastOrder.shippingAddress?.state}
+                {lastOrder.shippingAddress?.city}
+                {lastOrder.shippingAddress?.postalCode}
+              </p>
             </div>
-          )}
+          </div>
+        )}
         <form className="space-y-6 my-5" onSubmit={handleSubmit(submitHandler)}>
           {/* SHIPPING ADDRESS */}
           <div className="bg-white shadow-md rounded-lg p-6">
@@ -347,19 +254,18 @@ export default function ShippingScreen() {
               Shipping Address
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              
               <div>
                 <label className="block font-medium">Full Name*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="fullNameB"
+                  id="fullName"
                   placeholder="Enter Full Name"
-                  {...register('fullNameB', { required: false, minLength: 3 })}
+                  {...register('fullName', { required: true, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
-                {errors.fullNameB && (
+                {errors.fullName && (
                   <p className="text-red-500">Full Name is required.</p>
                 )}
               </div>
@@ -368,17 +274,13 @@ export default function ShippingScreen() {
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="companyB"
-                  value={session.user.companyName}
+                  id="company"
                   placeholder="Company's Name"
-                  {...register('companyB', { required: false, minLength: 3 })}
+                  {...register('company', { required: false, minLength: 3 })}
                   autoCapitalize="true"
-                  required
                 />
-                {errors.companyB && (
-                  <p className="text-red-500">
-                    Please check Company{"'"}s name.
-                  </p>
+                {errors.company && (
+                  <p className="text-red-500">Please check Company{"'"}s name.</p>
                 )}
               </div>
               <div>
@@ -386,13 +288,13 @@ export default function ShippingScreen() {
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="phoneB"
+                  id="phone"
                   placeholder="Enter Phone Number"
-                  {...register('phoneB', { required: false, minLength: 3 })}
+                  {...register('phone', { required: true, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
-                {errors.phoneB && (
+                {errors.phone && (
                   <p className="text-red-500">Phone Number is required.</p>
                 )}
               </div>
@@ -401,13 +303,13 @@ export default function ShippingScreen() {
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="addressB"
+                  id="address"
                   placeholder="Enter address"
-                  {...register('addressB', { required: false, minLength: 3 })}
+                  {...register('address', { required: true, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
-                {errors.addressB && (
+                {errors.address && (
                   <p className="text-red-500">Address is required.</p>
                 )}
               </div>
@@ -416,66 +318,57 @@ export default function ShippingScreen() {
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="stateB"
+                  id="state"
                   placeholder="Enter state"
-                  {...register('stateB', { required: false, minLength: 3 })}
+                  {...register('state', { required: true, minLength: 3 })}
                   onChange={handleStateChange}
                   onFocus={() => setShowSuggestions(true)}
-                  onKeyDown={handleKeyDown} // Add the onKeyDown event handler
+                  onKeyDown={handleKeyDown}
                   autoCapitalize="true"
                   required
                 />
-                {errors.stateB && (
-                  <p className="text-red-500">State is required.</p>
+                {errors.state && <p className="text-red-500">State is required.</p>}
+                {filteredStates.length > 0 && inputValue.length >= 3 && showSuggestions && (
+                  <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
+                    {filteredStates.map((state, index) => (
+                      <div
+                        key={index}
+                        className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
+                          index === selectedSuggestion ? 'bg-gray-200' : ''
+                        }`}
+                        onClick={() => handleSelectState(state)}
+                      >
+                        {state}
+                      </div>
+                    ))}
+                  </div>
                 )}
-                {filteredStates.length > 0 &&
-                  inputValue.length >= 3 &&
-                  showSuggestions && (
-                    <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
-                      {filteredStates.map((state, index) => (
-                        <div
-                          key={index}
-                          className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
-                            index === selectedSuggestion ? 'bg-gray-200' : ''
-                          }`} // Highlight the selected suggestion
-                          onClick={() => handleSelectState(state)}
-                        >
-                          {state}
-                        </div>
-                      ))}
-                    </div>
-                  )}
               </div>
               <div>
                 <label className="block font-medium">City*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="cityB"
+                  id="city"
                   placeholder="Enter city"
-                  {...register('cityB', { required: false, minLength: 3 })}
+                  {...register('city', { required: true, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
-                {errors.cityB && (
-                  <p className="text-red-500">City is required.</p>
-                )}
+                {errors.city && <p className="text-red-500">City is required.</p>}
               </div>
               <div>
                 <label className="block font-medium">Postal Code*</label>
                 <input
                   className="w-full contact__form-input"
                   type="text"
-                  id="postalCodeB"
+                  id="postalCode"
                   placeholder="Enter postal code"
-                  {...register('postalCodeB', {
-                    required: false,
-                    minLength: 3,
-                  })}
+                  {...register('postalCode', { required: true, minLength: 3 })}
                   autoCapitalize="true"
                   required
                 />
-                {errors.postalCodeB && (
+                {errors.postalCode && (
                   <p className="text-red-500">Postal Code is required.</p>
                 )}
               </div>
@@ -483,7 +376,7 @@ export default function ShippingScreen() {
                 <label htmlFor="useLastAddress" className="font-bold">
                   Use last used address?
                 </label>{' '}
-                 &nbsp;
+                &nbsp;
                 <input
                   type="checkbox"
                   id="useLastAddress"
@@ -554,28 +447,16 @@ export default function ShippingScreen() {
               )}
             </div>
             <div>
-              <h1 className="mb-4 my-4">
-                Aditional notes (Specific Instructions)
-              </h1>
+              <h1 className="mb-4 my-4">Additional notes (Specific Instructions)</h1>
               <textarea
                 className="w-full contact__form-input contact__message"
                 value={specialNotes}
                 onChange={handleSpecialNotesChange}
               />
             </div>
-            <div className="mb-4 contact__form-div" hidden>
-            <label htmlFor="notes">Shipping Instructions</label>
-            <textarea
-              className="w-full contact__form-input contact__message"
-              id="notes"
-              placeholder="Shipping instructions"
-              {...register('notes', { required: true, minLength: 3 })}
-              autoCapitalize="true"
-            />
-          </div>
           </div>
 
-          <button  
+          <button
             type="submit"
             className="primary-button w-full flex items-center justify-center gap-2"
           >
