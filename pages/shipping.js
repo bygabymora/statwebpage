@@ -14,7 +14,7 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
-  const [name, setName] = useState('');
+  const [ name, setName] = useState('');
 
   const usStates = [
     'Alabama',
@@ -93,6 +93,7 @@ export default function ShippingScreen() {
     if (session && session.user && session.user.name) {
       setName(session.user.name);
     }
+    console.log('User Name:', name);
   }, [session, session.user.name]);
 
   const handleStateChange = (event) => {
