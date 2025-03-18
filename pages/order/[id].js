@@ -616,7 +616,7 @@ function OrderScreen() {
                           >
                             <div className="flex flex-row align-middle justify-center items-center ">
                               Secure Checkout &nbsp;{' '}
-                              <AiTwotoneLock className="" />
+                              <AiTwotoneLock />
                             </div>
                             <Image
                               src={Stripe}

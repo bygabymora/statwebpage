@@ -91,7 +91,6 @@ export default function Products() {
             </h2>
             {manufacturers.map((manufacturer, index) => (
               <div
-                class="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
                 key={index}
                 onClick={() => handleManufacturerClick(manufacturer)}
                 className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${

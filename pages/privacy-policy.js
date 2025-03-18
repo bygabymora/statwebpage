@@ -465,7 +465,7 @@ export default function facs() {
             </a>
             <br />
           </p>
-          <div class="flex justify-end">
+          <div className="flex justify-end">
             <h2>Privacy Notice (Rev. 13461BC)</h2>
           </div>
         </div>

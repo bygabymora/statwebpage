@@ -845,7 +845,7 @@ export default function facs() {
           >
             sales@statsurgicalsupply.com <BiArrowFromLeft />
           </a>
-          <div class="flex justify-end">
+          <div className="flex justify-end">
             <h2>Terms of Use (Rev. 1343F05)</h2>
           </div>
         </div>
