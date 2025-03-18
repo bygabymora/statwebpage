@@ -1,130 +1,98 @@
 import axios from 'axios';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import CheckoutWizard from '../components/CheckoutWizard';
 import Layout from '../components/main/Layout';
 import { getError } from '../utils/error';
 import { Store } from '../utils/Store';
-import emailjs from '@emailjs/browser';
+import { useModalContext } from '../components/context/ModalContext';
+import { messageManagement } from '../utils/alertSystem/customers/messageManagement';
+import { useMemo } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import handleSendEmails from '../utils/alertSystem/documentRelatedEmail';
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const { cartItems, shippingAddress, billingAddress, paymentMethod } = cart;
-  const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
-  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
-
-  const itemsPrice = round2(
-    cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
-  ); // 123.4567 => 123.46
-
-  const isPayByWire = paymentMethod === 'Pay by Wire';
-  const discountPercentage = isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE : 0;
-  const discountAmount = round2(itemsPrice * (discountPercentage / 100));
-  const totalPrice = round2(itemsPrice - discountAmount);
-
-  //----EmailJS----//
+  const { showStatusMessage } = useModalContext();
+  const [loading] = useState(false);
 
   const form = useRef();
-
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get('/api/orders/placeOrder');
-      const userData = response.data;
-
-      setEmail(userData.email);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
+  const router = useRouter();
+  
   const [email, setEmail] = useState('');
   const [emailName, setEmailName] = useState('');
   const [emailPhone, setEmailPhone] = useState('');
-  const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
   const [emailTotalOrder, setEmailTotalOrder] = useState('');
+  const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
   const [emailShippingPreference, setEmailShippingPreference] = useState('');
 
+  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
+  
+  const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
+  const itemsPrice = useMemo(() => round2(cartItems.reduce((a, c) => a + c.quantity * c.price, 0)), [cartItems]);
+  const isPayByWire = paymentMethod === 'Pay by Wire';
+  const discountAmount = useMemo(() => round2(itemsPrice * (isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE / 100 : 0)), [itemsPrice, isPayByWire]);
+  const totalPrice = useMemo(() => round2(itemsPrice - discountAmount), [itemsPrice, discountAmount]);
+
+  const validateOrder = () => {
+    if (!shippingAddress || !billingAddress || !paymentMethod || cartItems.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    fetchUserData();
+    setEmail(shippingAddress.email);
     setEmailName(shippingAddress.fullName);
     setEmailPhone(shippingAddress.phone);
     setEmailPaymentMethod(paymentMethod);
     setEmailTotalOrder(totalPrice);
     setEmailShippingPreference(shippingAddress.notes);
-  }, [
-    paymentMethod,
-    shippingAddress.fullName,
-    shippingAddress.phone,
-    totalPrice,
-    shippingAddress.notes,
-  ]);
+  }, [paymentMethod, shippingAddress, totalPrice]);
 
-  function sendEmail() {
-    const formData = new FormData();
-
-    formData.append('user_name', emailName);
-    formData.append('user_phone', emailPhone);
-    formData.append('user_email', email);
-    formData.append('total_order', emailTotalOrder);
-    formData.append('payment_method', emailPaymentMethod);
-    formData.append('shipping_preference', emailShippingPreference);
-
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_6z4vqi6',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          console.log('Email sent', result.text);
-        },
-        (error) => {
-          console.log('Error sendingemail', error.text);
-        }
-      );
-  }
-
-  //-----------//
-  const router = useRouter();
-  useEffect(() => {
-    if (!paymentMethod) {
-      router.push('/payment');
-    }
-  }, [paymentMethod, router]);
-
-  const [loading, setLoading] = useState(false);
-  const validateOrder = () => {
-    if (
-      !shippingAddress ||
-      !billingAddress ||
-      !paymentMethod ||
-      cartItems.length === 0
-    ) {
-      return false;
-    }
-
-    return true;
-  };
   const cartItemsWithPrice = cartItems.map(item => ({
-  ...item,
-  wpPrice: item.wpPrice || item.price, // If missing, use the price as a minimum
-}));
-  
+    ...item,
+    wpPrice: item.wpPrice || item.price, 
+  }));
+
+  const sendEmail = (e = {preventDefault: () => {}}) => {
+    e.preventDefault();
+    
+    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod ) {
+      showStatusMessage("error", "Please fill all the fields before sending the email.");
+      return;
+    }
+
+    const contactToEmail = {
+      name: emailName,
+      email: email,
+      total: emailTotalOrder,
+      paymentMethod: emailPaymentMethod,
+      shippingPreference: emailShippingPreference,
+    };
+
+    const emailMessage = messageManagement(contactToEmail, "Order Confirmation");
+
+    handleSendEmails(
+      emailMessage, 
+      contactToEmail,
+    );
+  };
+
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
       toast.error('Please fill all required fields.');
       return;
     }
+
     sendEmail();
+
     try {
-      setLoading(true);
       const { data } = await axios.post('/api/orders', {
         orderItems: cartItemsWithPrice,
         shippingAddress,
@@ -134,23 +102,15 @@ export default function PlaceOrderScreen() {
         totalPrice,
         discountAmount,
       });
-      setLoading(false);
-      dispatch({ type: 'CART_CLEAR_ITEMS' });
-      Cookies.set(
-        'cart',
-        JSON.stringify({
-          ...cart,
-          cartItems: [],
-        })
-      );
-      router.push(`/order/${data._id}`);
-    } catch (err) {
-      setLoading(false);
-      toast.error(getError(err));
-    }
-    
-  };
 
+      dispatch({ type: 'CART_CLEAR_ITEMS' });
+      Cookies.set('cart', JSON.stringify({ ...cart, cartItems: [] }));
+
+      router.push(`/order/${data._id}`);
+    } catch (error) {
+      toast.error(getError(error));
+    }
+  };
   console.log("Cart Items before order:", cartItems);
   return (
     <Layout title="Confirm Order">
@@ -194,7 +154,7 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.fullName}, 
                 {shippingAddress.company && <>{shippingAddress.company},</>}
                 {shippingAddress.phone}, {shippingAddress.address},
-                {shippingAddress.city}, {shippingAddress.postalCode}
+                {shippingAddress.city}, {shippingAddress.postalCode}, {shippingAddress.email}
                 {shippingAddress.notes && (
                   <div className="mt-3 p-3 bg-gray-100 border-l-4 border-gray-500 rounded-lg">
                     <h3 className="font-bold">Shipping Instructions</h3>
@@ -262,7 +222,7 @@ export default function PlaceOrderScreen() {
               </li>
               {isPayByWire && (
                 <li className="mb-2 flex justify-between text-lg text-green-600">
-                  <span>Discount ({discountPercentage}%)</span>
+                  <span>Discount ({WIRE_PAYMENT_DISCOUNT_PERCENTAGE}%)</span>
                   <span>- ${discountAmount.toFixed(2)}</span>
                 </li>
               )}
@@ -311,7 +271,7 @@ export default function PlaceOrderScreen() {
               value={emailShippingPreference}
               readOnly
             />
-            <input type="text" name="user_email" value={email} />
+            <input type="text" name="user_email" value={setEmail} />
           </form>
       </div>
     )}

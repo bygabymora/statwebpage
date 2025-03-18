@@ -8,30 +8,33 @@ import { useModalContext } from '../context/ModalContext';
 const ContactUs = () => {
   const form = useRef();
   const [message, setMessage] = useState('');
-  const {contact, showStatusMessage} = useModalContext();
+  const { contact, showStatusMessage } = useModalContext();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [formData] = useState({ name: '', email: '', message: '' });
 
   const sendEmail = (e) => {
-    const contactToEmail = {name, email};
+    e.preventDefault(); // Evita el comportamiento por defecto del formulario
+
     if (!name || !email || !message) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
-    e.preventDefault();
 
+    const contactToEmail = { name, email };
     const emailmessage = messageManagement(contactToEmail, "Contact Us", message);
-    handleSendEmails( 
-      emailmessage,
-      contactToEmail,
-    );
+
+    handleSendEmails(emailmessage, contactToEmail);
+
+    // Limpiar los inputs después de enviar
+    setName('');
+    setEmail('');
+    setMessage('');
   };
 
   useEffect(() => {
     if (contact) {
-      setName(contact.name);
-      setEmail(contact.email);
+      setName(contact.name || '');
+      setEmail(contact.email || '');
     }
   }, [contact]);
 
@@ -57,7 +60,7 @@ const ContactUs = () => {
             name="user_name"
             className="contact__form-input"
             onChange={(e) => setName(e.target.value)}
-            value={formData.name ?? " "}
+            value={name}
             id="user_name"
             required
           />
@@ -72,7 +75,7 @@ const ContactUs = () => {
             name="user_email"
             className="contact__form-input"
             onChange={(e) => setEmail(e.target.value)}
-            value={formData.email ?? " "}
+            value={email}
             id="user_email"
             required
           />
@@ -86,18 +89,19 @@ const ContactUs = () => {
             name="message"
             className="contact__form-input contact__message"
             onChange={(e) => setMessage(e.target.value)}
-            value={formData.message ?? " "}
+            value={message}
             id="message"
             required
           />
         </div>
+
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="button button--flex btn-contact"
         >
-          <span className=" text-white">Send Message {tab} </span>
-          <BiMessageAdd className=" text-white" />
+          <span className="text-white">Send Message {tab} </span>
+          <BiMessageAdd className="text-white" />
         </motion.button>
       </form>
     </motion.div>

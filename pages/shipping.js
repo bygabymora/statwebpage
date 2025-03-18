@@ -116,6 +116,7 @@ export default function ShippingScreen() {
     setValue('state', shippingAddress?.state);
     setValue('city', shippingAddress?.city);
     setValue('postalCode', shippingAddress?.postalCode);
+    setValue('email', shippingAddress?.email);
     setValue('notes', shippingAddress?.notes);
   }, [setValue, shippingAddress]);
 
@@ -176,6 +177,7 @@ export default function ShippingScreen() {
         data.stateB = data.state;
         data.cityB = data.city;
         data.postalCodeB = data.postalCode;
+        data.emailB = data.email;
       }
 
       dispatch({
@@ -215,6 +217,7 @@ export default function ShippingScreen() {
       setValue('state', shippingAddress?.state);
       setValue('city', shippingAddress?.city);
       setValue('postalCode', shippingAddress?.postalCode);
+      setValue('email', shippingAddress?.email);
       setValue('notes', shippingAddress?.notes);
     }
   }, [lastOrder, setValue, useLastAddress]);
@@ -246,6 +249,7 @@ export default function ShippingScreen() {
                 {lastOrder.shippingAddress?.state}
                 {lastOrder.shippingAddress?.city}
                 {lastOrder.shippingAddress?.postalCode}
+                {lastOrder.shippingAddress?.email}
               </p>
             </div>
           </div>
@@ -368,6 +372,20 @@ export default function ShippingScreen() {
                 />
                 {errors.postalCode && (
                   <p className="text-red-500">Postal Code is required.</p>
+                )}
+              </div>
+              <div>
+                <label className="block font-medium">Email*</label>
+                <input
+                  className="w-full contact__form-input"
+                  type="text"
+                  id="email"
+                  placeholder="Enter email"
+                  {...register('email', { required: true, minLength: 3 })}
+                  autoCapitalize="true"
+                />
+                {errors.email && (
+                  <p className="text-red-500">Email is required.</p>
                 )}
               </div>
               <div>
