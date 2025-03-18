@@ -316,15 +316,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
 
             <input
               type="text"
-              name="emailSlug"
-              className="contact__form-input"
-              value={emailName}
-              disabled
-              hidden
-            />
-
-            <input
-              type="text"
               name="emailManufacturer"
               className="contact__form-input"
               value={emailManufacturer}
