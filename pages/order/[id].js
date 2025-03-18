@@ -14,7 +14,9 @@ import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
-import emailjs from '@emailjs/browser';
+import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
+import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
+import { useModalContext } from '../../components/context/ModalContext';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -92,8 +94,8 @@ function OrderScreen() {
         dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/orders/${orderId}`);
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
-      } catch (err) {
-        dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+      } catch (error) {
+        dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
     };
   
@@ -144,6 +146,56 @@ function OrderScreen() {
     trackUrl,
   } = order;
   const discountAmount = itemsPrice * 0.015;
+
+  //----EmailJS----//
+
+  const form = useRef();
+  const [message ] = useState('');
+  const { showStatusMessage } = useModalContext();
+  const [email, setEmail] = useState('');
+  const [emailName, setEmailName] = useState('');
+  const [emailPhone, setEmailPhone] = useState('');
+  const [emailTotalOrder, setEmailTotalOrder] = useState('');
+  const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
+  const [emailShippingPreference, setEmailShippingPreference] = useState('');
+  
+  useEffect(() => {
+    if ( order & order.shippingAddress) { 
+    setEmail(shippingAddress.email);
+    setEmailName(shippingAddress.fullName);
+    setEmailPhone(shippingAddress.phone);
+    setEmailPaymentMethod(paymentMethod);
+    setEmailTotalOrder(totalPrice);
+    setEmailShippingPreference(shippingAddress.notes);
+    }
+  }, [paymentMethod, shippingAddress, totalPrice]);
+  
+    const sendEmail = (e) => {
+      e.preventDefault(); 
+      
+      if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
+        showStatusMessage("error", "Please fill all the fields before sending the email.");
+        return;
+      }
+      
+      const contactToEmail = {
+        name: emailName,
+        email: email,
+        phone: emailPhone,
+        total: emailTotalOrder,
+        paymentMethod: emailPaymentMethod,
+        shippingPreference: emailShippingPreference,
+        items: orderItems.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
+  
+      const emailmessage = messageManagement(contactToEmail, "Order Confirmation", message);
+  
+      handleSendEmails(emailmessage, contactToEmail);
+    };
 
   const handleCheckout = async () => {
     try {
@@ -276,8 +328,8 @@ function OrderScreen() {
     }
   }, [order._id, sendEmail]);
 
-  function onError(err) {
-    toast.error(getError(err));
+  function onError(error) {
+    toast.error(getError(error));
   }
 
   async function deliverOrderHandler(e) {
@@ -306,9 +358,9 @@ function OrderScreen() {
 
       dispatch({ type: 'DELIVER_SUCCESS', payload: data });
       toast.success('Order is processed');
-    } catch (err) {
-      dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
-      toast.error(getError(err));
+    } catch (error) {
+      dispatch({ type: 'DELIVER_FAIL', payload: getError(error) });
+      toast.error(getError(error));
     }
   }
   async function atCostumersOrderHandler() {
@@ -320,9 +372,9 @@ function OrderScreen() {
       );
       dispatch({ type: 'AT_COSTUMERS_SUCCESS', payload: data });
       toast.success('Order is delivered');
-    } catch (err) {
-      dispatch({ type: 'AT_COSTUMERS_FAIL', payload: getError(err) });
-      toast.error(getError(err));
+    } catch (error) {
+      dispatch({ type: 'AT_COSTUMERS_FAIL', payload: getError(error) });
+      toast.error(getError(error));
     }
   }
 
@@ -334,40 +386,7 @@ function OrderScreen() {
       window.location.href = 'tel:8132520727';
     }
   };
-  //----EmailJS----//
 
-  const form = useRef();
-
-  const userEmail = order.user?.email || '';
-
-  function sendEmail() {
-    const formData = new FormData();
-
-    formData.append('user_name', shippingAddress.name);
-    formData.append('user_phone', shippingAddress.phone);
-    formData.append('user_email', userEmail);
-    formData.append('total_order', totalPrice);
-    formData.append('payment_method', paymentMethod);
-    formData.append('shipping_preference', shippingAddress.notes);
-
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_5fwanh4',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          console.log('Email sent', result.text);
-        },
-        (error) => {
-          console.log('Error sending email', error.text);
-        }
-      );
-  }
-
-  //-----------//
 
   const handleButtonClick = () => {
     handlePayment();
@@ -754,7 +773,7 @@ function OrderScreen() {
             value={shippingAddress.phone}
             readOnly
           />
-          <input type="hidden" name="user_email" value={userEmail} readOnly />
+          <input type="hidden" name="user_email" value={sendEmail} readOnly />
           <input
             type="hidden"
             name="total_order"

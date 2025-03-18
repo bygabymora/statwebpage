@@ -11,7 +11,9 @@ import Product from '../../models/Product';
 import { useSession } from "next-auth/react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import emailjs from '@emailjs/browser';
+import { useModalContext } from '../../components/context/ModalContext';
+import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
+import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
 export async function getStaticPaths() {
   await db.connect();
@@ -65,11 +67,6 @@ export default function ProductScreen(props) {
   const [currentPrice, setCurrentPrice] = useState(product.each?.wpPrice || null);
   const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
   const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.countInStock || null);
-  const form = useRef();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailSlug, setEmailSlug] = useState('');
-  const [emailManufacturer, setEmailManufacturer] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -84,11 +81,6 @@ export default function ProductScreen(props) {
     }
     return 'Each';
   });
-
-  useEffect(() => {
-    setEmailSlug(product.slug);
-    setEmailManufacturer(product.manufacturer);
-  }, [product.slug, product.manufacturer]);
 
   useEffect(() => {
     if (product.countInStock || 0 ) {
@@ -208,29 +200,36 @@ export default function ProductScreen(props) {
 
   //-----------------EmailJS-----------------//
 
+  const form = useRef();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const {showStatusMessage } = useModalContext();
+  const [emailName, setEmailName] = useState("");
+  const [emailManufacturer, setEmailManufacturer] = useState("");
+
+  useEffect(() => {
+    if (product) {
+      setEmailName(product.name || "");
+      setEmailManufacturer(product.manufacturer || "");
+    }
+  }, [product]);
+
   const sendEmail = (e) => {
     e.preventDefault();
+    const contactToEmail = { name, email, emailName, emailManufacturer };
 
-    emailjs
-      .sendForm(
-        'service_ej3pm1k',
-        'template_5bjn7js',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      )
-      .then(
-        (result) => {
-          alert('Thank you for joining the wait list!');
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
-    setName('');
-    setEmail('');
-    setEmailSlug('');
-    setEmailManufacturer('');
+    if (!name || !email || !emailName || !emailManufacturer) {
+      showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
+
+    const emailMessage = messageManagement(contactToEmail, "Product Wait List");
+    handleSendEmails(emailMessage, contactToEmail);
+
+    setName("");
+    setEmail("");
+    setEmailName("");
+    setEmailManufacturer("");
   };
   //-----------//
 
@@ -548,15 +547,6 @@ export default function ProductScreen(props) {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               placeholder="Email"
-              required
-            />
-            <input
-              type="text"
-              name="emailSlug"
-              className="contact__form-input"
-              onChange={(e) => setEmailSlug(e.target.value)}
-              value={emailSlug}
-              hidden
               required
             />
             <input

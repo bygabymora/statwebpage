@@ -59,6 +59,27 @@ export const messageManagement = (contact, actionName, message) => {
         };
         break;
 
+      case "Order Shipped":
+        emailMessage = {
+        subject: `Order Confirmation for - ${contact.name}`,
+        p1: `<div style="font-size: 20px; color: #333333;">
+              Thank you for your order, ${contact.name}! Your order details are as follows:
+             </div>`,
+        p2: `<div style="font-size: 18px; color: #333333;">
+               <strong>Total:</strong> $${contact.total} <br>
+               <strong>Payment Method:</strong> ${contact.paymentMethod} <br>
+               <strong>Shipping Notes:</strong> ${contact.shippingPreference || 'N/A'}
+             </div>`,
+        p3: `<div style="font-size: 18px; color: #333333;">
+               <strong>Items Ordered:</strong>
+               <ul>
+                   ${contact.items.map(item => 
+                   `<li>${item.quantity}x ${item.name} - $${item.price}</li>`).join('')}
+                </ul>
+              </div>`,
+        };
+      break;
+
     default:
       emailMessage = {
         ...emailMessage,
