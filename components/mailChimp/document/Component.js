@@ -17,6 +17,7 @@ const DocumentComponent = ({ message, contact }) => {
     contactName: contact.name,
     p1: message.p1,
     p2: message.p2,
+    p3: message.p3,
   };
 
   let bodyContent = replacePlaceholders(htmlFile, {
