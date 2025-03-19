@@ -236,9 +236,13 @@ export default function ProductScreen(props) {
   return (
     <Layout title={product.name} product={product}>
       <div className="py-2">
-        <Link href={'/products'} className="flex gap-4 items-center">
-          <BsBackspace />
-          Back to products.
+        <Link href={'/products'} className="flex items-center gap-2">
+          <span className="flex items-center justify-center w-10 h-10 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <BsBackspace className="text-2xl text-[#144e8b]" />
+          </span>
+          <span className="text-lg font-semibold">
+            Back to Products
+          </span>
         </Link>
       </div>
       <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-4 p-6"> 
@@ -278,7 +282,7 @@ export default function ProductScreen(props) {
                   backgroundPosition: `-${(cursorPos.x - 40) * 2}px -${
                     (cursorPos.y - 40) * 2
                   }px`,
-                  backgroundSize: '800px 800px',
+                  backgroundSize: '600px 600px',
                   border: '2px solid gray',
                   transform: 'scale(1.5)',
                   pointerEvents: 'none',
@@ -564,6 +568,75 @@ export default function ProductScreen(props) {
           </form>
         )}
           </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full overflow-x-auto">
+        <table className="hidden md:table min-w-full bg-white border border-gray-300 shadow-lg rounded-lg overflow-hidden mt-6 my-5">
+          <thead className="bg-gray-100 border border-collapse">
+            <tr>
+              <th className="py-2 px-4 border-b">Image</th>
+              <th className="py-2 px-4 border-b">Price</th>
+              <th className="py-2 px-4 border-b">Stock Status</th>
+              <th className="py-2 px-4 border-b">Reference</th>
+              <th className="py-2 px-4 border-b">Manufacturer</th>
+              <th className="py-2 px-4 border-b">Shipping Info</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-2 px-4 border-b flex justify-center">
+                <Image src={product.image} alt={product.name} width={100} height={100} className="rounded-md" />
+              </td>
+              <td className="py-2 px-4 border-b font-semibold">${currentPrice}</td>
+              <td className="py-2 px-4 border-b">
+                {currentCountInStock > 0 ? (
+                  <span className="text-green-600 font-semibold">In Stock</span>
+                ) : (
+                  <span className="text-red-600 font-semibold">Out of Stock</span>
+               )}
+              </td>
+              <td className="py-2 px-4 border-b">{product.name}</td>
+              <td className="py-2 px-4 border-b">{product.manufacturer}</td>
+              <td className="py-2 px-4 border-b text-sm text-gray-600">
+                Need it tomorrow? Order in next 1 hour 22 minutes and choose overnight shipping at checkout.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="md:hidden bg-gray-100 p-4 rounded-lg shadow-lg mt-6 my-6">
+          <h2 className="text-xl font-bold mb-4">Product Information</h2>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="rounded-lg ">
+              <h3 className="font-bold">Image</h3>
+              <Image src={product.image} alt={product.name} width={100} height={100} className="rounded-md" />
+            </div>
+            <div className="rounded-lg">
+              <h3 className="font-bold">Price</h3>
+              <p className="font-semibold">${currentPrice}</p>
+            </div>
+            <div className="rounded-lg">
+              <h3 className="font-bold">Stock Status</h3>
+              {currentCountInStock > 0 ? (
+              <p className="text-green-600 font-semibold">In Stock</p>
+              ) : (
+                <p className="text-red-600 font-semibold">Out of Stock</p>
+              )}
+            </div>
+            <div className="rounded-lg">
+              <h3 className="font-bold">Reference</h3>
+              <p>{product.reference || 'N/A'}</p>
+            </div>
+            <div className="rounded-lg">
+              <h3 className="font-bold">Manufacturer</h3>
+              <p>{product.manufacturer}</p>
+            </div>
+            <div className="rounded-lg">
+              <h3 className="font-bold">Shipping Info</h3>
+              <p className="text-sm text-gray-600">
+                Need it tomorrow? Order in next 1 hour 22 minutes and choose overnight shipping at checkout.
+              </p>
+            </div>
           </div>
         </div>
       </div>
