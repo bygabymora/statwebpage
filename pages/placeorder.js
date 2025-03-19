@@ -29,7 +29,7 @@ export default function PlaceOrderScreen() {
   const [emailPhone, setEmailPhone] = useState('');
   const [emailTotalOrder, setEmailTotalOrder] = useState('');
   const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
-  const [emailShippingPreference, setEmailShippingPreference] = useState('');
+  const [specialNotes, setSpecialNotes] = useState('');
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
   
@@ -52,7 +52,7 @@ export default function PlaceOrderScreen() {
     setEmailPhone(shippingAddress.phone);
     setEmailPaymentMethod(paymentMethod);
     setEmailTotalOrder(totalPrice);
-    setEmailShippingPreference(shippingAddress.notes);
+    setSpecialNotes(shippingAddress.notes);
   }, [paymentMethod, shippingAddress, totalPrice]);
 
   const cartItemsWithPrice = cartItems.map(item => ({
@@ -73,7 +73,7 @@ export default function PlaceOrderScreen() {
       email: email,
       total: emailTotalOrder,
       paymentMethod: emailPaymentMethod,
-      shippingPreference: emailShippingPreference,
+      shippingPreference: specialNotes,
     };
 
     const emailMessage = messageManagement(contactToEmail, "Order Confirmation");
@@ -268,7 +268,7 @@ export default function PlaceOrderScreen() {
             <input
               type="text"
               name="shipping_preference"
-              value={emailShippingPreference}
+              value={specialNotes}
               readOnly
             />
             <input type="text" name="user_email" value={setEmail} />

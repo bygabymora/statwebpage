@@ -157,7 +157,7 @@ function OrderScreen() {
   const [emailPhone, setEmailPhone] = useState('');
   const [emailTotalOrder, setEmailTotalOrder] = useState('');
   const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
-  const [emailShippingPreference, setEmailShippingPreference] = useState('');
+  const [specialNotes, setSpecialNotes] = useState('');
   
   useEffect(() => {
     if ( order & order.shippingAddress) { 
@@ -166,9 +166,9 @@ function OrderScreen() {
     setEmailPhone(shippingAddress.phone);
     setEmailPaymentMethod(paymentMethod);
     setEmailTotalOrder(totalPrice);
-    setEmailShippingPreference(shippingAddress.notes);
+    setSpecialNotes(shippingAddress.notes);
     }
-  }, [paymentMethod, shippingAddress, totalPrice]);
+  }, [paymentMethod, order, totalPrice]);
   
     const sendEmail = (e) => {
       e.preventDefault(); 
@@ -184,7 +184,7 @@ function OrderScreen() {
         phone: emailPhone,
         total: emailTotalOrder,
         paymentMethod: emailPaymentMethod,
-        shippingPreference: emailShippingPreference,
+        shippingPreference: specialNotes,
         items: orderItems.map((item) => ({
           name: item.name,
           quantity: item.quantity,
@@ -461,13 +461,13 @@ function OrderScreen() {
             )}
             {/* Address information */}
             <h2 className="mt-4 mb-2 text-lg flex items-center gap-2">
-              <BsTruck className="text-blue-500" /> Shipping Address
+              <BsTruck className="text-[#144e8b]" /> Shipping Address
             </h2>
             <div className="bg-gray-100 p-3 rounded-md">
               {shippingAddress.fullName}, {shippingAddress.company && `${shippingAddress.company},`} {shippingAddress.phone}, {shippingAddress.address}, {shippingAddress.city}, {shippingAddress.postalCode}
             </div>
             <h2 className="mt-4 mb-2 text-lg flex items-center gap-2">
-              <BsCreditCard2Back className="text-blue-500" /> Billing Address
+              <BsCreditCard2Back className="text-[#144e8b]" /> Billing Address
             </h2>
             <div className="bg-gray-100 p-3 rounded-md">
               {billingAddress.fullNameB}, 
@@ -556,7 +556,7 @@ function OrderScreen() {
           </div>
           <div className="card p-5 mt-4 my-5">
             <h2 className="mb-2 text-lg flex items-center gap-2">
-              <BsBoxSeam className="text-blue-500" /> Order Items
+              <BsBoxSeam className="text-[#144e8b]" /> Order Items
             </h2>
             <table className="table-auto w-full border-collapse border">
               <thead className="bg-gray-100">

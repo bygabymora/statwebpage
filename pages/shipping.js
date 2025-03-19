@@ -72,6 +72,10 @@ export default function ShippingScreen() {
     'Wisconsin',
     'Wyoming',
   ];
+  const router = useRouter();
+  const { state, dispatch } = useContext(Store);
+  const { cart } = state;
+  const { shippingAddress } = cart;
 
   const [lastOrder, setLastOrder] = useState(null);
   const [useLastAddress, setUseLastAddress] = useState(false);
@@ -96,11 +100,6 @@ export default function ShippingScreen() {
     formState: { errors },
     setValue,
   } = useForm();
-
-  const router = useRouter();
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
-  const { shippingAddress } = cart;
 
   useEffect(() => {
     if (session && session.user && session.user.name) {

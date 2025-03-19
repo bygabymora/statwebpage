@@ -54,7 +54,7 @@ export const messageManagement = (contact, actionName, message) => {
           p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">
                  <strong>Order Total:</strong> ${contact.total} <br>
                  <strong>Payment Method:</strong> ${contact.paymentMethod} <br>
-                 <strong>Shipping Preference:</strong> ${contact.shippingPreference}
+                 <strong>Shipping Preference:</strong> ${contact.shippingPreference || 'N/A'}
                </div>`,
           p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">
                  We are processing your order and will update you once it ships.
