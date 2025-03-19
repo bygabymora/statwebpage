@@ -43,7 +43,7 @@ function generateProductJSONLD(product) {
       itemCondition: 'https://schema.org/NewCondition',
       availability:
         product.countInStock > 0 ||
-        product.countInStockBulk > 0 ||
+        product.countInStockBox > 0 ||
         product.countInStockClearance > 0
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',

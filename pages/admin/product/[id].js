@@ -70,12 +70,12 @@ export default function AdminProductEditScreen() {
         setValue('image', data.image);
         setValue('reference', data.reference);
         setValue('description', data.description);
-        setValue('descriptionBulk', data.descriptionBulk);
+        setValue('descriptionBox', data.descriptionBox);
         setValue('price', data.price);
-        setValue('priceBulk', data.priceBulk);
+        setValue('priceBox', data.priceBox);
         setValue('each', data.each);
         setValue('countInStock', data.countInStock);
-        setValue('countInStockBulk', data.countInStockBulk);
+        setValue('countInStockBox', data.countInStockBox);
         setValue('sentOverNight', data.sentOverNight);
         setValue('notes', data.notes);
         setValue('includes', data.includes);
@@ -128,13 +128,13 @@ export default function AdminProductEditScreen() {
     image,
     reference,
     description,
-    descriptionBulk,
+    descriptionBox,
     price,
-    priceBulk,
+    priceBox,
     each,
-    bulk,
+    box,
     countInStock,
-    countInStockBulk,
+    countInStockBox,
     sentOverNight,
     isInClearance,
     countInStockClearance,
@@ -155,13 +155,13 @@ export default function AdminProductEditScreen() {
         image,
         reference,
         description,
-        descriptionBulk,
+        descriptionBox,
         price,
-        priceBulk,
+        priceBox,
         each,
-        bulk,
+        box,
         countInStock,
-        countInStockBulk,
+        countInStockBox,
         sentOverNight,
         isInClearance,
         countInStockClearance,
@@ -345,12 +345,12 @@ export default function AdminProductEditScreen() {
               <div>
                 <h2>Box</h2>
                 <div className="mb-4">
-                  <label htmlFor="descriptionBulk">Description Box</label>
+                  <label htmlFor="descriptionBox">Description Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                    id="descriptionBulk"
-                    {...register('descriptionBulk', {
+                    id="descriptionBox"
+                    {...register('descriptionBox', {
                     })}
                   />
                   {errors.description && (
@@ -360,12 +360,12 @@ export default function AdminProductEditScreen() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="priceBulk">Price Box</label>
+                  <label htmlFor="priceBox">Price Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                    id="priceBulk"
-                    {...register('priceBulk', {
+                    id="priceBox"
+                    {...register('priceBox', {
                     })}
                   />
                   {errors.price && (
@@ -373,12 +373,12 @@ export default function AdminProductEditScreen() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="countInStockBulk">Count In Stock Box</label>
+                  <label htmlFor="countInStockBox">Count In Stock Box</label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                    id="countInStockBulk"
-                    {...register('countInStockBulk', {
+                    id="countInStockBox"
+                    {...register('countInStockBox', {
                     })}
                   />
                   {errors.countInStock && (
@@ -405,7 +405,7 @@ export default function AdminProductEditScreen() {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="descriptionBulk">Description Clearance</label>
+                <label htmlFor="descriptionBox">Description Clearance</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"

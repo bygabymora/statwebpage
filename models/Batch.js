@@ -9,7 +9,7 @@ const batchSchema = new mongoose.Schema(
     expiration: { type: String, required: true },
     reference: { type: String, required: false, unique: true },
     countInStock: { type: Number, default: 0, required: true },
-    countInStockBulk: { type: Number, default: 0, required: true },
+    countInStockBox: { type: Number, default: 0, required: true },
     countInStockClearance: { type: Number, default: 0, required: true },
   },
   {

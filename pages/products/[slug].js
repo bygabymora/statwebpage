@@ -60,7 +60,7 @@ export default function ProductScreen(props) {
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState();
-  const [isOutOfStockBulk, setIsOutOfStockBulk] = useState(); 
+  const [isOutOfStockBox, setIsOutOfStockBox] = useState(); 
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState(); 
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
@@ -73,7 +73,7 @@ export default function ProductScreen(props) {
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
     const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
-      return 'Bulk';
+      return 'Box';
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return 'Each';
     } else if ((product.each?.clearanceCountInStock ?? 0) > 0) {
@@ -84,7 +84,7 @@ export default function ProductScreen(props) {
 
   useEffect(() => {
     if (product.countInStock || 0 ) {
-      setPurchaseType('Bulk');
+      setPurchaseType('Box');
       setCurrentPrice(product.box?.wpPrice || 0 );
       setCurrentDescription(product.box?.description || '');
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
@@ -117,7 +117,7 @@ export default function ProductScreen(props) {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || '');
       setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction ?? 0);
-    } else if (purchaseType === 'Bulk') {
+    } else if (purchaseType === 'Box') {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || '');
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? 0);
@@ -136,8 +136,8 @@ export default function ProductScreen(props) {
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);
       return;
-    } else if (purchaseType === 'Bulk' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
-      setIsOutOfStockBulk(true);
+    } else if (purchaseType === 'Box' && (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
+      setIsOutOfStockBox(true);
       return;
     } else if (
       purchaseType === 'Clearance' &&
@@ -160,7 +160,7 @@ export default function ProductScreen(props) {
         price:
           purchaseType === 'Each'
             ? product.each?.wpPrice
-            : purchaseType === 'Bulk'
+            : purchaseType === 'Box'
             ? product.box?.wpPrice
             : purchaseType === 'Clearance'
             ? product.clearance?.Price
@@ -168,7 +168,7 @@ export default function ProductScreen(props) {
         description:
           purchaseType === 'Each'
             ? product.each?.description
-            : purchaseType === 'Bulk'
+            : purchaseType === 'Box'
             ? product.box?.description
             : purchaseType === 'Clearance'
             ? product.clearance?.description
@@ -176,7 +176,7 @@ export default function ProductScreen(props) {
         countInStock:
           purchaseType === 'Each'
             ? product.each?.quickBooksQuantityOnHandProduction
-            : purchaseType === 'Bulk'
+            : purchaseType === 'Box'
             ? product.box?.quickBooksQuantityOnHandProduction
             : purchaseType === 'Clearance'
             ? product.each?.clearanceCountInStock
@@ -334,7 +334,7 @@ export default function ProductScreen(props) {
       </div>
         <div className="flex flex-col items-center justify-center">
           <div className="card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md">
-            {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && active && currentCountInStock > 0 && (
+            {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && active && currentCountInStock > 0 && (
               <div className="mb-2 flex items-center justify-center">
                 <div className="font-bold mt-4">Quantity &nbsp;</div>
                 <div className="flex items-center flex-row">
@@ -363,7 +363,7 @@ export default function ProductScreen(props) {
                 </div>
               </div>
             )}
-            {(isOutOfStock || isOutOfStockBulk || isOutOfStockClearance || currentCountInStock <= 0) && (
+            {(isOutOfStock || isOutOfStockBox || isOutOfStockClearance || currentCountInStock <= 0) && (
             <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
               <div className="font-bold">Status</div>
               <div className="">Out of Stock</div>
@@ -388,10 +388,10 @@ export default function ProductScreen(props) {
               </div>
             )}
             <div>
-            {!isOutOfStock && !isOutOfStockBulk && !isOutOfStockClearance && (
+            {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
           <div>
             {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
-            purchaseType === 'Each' || purchaseType === 'Bulk' ? (
+            purchaseType === 'Each' || purchaseType === 'Box' ? (
             <div>
             {active === "loading" ? (
               "Loading"
@@ -407,7 +407,7 @@ export default function ProductScreen(props) {
                         setCurrentPrice(product.each?.wpPrice || 0);
                         setCurrentDescription(product.each?.description || '');
                         setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
-                      } else if (e.target.value === 'Bulk' && product.box) {
+                      } else if (e.target.value === 'Box' && product.box) {
                         setCurrentPrice(product.box?.wpPrice || 0);
                         setCurrentDescription(product.box?.description || '');
                         setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
@@ -422,7 +422,7 @@ export default function ProductScreen(props) {
                       <option value="Each">Each</option>
                     )}
                     {product.box?.quickBooksQuantityOnHandProduction > 0 && (
-                      <option value="Bulk">Box</option>
+                      <option value="Box">Box</option>
                     )}
                     {product.clearance?.countInStock > 0 && (
                       <option value="Clearance">Clearance</option>
@@ -469,7 +469,7 @@ export default function ProductScreen(props) {
             <div className="font-bold">Status</div>
               <div>
                 {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                (purchaseType === 'Box' && isOutOfStockBox) ||
                 (purchaseType === 'Clearance' && isOutOfStockClearance)
                   ? 'Out of Stock'
                   : 'In Stock'}
@@ -485,12 +485,12 @@ export default function ProductScreen(props) {
                   onClick={addToCartHandler}
                   disabled={
                     (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                    (purchaseType === 'Box' && isOutOfStockBox) ||
                     (purchaseType === 'Clearance' && isOutOfStockClearance)
                   }
                   >
                   {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Bulk' && isOutOfStockBulk) ||
+                  (purchaseType === 'Box' && isOutOfStockBox) ||
                   (purchaseType === 'Clearance' && isOutOfStockClearance)
                   ? 'Out of Stock'
                   : 'Add to Cart'}
@@ -526,7 +526,7 @@ export default function ProductScreen(props) {
             )}
         {( 
             (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
-            (purchaseType === 'Bulk' && (isOutOfStockBulk || currentCountInStock <= 0)) ||
+            (purchaseType === 'Box' && (isOutOfStockBox || currentCountInStock <= 0)) ||
             (purchaseType === 'Clearance' && isOutOfStockClearance)
           ) && (
           <form className="text-center p-2" ref={form} onSubmit={sendEmail}>

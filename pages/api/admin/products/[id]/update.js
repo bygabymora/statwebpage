@@ -24,8 +24,8 @@ const updateProduct = async (req, res) => {
       if (req.body.price !== undefined) {
         product.price = req.body.price;
       }
-      if (req.body.priceBulk !== undefined) {
-        product.priceBulk = req.body.priceBulk;
+      if (req.body.priceBox !== undefined) {
+        product.priceBox = req.body.priceBox;
       }
       if (req.body.priceClearance !== undefined) {
         product.priceClearance = req.body.priceClearance;
@@ -33,8 +33,8 @@ const updateProduct = async (req, res) => {
       if (req.body.countInStock !== undefined) {
         product.countInStock = req.body.countInStock;
       }
-      if (req.body.countInStockBulk !== undefined) {
-        product.countInStockBulk = req.body.countInStockBulk;
+      if (req.body.countInStockBox !== undefined) {
+        product.countInStockBox = req.body.countInStockBox;
       }
       if (req.body.countInStockClearance !== undefined) {
         product.countInStockClearance = req.body.countInStockClearance;

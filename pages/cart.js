@@ -32,7 +32,7 @@ function CartScreen() {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
-    if (data.purchaseType === 'Bulk' && item.box?.quickBooksQuantityOnHandProduction < quantity) {
+    if (data.purchaseType === 'Box' && item.box?.quickBooksQuantityOnHandProduction < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
@@ -91,7 +91,7 @@ function CartScreen() {
                       </Link>
                     </td>
                     <td className="p-5 text-right border">
-                      {item.purchaseType === 'Bulk' ? 'Box' : item.purchaseType}
+                      {item.purchaseType === 'Box' ? 'Box' : item.purchaseType}
                     </td>
                     {item.purchaseType === 'Each' && (
                       <td className="p-5 text-right border">
@@ -109,7 +109,7 @@ function CartScreen() {
                         </select>
                       </td>
                     )}
-                    {item.purchaseType === 'Bulk' && (
+                    {item.purchaseType === 'Box' && (
                       <td className="p-5 text-right">
                         <select
                           value={item.quantity}
