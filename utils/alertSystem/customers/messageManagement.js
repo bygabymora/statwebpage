@@ -11,15 +11,18 @@ export const messageManagement = (contact, actionName, message) => {
         subject: `${contact.name}, You are now registered on our Web Page.`,
         p1: `<div style="font-weight: light; font-size: 20px; color: #333333; ">Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.</div> `,
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">If it takes longer than expected, please contact us for more information. Thank you for choosing us!</div>`,
+        p3: `<div style="font-weight: light; font-size: 20px; color: #333333; ">If you have any questions, please contact us at </div>`,
       };
       break;
 
       case "Contact Us":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.name}, You are now registered on our Web Page.`,
-        p1: `<div style="font-weight: light; font-size: 20px; color: #333333; ">Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.</div> `,
-        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">${message}</div>`,
+        subject: `${contact.name}, Thank You for Contacting Us!`,
+        p1: `<div style="font-weight: light; font-size: 20px; color: #333333; ">Hi! ${contact.name},<br><br>
+           We have received your message and appreciate you reaching out to us. </div>`,
+        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">The message you sent us: ${message}</div>`,
+        p3: `<div style="font-weight: light; font-size: 20px; color: #333333; ">Our team will review your request and get back to you within 24 hours!</div>`,  
       };
       break;
 
@@ -78,6 +81,17 @@ export const messageManagement = (contact, actionName, message) => {
                 </ul>
               </div>`,
         };
+      break;
+
+      
+      case "Product Manufacturer":
+      emailMessage = {
+        ...emailMessage,
+        subject: `Product Request from ${contact.name}`,
+        p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">A customer has requested a product:</div>`,
+        p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">Product: ${contact.productName} <br> Manufacturer: ${contact.emailManufacturer}</div>`,
+        p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Thank you for your request! We will get back to you soon.</div>`,
+      };
       break;
 
     default:

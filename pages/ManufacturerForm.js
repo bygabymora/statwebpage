@@ -1,58 +1,35 @@
 import React, { useRef, useState } from 'react';
-import emailjs from '@emailjs/browser';
 import { BiMessageAdd } from 'react-icons/bi';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from '../components/main/Layout';
+import { useModalContext } from '../components/context/ModalContext';
+import handleSendEmails from '../utils/alertSystem/documentRelatedEmail';
+import { messageManagement } from '../utils/alertSystem/customers/messageManagement';
 
 export default function ManufacturerForm() {
   const form = useRef();
-  const fileInputRef = useRef();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    phone: '',
-    message: '',
-  });
-  const [file, setFile] = useState(null);
+  const { showStatusMessage } = useModalContext();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [ productName, setProductName ] = useState('');
+  const [emailManufacturer, setEmailManufacturer] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const sendEmail = async (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
+    const contactToEmail = { name, email, emailManufacturer, productName};
 
-    if (!file) {
-      toast.error('Please select a file');
+    if (!name || !email || !emailManufacturer || !productName) {
+      showStatusMessage('error', 'Please fill all the fields');
       return;
     }
 
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
-    });
-    formDataToSend.append('my_file', file);
+    const emailMessage = messageManagement(contactToEmail, 'Product Manufacturer');
+    handleSendEmails(emailMessage, contactToEmail);
 
-    try {
-      await emailjs.sendForm(
-        'service_ej3pm1k',
-        'template_6uwfj0h',
-        form.current,
-        'cKdr3QndIv27-P67m'
-      );
-      toast.success('Message sent successfully!');
-      setFormData({ name: '', email: '', company: '', phone: '', message: '' });
-      setFile(null);
-      fileInputRef.current.value = '';
-    } catch {
-      toast.error('Failed to send message');
-    }
+    setName('');
+    setEmail('');
+    setEmailManufacturer('');
+    setProductName('');
   };
 
   return (
@@ -64,37 +41,44 @@ export default function ManufacturerForm() {
           dating.
         </h3>
         <form ref={form} onSubmit={sendEmail} className="space-y-6">
-          {['name', 'email', 'company', 'phone'].map((field) => (
-            <div key={field}>
-              <label className="block text-[#144e8b] mb-2 capitalize">{field}*</label>
-              <input
-                type={field === 'email' ? 'email' : 'text'}
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                required={field !== 'company' && field !== 'phone'}
-                className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
-              />
-            </div>
-          ))}
           <div>
-            <label className="block text-[#144e8b] mb-2">Message*</label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
+            <label className="block text-[#144e8b] mb-2">Name*</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
               className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
             />
           </div>
           <div>
-            <label className="block text-[#144e8b] mb-2">Upload File*</label>
+            <label className="block text-[#144e8b] mb-2">Email*</label>
             <input
-              type="file"
-              name="my_file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="w-full p-3 border rounded-lg"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
+            />
+          </div>
+          <div>
+            <label className="block text-[#144e8b] mb-2">Product Name*</label>
+            <input
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
+            />
+          </div>
+          <div>
+            <label className="block text-[#144e8b] mb-2">Manufacturer*</label>
+            <input
+              type="text"
+              value={emailManufacturer}
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]"
             />
           </div>
           <button
