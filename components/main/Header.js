@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import { BiSearch } from 'react-icons/bi';
 import axios from 'axios';
+import StaticHeader from './StaticHeader';
 
 const Header = () => {
   const router = useRouter();
@@ -80,6 +81,7 @@ const Header = () => {
   };
 
   return (
+    <>
     <header className="bg-white shadow-md sticky top-0 z-[9999]">
       <nav className="container mx-auto flex justify-between items-center py-4 px-6">
         <div className="flex items-center gap-4">
@@ -128,6 +130,8 @@ const Header = () => {
         </div>
       </nav>
     </header>
+    <StaticHeader /> 
+    </>
   );
 };
 

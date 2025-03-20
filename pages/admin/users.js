@@ -123,7 +123,7 @@ function AdminUsersScreen() {
                     <td className="border border-collapse p-4">{user.active ? '✅' : '❌'}</td>
                     <td className="border border-collapse p-4">{user.approved ? '✅' : '❌'}</td>
                     <td className="border p-4">{user.isAdmin ? '✅' : '❌'}</td>
-                    <td className="p-4 flex flex-col items-center space-y-2 md:space-x-2 md:flex-row">
+                    <td className="p-4 flex items-center space-x-2">
                       <button onClick={() => router.push(`/admin/user/${user._id}`)} className="p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10" title="Edit User">
                         <BiSolidEdit />
                       </button>
