@@ -4,152 +4,86 @@ import Banner1 from '../public/images/assets/banner1.svg';
 import Banner2 from '../public/images/assets/banner2.svg';
 import Banner3 from '../public/images/assets/banner3.svg';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { AiOutlineSend } from 'react-icons/ai';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiPhoneForwarded } from 'react-icons/fi';
+import { TiShoppingCart } from "react-icons/ti";
 
 const Banner = () => {
-  const router = useRouter();
-  const [audience, setAudience] = useState('');
-
-  const handleAudienceSelection = (selectedAudience) => {
-    setAudience(selectedAudience);
-  };
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const banners = [Banner1, Banner2, Banner3];
 
   useEffect(() => {
-    const imageContainer = document.querySelector('.image-container');
-    imageContainer.classList.add('fade-in-right');
-
-    const animationDuration = 1000;
-    setTimeout(() => {
-      imageContainer.classList.remove('fade-in-right');
-    }, animationDuration);
-  }, [audience]);
-
-  const handleCallButtonClick = () => {
-    window.location.href = 'tel:8132520727';
-  };
-
-  const handleLinkClick = (section) => {
-    if (window.innerWidth >= 800) {
-      const yOffsetLargeScreen = -170;
-      setTimeout(() => {
-        const element = document.getElementById(section);
-        const y =
-          element.getBoundingClientRect().top +
-          window.scrollY +
-          yOffsetLargeScreen;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 2000);
-    } else {
-      const yOffsetSmallScreen = -50;
-      setTimeout(() => {
-        const path = `/#${section}`;
-        router.push(path);
-        const element = document.getElementById(section);
-        const y =
-          element.getBoundingClientRect().top +
-          window.scrollY +
-          yOffsetSmallScreen;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 2000);
-    }
-  };
+    const interval = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 5000); 
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="text-title-color-dark text-center ">
-      <div className="grid lg:grid-cols-2 md:grid-cols-1  banner-container mx-auto px-4 py-8 items-center">
-        <div className="">
-          <h1 className="text-4xl font-bold mb-4">Welcome to STAT Surgical Supply</h1>
-          <div className="text-lg text-text-color">
-            {audience === 'hospital' ? (
-              <>
-                We provide high-quality surgical supplies to meet the needs of healthcare professionals. Partner with us to save thousands on the same devices you purchase direct.
-                <br />
-                <span>&nbsp;&nbsp;</span>
-                <Link href="/products" className="flex justify-center items-center font-bold text-[#03793d]">
-                  <span className="underline">Go Shopping!</span>
-                  <span>&nbsp;&nbsp;</span>
-                  <AiOutlineSend className="link-space"/>
-                </Link>
-              </>
-            ) : audience === 'manufacturer' ? (
-              <>
-                Partner with us to expand your market reach in two ways. We provide cost savings on the same devices you are purchasing direct. Additionally, we buy your excess inventory.
-                <br />
-                <span>&nbsp;&nbsp;</span>
-                <Link href="/ManufacturerForm" className="flex justify-center items-center font-bold text-[#03793d]">
-                  <span className="underline">Send us your list</span>
-                  <span>&nbsp;&nbsp;</span>
-                  <AiOutlineSend className="link-space" />
-                </Link>
-              </>
-            ) : (
-              <div className="mb-10">Explore our wide range of high-end surgical disposables.</div>
-            )}
+    <div className="text-title-color-dark text-center">
+      <div className="grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 py-12 items-center">
+        
+        <div className="text-left">
+          <h1 className="text-4xl font-bold mb-6">
+            Welcome to STAT Surgical Supply
+          </h1>
+          <p className="text-lg text-text-color text-center mb-6">
+            High-Quality Surgical Supplies at Unmatched Prices. <br />
+            Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.
+          </p>
+
+          <div className="flex gap-4 text-center justify-center">
+            <motion.button
+              className="bg-[#03793d] text-white px-6 py-3 rounded shadow-md hover:bg-green-700 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href="/products" className="flex items-center gap-3">
+                <TiShoppingCart />
+                Shop Now
+              </Link>
+            </motion.button>
+
+            <motion.button
+              className="border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href="/#contact" className="flex items-center gap-3">
+                <FiPhoneForwarded />
+                Contact Us
+              </Link>
+            </motion.button>
           </div>
-          {audience !== '' && (
-            <div className="flex gap-4 justify-center mt-10">
-              <motion.button
-                onClick={handleCallButtonClick}
-                className="equal-button-size btn-call sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded lg:hidden shadow-md"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                Call Now
-              </motion.button>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <Link
-                  href="#contact"
-                  className="equal-button-size btn-contact hover:text-white sm:inline-block block px-6 py-3 rounded lg:text-center shadow-md border border-title-color-dark"
-                  onClick={() => handleLinkClick('contact')}
-                >
-                  Contact Us
-                </Link>
-              </motion.div>
-            </div>
-          )}
-          {audience === '' && (
-            <div>
-              <h1 className="text-2xl">Who are you?</h1>
-              <br />
-              <div className="grid grid-cols-2 cart-button items-center mb-8 text-center sm:text-xs">
-                <motion.button
-                  onClick={() => handleAudienceSelection('hospital')}
-                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center shadow-md"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  Hospital, ASC, or <br /> Medical Facility
-                </motion.button>
-                <motion.button
-                  onClick={() => handleAudienceSelection('manufacturer')}
-                  className="btn-audience equal-button-size sm:inline-block block mr-4 mb-4 sm:mb-0 text-white bg-title-color-dark hover:bg-title-color px-6 py-3 rounded md:text-sm text-center shadow-md"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  Distributor <br /> or Manufacturer
-                </motion.button>
-              </div>
-            </div>
-          )}
         </div>
-          <div className="image-container">
-            {audience === 'hospital' ? (
-              <Image className="image-container-image" src={Banner2} alt="Banner" width={500} height={500} quality={5} />
-            ) : audience === 'manufacturer' ? (
-              <Image className="image-container-image" src={Banner3} alt="Banner" width={500} height={500} quality={5} />
-            ) : (
-              <Image className="image-container-image" src={Banner1} alt="Banner" width={500} height={500} quality={5} />
-            )}
-          </div>
+
+        {/* Imágenes con transición suave */}
+        <div className="relative w-[500px] h-[500px] flex justify-center items-center overflow-hidden">
+          <AnimatePresence mode="popLayout">
+            {banners.map((banner, index) => (
+              index === currentBanner && (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 1.02 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 2 , ease: "easeInOut" }}
+                  className="absolute"
+                >
+                  <Image
+                    src={banner}
+                    alt="Surgical Supplies"
+                    width={500}
+                    height={500}
+                    priority
+                    className="rounded-lg shadow-lg"
+                  />
+                </motion.div>
+              )
+            ))}
+          </AnimatePresence>
+        </div>
+
       </div>
     </div>
   );
