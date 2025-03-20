@@ -9,17 +9,16 @@ const messages = [
 const StaticHeader = () => {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const pathname = usePathname();
-  
-  if (pathname !== "/products") return null;
-
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-    }, 4000); // Cambia cada 4 segundos
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
+
+  if (pathname !== "/products") return null;
 
   return (
     <div className="bg-[#f5f5f5fb] text-[#144e8b] text-center py-2 text-lg font-semibold">
