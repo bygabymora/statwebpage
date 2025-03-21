@@ -58,7 +58,7 @@ export default function PaymentScreen() {
               className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
                 selectedPaymentMethod === method
                   ? 'border-[#03793d] bg-green-50 shadow-md'
-                  : 'border-gray-300 hover:border-[#03793d]'
+                  : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               <div className="flex items-center space-x-4">

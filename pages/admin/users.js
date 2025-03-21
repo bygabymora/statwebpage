@@ -133,30 +133,30 @@ function AdminUsersScreen() {
                     </td>
                   </tr>
                 ))}
-                {showModal && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
-                      <h2 className="font-bold text-lg">⚠️ Confirm Deletion ⚠️</h2>
-                      <p className="text-[#788b9b]">Are you sure you want to delete this user?</p>
-                      <div className="flex justify-center gap-4 mt-4">
-                        <button 
-                          className="px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
-                          onClick={deleteUser}
-                        >
-                          Delete
-                        </button>
-                        <button 
-                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
-                          onClick={() => setShowModal(false)}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </tbody>
             </table>
+            {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                  <h2 className="font-bold text-lg">⚠️ Confirm Deletion ⚠️</h2>
+                  <p className="text-[#788b9b]">Are you sure you want to delete this user?</p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <button 
+                      className="px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
+                      onClick={deleteUser}
+                    >
+                      Delete
+                    </button>
+                    <button 
+                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
