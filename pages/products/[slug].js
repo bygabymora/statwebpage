@@ -599,7 +599,7 @@ export default function ProductScreen(props) {
               <td className="py-2 px-4 border-b">{product.name}</td>
               <td className="py-2 px-4 border-b">{product.manufacturer}</td>
               <td className="py-2 px-4 border-b text-sm text-gray-600">
-                Need it tomorrow? Order in next 1 hour 22 minutes and choose overnight shipping at checkout.
+                Want it by tomorrow? Place your order within the next 1 hour and 22 minutes and select overnight shipping at checkout.
               </td>
             </tr>
           </tbody>
@@ -634,7 +634,7 @@ export default function ProductScreen(props) {
             <div className="rounded-lg">
               <h3 className="font-bold">Shipping Info</h3>
               <p className="text-sm text-gray-600">
-                Need it tomorrow? Order in next 1 hour 22 minutes and choose overnight shipping at checkout.
+                Want it by tomorrow? Place your order within the next 1 hour and 22 minutes and select overnight shipping at checkout.
               </p>
             </div>
           </div>
