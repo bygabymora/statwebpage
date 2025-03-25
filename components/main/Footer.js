@@ -7,7 +7,7 @@ import facebook from './../../public/images/assets/facebook.svg';
 import Google from './../../public/images/assets/Google.svg';
 import Payment from './../../public/images/assets/payments.png';
 import { AiOutlineSend } from 'react-icons/ai';
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useModalContext } from '../context/ModalContext';
 import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
@@ -17,7 +17,7 @@ export default function Footer() {
   const {contact, showStatusMessage } = useModalContext();
   const [email, setEmail] = useState("");
   
-  const handleSubscribe = (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
   
     if ( !email) {
@@ -99,7 +99,7 @@ export default function Footer() {
           <h4 className="text-lg font-bold text-[#144e8b] justify-center text-center lg:text-left">
             Subscribe to our Newsletter
           </h4>
-          <form className="flex mt-2 w-full justify-center" ref={formRef} onSubmit={handleSubscribe}>
+          <form className="flex mt-2 w-full justify-center" ref={formRef} onSubmit={sendEmail}>
         <input
           type="email"
           placeholder="Enter your email"
