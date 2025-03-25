@@ -14,7 +14,7 @@ import { messageManagement } from '../../utils/alertSystem/customers/messageMana
 
 export default function Footer() {
   const formRef = useRef();
-  const { contact, showStatusMessage, user } = useModalContext();
+  const { showStatusMessage, user } = useModalContext();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
