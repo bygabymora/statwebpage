@@ -11,7 +11,10 @@ export const messageManagement = (contact, actionName, message) => {
         subject: `${contact.name}, You are now registered on our Web Page.`,
         p1: `<div style="font-weight: light; font-size: 17px; color: #333333; ">Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.</div> `,
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">If it takes longer than expected, please contact us for more information. Thank you for choosing us!</div>`,
-        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">If you have any questions, please contact us.</div>`,
+        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">If you have any questions, please contact us.
+              <br>
+            <strong> Stat Surgical Supply </strong>
+            </div>`,
       };
       break;
 
@@ -21,7 +24,10 @@ export const messageManagement = (contact, actionName, message) => {
         subject: `${contact.name}, Thank You for Contacting Us!`,
         p1: `<div style="font-weight: light; font-size: 17px; color: #333333; ">We have received your message and appreciate you reaching out to us.</div>`,
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">The message you sent us: ${message}</div>`,
-        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">Our team will review your request and get back to you within 24 hours!</div>`,  
+        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">Our team will review your request and get back to you within 24 hours!
+             <br>
+            <strong> Stat Surgical Supply </strong>       
+            </div>`,  
       };
       break;
 
@@ -31,7 +37,10 @@ export const messageManagement = (contact, actionName, message) => {
         subject: `${contact.name} is inquiring about a product`,
         p1: `<div style="font-size: 17px; color: #333333;">Customer ${contact.name} is interested in the product:</div>`,
         p2: `<div style="font-weight: bold; font-size: 18px;">${contact.emailName} by ${contact.emailManufacturer}</div>`,
-        p3: `<div style="font-size: 15px; color: #333333;">We will notify you once the product is available.</div>`,
+        p3: `<div style="font-size: 15px; color: #333333;">We will notify you once the product is available.
+            <br>
+            <strong> Stat Surgical Supply </strong>
+            </div>`,
       };
       break;
 
@@ -41,7 +50,10 @@ export const messageManagement = (contact, actionName, message) => {
         subject: `Product Request from ${contact.name}`,
         p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">A customer has requested a product:</div>`,
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">Product: ${contact.searchedWord} <br> Manufacturer: ${contact.manufacturer} <br> Quantity: ${contact.quantity}</div>`,
-        p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Additional Message: ${message}</div>`,
+        p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Additional Message: ${message}
+              <br>
+             <strong> Stat Surgical Supply </strong>
+             </div>`,
       };
       break;
 
@@ -58,6 +70,8 @@ export const messageManagement = (contact, actionName, message) => {
                </div>`,
           p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">
                  We are processing your order and will update you once it ships.
+                  <br>
+                 <strong> Stat Surgical Supply </strong>
                </div>`,
         };
         break;
@@ -79,6 +93,8 @@ export const messageManagement = (contact, actionName, message) => {
                    ${contact.items.map(item => 
                    `<li>${item.quantity}x ${item.name} - $${item.price}</li>`).join('')}
                 </ul>
+                <br>
+                <strong> Stat Surgical Supply </strong>
               </div>`,
         };
       break;
@@ -96,10 +112,29 @@ export const messageManagement = (contact, actionName, message) => {
                </div>`,
           p3: `<div style="font-weight: light; font-size: 15px; color: #333333;">
                  Our team will review your request and get back to you shortly. If you have any questions, feel free to contact us.<br><br>
-                 Thank you for choosing us!
+                 Thank you for choosing us! <br>
+                 <strong> Stat Surgical Supply </strong>
                </div>`,
         };
         break;
+
+        case "Newsletter Subscription":
+          emailMessage = {
+            ...emailMessage,
+            subject: `Welcome to Our Newsletter!`,
+            p1: `<div style="font-weight: light; font-size: 17px; color: #333333;">
+                   Thank you for subscribing to our newsletter! We're excited to keep you updated with the latest news, exclusive offers, and valuable insights.
+                 </div>`,
+            p2: `<div style="font-weight: light; font-size: 18px; color: #333333;">
+                   Stay tuned for exciting content straight to your inbox. If you ever have any questions or feedback, feel free to reach out to us!
+                 </div>`,
+            p3: `<div style="font-weight: light; font-size: 15px; color: #333333;">
+                   We appreciate having you as part of our community! <br><br>
+                   Best regards, <br>
+                   <strong> Stat Surgical Supply </strong>
+                 </div>`,
+          };
+          break;
 
     default:
       emailMessage = {
