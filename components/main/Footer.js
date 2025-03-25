@@ -31,6 +31,11 @@ export default function Footer() {
     handleSendEmails(emailmessage, contactToEmail);
   
     setEmail("");
+    useEffect(() => {
+        if (contact) {
+          setEmail(contact.email || '');
+        }
+      }, [contact]);
   };
 
 
