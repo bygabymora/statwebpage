@@ -14,30 +14,33 @@ import { messageManagement } from '../../utils/alertSystem/customers/messageMana
 
 export default function Footer() {
   const formRef = useRef();
-  const {contact, showStatusMessage } = useModalContext();
-  const [email, setEmail] = useState("");
-  
+  const { contact, showStatusMessage, user } = useModalContext();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (user?.isApproved) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
+
   const sendEmail = (e) => {
     e.preventDefault();
-  
-    if ( !email) {
-      showStatusMessage("error","Please enter your email");
+
+    if (!email) {
+      showStatusMessage('error', 'Please enter your email');
       return;
     }
 
-    const contactToEmail = { email };
-    const emailmessage = messageManagement(contactToEmail, "Newsletter Subscription");
+    const contactToEmail = { name, email }; 
+    const emailmessage = messageManagement(contactToEmail, 'Newsletter Subscription');
 
     handleSendEmails(emailmessage, contactToEmail);
-  
-    setEmail("");
-    useEffect(() => {
-        if (contact) {
-          setEmail(contact.email || '');
-        }
-      }, [contact]);
-  };
 
+    setEmail('');
+    if (!user?.isApproved) setName(''); //  Clear name only if user is not authenticated 
+  };
 
   return (
     <footer className="flex h-30 justify-center shadow-inner items-center footer flex-col relative">
@@ -95,26 +98,34 @@ export default function Footer() {
           width={300} 
           height={100} 
         />
-        <div className="flex flex-col items-center w-full max-w-md text-center">
-          <h4 className="text-lg font-bold text-[#144e8b] justify-center text-center lg:text-left">
+        <div className="flex flex-col items-center w-full max-w-lg px-4 text-center">
+          <h4 className="text-xl font-semibold text-[#144e8b]">
             Subscribe to our Newsletter
           </h4>
-          <form className="flex mt-2 w-full justify-center" ref={formRef} onSubmit={sendEmail}>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          className="w-64 px-3 py-2 border rounded-l-lg text-[#414b53] focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-[#03793d] text-white rounded-r-lg hover:bg-[#025e2d] transition"
-        >
-          Subscribe
-        </button>
-      </form>
+          <form className="w-full flex flex-col sm:flex-row gap-2 mt-4" ref={formRef} onSubmit={sendEmail}>
+            <input
+              type="text"
+              placeholder="Your Name"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b] disabled:bg-gray-100"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={!!user?.isApproved}
+            />
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              className="px-6 py-2 bg-[#03793d] text-white font-medium rounded-lg hover:bg-[#025e2d] transition"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-5xl mt-6">

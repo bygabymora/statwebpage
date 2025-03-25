@@ -14,7 +14,7 @@ export const messageManagement = (contact, actionName, message) => {
         p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">If you have any questions, please contact us.
               <br>
             <strong> Stat Surgical Supply </strong>
-            </div>`,
+        </div>`,
       };
       break;
 
@@ -121,9 +121,9 @@ export const messageManagement = (contact, actionName, message) => {
         case "Newsletter Subscription":
           emailMessage = {
             ...emailMessage,
-            subject: `Welcome to Our Newsletter!`,
+            subject: `Welcome to Our Newsletter! - ${contact.name}`,
             p1: `<div style="font-weight: light; font-size: 17px; color: #333333;">
-                   Thank you for subscribing to our newsletter! We're excited to keep you updated with the latest news, exclusive offers, and valuable insights.
+                   ${contact.name}, Thank you for subscribing to our newsletter! We're excited to keep you updated with the latest news, exclusive offers, and valuable insights.
                  </div>`,
             p2: `<div style="font-weight: light; font-size: 18px; color: #333333;">
                    Stay tuned for exciting content straight to your inbox. If you ever have any questions or feedback, feel free to reach out to us!
