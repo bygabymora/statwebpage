@@ -58,7 +58,7 @@ const Banner = () => {
         </div>
 
         {/* Imágenes con transición suave */}
-        <div className="relative w-[500px] h-[500px] flex justify-center items-center overflow-hidden">
+        <div className="relative w-[350px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
           <AnimatePresence mode="popLayout">
             {banners.map((banner, index) => (
               index === currentBanner && (
@@ -73,10 +73,11 @@ const Banner = () => {
                   <Image
                     src={banner}
                     alt="Surgical Supplies"
+                    layout='responsive'
                     width={500}
                     height={500}
                     priority
-                    className="rounded-lg shadow-lg"
+                    className="rounded-lg w-[350px] h-[350px] md:w-[500px] md:h-[500px] object-cover"
                   />
                 </motion.div>
               )
