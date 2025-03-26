@@ -22,9 +22,12 @@ export const ModalProvider = ({children}) => {
   },[session]);
 
   const openAlertModal = (message, action) => {
+    const hasSeenApprovalMessage = localStorage.getItem('hasSeenApprovalMessage');
+    if (!hasSeenApprovalMessage) {
     setAlertMessage(message);
     setAlertAction(()=>action);
     setIsAlertVisible(true);
+    }
   };
   const showStatusMessage = useCallback((type, message) => {
     setStatusMessage(message);
