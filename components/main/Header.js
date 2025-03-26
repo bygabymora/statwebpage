@@ -86,7 +86,7 @@ const Header = () => {
             <Image 
               src={Logo2} 
               alt="logo" 
-              width={55} 
+              width={65} 
               height={50} 
               className="hidden md:block object-contain"
             />

@@ -105,7 +105,7 @@ export default function Footer() {
           <form className="w-full flex flex-col sm:flex-row gap-2 mt-4" ref={formRef} onSubmit={sendEmail}>
             <input
               type="text"
-              placeholder="Your Name"
+              placeholder="Name"
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b] disabled:bg-gray-100"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -113,7 +113,7 @@ export default function Footer() {
             />
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="Email"
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

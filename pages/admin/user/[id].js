@@ -178,7 +178,7 @@ export default function AdminUserEditScreen() {
               <div className="mb-4"><label>Company Name</label><input {...register('companyName')} className="w-full px-3 py-2 border rounded" /></div>
               <div className="mb-4"><label>Company EIN Code</label><input {...register('companyEinCode')} className="w-full px-3 py-2 border rounded" /></div>
 
-              <div className="flex flex-row">
+              <div className="flex flex-row my-5">
                 <button disabled={loadingUpdate} className="primary-button mr-2">{loadingUpdate ? 'Loading' : 'Update'}</button>
                 <button onClick={() => router.push(`/`)} className="primary-button">Back</button>
               </div>

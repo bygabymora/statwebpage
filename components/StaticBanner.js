@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const StaticBanner = () => {
   return (
     <motion.div 
-      className="static-banner-container mt-4"
+      className="static-banner-container"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeOut' }}
