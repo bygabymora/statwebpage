@@ -231,22 +231,21 @@ export default function ProductScreen(props) {
     setEmailName("");
     setEmailManufacturer("");
   };
-  //-----------//
 
   return (
     <Layout title={product.name} product={product}>
-      <div className="py-2">
-        <Link href={'/products'} className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-10 h-10 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <BsBackspace className="text-2xl text-[#144e8b]" />
-          </span>
-          <span className="text-lg font-semibold">
+      <div>
+        <Link href={'/products'} className="flex items-center gap-3 text-[#144e8b] hover:text-[#0f3b66] transition-colors duration-300">
+          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 shadow-sm">
+            <BsBackspace className="text-xl" />
+          </div>
+          <span className="text-base font-medium">
             Back to Products
           </span>
         </Link>
       </div>
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-4 p-6"> 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 my-6 p-6 bg-white shadow-lg rounded-xl">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-5 p-6"> 
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-5 p-6 bg-white shadow-lg rounded-xl">
           <div
             onMouseMove={(e) => {
               const rect = e.target.getBoundingClientRect();
@@ -267,6 +266,7 @@ export default function ProductScreen(props) {
               className="rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300" // <-- Added no-drag class here
               onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
               onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
+              priority
             />
             {isHovered && (
               <div
@@ -591,9 +591,9 @@ export default function ProductScreen(props) {
               <td className="py-2 px-4 border-b font-semibold">${currentPrice}</td>
               <td className="py-2 px-4 border-b">
                 {currentCountInStock > 0 ? (
-                  <span className="text-green-600 font-semibold">In Stock</span>
+                  <span className="text-[#414b53] font-semibold">In Stock</span>
                 ) : (
-                  <span className="text-red-600 font-semibold">Out of Stock</span>
+                  <span className="text-[#414b53] font-semibold">Out of Stock</span>
                )}
               </td>
               <td className="py-2 px-4 border-b">{product.name}</td>
@@ -618,9 +618,9 @@ export default function ProductScreen(props) {
             <div className="rounded-lg">
               <h3 className="font-bold">Stock Status</h3>
               {currentCountInStock > 0 ? (
-              <p className="text-green-600 font-semibold">In Stock</p>
+              <p className="text-[#414b53] font-semibold">In Stock</p>
               ) : (
-                <p className="text-red-600 font-semibold">Out of Stock</p>
+                <p className="text-[#414b53] font-semibold">Out of Stock</p>
               )}
             </div>
             <div className="rounded-lg">

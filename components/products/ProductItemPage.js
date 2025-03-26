@@ -215,6 +215,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
+              priority
             />
           </div>
         </Link>
