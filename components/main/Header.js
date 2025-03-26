@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BsCart2 } from 'react-icons/bs';
 import Image from 'next/image';
-import Logo from '../../public/images/assets/logo2.svg';
 import Logo2 from '../../public/images/assets/logo.png';
 import Navbar from './Navbar';
 import { Store } from '../../utils/Store';
@@ -18,7 +17,7 @@ const Header = () => {
   const router = useRouter();
   const { state } = useContext(Store);
   const { cart } = state;
-  const [cartItemsCount, setCarItemsCount] = useState(0);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
@@ -26,11 +25,10 @@ const Header = () => {
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
   useEffect(() => {
-    setCarItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
+    setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, [cart.cartItems]);
 
   const handleHomeClick = () => {
-    // Check if the current route is the home page
     if (router.pathname === '/') {
       router.reload();
     } else {
@@ -82,55 +80,68 @@ const Header = () => {
 
   return (
     <>
-    <header className="bg-white shadow-md sticky top-0 z-[9999]">
-      <nav className="container mx-auto flex justify-between items-center py-4 px-6">
-        <div className="flex items-center gap-4">
+      <header className="bg-white shadow-md sticky top-0 z-[9999]">
+        <nav className="container mx-auto flex items-center justify-between py-5 px-4 lg:px-6">
           <Link href="/" onClick={handleHomeClick} aria-label="Home">
-           <div className="block md:hidden">
-              <Image src={Logo} alt="logo" width={100} height={50} className="object-contain"/>
-           </div>
-            <div className="hidden md:block">
-              <Image src={Logo2} alt="logo" width={55} height={50} className="object-contain"/>
-            </div>
-          </Link>
-        </div>
-        <div className="relative w-full max-w-lg">
-          <div className="flex items-center border-b-2 border-[#03793d]">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              onKeyDown={handleKeyDown}
-              className="w-full p-2 outline-none text-[#144e8b]"
-              placeholder="Search..."
+            <Image 
+              src={Logo2} 
+              alt="logo" 
+              width={55} 
+              height={50} 
+              className="hidden md:block object-contain"
             />
-            <button onClick={() => handleSearch()} aria-label="Search">
-              <BiSearch className="text-[#03793d] text-xl" />
-            </button>
-          </div>
-          {suggestions.length > 0 && (
-            <div className="suggestions-list absolute w-full mt-1 bg-white shadow-md top-full">
-              {suggestions.map((product, idx) => (
-                <div key={idx} className="p-2 hover:bg-blue-100 cursor-pointer" onMouseDown={() => handleSuggestionClick(product.name)}>
-                  {product.name}
-                </div>
-              ))}
+            <Image 
+              src={Logo2} 
+              alt="logo" 
+              width={50} 
+              height={50} 
+              className="block md:hidden object-contain"
+            />
+          </Link>
+
+          <div className="relative flex-1 max-w-md mx-4 w-full">
+            <div className="flex items-center border rounded-full px-3 py-1 bg-gray-100">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm"
+                placeholder="Search..."
+              />
+              <button onClick={() => handleSearch()} aria-label="Search" className="p-2">
+                <BiSearch className="text-[#03793d] text-lg"/>
+              </button>
             </div>
-          )}
-        </div>
-        <div className="flex items-center gap-6">
-          {active && (
-            <Link href="/cart" aria-label="Carrito" className="relative">
-              <BsCart2 className="text-2xl text-[#144e8b]"/>
-              {cartItemsCount > 0 && <span className="absolute -top-2 -right-2 bg-[#03793d] text-white rounded-full text-xs px-2">{cartItemsCount}</span>}
-            </Link>
-          )}
-          <Signupbutton aria-label="profile"/>
-          <Navbar />
-        </div>
-      </nav>
-    </header>
-    <StaticHeader /> 
+            {suggestions.length > 0 && (
+              <div className="suggestions-list absolute w-full mt-1 bg-white shadow-md top-full">
+                {suggestions.map((product, idx) => (
+                  <div key={idx} className="p-2 hover:bg-gray-100 cursor-pointer" onMouseDown={() => handleSuggestionClick(product.name)}>
+                    {product.name}
+                  </div>
+                ))} 
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            {active && (
+              <Link href="/cart" aria-label="Cart" className="relative">
+                <BsCart2 className="text-2xl text-[#144e8b]" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#03793d] text-white rounded-full text-xs px-2">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
+            )}
+            <Signupbutton aria-label="Profile"/>
+            <Navbar/>
+          </div>
+
+        </nav>
+      </header>
+      <StaticHeader/>
     </>
   );
 };
