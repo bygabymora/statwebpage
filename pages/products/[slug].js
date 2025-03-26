@@ -1,7 +1,7 @@
 import Layout from '../../components/main/Layout';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { BsBackspace, BsCart2 } from 'react-icons/bs';
+import { BsCart2, BsChevronRight } from 'react-icons/bs';
 import Image from 'next/image';
 import { fetchDataWithRetry } from '../../utils/dbUtils';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -232,18 +232,32 @@ export default function ProductScreen(props) {
     setEmailManufacturer("");
   };
 
+  const breadcrumbs = [
+    { href: '/', name: 'Home' },
+    { href: '/products', name: 'Products' },
+    { href: `/products/${product.slug}`, name: product.name },
+  ];
+
   return (
     <Layout title={product.name} product={product}>
-      <div>
-        <Link href={'/products'} className="flex items-center gap-3 text-[#144e8b] hover:text-[#0f3b66] transition-colors duration-300">
-          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 shadow-sm">
-            <BsBackspace className="text-xl" />
-          </div>
-          <span className="text-base font-medium">
-            Back to Products
-          </span>
-        </Link>
-      </div>
+      <nav className="text-sm text-gray-700">
+        <ul className="flex ml-0 lg:ml-20 items-center space-x-2">
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className="flex items-center">
+              {breadcrumb.href ? (
+                <Link href={breadcrumb.href} className="hover:underline text-[#144e8b]">
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className="mx-2 text-gray-500" />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className="flex flex-col lg:flex-row items-center justify-center gap-5 p-6"> 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-5 p-6 bg-white shadow-lg rounded-xl">
           <div
