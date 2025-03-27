@@ -30,7 +30,7 @@ const benefits = [
 
 export default function BenefitsSection() {
   return (
-    <section className="w-full py-12">
+    <section className="w-full my-10">
       <h2 className="text-3xl font-bold text-center text-[#144e8b]">Our Key Benefits</h2>
       <p className="text-center text-lg text-gray-600 mt-2">
         Discover why we are the trusted choice in surgical supplies.
