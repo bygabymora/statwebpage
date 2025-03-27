@@ -7,7 +7,6 @@ import StaticBanner from '../components/StaticBanner';
 import db from "../utils/db";
 import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
-import BenefitsSection from '../components/BenefitsSection';
 import Benefits from './slider';
 
 export async function getServerSideProps() {
@@ -222,9 +221,8 @@ export default function Home({ products }) {
         Featured Products
       </h2>
       <Carousel products={filteredProducts} />
-      <Benefits className="mt-2"/>
       <Contact className="mt-2" />
-      <BenefitsSection className="mt-2"/>
+      <Benefits className="mt-2"/>
     </Layout>
   );
 }

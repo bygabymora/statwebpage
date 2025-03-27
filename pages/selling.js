@@ -76,7 +76,9 @@ export default function SecureBuyingSelling() {
           </div>
 
           <div className="mt-10 my-10">
-            <button href="/products" className="px-8 py-3 bg-[#03793d] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105">
+            <button 
+            onClick={() => window.location.href = '/products'}
+              className="px-8 py-3 bg-[#03793d] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105">
               Start Shopping Securely
             </button>
           </div>
