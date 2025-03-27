@@ -590,7 +590,13 @@ export default function ProductScreen(props) {
           <thead className="bg-gray-100 border border-collapse">
             <tr>
               <th className="py-2 px-4 border-b">Image</th>
-              <th className="py-2 px-4 border-b">Price</th>
+                {active === "loading" ? (
+                 "Loading"
+                  ) : (
+                  active && (
+                    <th className="py-2 px-4 border-b">Price</th>
+                  )
+                )}
               <th className="py-2 px-4 border-b">Stock Status</th>
               <th className="py-2 px-4 border-b">Reference</th>
               <th className="py-2 px-4 border-b">Manufacturer</th>
@@ -602,7 +608,13 @@ export default function ProductScreen(props) {
               <td className="py-2 px-4 border-b flex justify-center">
                 <Image src={product.image} alt={product.name} width={100} height={100} className="rounded-md" />
               </td>
-              <td className="py-2 px-4 border-b font-semibold">${currentPrice}</td>
+                {active === "loading" ? (
+                "Loading"
+                 ) : (
+                  active && (
+                    <td className="py-2 px-4 border-b font-semibold">${currentPrice}</td>
+                  )
+                )}
               <td className="py-2 px-4 border-b">
                 {currentCountInStock > 0 ? (
                   <span className="text-[#414b53] font-semibold">In Stock</span>
@@ -625,10 +637,16 @@ export default function ProductScreen(props) {
               <h3 className="font-bold">Image</h3>
               <Image src={product.image} alt={product.name} width={100} height={100} className="rounded-md" />
             </div>
-            <div className="rounded-lg">
-              <h3 className="font-bold">Price</h3>
-              <p className="font-semibold">${currentPrice}</p>
-            </div>
+            {active === "loading" ? (
+              "Loading"
+            ) : (
+              active && (
+                <div className="rounded-lg">
+                  <h3 className="font-bold">Price</h3>
+                  <p className="font-semibold">${currentPrice}</p>
+                </div>
+               )
+              )}
             <div className="rounded-lg">
               <h3 className="font-bold">Stock Status</h3>
               {currentCountInStock > 0 ? (

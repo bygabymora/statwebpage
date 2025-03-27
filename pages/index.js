@@ -7,6 +7,7 @@ import StaticBanner from '../components/StaticBanner';
 import db from "../utils/db";
 import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
+import BenefitsSection from '../components/BenefitsSection';
 
 export async function getServerSideProps() {
   await db.connect();
@@ -221,6 +222,7 @@ export default function Home({ products }) {
       </h2>
       <Carousel products={filteredProducts} />
       <Contact className="mt-2" />
+      <BenefitsSection className="mt-2"/>
     </Layout>
   );
 }
