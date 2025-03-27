@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaDollarSign, FaTags, FaHandshake, FaChartLine } from 'react-icons/fa';
 import Layout from '../components/main/Layout';
+import Link from 'next/link';
 
 export default function GuaranteedSavings({ isInClearance }) {
   return (
@@ -39,14 +40,14 @@ export default function GuaranteedSavings({ isInClearance }) {
             <FaTags className="text-5xl text-[#03793d]" />
             <h4 className="text-xl font-bold text-[#144e8b] mt-4">Limited-Time Clearance</h4>
             <p className="text-[#414b53] text-sm mt-2">
-              Special discounted items available for a short time. Grab them before they're gone!
+              Special discounted items available for a short time. Grab them before they re gone!
             </p>
-            <a
+            <Link
               href="/clearance"
               className="mt-4 px-6 py-2 bg-[#03793d] text-white font-bold rounded-lg shadow-md hover:bg-[#025e2d] transition-all duration-300"
             >
               View Deals
-            </a>
+            </Link>
           </div>
         )}
 
