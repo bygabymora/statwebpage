@@ -2,10 +2,35 @@ import React from 'react';
 import { FaDollarSign, FaTags, FaHandshake, FaChartLine } from 'react-icons/fa';
 import Layout from '../components/main/Layout';
 import Link from 'next/link';
+import { BsChevronRight } from 'react-icons/bs';
 
 export default function GuaranteedSavings({ isInClearance }) {
+  
+  const breadcrumbs = [
+    { href: '/', name: 'Home' },
+    { name: 'Guaranteed Savings' },
+  ];
+
   return (
-    <Layout>
+    <Layout title={'Guaranteed Savings'}>
+      <nav className="text-sm text-gray-700">
+        <ul className="flex ml-0 lg:ml-20 items-center space-x-2 my-5">
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className="flex items-center">
+              {breadcrumb.href ? (
+                <Link href={breadcrumb.href} className="hover:underline text-[#144e8b]">
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className="mx-2 text-gray-500" />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
     <section className="w-full bg-white my-10 px-6">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-4xl font-bold text-[#144e8b] leading-tight">

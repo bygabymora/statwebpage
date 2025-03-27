@@ -1,10 +1,35 @@
 import React from "react";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaQuestionCircle } from "react-icons/fa";
 import Layout from "../components/main/Layout";
+import { BsChevronRight } from "react-icons/bs";
+import Link from "next/link";
 
 export default function Support() {
+
+  const breadcrumbs = [
+    { href: '/', name: 'Home' },
+    { name: 'Support' },
+  ];
   return (
-    <Layout>
+    <Layout title={'Support'}>
+      <nav className="text-sm text-gray-700">
+        <ul className="flex ml-0 lg:ml-20 items-center space-x-2">
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className="flex items-center">
+              {breadcrumb.href ? (
+                <Link href={breadcrumb.href} className="hover:underline text-[#144e8b]">
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className="mx-2 text-gray-500" />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <section className="w-full min-h-screen flex justify-center items-center px-6">
         <div className="max-w-4xl w-full p-10 text-center">
           <h2 className="text-4xl font-bold text-[#144e8b]">Personalized Support</h2>

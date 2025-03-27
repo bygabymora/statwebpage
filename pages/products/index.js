@@ -3,6 +3,8 @@ import Layout from "../../components/main/Layout";
 import { ProductItemPage } from "../../components/products/ProductItemPage";
 import { AiOutlineMenuFold } from "react-icons/ai";
 import axios from 'axios';
+import { BsChevronRight } from "react-icons/bs";
+import Link from "next/link";
 
 export default function Products() {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
@@ -56,8 +58,31 @@ export default function Products() {
     setSelectedManufacturer(null);
   };
 
+  const breadcrumbs = [
+    { name: "Home", href: "/" },
+    { name: "Products" },
+  ];
+
   return (
     <Layout title="Products">
+      <nav className="text-sm text-gray-700">
+        <ul className="flex ml-0 lg:ml-20 items-center space-x-2">
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className="flex items-center">
+              {breadcrumb.href ? (
+                <Link href={breadcrumb.href} className="hover:underline text-[#144e8b]">
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className="mx-2 text-gray-500" />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className="grid grid-cols-1 md:grid-cols-4">
         <div className="md:col-span-1 p-4">
           <div className="block md:hidden mb-4">
