@@ -22,8 +22,7 @@ const Contact = () => {
   return (
     <section className="contact" id="contact">
       <div className="contact__container">
-        <h1 className="section__title">Contact us!</h1>
-
+        <h1 className="section__title my-10">Contact us!</h1>
         <div className="contact__container container grid">
           <div className="contact__content my-2 space-y-1.5">
             <motion.div

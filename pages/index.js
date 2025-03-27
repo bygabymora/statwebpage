@@ -8,6 +8,7 @@ import db from "../utils/db";
 import Product from '../models/Product';
 import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 import BenefitsSection from '../components/BenefitsSection';
+import Benefits from './slider';
 
 export async function getServerSideProps() {
   await db.connect();
@@ -163,7 +164,7 @@ function Carousel({ products }) {
   };
 
   return (
-    <div className="carousel-container" lang="en">
+    <div className="carousel-container my-10" lang="en">
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
@@ -221,6 +222,7 @@ export default function Home({ products }) {
         Featured Products
       </h2>
       <Carousel products={filteredProducts} />
+      <Benefits className="mt-2"/>
       <Contact className="mt-2" />
       <BenefitsSection className="mt-2"/>
     </Layout>
