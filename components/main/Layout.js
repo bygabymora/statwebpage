@@ -12,13 +12,13 @@ import {
 } from '../../utils/seo';
 import Logo from '../../public/images/assets/logo2.png';
 
-import { useSession, signOut, getSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useModalContext } from '../context/ModalContext';
 import { useRouter } from 'next/router';
 
-export default function Layout({ title, children, news, product}) {
-  const { data: session} = useSession();
-  const {showStatusMessage,openAlertModal} = useModalContext();
+export default function Layout({ title, children, news, product }) {
+  const { data: session } = useSession();
+  const { showStatusMessage, openAlertModal } = useModalContext();
   const router = useRouter();
 
   // Account not approved message
@@ -35,35 +35,29 @@ export default function Layout({ title, children, news, product}) {
     warning: 'If you believe this is an error, please reach out to customer service immediately.',
   };
 
-  useEffect(() => {
-    if (!session?.user) return; // Do nothing if there is no authenticated user
-
-    // Show only if approved is false
-    if (session.user.approved === false) {
-      showStatusMessage('error', 'Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.');
-      openAlertModal(approvalMessage);
-    }
-  }, [session]);
-
-  const redirectHandler = () => {
-    signOut();
-    setTimeout(() => {
-      router.push('/Login');
-    }, 2000);   
+  const redirectHandler = async () => {
+    await signOut({ redirect: false });
+    router.push('/');
   };
 
   useEffect(() => {
-    if (!session?.user) return; // Do nothing if there is no authenticated user
-    const checkSession = async () => {  
-      const updatedSession = await getSession();
-
-      // Only show message if active is false
-      if (!updatedSession || updatedSession.user?.active === false) {
-        showStatusMessage('error', 'Your account has been disabled. Please contact support for more information.');
-        openAlertModal(disabledMessage, redirectHandler);
-      }
-    };
-    checkSession();
+    if (!session?.user) return;
+  
+    const { approved, active } = session.user;
+  
+    if (approved === false) {
+      showStatusMessage('error', 'Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.');
+      openAlertModal(approvalMessage);
+    } else if (active === false) {
+      showStatusMessage('error', 'Your account has been disabled. Please contact support for more information.');
+      openAlertModal(disabledMessage, async () => {
+        await redirectHandler();
+      });
+  
+      setTimeout(async () => {
+        await redirectHandler();
+      }, 5000);
+    } 
   }, [session]);
 
   return (
