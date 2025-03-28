@@ -73,7 +73,6 @@ const Banner = () => {
                   <Image
                     src={banner}
                     alt="Surgical Supplies"
-                    layout='responsive'
                     width={500}
                     height={500}
                     priority

@@ -37,6 +37,7 @@ export const ModalProvider = ({children}) => {
 
    const handleAlertConfirm = () => {
     setIsAlertVisible(false);
+    localStorage.setItem('hasSeenApprovalMessage', true);
     if (alertAction) alertAction();
   };
 

@@ -139,7 +139,7 @@ export default function Footer() {
         src={Payment} 
         alt="Payment Methods" 
         width={300} 
-          height={'auto'}
+        height={'auto'}
         />
         <div className="flex space-x-4 mt-4 sm:mt-0">
           <Link 
