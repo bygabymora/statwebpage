@@ -2,27 +2,64 @@ import Link from 'next/link';
 import React from 'react';
 import { AiOutlineSend } from 'react-icons/ai';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const StaticBanner = () => {
   return (
     <motion.div 
-      className="static-banner-container"
+      className="static-banner-container text-white py-10 px-6 rounded-lg shadow-lg"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeOut' }}
     >
-      <div className="banner-content">
-        <h2 className="banner-title text-[#144e8b] text-3xl font-bold mb-4">
-          Partner With Us and Sell Your Surgical Disposables
-        </h2>
-        <p className="banner-description text-lg text-gray-700 mb-6">
-          Stat Surgical Supply is looking to fill our customer demand. We pay
-          top dollar for in-date high-end surgical disposables.
-        </p>
-          <Link className="flex justify-center items-center gap-2 bg-[#03793d] text-white px-6 py-3 rounded-lg shadow-lg hover:bg-[#144e8b] transition duration-300" href="/ManufacturerForm">
-            <span className="font-semibold">Send us your list</span>
-            <AiOutlineSend className="text-xl" />
-          </Link>
+      <div className="banner-content text-center md:text-left md:flex md:items-center md:justify-between gap-10">
+    
+        <div className="hidden md:block md:w-1/3">
+          <Image
+            width={500}
+            height={500}
+            src="/images/assets/StaticBanner.png"
+            alt="Banner" 
+            className="rounded-lg shadow-lg" 
+          />
+        </div>
+
+        <div className="flex-1">
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-[#144e8b] text-3xl md:text-4xl font-bold mb-4"
+          >
+            Partner With Us and Sell Your Surgical Disposables
+          </motion.h2>
+          
+          <p className="text-lg text-[#414b53] mb-6 max-w-lg">
+            Stat Surgical Supply is looking to fill our customer demand. We pay
+            top dollar for in-date high-end surgical disposables.
+          </p>
+
+          <ul className="text-lg text-[#414b53] mb-6 space-y-2">
+            {[
+              "We pay top dollar for unused medical supplies.",
+              "Fast and secure transaction process.",
+              "Contribute to reducing medical waste."
+            ].map((item, index) => (
+              <li key={index} className="flex items-center">
+                <AiOutlineSend className="mr-2 text-[#144e8b]" /> {item}
+              </li>
+            ))}
+          </ul>
+          <div className="md:w-auto">
+            <Link 
+              href="/ManufacturerForm"
+              className="flex w-fit items-center gap-3 bg-[#144e8b] text-white px-10 py-2 rounded-full shadow-lg hover:bg-[#788b9b] hover:scale-105 transition duration-300 transform"
+            >
+              <span className="font-semibold">Send us your list</span>
+              <AiOutlineSend className="text-2xl" />
+            </Link>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
