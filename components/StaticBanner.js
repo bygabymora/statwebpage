@@ -7,7 +7,7 @@ import Image from 'next/image';
 const StaticBanner = () => {
   return (
     <motion.div 
-      className="static-banner-container text-white py-10 px-6 rounded-lg shadow-lg"
+      className="static-banner-container text-white py-10 px-6 rounded-lg shadow-lg my-12"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeOut' }}

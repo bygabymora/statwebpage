@@ -215,14 +215,14 @@ export default function Home({ products }) {
 
   return (
     <Layout title="STAT Surgical Supply">
-      <StaticBanner />
       <Banner />
+      <StaticBanner />
+      <Benefits className="mt-2"/>
       <h2 className="section__title" id="products">
         Featured Products
       </h2>
       <Carousel products={filteredProducts} />
       <Contact className="mt-2" />
-      <Benefits className="mt-2"/>
     </Layout>
   );
 }
