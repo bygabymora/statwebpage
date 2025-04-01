@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useEffect, useRef, useState} from 'react';
+import React, { forwardRef, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import { useSession } from "next-auth/react";
 import { Store } from '../../utils/Store';
@@ -10,7 +10,7 @@ import { useModalContext } from '../context/ModalContext';
 import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
-export const ProductItemPage = ({ product, clearancePurchaseType }) => { 
+export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, ref) => { 
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -195,6 +195,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
      border-gray-200 shadow-lg rounded-lg p-1.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
+     ref={ref}
     >
       <h2 className="font-bold my-2">
         {product.name}
@@ -443,4 +444,5 @@ export const ProductItemPage = ({ product, clearancePurchaseType }) => {
         )}
     </div>
   );
-};
+}
+);

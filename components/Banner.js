@@ -58,7 +58,7 @@ const Banner = () => {
         </div>
 
         {/* Imágenes con transición suave */}
-        <div className="relative w-[300px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
+        <div className="relative w-[330px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
           <AnimatePresence mode="popLayout">
             {banners.map((banner, index) => (
               index === currentBanner && (
