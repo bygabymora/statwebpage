@@ -17,7 +17,7 @@ const Banner = () => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
     }, 5000); 
     return () => clearInterval(interval);
-  }, []);
+  }, [banners.length]);
 
   return (
     <div className="text-title-color-dark text-center">
@@ -57,7 +57,6 @@ const Banner = () => {
           </div>
         </div>
 
-        {/* Imágenes con transición suave */}
         <div className="relative w-[330px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
           <AnimatePresence mode="popLayout">
             {banners.map((banner, index) => (
@@ -75,7 +74,7 @@ const Banner = () => {
                     alt="Surgical Supplies"
                     width={500}
                     height={500}
-                    priority
+                    loading={index === 0 ? "eager" : "lazy"}
                     className="rounded-lg w-[350px] h-[350px] md:w-[500px] md:h-[500px] object-cover"
                   />
                 </motion.div>

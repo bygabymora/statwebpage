@@ -42,7 +42,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
       setCurrentDescription(product.box?.description || '');
       setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction ?? null);
     }
-  }, [purchaseType, product.box]);
+  }, [purchaseType, product.box, product.countInStock]);
 
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
