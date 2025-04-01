@@ -444,5 +444,5 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         )}
     </div>
   );
-}
-);
+} );
+ProductItemPage.displayName = 'ProductItemPage';
