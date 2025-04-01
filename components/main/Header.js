@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { BiSearch } from 'react-icons/bi';
 import axios from 'axios';
 import StaticHeader from './StaticHeader';
+import Menu from './../Menu';
 
 const Header = () => {
   const router = useRouter();
@@ -140,7 +141,8 @@ const Header = () => {
           </div>
 
         </nav>
-      </header>
+      </header>      
+      <Menu className="sticky top-0 z-[9999]"/>
       <StaticHeader/>
     </>
   );

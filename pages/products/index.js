@@ -5,16 +5,19 @@ import { AiOutlineMenuFold } from "react-icons/ai";
 import axios from 'axios';
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 
 export default function Products() {
-  const [selectedManufacturer, setSelectedManufacturer] = useState(null);
+  const router = useRouter();
+  const { manufacturer } = router.query; // Get the query parameter from the URL
+  const [selectedManufacturer, setSelectedManufacturer] = useState(manufacturer || null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
   const firstProductRef = useRef(null);
   const manufacturersMap = new Map();
-  
 
   const [loading, setLoading] = useState(true);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -22,40 +25,41 @@ export default function Products() {
       const sortQuery = sortDirection === 1 ? "asc" : "desc";
       const { data } = await axios.get(`/api/products?sort=${sortQuery}`);
       setProducts(data);
-    } catch (err) {
-      console.error('Error al obtener productos:', err);
+    } catch (error) {
+      console.error('Error al obtener productos:', error);
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
 
   products.forEach((product) => {
-    const normalized = product.manufacturer?.trim().toLowerCase(); // Elimina espacios y normaliza
+    const normalized = product.manufacturer?.trim().toLowerCase();
     if (!manufacturersMap.has(normalized)) {
-      manufacturersMap.set(normalized, product.manufacturer?.trim()); // Guarda el original
+      manufacturersMap.set(normalized, product.manufacturer?.trim());
     }
   });
-  
+
   const manufacturers = [...manufacturersMap.values()];
 
   const filteredProducts = selectedManufacturer
-  ? products.filter(
-      (product) => product.manufacturer.trim().toLowerCase() === selectedManufacturer.trim().toLowerCase()
-    )
-  : products;
+    ? products.filter(
+        (product) => product.manufacturer.trim().toLowerCase() === selectedManufacturer.trim().toLowerCase()
+      )
+    : products;
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
-
+    router.push(`/products?manufacturer=${encodeURIComponent(manufacturer)}`, undefined, { shallow: true });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleShowAll = () => {
     setSelectedManufacturer(null);
+    router.push('/products', undefined, { shallow: true });
   };
 
   const breadcrumbs = [
@@ -135,15 +139,15 @@ export default function Products() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
             {loading ? (
-            <p>Cargando productos...</p>
+              <p>Cargando productos...</p>
             ) : (
-            filteredProducts.map((product, index) => (
-            <ProductItemPage 
-            product={product} 
-            key={product.name}
-            ref={index === 0 ? firstProductRef : null}
-            ></ProductItemPage>
-            ))
+              filteredProducts.map((product, index) => (
+                <ProductItemPage 
+                  product={product} 
+                  key={product.name}
+                  ref={index === 0 ? firstProductRef : null}
+                />
+              ))
             )}
           </div>
         </div>
