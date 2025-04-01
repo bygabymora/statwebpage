@@ -34,7 +34,7 @@ export default function ManufacturerForm() {
 
   return (
     <Layout title="Manufacturer Form">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 my-8">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8">
         <h3 className="text-xl text-center font-semibold text-[#144e8b] mb-6">
           For the most accurate quote, please provide us with a list that
           includes reference numbers, quantities(each/box), and expiration
