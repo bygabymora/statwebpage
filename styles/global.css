@@ -1097,6 +1097,11 @@ main {
   }
 }
 
+.scroll-container {
+  overflow-y: auto; /* Permite el scroll vertical */
+  height: 100vh; /* Ajusta la altura según sea necesario */
+}
+
 /* For small devices */
 
 @media screen and (max-width: 400px) {
