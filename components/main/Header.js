@@ -13,6 +13,7 @@ import { BiSearch } from 'react-icons/bi';
 import axios from 'axios';
 import StaticHeader from './StaticHeader';
 import Menu from './../Menu';
+import MiniHeader from './../MiniHeader';
 
 const Header = () => {
   const router = useRouter();
@@ -81,6 +82,7 @@ const Header = () => {
 
   return (
     <>
+      <MiniHeader />
       <header className="bg-white shadow-md sticky top-0 z-[9999]">
         <nav className="container mx-auto flex items-center justify-between py-5 px-4 lg:px-6">
           <Link href="/" onClick={handleHomeClick} aria-label="Home">

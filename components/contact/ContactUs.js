@@ -13,7 +13,7 @@ const ContactUs = () => {
   const [email, setEmail] = useState('');
 
   const sendEmail = (e) => {
-    e.preventDefault(); // Evita el comportamiento por defecto del formulario
+    e.preventDefault(); // Avoid the default behavior of the form. 
 
     if (!name || !email || !message) {
       showStatusMessage("error", "Please fill all the fields");
@@ -25,7 +25,7 @@ const ContactUs = () => {
 
     handleSendEmails(emailmessage, contactToEmail);
 
-    // Limpiar los inputs después de enviar
+    // Clear inputs after sending the email
     setName('');
     setEmail('');
     setMessage('');
