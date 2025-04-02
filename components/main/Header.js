@@ -127,21 +127,23 @@ const Header = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6 relative">
             {active && (
-              <Link href="/cart" aria-label="Cart" className="relative">
-                <BsCart2 className="text-2xl text-[#144e8b]" />
+              <Link href="/cart" aria-label="Cart" className="relative group">
+                <BsCart2 className="text-3xl text-[#144e8b] transition-transform transform group-hover:scale-110" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#03793d] text-white rounded-full text-xs px-2">
+                  <span className="absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg">
                     {cartItemsCount}
                   </span>
-                )}
+                )} 
               </Link>
             )}
-            <Signupbutton aria-label="Profile"/>
-            <Navbar/>
+           <Signupbutton
+             aria-label="Profile"
+            
+           />
+            <Navbar />
           </div>
-
         </nav>
         <Menu />
       </header>      

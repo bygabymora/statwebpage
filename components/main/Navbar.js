@@ -64,43 +64,45 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
-        <div className="nav__list grid">
-          <Link href="/" className="nav__link" onClick={handleHomeClick}>
-            <BiHomeSmile className="uil uil-estate nav__icon" />
-            Home
-          </Link>
-          <Link href="/about" className="nav__link">
-            <BiUser className="uil uil-user nav__icon" />
-            About
-          </Link>
-          <Link href="/products" className="nav__link">
-            <BiPhotoAlbum className="uil uil-scenery nav__icon" />
-            Products
-          </Link>
-          <Link
-            href="/#contact"
-            onClick={() => handleLinkClick('contact')}
-            className="nav__link"
-          >
-            <MdOutlineWavingHand className="uil uil-message nav__icon" />
-            Contact
-          </Link>
-          <Link href="/news" className="nav__link">
-            <BiPhotoAlbum className="uil uil-scenery nav__icon" />
-            News
-          </Link>
+      <span className="block md:hidden"> 
+        <div className={toggleMenu ? 'nav__menu show-menu' : 'nav__menu'}>
+          <div className="nav__list grid">
+            <Link href="/" className="nav__link" onClick={handleHomeClick}>
+              <BiHomeSmile className="uil uil-estate nav__icon" />
+              Home
+            </Link>
+            <Link href="/about" className="nav__link">
+              <BiUser className="uil uil-user nav__icon" />
+              About
+            </Link>
+            <Link href="/products" className="nav__link">
+              <BiPhotoAlbum className="uil uil-scenery nav__icon" />
+              Products
+            </Link>
+            <Link
+              href="/#contact"
+              onClick={() => handleLinkClick('contact')}
+              className="nav__link"
+            >
+              <MdOutlineWavingHand className="uil uil-message nav__icon" />
+              Contact
+            </Link>
+            <Link href="/news" className="nav__link">
+              <BiPhotoAlbum className="uil uil-scenery nav__icon" />
+              News
+            </Link>
 
-          <br className="break" />
+            <br className="break" />
+          </div>
+          <BiXCircle
+            className="uil uil-times nav__close"
+            onClick={toggleMenuHandler}
+          />
         </div>
-        <BiXCircle
-          className="uil uil-times nav__close"
-          onClick={toggleMenuHandler}
-        />
-      </div>
-      <div className="nav__toggle" onClick={toggleMenuHandler}>
-        <BiGridVertical className="uil uil-apps" />
-      </div>
+        <div className="nav__toggle" onClick={toggleMenuHandler}>
+          <BiGridVertical className="uil uil-apps" />
+        </div>
+      </span>
     </div>
   );
 };

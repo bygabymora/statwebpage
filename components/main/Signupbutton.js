@@ -41,13 +41,13 @@ const SignupButton = () => {
     <div className="relative">
       <Menu as="div" className="flex items-center">
         <Menu.Button className="p-2" aria-label="user">
-          <BsPerson className="h-6 w-6 cursor-pointer" onClick={handleMenuToggle} />
+          <BsPerson  className="text-[#03793d] text-3xl cursor-pointer" onClick={handleMenuToggle} />
         </Menu.Button>
 
         {menuOpen && (
           <div
             ref={menuRef}
-            className="absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-50 overflow-hidden border border-gray-200"
+            className="absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200"
             role="menu"
             aria-orientation="vertical"
           >

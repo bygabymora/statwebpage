@@ -136,7 +136,7 @@ function AdminUsersScreen() {
               </tbody>
             </table>
             {showModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
                 <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
                   <h2 className="font-bold text-lg">⚠️ Confirm Deletion ⚠️</h2>
                   <p className="text-[#788b9b]">Are you sure you want to delete this user?</p>
