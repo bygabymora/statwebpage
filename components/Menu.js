@@ -3,6 +3,17 @@ import Link from "next/link";
 import axios from 'axios';
 
 const menuItems = [
+  { 
+    title: "Home",
+    subcategories: [
+      {
+        title: "Home",
+        links: [
+          { name: "Home", href: "/" }
+        ]
+      }
+    ]
+  },
   {
     title: "Manufacturers",
     subcategories: [] // Initially empty, it will be filled with manufacturers from the API
