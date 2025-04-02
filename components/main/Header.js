@@ -143,8 +143,8 @@ const Header = () => {
           </div>
 
         </nav>
+        <Menu />
       </header>      
-      <Menu className="sticky top-90 z-[9999]"/>
       <StaticHeader/>
     </>
   );

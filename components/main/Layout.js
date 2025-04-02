@@ -11,7 +11,6 @@ import {
   generateMainPageJSONLD,
 } from '../../utils/seo';
 import Logo from '../../public/images/assets/logo2.png';
-
 import { signOut, useSession } from 'next-auth/react';
 import { useModalContext } from '../context/ModalContext';
 import { useRouter } from 'next/router';

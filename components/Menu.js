@@ -117,8 +117,9 @@ const Menu = () => {
     return item;
   });
 
-  return (                     
+  return (               
     <nav className="bg-gray-100 shadow-md sticky top-0 z-50">
+      <div className="border-b border-gray-300"></div>  
       <ul className="flex justify-center space-x-6 py-4 text-[#144e8b] font-semibold">
         {updatedMenuItems.map((item, index) => (
           <li
