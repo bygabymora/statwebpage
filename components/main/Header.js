@@ -80,17 +80,13 @@ const Header = () => {
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
-
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false; 
+    let ticking = false;
   
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          setIsScrolled(currentScrollY > 50);
-          lastScrollY = currentScrollY;
+          setIsScrolled(window.scrollY > 50);
           ticking = false;
         });
         ticking = true;
