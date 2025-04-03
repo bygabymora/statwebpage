@@ -235,7 +235,7 @@ export default function ProductScreen(props) {
   const breadcrumbs = [
     { href: '/', name: 'Home' },
     { href: '/products', name: 'Products' },
-    { href: `/products/${product.slug}`, name: product.name },
+    { name: product.name },
   ];
 
   return (
