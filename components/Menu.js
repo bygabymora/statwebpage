@@ -129,29 +129,40 @@ const Menu = () => {
   });
 
   return (               
-    <nav className="bg-gray-100 shadow-md w-full">
-      <ul className="flex justify-center space-x-6 py-4 text-[#144e8b] font-semibold">
+    <nav className="bg-gray-100 shadow w-full">
+      <ul className="flex justify-center space-x-6 py-3 text-[#144e8b] font-medium text-sm lg:text-base">
         {updatedMenuItems.map((item, index) => (
           <li
             key={index}
-            className="relative group cursor-pointer"
+            className="relative group"
             onMouseEnter={() => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
           >
-            <span className="px-4 py-2 hover:text-[#03793d] transition-colors duration-200">{item.title}</span>
+            <span className="px-3 py-3 inline-block hover:text-[#03793d] transition-colors duration-200">
+              {item.title}
+            </span>
+
             {item.subcategories.length > 0 && (
               <div
-                className={`absolute left-0 mt-2 w-64 max-h-64 overflow-y-auto bg-white shadow-lg rounded-lg transform transition-all duration-300 ${
-                  activeIndex === index ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
-                }`}
-              >
+                className={`absolute left-1/2 -translate-x-1/2 top-full mt-1 w-72 max-h-72 overflow-y-auto bg-white shadow-md rounded-md border border-gray-100 transition-all duration-200 z-50 ${
+                  activeIndex === index
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 translate-y-2 pointer-events-none"
+                  }`}
+                  // Add these to keep hover even if there is a small jump
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onMouseLeave={() => setActiveIndex(null)}
+                >
                 {item.subcategories.map((sub, subIndex) => (
-                  <div key={subIndex} className="p-3">
-                    <h4 className="font-bold text-[#144e8b] border-b pb-1 mb-2">{sub.title}</h4>
-                    <ul className="space-y-1 text-gray-600">
+                  <div key={subIndex} className="px-4 py-3 border-b last:border-b-0">
+                    <h4 className="font-semibold text-sm text-[#144e8b] mb-1">{sub.title}</h4>
+                    <ul className="space-y-1">
                       {sub.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
-                          <Link href={link.href} className="block px-3 py-1 hover:bg-gray-100 rounded transition-all duration-200">
+                          <Link
+                            href={link.href}
+                            className="block text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-100 transition-all"
+                          >
                             {link.name}
                           </Link>
                         </li>
