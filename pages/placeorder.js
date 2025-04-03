@@ -26,7 +26,7 @@ export default function PlaceOrderScreen() {
   
   const [email, setEmail] = useState('');
   const [emailName, setEmailName] = useState('');
-  const [emailPhone, setEmailPhone] = useState('');
+  const [Phone, setPhone] = useState('');
   const [emailTotalOrder, setEmailTotalOrder] = useState('');
   const [emailPaymentMethod, setEmailPaymentMethod] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
@@ -49,7 +49,7 @@ export default function PlaceOrderScreen() {
   useEffect(() => {
     setEmail(shippingAddress.email);
     setEmailName(shippingAddress.fullName);
-    setEmailPhone(shippingAddress.phone);
+    setPhone(shippingAddress.phone);
     setEmailPaymentMethod(paymentMethod);
     setEmailTotalOrder(totalPrice);
     setSpecialNotes(shippingAddress.notes);
@@ -245,34 +245,23 @@ export default function PlaceOrderScreen() {
             </ul>
           </div>
         </div>
-          <form ref={form} hidden>
-            <input type="text" name="user_name" value={emailName} readOnly />
-            <input type="text" name="user_phone" value={emailPhone} readOnly />
-            <input
-              type="text"
-              name="total_order"
-              value={emailTotalOrder}
-              readOnly
-            />
-            <input
-              readOnly
-              type="text"
-              name="payment_method"
-              value={
-                emailPaymentMethod === 'Stripe'
-                  ? 'Credit Card (Powered by Stripe)'
-                  : emailPaymentMethod
-              }
-            />
-
-            <input
-              type="text"
-              name="shipping_preference"
-              value={specialNotes}
-              readOnly
-            />
-            <input type="text" name="user_email" value={setEmail} />
-          </form>
+        <form ref={form} hidden>
+          <input type="text" name="user_name" value={emailName ?? ""} readOnly />
+          <input type="text" name="user_phone" value={Phone ?? ""} onChange={(e) => setPhone(e.target.value)} />
+          <input type="text" name="total_order" value={emailTotalOrder ?? ""} readOnly />
+          <input
+            readOnly
+            type="text"
+            name="payment_method"
+            value={
+            emailPaymentMethod === 'Stripe'
+              ? 'Credit Card (Powered by Stripe)'
+              : emailPaymentMethod ?? ""
+            }
+          />
+          <input type="text" name="shipping_preference" value={specialNotes ?? ""} readOnly />
+          <input type="text" name="user_email" value={email ?? ""} readOnly />
+        </form>
       </div>
     )}
   </Layout>
