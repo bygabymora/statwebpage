@@ -1,30 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Store } from '../utils/Store';
 import Link from 'next/link';
+import { Store } from '../utils/Store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AiFillCheckCircle } from "react-icons/ai";
-import { HiXCircle } from "react-icons/hi";
-import { IoMdSettings } from "react-icons/io";
 
 const CookieAcceptancePopup = () => {
   const { state, dispatch } = useContext(Store);
   const [isClient, setIsClient] = useState(false);
-  const [showPreferences, setShowPreferences] = useState(false);
+
+  useEffect(() => setIsClient(true), []);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    const cookieAccepted = localStorage.getItem('cookieAccepted');
-    if (cookieAccepted) {
-      dispatch({ type: 'ACCEPT_COOKIES' });
-    }
+    const accepted = localStorage.getItem('cookieAccepted');
+    if (accepted === 'true') dispatch({ type: 'ACCEPT_COOKIES' });
   }, [dispatch]);
 
-  if (!isClient || state.cookieAccepted) {
-    return null;
-  }
+  if (!isClient || state.cookieAccepted) return null;
 
   const acceptCookies = () => {
     localStorage.setItem('cookieAccepted', 'true');
@@ -32,58 +22,41 @@ const CookieAcceptancePopup = () => {
   };
 
   const declineCookies = () => {
-    localStorage.setItem('cookieAccepted', 'false');
-    dispatch({ type: 'DECLINE_COOKIES' });
+    // Just close the popup but don’t set cookieAccepted in storage
+    dispatch({ type: 'ACCEPT_COOKIES' });
   };
 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 50, opacity: 0 }}
+        initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 50, opacity: 0 }}
+        exit={{ y: 30, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-6 right-20 sm:left-5 sm:transform sm:-translate-x-1/2 w-full max-w-xl p-6 bg-[#fff] shadow-lg rounded-lg text-[#788b9b] z-50 border border-[#788b9b] sm:bottom-6"
+        className="fixed bottom-4 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto sm:w-[95%] max-w-xl mx-auto p-5 sm:p-6 bg-white/90 backdrop-blur-md border border-gray-300 shadow-xl rounded-xl z-50 text-sm text-[#414b53]"
       >
-        {!showPreferences ? (
-          <div className="flex flex-col space-y-6">
-            <p className="text-base text-center text-[#788b9b]">
-              We use cookies to improve your experience. By continuing, you agree to our use of cookies.
-              <Link href="/privacy-policy" className="text-[#144e8b] hover:underline"> More information</Link>
-            </p>
-            <div className="flex flex-wrap justify-center sm:space-x-6">
-              <button
-                className="flex items-center px-4 py-2 bg-[#144e8b] text-white rounded-full hover:bg-[#03793d] transition text-sm sm:text-lg"
-                onClick={acceptCookies}
-              >
-                <AiFillCheckCircle className="w-5 h-5 sm:w-6 sm:h-6 mr-2" /> Accept
-              </button>
-              <button
-                className="flex items-center px-4 py-2 bg-[#414b53] text-white rounded-full hover:bg-gray-600 transition text-sm sm:text-lg"
-                onClick={declineCookies}
-              >
-                <HiXCircle className="w-5 h-5 sm:w-6 sm:h-6 mr-2" /> Decline
-              </button>
-              <button
-                className="flex items-center px-4 py-2 bg-[#ffd700] text-[--dark-text-color] rounded-full hover:bg-yellow-500 transition text-sm sm:text-lg"
-                onClick={() => setShowPreferences(true)}
-              >
-                <IoMdSettings className="w-5 h-5 sm:w-6 sm:h-6 mr-2" /> Preferences
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center">
-            <h3 className="text-xl font-semibold mb-4 text-[#144e8b]">Cookie Preferences</h3>
-            <p className="text-base mb-6 text-[#788b9b]">Customize your cookie settings.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-center sm:text-left text-sm leading-relaxed">
+            We use cookies to enhance your experience. By continuing to use our website, you agree to our use of cookies.
+            <Link href="/privacy-policy" className="ml-1 text-[#144e8b] font-semibold hover:underline">
+              Learn more
+            </Link>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-end">
             <button
-              className="px-5 py-3 bg-[#144e8b] text-white rounded-full hover:bg-[#03793d] transition text-lg"
               onClick={acceptCookies}
-            > 
-              Save Preferences
+              className="px-5 py-2 rounded-full bg-[#144e8b] text-white hover:bg-[#03793d] transition shadow-sm text-sm"
+            >
+              I Understand
+            </button>
+            <button
+              onClick={declineCookies}
+              className="px-5 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition shadow-sm text-sm"
+            >
+              Decline
             </button>
           </div>
-        )}
+        </div>
       </motion.div>
     </AnimatePresence>
   );
