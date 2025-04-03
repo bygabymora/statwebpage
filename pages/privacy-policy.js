@@ -13,7 +13,7 @@ export default function facs() {
   return (
     <>
       <Layout title="Privacy policy">
-        <div className="card p-5 mb-10">
+        <div className="card p-5 my-10">
           <h1 className="section__title">Privacy Policy</h1>
           <br />
           <h2 className="section__subtitle">Last updated October 24, 2023</h2>

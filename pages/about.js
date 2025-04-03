@@ -21,7 +21,7 @@ export default function AboutScreen() {
 
   return (
     <Layout title="About Us">
-      <div className="grid lg:grid-cols-2 md:grid-cols-1  banner-container mx-auto px-4 py-8 items-center">
+      <div className="grid lg:grid-cols-2 md:grid-cols-1  banner-container mx-auto px-4 my-5 tems-center">
         <animated.div className="image-container" style={imageAnimation}>
           <Image src={image} alt="About Us" className="about-image" />
         </animated.div>{' '}
