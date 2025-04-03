@@ -24,6 +24,7 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
+  const lastScrollY = React.useRef(0);
 
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
@@ -80,28 +81,28 @@ const Header = () => {
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
+
   useEffect(() => {
-    let ticking = false;
-  
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 50);
-          ticking = false;
-        });
-        ticking = true;
+      const scrollY = window.scrollY;
+  
+      // Only updates if there is really a necessary state change
+      if (scrollY > 60 && !isScrolled) {
+        setIsScrolled(true);
+      } else if (scrollY <= 40 && isScrolled) {
+        setIsScrolled(false);
       }
     };
   
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isScrolled]);
 
   return (
     <>
       <MiniHeader />
       <header className={`bg-white shadow-md sticky top-0 z-[9999] transition-all duration-300`}>
-        <div className={`transition-all duration-300 ${isScrolled ? "py-0" : "py-2"}`}>
+        <div className={`transition-all duration-300 ${isScrolled ? "py-1" : "py-3"}`}>  
           <nav className="container mx-auto flex items-center justify-between px-4 lg:px-6">
             <Link href="/" onClick={handleHomeClick} aria-label="Home">
               <Image 
