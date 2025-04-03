@@ -24,7 +24,6 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
-  const lastScrollY = React.useRef(0);
 
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
