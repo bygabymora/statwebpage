@@ -144,24 +144,24 @@ const Menu = () => {
 
             {item.subcategories.length > 0 && (
               <div
-                className={`absolute left-1/2 -translate-x-1/2 top-full mt-1 w-72 max-h-72 overflow-y-auto bg-white shadow-md rounded-md border border-gray-100 transition-all duration-200 z-50 ${
+                className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 max-h-80 overflow-y-auto 
+                bg-gray-100 shadow-2xl rounded-lg border border-gray-200 transition-all duration-200 z-50 ${
                   activeIndex === index
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 translate-y-2 pointer-events-none"
-                  }`}
-                  // Add these to keep hover even if there is a small jump
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onMouseLeave={() => setActiveIndex(null)}
-                >
+                }`}
+                onMouseEnter={() => setActiveIndex(index)}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
                 {item.subcategories.map((sub, subIndex) => (
-                  <div key={subIndex} className="px-4 py-3 border-b last:border-b-0">
-                    <h4 className="font-semibold text-sm text-[#144e8b] mb-1">{sub.title}</h4>
-                    <ul className="space-y-1">
+                  <div key={subIndex} className="px-6 py-4 border-b last:border-b-0">
+                    <h4 className="font-semibold text-base text-[#144e8b] mb-2">{sub.title}</h4>
+                    <ul className="space-y-2">
                       {sub.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
                           <Link
                             href={link.href}
-                            className="block text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-100 transition-all"
+                            className="block text-gray-700 text-base px-3 py-2 rounded-md hover:bg-gray-200 transition-all"
                           >
                             {link.name}
                           </Link>
