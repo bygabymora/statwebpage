@@ -32,6 +32,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
   const [currentDescription, setCurrentDescription] = useState(product.each?.description || '');
   const [currentCountInStock, setCurrentCountInStock] = useState(product.each?.quickBooksQuantityOnHandProduction ?? null);
   const [showModal, setShowModal] = useState(false);
+  const hasPrice = currentPrice !== null && currentPrice !== 0;
 
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
 
@@ -378,7 +379,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
               active && (
                 <div className="mb-2 justify-between">
                   <div className="font-bold">Price</div>
-                  <div className="">&nbsp; ${currentPrice}</div>
+                  {hasPrice ? `$${currentPrice}` : "Call for Price"}
                 </div>
               )
             )}
@@ -417,27 +418,37 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
                 </div>
               </div>
               {active === "loading" ? (
-              "Loading"
-              ) : (
+                "Loading"
+                ) : (
                 active && (
-                  <button
-                    className="primary-button align-middle"
-                    type="button"
-                    onClick={addToCartHandler}
-                    disabled={
-                      (purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Box' && isOutOfStockBox) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    }
-                    >
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Box' && isOutOfStockBox) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
-                  </button>
+                  <>
+                    {(!hasPrice || currentPrice === 0) ? (
+                      <Link href="/support">
+                        <button className="primary-button align-middle text-white">
+                          Call for Price
+                        </button>
+                      </Link>
+                    ) : (
+                      <button
+                        className="primary-button align-middle"
+                        type="button"
+                        onClick={addToCartHandler}
+                        disabled={
+                          (purchaseType === 'Each' && isOutOfStock) ||
+                          (purchaseType === 'Box' && isOutOfStockBox) ||
+                          (purchaseType === 'Clearance' && isOutOfStockClearance)
+                        }
+                      >
+                        {(purchaseType === 'Each' && isOutOfStock) ||
+                         (purchaseType === 'Box' && isOutOfStockBox) ||
+                         (purchaseType === 'Clearance' && isOutOfStockClearance)
+                            ? 'Out of Stock'
+                            : 'Add to Cart'}
+                      </button>
+                    )}
+                  </>
                 )
-              )}
+              )} 
             </div>
           )}
         </div>

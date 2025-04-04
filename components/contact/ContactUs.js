@@ -14,14 +14,13 @@ const ContactUs = () => {
 
   const sendEmail = (e) => {
     e.preventDefault(); // Avoid the default behavior of the form. 
+    const contactToEmail = { name, email };
+    const emailmessage = messageManagement(contactToEmail, "Contact Us", message);
 
     if (!name || !email || !message) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
-
-    const contactToEmail = { name, email };
-    const emailmessage = messageManagement(contactToEmail, "Contact Us", message);
 
     handleSendEmails(emailmessage, contactToEmail);
 
