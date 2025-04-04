@@ -186,8 +186,9 @@ export default function AdminUserEditScreen() {
           )}
         </div>
       </div>
-
-      <CustomAlertModal isOpen={showModal} message={modalMessage} onConfirm={handleAlertConfirm} />
+      <div className="fixed z-[9999] bg-gray bg-opacity-50">
+        <CustomAlertModal isOpen={showModal} message={modalMessage} onConfirm={handleAlertConfirm} />
+      </div>
     </Layout>
   );
 }

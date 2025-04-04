@@ -18,7 +18,6 @@ const Navbar = () => {
     setToggleMenu(!toggleMenu);
   };
 
-
   const handleLinkClick = (section) => {
     if (window.innerWidth >= 800) {
       const yOffsetLargeScreen = -170;
