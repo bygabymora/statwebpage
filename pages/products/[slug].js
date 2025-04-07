@@ -34,9 +34,9 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   try {
    await db.connect();
-   const product = await Product.findOne({ slug: new RegExp(`^${params.slug}$`, 'i') }).lean();
-   await db.disconnect();
-   console.log("Producto encontrado en getStaticProps:", product); // Debugging 
+  const product = await fetchDataWithRetry(async () => {
+    return await Product.findOne({ slug: String(params.slug) }).lean();
+  });
 
   if (!product) {
     return { notFound: true };
@@ -132,7 +132,7 @@ export default function ProductScreen(props) {
   const addToCartHandler = async () => {
     const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = exisItem ? exisItem.quantity + qty : qty;
-    const { data } = await axios.get(`/api/products/${product._slug}`);
+    const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);

@@ -100,10 +100,10 @@ function OrderScreen() {
     };
   
     if (
-      !order._slug ||
+      !order._id ||
       successPay ||
       successDeliver ||
-      (order._slug && order._slug !== orderId)
+      (order._id && order._id !== orderId)
     ) {
       fetchOrder();
       if (successPay) 
@@ -242,7 +242,7 @@ function OrderScreen() {
       try {
         dispatch({ type: 'PAY_REQUEST' });
         const { data } = await axios.put(
-          `/api/orders/${order._slug}/pay`,
+          `/api/orders/${order._id}/pay`,
           details
         );
         dispatch({ type: 'PAY_SUCCESS', payload: data });
@@ -266,7 +266,7 @@ function OrderScreen() {
     try {
       dispatch({ type: 'PAY_REQUEST' });
       const { data } = await axios.put(
-        `/api/orders/${order._slug}/pay`
+        `/api/orders/${order._id}/pay`
         // Include any necessary payload here
       );
       dispatch({ type: 'PAY_SUCCESS', payload: data });
@@ -293,7 +293,7 @@ function OrderScreen() {
         try {
           dispatch({ type: 'PAY_REQUEST' });
           const { data } = await axios.put(
-            `/api/orders/${order._slug}/pay`
+            `/api/orders/${order._id}/pay`
             // Include any necessary payload here
           );
           dispatch({ type: 'PAY_SUCCESS', payload: data });
@@ -326,7 +326,7 @@ function OrderScreen() {
     } else {
       console.log('Payment failed');
     }
-  }, [order._slug, sendEmail]);
+  }, [order._id, sendEmail]);
 
   function onError(error) {
     toast.error(getError(error));
@@ -349,7 +349,7 @@ function OrderScreen() {
 
       // Send tracking URL and number with the axios request
       const { data } = await axios.put(
-        `/api/admin/orders/${order._slug}/deliver`,
+        `/api/admin/orders/${order._id}/deliver`,
         {
           trackUrl: trackUrl,
           trackNumber: trackNumber,
@@ -367,7 +367,7 @@ function OrderScreen() {
     try {
       dispatch({ type: 'AT_COSTUMERS_REQUEST' });
       const { data } = await axios.put(
-        `/api/admin/orders/${order._slug}/atcostumers`,
+        `/api/admin/orders/${order._id}/atcostumers`,
         {}
       );
       dispatch({ type: 'AT_COSTUMERS_SUCCESS', payload: data });
@@ -570,12 +570,12 @@ function OrderScreen() {
               </thead>
               <tbody>
                 {orderItems.map((item) => (
-                  <tr key={item._slug} className="border">
+                  <tr key={item._id} className="border">
                     <td className="p-3 flex items-center gap-2">
                       <Image src={item.image} alt={item.name} width={50} height={50} className="rounded" />
-                      <Link href={`/products/${encodeURIComponent(item.name)}`} className="text-[#144e8b] font-bold">
-                        {item.name}
-                      </Link>
+<Link href={`/products/${encodeURIComponent(item.name)}`} className="text-[#144e8b] font-bold">
+  {item.name}
+</Link>
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>
                     <td className="p-3 text-center">{item.purchaseType}</td>
@@ -696,7 +696,7 @@ function OrderScreen() {
                   <li>
                     {loadingDeliver && <div>Loading...</div>}
                     <form
-                      action={`/api/admin/orders/${order._slug}/deliver`}
+                      action={`/api/admin/orders/${order._id}/deliver`}
                       method="POST"
                     >
                       <section>

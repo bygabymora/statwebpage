@@ -66,7 +66,7 @@ function AdminDashboardScreen() {
     switch (activeChart) {
       case 'sales':
         data = {
-          labels: summary.salesData.map((x) => x._slug),
+          labels: summary.salesData.map((x) => x._id),
           datasets: [
             {
               label: 'Sales per month',
@@ -78,7 +78,7 @@ function AdminDashboardScreen() {
         break;
       case 'orders':
         data = {
-          labels: summary.salesData ? summary.salesData.map((x) => x._slug) : [],
+          labels: summary.salesData ? summary.salesData.map((x) => x._id) : [],
           datasets: [
             {
               label: 'Quantity of orders per month',
@@ -92,7 +92,7 @@ function AdminDashboardScreen() {
         break;
       case 'products':
         data = {
-          labels: summary.salesPerProduct.map((x) => x._slug),
+          labels: summary.salesPerProduct.map((x) => x._id),
           datasets: [
             {
               label: 'Quantity of products sold by reference',
@@ -104,7 +104,7 @@ function AdminDashboardScreen() {
         break;
       case 'users':
         data = {
-          labels: summary.totalPricePerUser.map((x) => x._slug), // This will be user's name now
+          labels: summary.totalPricePerUser.map((x) => x._id), // This will be user's name now
           datasets: [
             {
               label: 'Money spent by user',
