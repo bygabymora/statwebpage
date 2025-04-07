@@ -34,9 +34,9 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   try {
    await db.connect();
-  const product = await fetchDataWithRetry(async () => {
-    return await Product.findOne({ slug: String(params.slug) }).lean();
-  });
+   const product = await Product.findOne({ slug: new RegExp(`^${params.slug}$`, 'i') }).lean();
+   await db.disconnect();
+   console.log("Producto encontrado en getStaticProps:", product); // Debugging 
 
   if (!product) {
     return { notFound: true };
