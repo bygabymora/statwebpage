@@ -46,7 +46,7 @@ export async function getStaticProps({ params }) {
     props: {
       product: JSON.parse(JSON.stringify(product)),
     },
-    revalidate: 10, // Optional: Regenerate the page every 60 seconds if there are changes
+    revalidate: 10, // Optional: Regenerate the page every 10 seconds if there are changes
   };
 } catch (error) {
   console.error("Error fetching product:", error);
