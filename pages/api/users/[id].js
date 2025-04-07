@@ -11,24 +11,23 @@ const handler = async (req, res) => {
   if (req.method === 'GET') {
     return getHandler(req, res, user);
   } else {
-    return res.status(400).send({ message: 'Method not allowed' });
+    return res.status(405).send({ message: 'Method not allowed' });
   }
 };
 
 const getHandler = async (req, res) => {
-  await db.connect();
-
   const { id } = req.query;
-  if (!id) {
-    await db.disconnect();
-    return res.status(400).json({ message: 'Missing user ID' });
+
+  if (!id || id.length !== 24) {
+    return res.status(400).send({ message: 'Invalid or missing user ID' });
   }
 
+  await db.connect();
   const user = await WpUser.findById(id);
   await db.disconnect();
 
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(404).send({ message: 'User not found' });
   }
 
   res.send(user);
