@@ -3,33 +3,39 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 
 const handleSendEmails = async (message, contact) => {
-  let response;
- const headersToSend = "X-WpEmail";
-
   try {
-      const templateHtml = renderToStaticMarkup(
-        <DocumentComponent message={message} contact={contact} />
-      );
-      console.log("Sending email with payload:", message);
+    const templateHtml = renderToStaticMarkup(
+      <DocumentComponent message={message} contact={contact} />
+    );
 
-      const payload = {
-        toEmail: contact.email,
-        subject: message.subject,
-        htmlContent: templateHtml,
-        headers: {  
-          [headersToSend]: true,
-        },
-      };
+    console.log("Sending email with payload:", message);
 
-      response = await fetch("/api/emails/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      res.status(500).json({ success: false, error: "Error sending email" });
-      console.error("Error sending email:", error?.response?.data || error.message || error);
+    const payload = {
+      toEmail: contact.email,
+      subject: message.subject,
+      htmlContent: templateHtml,
+      headers: {
+        "X-WpEmail": true,
+      },
+    };
+
+    const response = await fetch("/api/emails/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await handleSendEmails(message, contact);
+      if (!result?.success) {
+      alert(`Error: ${result?.error?.message || "Unknown error"}`);
+    }     
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error sending email:", errorData);
+    }
+
     return response;
   } catch (error) {
     console.error("Error sending emails:", error);
