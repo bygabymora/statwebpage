@@ -37,7 +37,7 @@ function CartScreen() {
     console.log("Actualizando item:", item);
     console.log("Nueva cantidad:", quantity);
 
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const { data } = await axios.get(`/api/products/${item._slug}`);
 
     if (data.purchaseType === 'Each' && item.each?.quickBooksQuantityOnHandProduction < quantity) {
       alert("Sorry, we don't have enough of that item in stock.");

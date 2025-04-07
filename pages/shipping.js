@@ -160,7 +160,7 @@ export default function ShippingScreen() {
 
   const submitHandler = async (data) => {
     try {
-      const response = await axios.get(`api/users/${session.user._id}`);
+      const response = await axios.get(`api/users/${session.user._slug}`);
       const userData = response.data;
 
       if (!userData) {

@@ -18,7 +18,7 @@ export async function getServerSideProps() {
     } else if (obj && typeof obj === 'object') {
       // If it is an object, we process its properties
       return Object.keys(obj).reduce((acc, key) => {
-        acc[key] = obj[key] && obj[key]._id ? obj[key]._id.toString() : serializeObjectIds(obj[key]);
+        acc[key] = obj[key] && obj[key]._slug ? obj[key]._slug.toString() : serializeObjectIds(obj[key]);
         return acc;
       }, {});
     }
@@ -29,7 +29,7 @@ export async function getServerSideProps() {
   const serializedProducts = products.map((product) => {
     return serializeObjectIds({
       ...product,
-      _id: product._id.toString(),
+      _slug: product._slug.toString(),
       createdAt: product.createdAt ? product.createdAt.toISOString() : null,
       updatedAt: product.updatedAt ? product.updatedAt.toISOString() : null,
     });

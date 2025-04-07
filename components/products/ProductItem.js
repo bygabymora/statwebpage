@@ -108,10 +108,10 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(
-      (x) => x._id === product._id && x.purchaseType === purchaseType
+      (x) => x._slug === product._slug && x.purchaseType === purchaseType
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
-    const { data } = await axios.get(`/api/products/${product._id}`);
+    const { data } = await axios.get(`/api/products/${product._slug}`);
 
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);

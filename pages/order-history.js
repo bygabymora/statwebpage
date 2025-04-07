@@ -58,8 +58,8 @@ function OrderHistoryScreen() {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order._id} className="border">
-                  <td className=" p-5 border">{order._id.substring(20, 24)}</td>
+                <tr key={order._slug} className="border">
+                  <td className=" p-5 border">{order._slug.substring(20, 24)}</td>
                   <td className=" p-5 border">{order.createdAt.substring(0, 10)}</td>
                   <td className=" p-5 border">${order.totalPrice}</td>
                   <td className=" p-5 border">
@@ -80,7 +80,7 @@ function OrderHistoryScreen() {
                   <td className=" p-5 ">
                     <Link
                       className="font-bold underline"
-                      href={`/order/${order._id}`} style={{ color: '#144e8b' }}
+                      href={`/order/${order._slug}`} style={{ color: '#144e8b' }}
                       passHref
                     >
                       Details
