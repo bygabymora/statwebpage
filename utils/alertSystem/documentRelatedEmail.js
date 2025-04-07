@@ -1,4 +1,6 @@
 import DocumentComponent from "../../components/mailChimp/document/Component";
+import { renderToStaticMarkup } from "react-dom/server";
+import React from "react";
 
 const handleSendEmails = async (message, contact) => {
   let response;
