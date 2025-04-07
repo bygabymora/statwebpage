@@ -28,10 +28,11 @@ const handleSendEmails = async (message, contact) => {
         },
         body: JSON.stringify(payload),
       });
-      console.error("Error sending email:", JSON.stringify(error, null, 2));
+      console.error("Error sending email:", error?.response?.data || error.message || error);
     return response;
-  } catch (err) {
-    console.error("Error sending emails:", err);
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Error sending email" });
+    console.error("Error sending emails:", error);
   }
 };
 
