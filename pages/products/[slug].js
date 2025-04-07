@@ -70,6 +70,7 @@ export default function ProductScreen(props) {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const hasPrice =  currentPrice !== null && currentPrice !== 0;
   const active = session?.user?.active && session?.user?.approved && status === "authenticated";
     const [purchaseType, setPurchaseType] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
@@ -455,7 +456,7 @@ export default function ProductScreen(props) {
               active && (
                 <div className="mb-2 flex justify-between">
                   <div className="font-bold">Price</div>
-                  <div className="text-2xl">${currentPrice}</div>
+                  {hasPrice ? `$${currentPrice}` : "Call for Price"}
                 </div>
               )
             )}
@@ -497,22 +498,32 @@ export default function ProductScreen(props) {
             "Loading"
             ) : (
               active && (
-                <button
-                  className="primary-button cart-button my-2"
-                  type="button"
-                  onClick={addToCartHandler}
-                  disabled={
-                    (purchaseType === 'Each' && isOutOfStock) ||
-                    (purchaseType === 'Box' && isOutOfStockBox) ||
-                    (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  }
+                <>
+                {(!hasPrice || currentPrice === 0) ? (
+                  <Link href="/support">
+                    <button className="primary-button cart-button text-white">
+                      Call for Price
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    className="primary-button cart-button my-2"
+                    type="button"
+                    onClick={addToCartHandler}
+                    disabled={
+                      (purchaseType === 'Each' && isOutOfStock) ||
+                      (purchaseType === 'Box' && isOutOfStockBox) ||
+                      (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    }
                   >
-                  {(purchaseType === 'Each' && isOutOfStock) ||
-                  (purchaseType === 'Box' && isOutOfStockBox) ||
-                  (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'Add to Cart'}
-                </button>
+                    {(purchaseType === 'Each' && isOutOfStock) ||
+                     (purchaseType === 'Box' && isOutOfStockBox) ||
+                     (purchaseType === 'Clearance' && isOutOfStockClearance)
+                        ? 'Out of Stock'
+                        : 'Add to Cart'}
+                  </button>
+                )}
+              </>
               )
             )}
           </div>
@@ -612,7 +623,9 @@ export default function ProductScreen(props) {
                 "Loading"
                  ) : (
                   active && (
-                    <td className="py-2 px-4 border-b font-semibold">${currentPrice}</td>
+                    <td className="py-2 px-4 border-b font-semibold">
+                      {hasPrice ? `$${currentPrice}` : "Call for Price"}
+                    </td>
                   )
                 )}
               <td className="py-2 px-4 border-b">
@@ -643,7 +656,7 @@ export default function ProductScreen(props) {
               active && (
                 <div className="rounded-lg">
                   <h3 className="font-bold">Price</h3>
-                  <p className="font-semibold">${currentPrice}</p>
+                  {hasPrice ? `$${currentPrice}` : "Call for Price"}
                 </div>
                )
               )}
