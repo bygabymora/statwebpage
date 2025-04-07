@@ -8,7 +8,7 @@ const wpUserSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, required: true, default: false },
     companyName: { type: String, required: false },
     companyEinCode: { type: String, required: false },
-    active: { type: Boolean, required: true, default: false }, 
+    active: { type: Boolean, required: true, default: true }, 
     approved: { type: Boolean, required: true, default: false },
   },
   {

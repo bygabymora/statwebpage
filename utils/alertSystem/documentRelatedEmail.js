@@ -2,13 +2,13 @@ import DocumentComponent from "../../components/mailChimp/document/Component";
 
 const handleSendEmails = async (message, contact) => {
   let response;
- const headersToSend = " X-WpEmail";
+ const headersToSend = "X-WpEmail";
 
   try {
-      const templateHtml = DocumentComponent({
-        message,
-        contact,
-      });
+      const templateHtml = renderToStaticMarkup(
+        <DocumentComponent message={message} contact={contact} />
+      );
+      console.log("Sending email with payload:", message);
 
       const payload = {
         toEmail: contact.email,
@@ -26,7 +26,7 @@ const handleSendEmails = async (message, contact) => {
         },
         body: JSON.stringify(payload),
       });
-    
+      console.error("Error sending email:", JSON.stringify(error, null, 2));
     return response;
   } catch (err) {
     console.error("Error sending emails:", err);
