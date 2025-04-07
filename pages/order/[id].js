@@ -573,7 +573,7 @@ function OrderScreen() {
                   <tr key={item._id} className="border">
                     <td className="p-3 flex items-center gap-2">
                       <Image src={item.image} alt={item.name} width={50} height={50} className="rounded" />
-                      <Link href={`/products/${item.name}`} className="text-[#144e8b] font-bold">
+                      <Link href={`/products/${encodeURIComponent(item.name)}`} className="text-[#144e8b] font-bold">
                         {item.name}
                       </Link>
                     </td>
