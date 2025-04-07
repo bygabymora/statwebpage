@@ -205,7 +205,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
       </h2>
       <div className="flex flex-row justify-between">
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
