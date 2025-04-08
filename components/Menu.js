@@ -100,7 +100,7 @@ const Menu = () => {
       });
       setManufacturers([...manufacturersSet]);
     } catch (error) {
-      console.error('Error fetching manufacturers:', error);
+      console.error('Error fetching manufacturers:', error.response ? error.response.data : error.message);
     }
   };
 
