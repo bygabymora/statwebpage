@@ -55,14 +55,12 @@ export const ModalProvider = ({ children }) => {
           type={messageType}
           message={statusMessage}
           isVisible={isVisible}
-          className="fixed top-0 left-0 w-full z-[9999]"
         />
       }
         <CustomAlertModal 
           isOpen={isAlertVisible}
           message={alertMessage}
           onConfirm={handleAlertConfirm}
-          className="fixed top-0 left-0 w-full z-[9999]"
         />
     </ModalContext.Provider>
   )
