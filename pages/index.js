@@ -10,36 +10,45 @@ import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
 import Benefits from './slider';
 
 export async function getServerSideProps() {
-  await db.connect();
-  const products = await Product.find({}).lean();
-  const serializeObjectIds = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map(serializeObjectIds); // If it is an array, we process each element
-    } else if (obj && typeof obj === 'object') {
-      // If it is an object, we process its properties
-      return Object.keys(obj).reduce((acc, key) => {
-        acc[key] = obj[key] && obj[key]._id ? obj[key]._id.toString() : serializeObjectIds(obj[key]);
-        return acc;
-      }, {});
-    }
-    return obj; // If it is not an object or an array, we return it as is
-  };
+  try {
+    await db.connect();
+    const products = await Product.find({}).lean();
 
-  // Serialize all products
-  const serializedProducts = products.map((product) => {
-    return serializeObjectIds({
-      ...product,
-      _id: product._id.toString(),
-      createdAt: product.createdAt ? product.createdAt.toISOString() : null,
-      updatedAt: product.updatedAt ? product.updatedAt.toISOString() : null,
+    const serializeObjectIds = (obj) => {
+      if (Array.isArray(obj)) {
+        return obj.map(serializeObjectIds);
+      } else if (obj && typeof obj === 'object') {
+        return Object.keys(obj).reduce((acc, key) => {
+          acc[key] = obj[key] && obj[key]._id ? obj[key]._id.toString() : serializeObjectIds(obj[key]);
+          return acc;
+        }, {});
+      }
+      return obj;
+    };
+
+    const serializedProducts = products.map((product) => {
+      return serializeObjectIds({
+        ...product,
+        _id: product._id.toString(),
+        createdAt: product.createdAt ? product.createdAt.toISOString() : null,
+        updatedAt: product.updatedAt ? product.updatedAt.toISOString() : null,
+      });
     });
-  });
-;
-  return {
-    props: {
-      products: serializedProducts,
-    },
-  };
+
+    return {
+      props: {
+        products: serializedProducts,
+      },
+    };
+  } catch (error) {
+    console.error('Error loading products:', error.message);
+    return {
+      props: {
+        products: [],
+        error: error.message,
+      },
+    };
+  }
 }
 
 function Carousel({ products }) {
