@@ -5,53 +5,55 @@ import { SessionProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
-import ReactGA from 'react-ga';
 import Script from 'next/script';
 import { reportWebVitals } from '../utils/reportWebVitals';
 import { ModalProvider } from '../components/context/ModalContext';
 
-// Initialize Google Analytics with your tracking ID
-ReactGA.initialize('G-DZ8WE2HZH9', {
-  gaOptions: {
-    anonymizeIp: true, // Optional: Mask user IPs for GDPR compliance
-  },
-});
-
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const router = useRouter();
+
   useEffect(() => {
-    // Track page views
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  }, []);
+    const handleRouteChange = (url) => {
+      window.gtag('config', 'G-3JJZVPL0B5', {
+        page_path: url,
+      });
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <SessionProvider session={session}>
       <ModalProvider>
-      <StoreProvider>
-        <CookieAcceptancePopup />
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
-          async
-        />
-        <Script id="gtag-init" strategy="afterInteractive" async>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-3JJZVPL0B5');
-          `}
-        </Script>
+        <StoreProvider>
+          <CookieAcceptancePopup />
+          <Script
+            strategy="afterInteractive"
+            src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
+            async
+          />
+          <Script id="gtag-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-3JJZVPL0B5');
+            `}
+          </Script>
 
-        <PayPalScriptProvider deferLoading={true}>
-          {Component.auth ? (
-            <Auth adminOnly={Component.auth.adminOnly}>
+          <PayPalScriptProvider deferLoading={true}>
+            {Component.auth ? (
+              <Auth adminOnly={Component.auth.adminOnly}>
+                <Component {...pageProps} />
+              </Auth>
+            ) : (
               <Component {...pageProps} />
-            </Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}
-        </PayPalScriptProvider>
-      </StoreProvider>
+            )}
+          </PayPalScriptProvider>
+        </StoreProvider>
       </ModalProvider>
     </SessionProvider>
   );
