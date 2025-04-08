@@ -117,10 +117,12 @@ const Menu = () => {
         subcategories: [
           {
             title: "Manufacturers",
-            links: manufacturers.map(manufacturer => ({
+            links: manufacturers
+            .filter(m => typeof m === 'string' && m.trim() !== '')
+            .map(manufacturer => ({
               name: manufacturer,
-              href: `/products?manufacturer=${encodeURIComponent(manufacturer)}`,
-              onClick: () => setSelectedManufacturer(manufacturer) // Set selected manufacturer
+              href: `/products?manufacturer=${(manufacturer)}`,
+              onClick: () => setSelectedManufacturer(manufacturer)
             }))
           }
         ]
