@@ -22,13 +22,12 @@ export async function getStaticPaths() {
     return await Product.find({},'slug').lean();
   });
 
-  const filtered = products.filter(product => product.slug !== 'products');
-
   return {
-    paths: filtered.map((product) => ({
+    paths: products
+    .filter((product) => product.slug !== 'products') 
+    .map((product) => ({
       params: { slug: String(product.slug) },
     })),
-    fallback: 'blocking',
   };
 }
 
