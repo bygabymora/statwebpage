@@ -21,11 +21,12 @@ export async function getStaticPaths() {
   const products = await fetchDataWithRetry(async () => {
     return await Product.find({},'slug').lean();
   });
-  console.log("Productos generados en getStaticPaths:", products); // Debugging
+
+  const filtered = products.filter(product => product.slug !== 'products');
 
   return {
-    paths: products.map((product) => ({
-      params: { slug: String(product.slug) }, // Ensure it's a string
+    paths: filtered.map((product) => ({
+      params: { slug: String(product.slug) },
     })),
     fallback: 'blocking',
   };
@@ -33,25 +34,25 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   try {
-   await db.connect();
-  const product = await fetchDataWithRetry(async () => {
-    return await Product.findOne({ slug: String(params.slug) }).lean();
-  });
+    await db.connect();
+    const product = await fetchDataWithRetry(async () => {
+      return await Product.findOne({ slug: String(params.slug) }).lean();
+    });
 
-  if (!product) {
+    if (!product) {
+      return { notFound: true };
+    }
+
+    return {
+      props: {
+        product: JSON.parse(JSON.stringify(product)),
+      },
+      revalidate: 10,
+    };
+  } catch (error) {
+    console.error("Error fetching product:", error);
     return { notFound: true };
   }
-
-  return {
-    props: {
-      product: JSON.parse(JSON.stringify(product)),
-    },
-    revalidate: 10, // Optional: Regenerate the page every 10 seconds if there are changes
-  };
-} catch (error) {
-  console.error("Error fetching product:", error);
-  return { notFound: true };
-}
 }
 
 export default function ProductScreen(props) {
