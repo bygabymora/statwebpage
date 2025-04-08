@@ -18,6 +18,11 @@ const handler = async (req, res) => {
     if (!order) {
       return res.status(404).send('Order not found');
     }
+    order.orderItems.forEach((item, index) => {
+      if (!item.slug || typeof item.slug !== 'string') {
+        console.warn(`⚠️ Missing or invalid slug in item #${index}:`, item);
+      }
+    });
   console.log('Fetched order:', order);
     await db.disconnect();
     res.status(200).send(order);

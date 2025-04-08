@@ -574,10 +574,20 @@ function OrderScreen() {
                   <tr key={item._id} className="border">
                     <td className="p-3 flex items-center gap-2">
                       <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded" />
-                      {item.slug && (
-                        <Link href={`/products/${item.slug}`} className="text-[#144e8b] font-bold">
+                      {typeof item.slug === 'string' && item.slug.trim() !== '' ? (
+                        <Link
+                          href={`/products/${item.slug}`}
+                          className="text-[#144e8b] font-bold"
+                        >
                           {item.name}
                         </Link>
+                      ) : (
+                        <span
+                          className="text-red-500 font-bold"
+                          title="Invalid or missing slug"
+                        >
+                          {item.name || 'Unnamed Product'}
+                        </span>
                       )}
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>
