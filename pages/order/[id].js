@@ -773,7 +773,7 @@ function OrderScreen() {
             value={shippingAddress.phone}
             readOnly
           />
-          <input type="hidden" name="user_email" value={sendEmail} readOnly />
+          <input type="hidden" name="user_email" value={email} readOnly />
           <input
             type="hidden"
             name="total_order"
