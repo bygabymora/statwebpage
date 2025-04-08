@@ -44,7 +44,7 @@ export default function GuaranteedSavings({ isInClearance }) {
           <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
             <FaDollarSign className="text-5xl text-[#03793d] animate-pulse" />
             <h4 className="text-xl font-bold text-[#144e8b] mt-4">Best Prices</h4>
-            <p className="text-[#414b53] text-sm mt-2">Save up to X% on selected products.</p>
+            <p className="text-[#414b53] text-sm mt-2">Save up to 10% on selected products.</p>
           </div>
 
           <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105">

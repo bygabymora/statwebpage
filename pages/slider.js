@@ -5,7 +5,7 @@ const benefits = [
   { 
     icon: <FaDollarSign />, 
     title: "Guaranteed Savings", 
-    description: "Save up to X% on selected products.", 
+    description: "Save up to 10% on selected products.", 
     link: "/savings" 
   },
   { 
