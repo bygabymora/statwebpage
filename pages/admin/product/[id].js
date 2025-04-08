@@ -484,12 +484,14 @@ export default function AdminProductEditScreen() {
                   <button
                     disabled={loadingUpdate}
                     className="primary-button mr-2"
+                    type="submit"
                   >
                     {loadingUpdate ? 'Loading' : 'Update'}
                   </button>
                 </div>
                 <div className="mb-4">
                   <button
+                    type="button"
                     onClick={() => router.push(`/`)}
                     className="primary-button"
                   >
