@@ -162,12 +162,12 @@ export default function ShippingScreen() {
     try {
       const response = await axios.get(`api/users/${session.user._id}`);
       const userData = response.data;
-
+  
       if (!userData) {
-        toast.error('User  not found, please try to login again');
+        toast.error('User not found, please try to login again');
         return;
       }
-
+  
       if (sameAddress) {
         data.fullNameB = data.fullName;
         data.companyB = data.company;
@@ -178,14 +178,16 @@ export default function ShippingScreen() {
         data.postalCodeB = data.postalCode;
         data.emailB = data.email;
       }
-
+      
+      data.notes = specialNotes;
+  
       dispatch({
         type: 'SAVE_SHIPPING_ADDRESS',
         payload: data,
       });
-
+  
       Cookies.set('cart', JSON.stringify({ ...cart, shippingAddress: data }));
-
+  
       router.push('/payment');
     } catch (error) {
       toast.error('An error occurred while fetching user data.');
