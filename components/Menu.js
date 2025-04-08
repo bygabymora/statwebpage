@@ -70,15 +70,12 @@ const menuItems = [
       }
     ]
   },
-  {
-    title: "Clearance",
-    subcategories: []
-  },
 ];
 
 const Menu = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const [manufacturers, setManufacturers] = useState([]);
+  const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -120,7 +117,11 @@ const Menu = () => {
         subcategories: [
           {
             title: "Manufacturers",
-            links: manufacturers.map(manufacturer => ({ name: manufacturer, href: `/products?manufacturer=${encodeURIComponent(manufacturer)}` }))
+            links: manufacturers.map(manufacturer => ({
+              name: manufacturer,
+              href: `/products?manufacturer=${encodeURIComponent(manufacturer)}`,
+              onClick: () => setSelectedManufacturer(manufacturer) // Set selected manufacturer
+            }))
           }
         ]
       };
@@ -161,7 +162,10 @@ const Menu = () => {
                         <li key={linkIndex}>
                           <Link
                             href={link.href}
-                            className="block text-gray-700 text-base px-3 py-2 rounded-md hover:bg-gray-200 transition-all"
+                            onClick={link.onClick} // Call the onClick function
+                            className={`block text-gray-700 text-base px-3 py-2 rounded-md hover:bg-gray-200 transition-all ${
+                              selectedManufacturer === link.name ? "bg-slate-200" : ""
+                            }`}
                           >
                             {link.name}
                           </Link>
