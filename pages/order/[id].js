@@ -285,9 +285,9 @@ function OrderScreen() {
   };
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentSuccess = urlParams.get('paymentSuccess');
-
+    if (typeof window !== 'undefined' && window.location?.search) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentSuccess = urlParams.get('paymentSuccess');
     if (paymentSuccess === 'true') {
       const handleOnApprove = async () => {
         try {
@@ -325,6 +325,7 @@ function OrderScreen() {
       handleOnApprove();
     } else {
       console.log('Payment failed');
+    }
     }
   }, [order._id, sendEmail]);
 
@@ -573,9 +574,11 @@ function OrderScreen() {
                   <tr key={item._id} className="border">
                     <td className="p-3 flex items-center gap-2">
                       <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded" />
-                      <Link href={`/products/${item.slug}`} className="text-[#144e8b] font-bold">
-                        {item.name}
-                      </Link>
+                      {item.slug && (
+                        <Link href={`/products/${item.slug}`} className="text-[#144e8b] font-bold">
+                          {item.name}
+                        </Link>
+                      )}
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>
                     <td className="p-3 text-center">{item.purchaseType}</td>
