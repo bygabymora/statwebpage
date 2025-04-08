@@ -13,7 +13,7 @@ function replaceSlashNWithBreak(content) {
 function parseContentWithImages(content) {
   // Use a regular expression to find image tags in the content
   const imageTagRegex = /\[([^\]]+)\]/g;
-  const matches = content.match(imageTagRegex);
+  const matches = content?.match(imageTagRegex);
 
   // Replace /n with <br/>
   content = replaceSlashNWithBreak(content);

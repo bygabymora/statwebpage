@@ -14,11 +14,11 @@ const handler = async (req, res) => {
   await db.connect();
 
   try {
-    const order = await Order.findById(id).populate('WpUser', 'name email');
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).send('Order not found');
     }
-
+  console.log('Fetched order:', order);
     await db.disconnect();
     res.status(200).send(order);
   } catch (error) {
