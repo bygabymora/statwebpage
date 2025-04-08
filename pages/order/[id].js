@@ -394,7 +394,7 @@ function OrderScreen() {
 
   return (
     <Layout
-      title={`Order ${typeof orderId === 'string' ? `Order ${orderId.substring(orderId.length - 8).toUpperCase()}` : ""}`}
+      title={`Order ${typeof orderId === 'string' && orderId.length >= 8 ? orderId.substring(orderId.length - 8).toUpperCase() : ""}`}
     >
     <h1 className="mb-4 text-2xl font-bold text-center text-[#144e8b]">
       Order {orderId ? orderId.substring(orderId.length - 8).toUpperCase() : ""}
