@@ -90,7 +90,7 @@ const Menu = () => {
 
   const fetchManufacturers = async () => {
     try {
-      const { data } = await axios.get('/api/products');
+      const { data } = await axios.get(`/api/products`);
       const manufacturersSet = new Set();
 
       data.forEach(product => {
