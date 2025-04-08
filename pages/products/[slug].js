@@ -19,19 +19,25 @@ export async function getStaticPaths() {
   await db.connect();
 
   const products = await fetchDataWithRetry(async () => {
-    return await Product.find({},'slug').lean();
+    return await Product.find({}, 'slug').lean();
   });
 
   return {
-    paths: products.map((product) => ({
-      params: { slug: String(product.slug) }, // Ensure it's a string
-    })),
+    paths: products
+      .filter((product) => product.slug && product.slug !== 'products') // 💥 Filtrar el slug conflictivo
+      .map((product) => ({
+        params: { slug: String(product.slug) },
+      })),
     fallback: 'blocking',
   };
 }
 
 export async function getStaticProps({ params }) {
   try {
+    if (!params?.slug || params.slug === 'products') {
+      return { notFound: true };
+    }
+
     await db.connect();
     const product = await fetchDataWithRetry(async () => {
       return await Product.findOne({ slug: String(params.slug) }).lean();
