@@ -138,17 +138,19 @@ export default function Products() {
             Products
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
-            {loading ? (
-              <p>Cargando productos...</p>
-            ) : (
-              filteredProducts.map((product, index) => (
-                <ProductItemPage 
-                  product={product} 
-                  key={product.name}
-                  ref={index === 0 ? firstProductRef : null}
-                />
-              ))
+            {loading && (
+              <p>Loading Products...</p>
             )}
+
+              {filteredProducts
+                .filter((product) => typeof product.slug === 'string' && product.slug.trim() !== '')
+                .map((product, index) => (
+                  <ProductItemPage 
+                    product={product} 
+                    key={product.name}
+                    ref={index === 0 ? firstProductRef : null}
+                  />
+              ))}
           </div>
         </div>
       </div>

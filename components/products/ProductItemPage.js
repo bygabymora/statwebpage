@@ -205,8 +205,8 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         {product.manufacturer}{' '}
       </h2>
       <div className="flex flex-row justify-between">
-        <Link
-          href={`/products/${product.slug}`}
+      {typeof product.slug === 'string' && product.slug.trim() !== '' && (
+        <Link href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
@@ -222,65 +222,67 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
             />
           </div>
         </Link>
+        )}
         <div className="flex flex-col justify-center items-center px-2 flex-1">
-          <Link
-            href={`/products/${product.slug}`}
-            className="justify-center items-center text-center"
-          >
-            <div className="max-w-full">
-              <div className="h-[3em] overflow-hidden relative flex ">
-                <span className="flex-1">{currentDescription}</span>
+          {typeof product.slug === 'string' && product.slug.trim() !== '' && (
+            <Link href={`/products/${product.slug}`}
+              className="justify-center items-center text-center"
+            >
+              <div className="max-w-full">
+                <div className="h-[3em] overflow-hidden relative flex ">
+                  <span className="flex-1">{currentDescription}</span>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          )}
           <div>
-          {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && active && currentCountInStock > 0 && (
-            <div className="mb-2 flex items-center justify-center lg:block">
-              <div className="font-bold mt-4">Quantity &nbsp;</div>
-              <div className="flex items-center flex-row">
-                <button
-                  className="border px-2 py-1 card"
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  disabled={qty <= 1}
-                >
-                  -
-                </button>
-                <span className="px-1 mt-4">
-                  {qty}
-                </span>
-                <button
+            {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && active && currentCountInStock > 0 && (
+              <div className="mb-2 flex items-center justify-center lg:block">
+                <div className="font-bold mt-4">Quantity &nbsp;</div>
+                <div className="flex items-center flex-row">
+                  <button
+                    className="border px-2 py-1 card"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    disabled={qty <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="px-1 mt-4">
+                    {qty}
+                  </span>
+                  <button
                     className="border px-2 py-1 card"
                     onClick={() => {
-                  if (qty < currentCountInStock) {
-                    setQty(qty + 1);
-                  } else {
-                  setShowModal(true);
-                }
-                }}
+                      if (qty < currentCountInStock) {
+                        setQty(qty + 1);
+                      } else {
+                      setShowModal(true);
+                      }
+                    }}
                   >
-                  +
-                </button>
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-          {showModal && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
-                <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
-                <p className="text-[#788b9b]">
-                Sorry, we do not have any additional units of{" "}
-                <span className="font-bold text-[#144e8b]">{product.manufacturer} - {product.name}</span>{" "}
-                At this moment. Please contact us for more information.
-                </p>
-                <button 
-                  className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
-                  onClick={() => setShowModal(false)}
-                >
-                  Close
-                </button>
+            )}
+            {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+                  <h2 className="font-bold">🚫 Out of Stock 🚫</h2>
+                  <p className="text-[#788b9b]">
+                  Sorry, we do not have any additional units of{" "}
+                  <span className="font-bold text-[#144e8b]">{product.manufacturer} - {product.name}</span>{" "}
+                  At this moment. Please contact us for more information.
+                  </p>
+                  <button 
+                    className="mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           </div> 
           {(isOutOfStock || isOutOfStockBox || isOutOfStockClearance || currentCountInStock <= 0) && (
             <div className="mb-2 justify-center gap-10 text-center items-center mt-2">
