@@ -203,6 +203,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       setEmailManufacturer("");
     };
   //-----------//
+  console.log(product);
 
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
