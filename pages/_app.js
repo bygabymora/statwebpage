@@ -8,6 +8,14 @@ import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
 import Script from 'next/script';
 import { reportWebVitals } from '../utils/reportWebVitals';
 import { ModalProvider } from '../components/context/ModalContext';
+import axios from 'axios';
+
+if (typeof window !== 'undefined') {
+  axios.interceptors.request.use((request) => {
+    console.log('📡 Axios Request:', request.method, request.url);
+    return request;
+  });
+}
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
