@@ -569,18 +569,28 @@ function OrderScreen() {
                 </tr>
               </thead>
               <tbody>
-                {orderItems.map((item) => (
-                  <tr key={item._id} className="border">
+                {orderItems.map((item, index) => (
+                  <tr key={item._id || index} className="border">
                     <td className="p-3 flex items-center gap-2">
-                      <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded" />
-                      <Link href={`/products/${item.slug}`} className="text-[#144e8b] font-bold">
-                        {item.name}
-                      </Link>
-                    </td>
-                    <td className="p-3 text-center">{item.quantity}</td>
-                    <td className="p-3 text-center">{item.purchaseType}</td>
-                    <td className="p-3 text-right">${item.price}</td>
-                    <td className="p-3 text-right">
+                      <Image
+                        src={item.image || '/placeholder.png'}
+                        alt={item.name || 'Product'}
+                        width={50}
+                        height={50}
+                        className="rounded"
+                      />
+                        {item.slug ? (
+                          <Link href={`/products/${item.slug}`} className="text-[#144e8b] font-bold">
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <span className="text-[#144e8b] font-bold">{item.name}</span>
+                        )}
+                      </td>
+                        <td className="p-3 text-center">{item.quantity}</td>
+                        <td className="p-3 text-center">{item.purchaseType}</td>
+                        <td className="p-3 text-right">${item.price}</td>
+                        <td className="p-3 text-right">
                       ${(item.quantity * item.price).toFixed(2)}
                     </td>
                   </tr>
