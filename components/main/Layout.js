@@ -4,7 +4,6 @@ import Header from './Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from './Footer';
-import { Analytics } from '@vercel/analytics/react';
 import {
   generateJSONLD,
   generateProductJSONLD,
@@ -20,14 +19,12 @@ export default function Layout({ title, children, news, product }) {
   const { showStatusMessage, openAlertModal } = useModalContext();
   const router = useRouter();
 
-  // Account not approved message
   const approvalMessage = {
     title: 'Account Verification',
     body: 'Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.',
     warning: 'If it takes longer than expected, please contact us for more information. Thank you for choosing us!',
   };
 
-  // Disabled account message
   const disabledMessage = {
     title: 'Account Disabled',
     body: 'Your account has been disabled. Please contact support for more information.',
@@ -41,27 +38,26 @@ export default function Layout({ title, children, news, product }) {
 
   useEffect(() => {
     if (!session?.user) return;
-  
+
     const { approved, active } = session.user;
-  
+
     if (approved === false) {
-      showStatusMessage('error', 'Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.');
+      showStatusMessage('error', approvalMessage.body);
       openAlertModal(approvalMessage);
     } else if (active === false) {
-      showStatusMessage('error', 'Your account has been disabled. Please contact support for more information.');
+      showStatusMessage('error', disabledMessage.body);
       openAlertModal(disabledMessage, async () => {
         await redirectHandler();
       });
-  
+
       setTimeout(async () => {
         await redirectHandler();
       }, 5000);
-    } 
+    }
   }, [session]);
 
   return (
     <div className="w-full" lang="en">
-      <Analytics />
       <Head lang="en">
         <title>{title ? title : 'STAT'}</title>
         <meta name="description" content="Surgical Supplies at low price" />
@@ -129,7 +125,6 @@ export default function Layout({ title, children, news, product }) {
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
-        {console.log('session', session)}
         <Header />
         <main className="main container m-auto mt-11 px-4">{children}</main>
         <Footer />
