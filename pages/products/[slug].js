@@ -23,11 +23,10 @@ export async function getStaticPaths() {
   });
 
   return {
-    paths: products
-    .filter((product) => product.slug !== 'products') 
-    .map((product) => ({
-      params: { slug: String(product.slug) },
+    paths: products.map((product) => ({
+      params: { slug: String(product.slug) }, // Ensure it's a string
     })),
+    fallback: 'blocking',
   };
 }
 

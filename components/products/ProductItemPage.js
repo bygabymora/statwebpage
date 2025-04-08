@@ -205,6 +205,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         {product.manufacturer}{' '}
       </h2>
       <div className="flex flex-row justify-between">
+      {typeof product.slug === 'string' && product.slug.trim() !== '' && (
         <Link href={`/products/${product.slug}`}
           className="justify-center items-center text-center flex-1"
         >
@@ -221,7 +222,9 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
             />
           </div>
         </Link>
+        )}
         <div className="flex flex-col justify-center items-center px-2 flex-1">
+        {typeof product.slug === 'string' && product.slug.trim() !== '' && (
             <Link href={`/products/${product.slug}`}
               className="justify-center items-center text-center"
             >
@@ -231,6 +234,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
                 </div>
               </div>
             </Link>
+          )}
           <div>
             {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && active && currentCountInStock > 0 && (
               <div className="mb-2 flex items-center justify-center lg:block">
