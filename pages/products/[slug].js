@@ -24,7 +24,7 @@ export async function getStaticPaths() {
 
   return {
     paths: products
-      .filter((product) => product.slug && product.slug !== 'products') // 💥 Filtrar el slug conflictivo
+      .filter((product) => product.slug && product.slug !== 'products')
       .map((product) => ({
         params: { slug: String(product.slug) },
       })),
