@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
 import { BsTruck, BsCreditCard2Back, BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs';
-import { FaRegSadCry, FaRegBell } from 'react-icons/fa';
+import { FaRegBell } from 'react-icons/fa';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
