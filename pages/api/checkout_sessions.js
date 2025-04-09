@@ -45,8 +45,8 @@ export default async function handler(req, res) {
     });
 
     return res.redirect(303, session.url);
-  } catch (err) {
-    console.error('Stripe Checkout Session Error:', err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
+  } catch (error) {
+    console.error('Stripe Checkout Session Error:', error);
+    return res.status(error.statusCode || 500).json({ message: error.message });
   }
 }
