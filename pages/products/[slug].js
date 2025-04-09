@@ -51,7 +51,7 @@ export async function getStaticProps({ params }) {
       props: {
         product: JSON.parse(JSON.stringify(product)),
       },
-      revalidate: 10,
+      revalidate: 5, // In seconds
     };
   } catch (error) {
     console.error("Error fetching product:", error);
