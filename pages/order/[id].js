@@ -513,7 +513,7 @@ function OrderScreen() {
                 </div>
               ) : (
                 <div className="alert-error flex items-center">
-                <FaRegSadCry className="text-red-500 text-xl" /> &nbsp;
+                &nbsp;
                 Not Processed
               </div>
               )}
@@ -573,7 +573,19 @@ function OrderScreen() {
                 {orderItems.map((item) => (
                   <tr key={item._id} className="border">
                     <td className="p-3 flex items-center gap-2">
-                      <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded" />
+                      {item.image ? (
+                        <Image
+                          src={item.image}
+                          alt={item.slug || 'product'}
+                          width={50}
+                          height={50}
+                          className="rounded"
+                        />
+                      ) : (
+                        <div className="w-[50px] h-[50px] bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500">
+                          N/A
+                        </div>
+                      )}
                       {typeof item.slug === 'string' && item.slug.trim() !== '' ? (
                         <Link
                           href={`/products/${item.slug}`}
