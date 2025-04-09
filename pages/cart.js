@@ -4,7 +4,7 @@ import { Store } from '../utils/Store';
 import Layout from '../components/main/Layout';
 import Link from 'next/link';
 import Image from 'next/image';
-import { BsTrash3 } from 'react-icons/bs';
+import { BsCartX, BsTrash3 } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
@@ -59,11 +59,16 @@ function CartScreen() {
   };
   return (
     <Layout title="Cart">
-      <h1 className="mb-4 text-xl">Shopping Cart</h1>
+      <h1 className="text-2xl font-bold text-[#144e8b] my-2">Shopping Cart</h1>
+      <div className="w-16 h-1 bg-[#03793d] mt-1 rounded-full my-3"></div>  
       {cartItems.length === 0 ? (
-        <div>
-          Cart is empty.{' '}
-          <Link className="font-bold underline" href="/products">
+        <div className="p-6 flex flex-col items-center text-center space-y-4 my-5">
+          <BsCartX className="text-[#144e8b] text-4xl" />
+          <p className="text-[#414b53] text-lg font-semibold">Cart is empty.</p>
+          <Link
+            href="/products"
+            className="text-white bg-[#144e8b] hover:bg-[#788b9b] px-4 py-2 rounded-full font-medium transition"
+          >
             Go shopping!
           </Link>
         </div>
