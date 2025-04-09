@@ -559,59 +559,61 @@ function OrderScreen() {
             <h2 className="mb-2 text-lg flex items-center gap-2">
               <BsBoxSeam className="text-[#144e8b]" /> Order Items
             </h2>
-            <table className="table-auto w-full border-collapse border">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="p-3 border text-left">Item</th>
-                  <th className="p-3 border text-center">Quantity</th>
-                  <th className="p-3 border text-center">Type</th>
-                  <th className="p-3 border text-right">Price</th>
-                  <th className="p-3 border text-right">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderItems.map((item) => (
-                  <tr key={item._id} className="border">
-                    <td className="p-3 flex items-center gap-2">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.slug || 'product'}
-                          width={50}
-                          height={50}
-                          className="rounded"
-                        />
-                      ) : (
-                        <div className="w-[50px] h-[50px] bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500">
-                          N/A
-                        </div>
-                      )}
-                      {typeof item.slug === 'string' && item.slug.trim() !== '' ? (
-                        <Link
-                          href={`/products/${item.slug}`}
-                          className="text-[#144e8b] font-bold"
-                        >
-                          {item.name}
-                        </Link>
-                      ) : (
-                        <span
-                          className="text-red-500 font-bold"
-                          title="Invalid or missing slug"
-                        >
-                          {item.name || 'Unnamed Product'}
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-3 text-center">{item.quantity}</td>
-                    <td className="p-3 text-center">{item.purchaseType}</td>
-                    <td className="p-3 text-right">${item.price}</td>
-                    <td className="p-3 text-right">
-                      ${(item.quantity * item.price).toFixed(2)}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="table-auto min-w-[600px] w-full border-collapse border">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-3 border text-left">Item</th>
+                    <th className="p-3 border text-center">Quantity</th>
+                    <th className="p-3 border text-center">Type</th>
+                    <th className="p-3 border text-right">Price</th>
+                    <th className="p-3 border text-right">Subtotal</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {orderItems.map((item) => (
+                    <tr key={item._id} className="border">
+                      <td className="p-3 flex items-center gap-2">
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.slug || 'product'}
+                            width={50}
+                            height={50}
+                            className="rounded"
+                          />
+                        ) : (
+                          <div className="w-[50px] h-[50px] bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500">
+                            N/A
+                          </div>
+                        )}
+                        {typeof item.slug === 'string' && item.slug.trim() !== '' ? (
+                          <Link
+                            href={`/products/${item.slug}`}
+                            className="text-[#144e8b] font-bold"
+                          >
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <span
+                            className="text-red-500 font-bold"
+                            title="Invalid or missing slug"
+                          >
+                            {item.name || 'Unnamed Product'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3 text-center">{item.quantity}</td>
+                      <td className="p-3 text-center">{item.purchaseType}</td>
+                      <td className="p-3 text-right">${item.price}</td>
+                      <td className="p-3 text-right">
+                        ${(item.quantity * item.price).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
         <div>
