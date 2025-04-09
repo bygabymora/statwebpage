@@ -90,12 +90,12 @@ export default function AdminProductsScreen() {
         ) : error ? (
           <div className="text-red-500">{error}</div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="max-h-[200vh] overflow-auto">
             <br />
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-gray-100 border border-collapse sticky top-0 z-10">
-                <tr className='sticky top-0'>
-                  <th className="p-4 text-left uppercase border border-collapse sticky top-0">
+            <table className="min-w-full bg-white shadow-md rounded-lg">
+              <thead className="bg-gray-100 sticky top-0 z-10">
+                <tr>
+                  <th className="p-4 text-left uppercase sticky top-0 bg-gray-100 z-20">
                     REF
                     <br />
                     Manufacturer
@@ -111,17 +111,17 @@ export default function AdminProductsScreen() {
                       )}
                     </button>
                   </th>
-                  <th className="p-2 text-left w-[12%]">PRICE EACH</th>
-                  <th className="p-2 text-left w-[12%] border">COUNT IN STOCK (EACH)</th>
-                  <th className="p-2 text-left w-[12%] border">PRICE BOX</th>
-                  <th className="p-2 text-left w-[12%]">COUNT IN STOCK (BOX)</th>
+                  <th className="p-2 text-left w-[12%] sticky top-0 bg-gray-100 z-20">PRICE EACH</th>
+                  <th className="p-2 text-left w-[12%] sticky top-0 bg-gray-100 z-20">COUNT IN STOCK (EACH)</th>
+                  <th className="p-2 text-left w-[12%] sticky top-0 bg-gray-100 z-20">PRICE BOX</th>
+                  <th className="p-2 text-left w-[12%] sticky top-0 bg-gray-100 z-20">COUNT IN STOCK (BOX)</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
                   <tr key={product._id} className="border border-collapse odd:bg-white even:bg-gray-50">
                     <td className="p-2 border">
-                      <div>
+                      <div className="flex items-center gap-4">
                         {product.name}
                         <br />
                         {product.manufacturer}

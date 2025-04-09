@@ -193,7 +193,7 @@ export default function ProfileScreen() {
         <div className="text-center mt-6 my-9">
           <button
             onClick={toggleModifyForm}
-            className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition"
+            className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition"
           >
             Modify Profile
           </button>
