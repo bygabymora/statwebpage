@@ -10,7 +10,7 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
 import { BsTruck, BsCreditCard2Back, BsBoxSeam, BsCurrencyDollar } from 'react-icons/bs';
 import { FaRegBell } from 'react-icons/fa';
-import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from '../../public/images/assets/PBS.png';
 import { AiTwotoneLock } from 'react-icons/ai';
@@ -513,7 +513,7 @@ function OrderScreen() {
                 </div>
               ) : (
                 <div className="alert-error flex items-center">
-                &nbsp;
+                  <AiOutlineCloseCircle className="text-red-500 text-xl" /> &nbsp;
                 Not Processed
               </div>
               )}
