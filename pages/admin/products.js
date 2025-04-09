@@ -120,19 +120,19 @@ export default function AdminProductsScreen() {
               <tbody>
                 {products.map((product) => (
                   <tr key={product._id} className="border border-collapse odd:bg-white even:bg-gray-50">
-                    <td className="p-2 border">
+                   <td className="p-2 border">
                       <div className="flex items-center gap-4">
-                        {product.name}
-                        <br />
-                        {product.manufacturer}
-                        <br />
                         <Image
                           width={100}
                           height={100}
                           src={product.image}
                           alt={product.name}
-                          className="rounded-lg shadow-lg hover:scale-105 transition-all duration-300" 
+                          className="rounded-lg"
                         />
+                        <div className="text-sm">
+                          <div className="font-bold">{product.name}</div>
+                          <div className="text-gray-600">{product.manufacturer}</div>
+                        </div>
                       </div>
                     </td>
                     <td className="p-2 border w-[12%]">${product.each?.wpPrice ?? 'N/A'}</td>
