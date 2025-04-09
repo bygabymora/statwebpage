@@ -19,7 +19,7 @@ import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { useModalContext } from '../../components/context/ModalContext';
 
 const stripePromise = loadStripe(
-  process.env.STRIPE_SECRET_KEY
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
 function reducer(state, action) {

@@ -23,7 +23,7 @@ export default function PlaceOrderScreen() {
 
   const form = useRef();
   const router = useRouter();
-  
+
   const [email, setEmail] = useState('');
   const [emailName, setEmailName] = useState('');
   const [Phone, setPhone] = useState('');
@@ -32,7 +32,7 @@ export default function PlaceOrderScreen() {
   const [specialNotes, setSpecialNotes] = useState('');
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
-  
+
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
   const itemsPrice = useMemo(() => round2(cartItems.reduce((a, c) => a + c.quantity * c.price, 0)), [cartItems]);
   const isPayByWire = paymentMethod === 'Pay by Wire';
@@ -57,13 +57,13 @@ export default function PlaceOrderScreen() {
 
   const cartItemsWithPrice = cartItems.map(item => ({
     ...item,
-    wpPrice: item.wpPrice || item.price, 
+    wpPrice: item.wpPrice || item.price,
   }));
 
-  const sendEmail = (e = {preventDefault: () => {}}) => {
+  const sendEmail = (e = { preventDefault: () => {} }) => {
     e.preventDefault();
-    
-    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod ) {
+
+    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage("error", "Please fill all the fields before sending the email.");
       return;
     }
@@ -78,15 +78,17 @@ export default function PlaceOrderScreen() {
 
     const emailMessage = messageManagement(contactToEmail, "Order Confirmation");
 
-    handleSendEmails(
-      emailMessage, 
-      contactToEmail,
-    );
+    handleSendEmails(emailMessage, contactToEmail);
   };
 
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
       toast.error('Please fill all required fields.');
+      return;
+    }
+
+    if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
+      toast.error('Total price is invalid. Please review your cart.');
       return;
     }
 
@@ -111,6 +113,7 @@ export default function PlaceOrderScreen() {
       toast.error(getError(error));
     }
   };
+
   console.log("Cart Items before order:", cartItems);
   return (
     <Layout title="Confirm Order">
