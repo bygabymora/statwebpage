@@ -15,32 +15,17 @@ import { useModalContext } from '../../components/context/ModalContext';
 import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
-export async function getStaticPaths() {
-  await db.connect();
-
-  const products = await fetchDataWithRetry(async () => {
-    return await Product.find({}, 'slug').lean();
-  });
-
-  return {
-    paths: products
-      .filter((product) => product.slug && product.slug !== 'products')
-      .map((product) => ({
-        params: { slug: String(product.slug) },
-      })),
-    fallback: 'blocking',
-  };
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   try {
-    if (!params?.slug || params.slug === 'products') {
+    const { slug } = params;
+
+    if (!slug || slug === 'products') {
       return { notFound: true };
     }
 
     await db.connect();
     const product = await fetchDataWithRetry(async () => {
-      return await Product.findOne({ slug: String(params.slug) }).lean();
+      return await Product.findOne({ slug: String(slug) }).lean();
     });
 
     if (!product) {
@@ -51,7 +36,6 @@ export async function getStaticProps({ params }) {
       props: {
         product: JSON.parse(JSON.stringify(product)),
       },
-      revalidate: 5, // In seconds
     };
   } catch (error) {
     console.error("Error fetching product:", error);
