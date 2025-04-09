@@ -8,7 +8,7 @@ const handler = async (req, res) => {
     return res.status(401).send({ message: 'signin required' });
   }
   await db.connect();
-  const orders = await Order.find({ user: user._id });
+  const orders = await Order.find({ WpUser: user._id }).sort({ createdAt: -1 });
   await db.disconnect();
   res.send(orders);
 };
