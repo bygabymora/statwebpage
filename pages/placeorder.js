@@ -86,17 +86,24 @@ export default function PlaceOrderScreen() {
       toast.error('Please fill all required fields.');
       return;
     }
-
+  
     if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
       toast.error('Total price is invalid. Please review your cart.');
       return;
     }
-
+  
+    const currentCartItems = [...cartItemsWithPrice];
+  
+    if (!currentCartItems.length) {
+      toast.error('Cart is empty.');
+      return;
+    }
+  
     sendEmail();
-
+  
     try {
       const { data } = await axios.post('/api/orders', {
-        orderItems: cartItemsWithPrice,
+        orderItems: currentCartItems,
         shippingAddress,
         billingAddress,
         paymentMethod,
@@ -104,10 +111,10 @@ export default function PlaceOrderScreen() {
         totalPrice,
         discountAmount,
       });
-
+  
       dispatch({ type: 'CART_CLEAR_ITEMS' });
       Cookies.set('cart', JSON.stringify({ ...cart, cartItems: [] }));
-
+  
       router.push(`/order/${data._id}`);
     } catch (error) {
       toast.error(getError(error));
