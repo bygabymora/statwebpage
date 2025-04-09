@@ -65,170 +65,140 @@ export default function ProfileScreen() {
 
   return (
     <Layout title="Profile">
-      <section className='profile-info mb-3'> 
-      <h1 className="mb-4 text-xl ml-10">User Profile Information</h1>
-        <div className="info-block ml-10">
+      <section className="profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md">
+        <h1 className="text-2xl font-bold text-[#144e8b] text-center mb-6">
+          {session.user.name} Profile Information
+        </h1>
+        <div className="grid md:grid-cols-2 gap-6 text-[#414b53]">
           <div>
-            <strong>Full Name:</strong>
-            <div>{session.user.name}</div>
+            <p className="text-sm font-semibold text-gray-500">Full Name</p>
+            <p className="text-base">{session.user.name}</p>
           </div>
           <div>
-            <strong>Email:</strong>
-            <div>{session.user.email}</div>
+            <p className="text-sm font-semibold text-gray-500">Email</p>
+            <p className="text-base">{session.user.email}</p>
           </div>
           <div>
-            <strong>Company Name:</strong>
-            <div>{session.user.companyName}</div>
+            <p className="text-sm font-semibold text-gray-500">Company Name</p>
+            <p className="text-base">{session.user.companyName}</p>
           </div>
           <div>
-            <strong>Company EIN:</strong>
-            <div>{session.user.companyEinCode}</div>
+            <p className="text-sm font-semibold text-gray-500">Company EIN</p>
+            <p className="text-base">{session.user.companyEinCode}</p>
           </div>
+        </div>
+        <div className="mt-6 text-center">
           {active === "loading" ? (
-            "Loading"
+            <p className="text-gray-400 italic">Loading...</p>
           ) : (
             active && (
-              <Link href={'/order-history'} className="font-bold underline" style={{ color: '#144e8b' }} >
-                Order History
+              <Link
+                href="/order-history"
+                className="inline-block text-[#144e8b] font-medium border border-[#144e8b] px-4 py-2 rounded-full hover:bg-[#144e8b] hover:text-white transition"
+              >
+                View Order History
               </Link>
             )
           )}
         </div>
       </section>
-      
-      <div
-        className={`mx-auto max-w-screen-md ${
-          showModifyForm ? 'block' : 'hidden'
-        }`}
-      >
-        {/* Modify Profile Form */}
-        <form onSubmit={handleSubmit(submitHandler)}>
-          <h1 className="mb-4 text-xl">Update Profile</h1>
-          <div className="my-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="name"
-            >
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="name"
-              autoFocus
-              {...register('name', {
-                required: 'Please enter name',
-              })}
-            />
-            {errors.name && (
-              <div className="text-red-500">{errors.name.message}</div>
-            )}
-          </div>
 
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="email"
-              {...register('email', {
-                required: 'Please enter email',
-                pattern: {
-                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
-                  message: 'Please enter valid email',
-                },
-              })}
-            />
-            {errors.email && (
-              <div className="text-red-500">{errors.email.message}</div>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="password"
-            >
-              New Password
-            </label>
-            <input
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              type="password"
-              id="password"
-              {...register('password', {
-                required: 'Please enter new password',
-                minLength: {
-                  value: 6,
-                  message: 'password is more than 5 chars',
-                },
-              })}
-            />
-            {errors.password && (
-              <div className="text-red-500 ">{errors.password.message}</div>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="confirmPassword"
-            >
-              Confirm New Password
-            </label>
-            <input
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              type="password"
-              id="confirmPassword"
-              {...register('confirmPassword', {
-                required: 'Please confirm new password',
-                validate: (value) => value === getValues('password'),
-                minLength: {
-                  value: 6,
-                  message: 'confirm password is more than 5 chars',
-                },
-              })}
-            />
-            {errors.confirmPassword && (
-              <div className="text-red-500 ">
-                {errors.confirmPassword.message}
-              </div>
-            )}
-            {errors.confirmPassword &&
-              errors.confirmPassword.type === 'validate' && (
-                <div className="text-red-500 ">Password do not match</div>
-              )}
-          </div>
-          <div className="mb-4">
-            <button className="primary-button" type="submit">
+      {showModifyForm && (
+        <div className="mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9">
+          <form onSubmit={handleSubmit(submitHandler)}>
+            <h1 className="text-2xl font-bold text-[#144e8b] text-center mb-6">
               Update Profile
-            </button>
-          </div>
-        </form>
-      </div>
+            </h1>
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="name">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                {...register("name", { required: "Please enter name" })}
+              />
+              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="email">
+                Email *
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                  {...register("email", {
+                    required: "Please enter email",
+                    pattern: {
+                      value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
+                      message: "Please enter valid email",
+                    },
+                  })}
+                />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="password">
+                New Password *
+              </label>
+              <input
+                type="password"
+                id="password"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                {...register("password", {
+                  required: "Please enter new password",
+                  minLength: { value: 6, message: "Password must be at least 6 characters" },
+                })}
+              />
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            </div>
 
-      {/* Show Profile Information */}
-      <div
-        className={`mx-auto max-w-screen-md ${
-          showModifyForm ? 'hidden' : 'block'
-        }`}
-      ></div>
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="confirmPassword">
+                Confirm New Password *
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                {...register("confirmPassword", {
+                  required: "Please confirm new password",
+                  validate: (value) => value === getValues("password"),
+                  minLength: { value: 6, message: "Confirm password must be at least 6 characters" },
+                })}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+              )}
+              {errors.confirmPassword?.type === "validate" && (
+                <p className="text-red-500 text-sm">Passwords do not match</p>
+              )}
+            </div>
 
-      <div className="mb-4">
-        {/* Show Modify Profile Button */}
-        <button
-          className={`primary-button ml-10 ${
-            showModifyForm ? 'hidden' : 'block'
-          } mr-2`}
-          onClick={toggleModifyForm}
-        >
-          Modify Profile
-        </button>
-      </div>
+            <div className="text-center">
+              <button
+                type="submit"
+                className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition"
+              >
+                Update Profile
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {!showModifyForm && (
+        <div className="text-center mt-6 my-9">
+          <button
+            onClick={toggleModifyForm}
+            className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition"
+          >
+            Modify Profile
+          </button>
+        </div>
+      )}
     </Layout>
   );
 }
