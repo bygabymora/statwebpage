@@ -32,7 +32,7 @@ export default function Support() {
       </nav>
       <section className="w-full min-h-screen flex justify-center items-center px-6">
         <div className="max-w-4xl w-full p-10 text-center">
-          <h2 className="text-4xl font-bold text-[#144e8b]">Personalized Support</h2>
+          <h2 className="text-4xl font-bold text-[#144e8b]">Support</h2>
           <p className="text-lg text-[#414b53] mt-4">
             Need help? Contact us through email, phone, or visit us in person.
           </p>

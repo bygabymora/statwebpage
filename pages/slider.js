@@ -22,7 +22,7 @@ const benefits = [
   },
   { 
     icon: <FaHeadset />, 
-    title: "Personalized Support", 
+    title: "Support", 
     description: "Email, phone, or visit our location.", 
     link: "/support" 
   }

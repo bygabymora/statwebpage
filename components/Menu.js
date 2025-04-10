@@ -53,7 +53,7 @@ const menuItems = [
           { name: "Guaranteed Savings", href: "/savings" },
           { name: "Available Stock", href: "/products" },
           { name: "Secure Buying & Selling", href: "/selling" },
-          { name: "Personalized Support", href: "/support" }
+          { name: "Support", href: "/support" }
         ]
       }
     ]
