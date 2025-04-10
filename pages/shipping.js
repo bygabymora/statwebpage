@@ -20,7 +20,7 @@ export default function ShippingScreen() {
     console.log(name); 
   }, [name]);
 
-  const usStates = [
+  const stateMap = [
     'Alabama',
     'Alaska',
     'Arizona',
@@ -79,7 +79,7 @@ export default function ShippingScreen() {
 
   const [lastOrder, setLastOrder] = useState(null);
   const [useLastAddress, setUseLastAddress] = useState(false);
-  const [filteredStates, setFilteredStates] = useState(usStates);
+  const [filteredStates, setFilteredStates] = useState(stateMap);
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
@@ -120,17 +120,23 @@ export default function ShippingScreen() {
   }, [setValue, shippingAddress]);
 
   const handleStateChange = (event) => {
-    const inputValue = event.target.value.toLowerCase();
-    setInputValue(inputValue);
-    let filteredOptions = [];
-    if (inputValue.length >= 3) {
-      filteredOptions = usStates.filter((state) =>
-        state.toLowerCase().startsWith(inputValue)
+    const value = event.target.value;
+    const expanded = stateMap[value.toUpperCase()];
+    const finalValue = expanded || value;
+  
+    setInputValue(finalValue);
+  
+    if (finalValue.length >= 2) {
+      const filtered = stateMap.filter((state) =>
+        state.toLowerCase().startsWith(finalValue.toLowerCase())
       );
+      setFilteredStates(filtered);
+    } else {
+      setFilteredStates([]);
     }
-    setFilteredStates(filteredOptions);
+  
     setShowSuggestions(true);
-    setSelectedSuggestion(-1); // Reset the selected suggestion when input value changes
+    setSelectedSuggestion(-1);
   };
 
   const handleSelectState = (state) => {
@@ -319,35 +325,39 @@ export default function ShippingScreen() {
                   <p className="text-red-500">Address is required.</p>
                 )}
               </div>
-              <div>
-                <label className="block font-medium">State*</label>
+              <div className="relative w-full max-w-sm">
+                <label htmlFor="state" className="block font-medium mb-1">State*</label>
                 <input
-                  className="w-full contact__form-input"
                   type="text"
                   id="state"
+                  {...register('state', { required: true, minLength: 2 })}
+                  className="w-full contact__form-input"
                   placeholder="Enter state"
-                  {...register('state', { required: true, minLength: 3 })}
                   onChange={handleStateChange}
                   onFocus={() => setShowSuggestions(true)}
                   onKeyDown={handleKeyDown}
+                  value={inputValue}
                   autoCapitalize="true"
                 />
-                {errors.state && <p className="text-red-500">State is required.</p>}
-                {filteredStates.length > 0 && inputValue.length >= 3 && showSuggestions && (
-                  <div className="mt-2 bg-white border border-gray-300 rounded-md absolute z-10 w-full">
+                {showSuggestions && filteredStates.length > 0 && (
+                  <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1 max-h-48 overflow-y-auto">
                     {filteredStates.map((state, index) => (
-                      <div
-                        key={index}
-                        className={`cursor-pointer py-1 px-4 hover:bg-gray-200 ${
-                          index === selectedSuggestion ? 'bg-gray-200' : ''
+                      <li
+                        key={state}
+                        onClick={() => {
+                          handleSelectState(state);
+                          setInputValue(state);
+                        }}
+                        className={`px-3 py-2 cursor-pointer ${
+                        selectedSuggestion === index ? 'bg-gray-100' : ''
                         }`}
-                        onClick={() => handleSelectState(state)}
                       >
                         {state}
-                      </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 )}
+                {errors.state && <p className="text-red-500">State is required.</p>}
               </div>
               <div>
                 <label className="block font-medium">City*</label>
