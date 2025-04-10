@@ -138,15 +138,29 @@ export default function AdminUserEditScreen() {
     router.push('/admin/users');
   };
 
+  const links = [
+    { href: '/admin/dashboard', label: 'Dashboard' },
+    { href: '/admin/orders', label: 'Orders' },
+    { href: '/admin/products', label: 'Products' },
+    { href: '/admin/users', label: 'Users' },
+    { href: '/admin/news', label: 'News' },
+  ];
+  
   return (
     <Layout title={`Editar Usuario ${userId}`}>
       <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li><Link href="/admin/dashboard">Dashboard</Link></li>
-            <li><Link href="/admin/orders">Orders</Link></li>
-            <li><Link href="/admin/products">Products</Link></li>
-            <li><Link href="/admin/users" className="font-bold">Usuarios</Link></li>
+        <div className="flex justify-center">
+          <ul className="flex flex-col space-y-4 my-3 lg:text-lg w-full">
+            {links.map(({ href, label, isBold }) => (
+              <li key={href} className="w-full">
+                <Link
+                  href={href}
+                  className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition ${isBold ? 'font-semibold' : ''}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="md:col-span-3">
