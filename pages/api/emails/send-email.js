@@ -22,13 +22,13 @@ export default async function handler(req, res) {
     const client = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY);
 
     const message = {
-      from_email: "gaby@statsurgicalsupply.com",
+      from_email: "sales@statsurgicalsupply.com",
       subject: subject,
       html: htmlContent,
       headers: headers || {},
       to: [
         { email: toEmail, type: "to" },
-        { email: "gaby@statsurgicalsupply.com", type: "bcc" },
+        { email: "sales@statsurgicalsupply.com", type: "bcc" },
       ],
     };
 
