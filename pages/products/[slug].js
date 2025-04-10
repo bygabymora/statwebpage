@@ -483,6 +483,17 @@ export default function ProductScreen(props) {
                   : 'In Stock'}
               </div>
             </div>
+            {!session?.user?.active || !session?.user?.approved || status !== 'authenticated' ? (
+              <>
+                <div className="border-t border-gray-300 my-2" />
+                <div className="text-sm text-gray-500 mt-1">
+                  {!session?.user?.active || status !== 'authenticated'
+                    ? 'Sign in to purchase this product.'
+                    : 'You will be able to purchase this product when your account is Approved.'
+                  }
+                </div>
+              </>
+            ) : null}
             {active === "loading" ? (
             "Loading"
             ) : (
