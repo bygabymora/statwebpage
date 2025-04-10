@@ -397,139 +397,140 @@ export default function ProductScreen(props) {
             )}
             <div>
             {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
-          <div>
-            {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
-            purchaseType === 'Each' || purchaseType === 'Box' ? (
-            <div>
-            {active === "loading" ? (
-              "Loading"
-            ) : (
-              active && (
-                <div className="mb-2 flex justify-between">
-                  <div className="font-bold">U o M &nbsp;</div>
-                  <select
-                    value={purchaseType}
-                    onChange={(e) => {
-                      setPurchaseType(e.target.value);
-                      if (e.target.value === 'Each' && product.each) {
-                        setCurrentPrice(product.each?.wpPrice || 0);
-                        setCurrentDescription(product.each?.description || '');
-                        setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
-                      } else if (e.target.value === 'Box' && product.box) {
-                        setCurrentPrice(product.box?.wpPrice || 0);
-                        setCurrentDescription(product.box?.description || '');
-                        setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
-                      } else if (e.target.value === 'Clearance' && product.clearance) {
-                        setCurrentPrice(product.clearance?.price || 0);
-                        setCurrentDescription(product.clearance?.description || '');
-                        setCurrentCountInStock(product.clearance?.countInStock || 0);
-                      }
-                    }}
-                  >
-                    {product.each?.quickBooksQuantityOnHandProduction > 0 && (
-                      <option value="Each">Each</option>
-                    )}
-                    {product.box?.quickBooksQuantityOnHandProduction > 0 && (
-                      <option value="Box">Box</option>
-                    )}
-                    {product.clearance?.countInStock > 0 && (
-                      <option value="Clearance">Clearance</option>
-                    )}
-                  </select>
-                </div>
-              )
-            )}
-            {active === "loading" ? (
-              "Loading"
-            ) : (
-              active && (
-                <div className="mb-2 flex justify-between">
-                  <div className="font-bold">Price</div>
-                  {hasPrice ? `$${currentPrice}` : "Call for Price"}
-                </div>
-              )
-            )}
-          </div>
-        ) : null
-      ) : (
-      // If you only have Clearance, show it once without an "Add to Cart" button
-      product.each?.clearanceCountInStock > 0 && (
-        <div className="my-5 text-center">
-          <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
-          {active === "loading" ? (
-          "Loading"
-          ) : active ? (
-              <div className="mb-2 flex justify-between">
-                <div className="font-bold">Price:</div>
-                <div className="ml-2 text-[#788b9b]">
-                  $ {product.clearance?.price || 'Call for Price'}
-                </div>
-              </div>
-            ) : null}
-              <div className="text-[#414b53]">{product.notes}</div>
-        </div>  
-      )
-      )}
-      {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-        product.box?.quickBooksQuantityOnHandProduction > 0) && (
-        <div>
-          <div className="mb-2 flex justify-between">
-            <div className="font-bold">Status</div>
               <div>
-                {(purchaseType === 'Each' && isOutOfStock) ||
-                (purchaseType === 'Box' && isOutOfStockBox) ||
-                (purchaseType === 'Clearance' && isOutOfStockClearance)
-                  ? 'Out of Stock'
-                  : 'In Stock'}
-              </div>
-            </div>
-            {!session?.user?.active || !session?.user?.approved || status !== 'authenticated' ? (
-              <>
-                <div className="border-t border-gray-300 my-2" />
-                <div className="text-sm text-gray-500 mt-1">
-                  {!session?.user?.active || status !== 'authenticated'
-                    ? 'Sign in to purchase this product.'
-                    : 'You will be able to purchase this product when your account is Approved.'
+                {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+                  purchaseType === 'Each' || purchaseType === 'Box' ? (
+                  <div>
+                    {active === "loading" ? (
+                      "Loading"
+                    ) : (
+                      active && (
+                        <div className="mb-2 flex justify-between">
+                          <div className="font-bold">U o M &nbsp;</div>
+                          <select
+                            value={purchaseType}
+                            onChange={(e) => {
+                              setPurchaseType(e.target.value);
+                              if (e.target.value === 'Each' && product.each) {
+                                setCurrentPrice(product.each?.wpPrice || 0);
+                                setCurrentDescription(product.each?.description || '');
+                                setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                              } else if (e.target.value === 'Box' && product.box) {
+                                setCurrentPrice(product.box?.wpPrice || 0);
+                                setCurrentDescription(product.box?.description || '');
+                                setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                              } else if (e.target.value === 'Clearance' && product.clearance) {
+                                setCurrentPrice(product.clearance?.price || 0);
+                                setCurrentDescription(product.clearance?.description || '');
+                                setCurrentCountInStock(product.clearance?.countInStock || 0);
+                              }
+                            }}
+                          >
+                            {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                              <option value="Each">Each</option>
+                            )}
+                            {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                              <option value="Box">Box</option>
+                            )}
+                            {product.clearance?.countInStock > 0 && (
+                              <option value="Clearance">Clearance</option>
+                            )}
+                          </select>
+                        </div>
+                      )
+                    )}
+                    {active === "loading" ? (
+                      "Loading"
+                     ) : (
+                      active && (
+                        <div className="mb-2 flex justify-between">
+                          <div className="font-bold">Price</div>
+                          {hasPrice ? `$${currentPrice}` : "Call for Price"}
+                        </div>
+                      )
+                    )}
+                  </div>
+                ) : null
+              ) : (
+             // If you only have Clearance, show it once without an "Add to Cart" button
+              product.each?.clearanceCountInStock > 0 && (
+                <div className="my-5 text-center">
+                  <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+                  {active === "loading" ? (
+                    "Loading"
+                  ) : active ? (
+                    <div className="mb-2 flex justify-between">
+                      <div className="font-bold">Price:</div>
+                      <div className="ml-2 text-[#788b9b]">
+                        $ {product.clearance?.price || 'Call for Price'}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="text-[#414b53]">{product.notes}</div>
+                </div>  
+              )
+            )}
+            {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
+              product.box?.quickBooksQuantityOnHandProduction > 0) && (
+              <div>
+                <div className="mb-2 flex justify-between">
+                  <div className="font-bold">Status</div>
+                <div>
+                  {(purchaseType === 'Each' && isOutOfStock) ||
+                  (purchaseType === 'Box' && isOutOfStockBox) ||
+                  (purchaseType === 'Clearance' && isOutOfStockClearance)
+                    ? 'Out of Stock'
+                    : 'In Stock'
                   }
                 </div>
-              </>
-            ) : null}
-            {active === "loading" ? (
-            "Loading"
-            ) : (
-              active && (
+              </div>
+              {!session?.user?.active || !session?.user?.approved || status !== 'authenticated' ? (
                 <>
-                {(!hasPrice || currentPrice === 0) ? (
-                  <Link href="/support">
-                    <button className="primary-button cart-button text-white">
-                      Call for Price
-                    </button>
-                  </Link>
-                ) : (
-                  <button
-                    className="primary-button cart-button my-2"
-                    type="button"
-                    onClick={addToCartHandler}
-                    disabled={
-                      (purchaseType === 'Each' && isOutOfStock) ||
-                      (purchaseType === 'Box' && isOutOfStockBox) ||
-                      (purchaseType === 'Clearance' && isOutOfStockClearance)
+                  <div className="border-t border-gray-300 my-2" />
+                  <div className="text-sm text-gray-500 mt-1">
+                    {!session?.user?.active || status !== 'authenticated'
+                      ? 'Sign in to purchase this product.'
+                      : 'You will be able to purchase this product when your account is Approved.'
                     }
-                  >
-                    {(purchaseType === 'Each' && isOutOfStock) ||
-                     (purchaseType === 'Box' && isOutOfStockBox) ||
-                     (purchaseType === 'Clearance' && isOutOfStockClearance)
-                        ? 'Out of Stock'
-                        : 'Add to Cart'}
-                  </button>
-                )}
-              </>
-              )
+                  </div>
+                </>
+              ) : null}
+              {active === "loading" ? (
+                "Loading"
+              ) : (
+                active && (
+                  <>
+                    {(!hasPrice || currentPrice === 0) ? (
+                      <Link href="/support">
+                        <button className="primary-button cart-button text-white">
+                          Call for Price
+                        </button>
+                      </Link>
+                    ) : (
+                      <button
+                        className="primary-button cart-button my-2"
+                        type="button"
+                        onClick={addToCartHandler}
+                        disabled={
+                          (purchaseType === 'Each' && isOutOfStock) ||
+                          (purchaseType === 'Box' && isOutOfStockBox) ||
+                          (purchaseType === 'Clearance' && isOutOfStockClearance)
+                        }
+                      >
+                        {(purchaseType === 'Each' && isOutOfStock) ||
+                        (purchaseType === 'Box' && isOutOfStockBox) ||
+                        (purchaseType === 'Clearance' && isOutOfStockClearance)
+                          ? 'Out of Stock'
+                          : 'Add to Cart'}
+                      </button>
+                    )}
+                  </>
+                )
+              )}
+            </div>
+          )}
+        </div>
             )}
-          </div>
-        )}
-      </div>
-        )}
             {showPopup && (
               <div className="popup">
                 <div className="popup-content">
