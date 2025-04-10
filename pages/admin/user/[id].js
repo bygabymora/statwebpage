@@ -174,16 +174,16 @@ export default function AdminUserEditScreen() {
 
               <div className="flex gap-4 my-4">
                 <label>
-                  <input type="checkbox" {...register('isAdmin')} checked={isAdmin} onChange={(e) => setEsAdmin(e.target.checked)} />
-                  &nbsp; Is Admin?
-                </label>
-                <label>
                   <input type="checkbox" {...register('active')} checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                   &nbsp; Is Active?
                 </label>
                 <label>
                   <input type="checkbox" {...register('approved')} checked={isApproved} onChange={(e) => setIsApproved(e.target.checked)} />
                   &nbsp; Is Approved?
+                </label>
+                <label>
+                  <input type="checkbox" {...register('isAdmin')} checked={isAdmin} onChange={(e) => setEsAdmin(e.target.checked)} />
+                  &nbsp; Is Admin?
                 </label>
               </div>
 
