@@ -13,7 +13,7 @@ export const messageManagement = (contact, actionName, message) => {
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">If it takes longer than expected, please contact us for more information. Thank you for choosing us!</div>`,
         p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">If you have any questions, please contact us.
               <br>
-            <strong> Stat Surgical Supply </strong>
+              <strong> Stat Surgical Supply </strong>
         </div>`,
       };
       break;
