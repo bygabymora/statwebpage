@@ -41,9 +41,9 @@ export default function BenefitsSection() {
           <div 
             key={index} 
             className="flex items-center p-6 bg-white border-l-4 border-[#03793d] rounded-lg shadow-md 
-            transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+            transition-transform duration-300 hover:scale-105 hover:shadow-lg group"
           >
-            <div className="text-4xl text-[#03793d] p-4 bg-gray-100 rounded-full">
+            <div className="text-4xl text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12">
               {benefit.icon}
             </div>
             <div className="ml-5 flex-1">
