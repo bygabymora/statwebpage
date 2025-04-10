@@ -113,9 +113,9 @@ export default function AdminProductEditScreen() {
       dispatch({ type: 'UPLOAD_SUCCESS' });
       setValue(imageField, data.secure_url);
       toast.success('File uploaded successfully');
-    } catch (err) {
-      dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
-      toast.error(getError(err));
+    } catch (error) {
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(error) });
+      toast.error(getError(error));
     }
   };
 
