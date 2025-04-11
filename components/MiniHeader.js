@@ -9,7 +9,7 @@ export default function Header() {
         <div className="flex space-x-4">
           <a href="#contact" className="hover:underline">Contact Us</a>
           <span>|</span>
-          <p>At Stat Surgical Supply Reliable, Affordable, High Quality Surgical Tools.</p>
+          <p>Stat Surgical Supply Reliable, Affordable, High Quality Surgical Tools.</p>
         </div>
 
         <div className="flex space-x-4 items-center">
