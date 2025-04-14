@@ -168,8 +168,8 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
     });
   };
   
-  //-----------------EmailJS-----------------//
-  const form = useRef();
+  //-----------------Email-----------------//
+    const form = useRef();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const {showStatusMessage } = useModalContext();
@@ -202,8 +202,8 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
       setEmailName("");
       setEmailManufacturer("");
     };
-  //-----------//
-  console.log(product);
+
+   console.log(product);
 
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
@@ -217,7 +217,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
       <div className="flex flex-row justify-between">
         <Link
-          href={`/products/${product.slug}`}
+          href={`/products/${product.name}?id=${product._id}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
@@ -237,7 +237,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
         <div className="flex flex-col justify-center items-center px-2 mb-3 flex-1">
           <Link
-            href={`/products/${product.slug}`}
+            href={`/products/${product.name}?id=${product._id}`}
             className="justify-center items-center text-center"
           >
             <div className="max-w-full">

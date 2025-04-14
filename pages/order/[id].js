@@ -147,7 +147,7 @@ function OrderScreen() {
   } = order;
   const discountAmount = itemsPrice * 0.015;
 
-  //----EmailJS----//
+  //----Email----//
 
   const form = useRef();
   const [message ] = useState('');

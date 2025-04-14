@@ -29,7 +29,7 @@ const getHandler = async (req, res) => {
       const products = await Product.find({approved: true, active: true})
       .sort({ [sortField]: sortDirection })
       .lean();
-      console.log("productos filtrados:", products);
+      console.log("leaked products:", products);
       res.send(products);
     } catch {
       res.status(500).send({ message: "Error fetching products"});

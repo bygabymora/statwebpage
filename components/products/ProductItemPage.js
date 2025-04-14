@@ -157,7 +157,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
   });
   };
 
-  //-----------------EmailJS-----------------//
+  //-----------------Email-----------------//
 
   const form = useRef();
   const [name, setName] = useState("");
@@ -192,8 +192,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
     setEmailName("");
     setEmailManufacturer("");
   };
-  //-----------//
-  console.log("SLUG:", product.slug, typeof product.slug);
+
   return (
     <div className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
      border-gray-200 shadow-lg rounded-lg p-1.5 hover:shadow-xl transition-shadow duration-300 ease-in-out"
@@ -224,8 +223,8 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         </Link>
         )}
         <div className="flex flex-col justify-center items-center px-2 flex-1">
-        {typeof product.slug === 'string' && product.slug.trim() !== '' && (
-            <Link href={`/products/${product.slug}`} prefetch={false}
+        {typeof product._id === 'string' && product._id.trim() !== '' && (
+            <Link href={`/products/${product._name}?id=${product._id}`} prefetch={false}
               className="justify-center items-center text-center"
             >
               <div className="max-w-full">

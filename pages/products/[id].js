@@ -17,15 +17,15 @@ import { messageManagement } from '../../utils/alertSystem/customers/messageMana
 
 export async function getServerSideProps({ params }) {
   try {
-    const { slug } = params;
+    const { id } = params;
 
-    if (!slug || slug === 'products') {
+    if (!id || id === 'products') {
       return { notFound: true };
     }
 
     await db.connect();
     const product = await fetchDataWithRetry(async () => {
-      return await Product.findOne({ slug: String(slug) }).lean();
+      return await Product.findById(id).lean();
     });
 
     if (!product) {
@@ -119,9 +119,9 @@ export default function ProductScreen(props) {
   }, [purchaseType, product]);
 
   const addToCartHandler = async () => {
-    const exisItem = state.cart.cartItems.find((x) => x.slug === product.slug);
+    const exisItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = exisItem ? exisItem.quantity + qty : qty;
-    const { data } = await axios.get(`/api/products/${product._slug}`);
+    const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (purchaseType === 'Each' && (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity) {
       setIsOutOfStock(true);

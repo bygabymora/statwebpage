@@ -56,7 +56,7 @@ const SearchPage = ({ query }) => {
     }
   };
 
-  //----- EmailJS-----//
+  //-------------Email-------------//
 
   const sendEmail = (e) => {
     e.preventDefault();
