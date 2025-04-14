@@ -26,7 +26,7 @@ export default function Products() {
       const { data } = await axios.get(`/api/products?sort=${sortQuery}`);
       setProducts(data);
     } catch (error) {
-      console.error('Error al obtener productos:', error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
@@ -139,7 +139,7 @@ export default function Products() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
             {loading ? (
-              <p>Cargando productos...</p>
+              <p>Loading products...</p>
             ) : (
               filteredProducts.map((product, index) => (
                 <ProductItemPage 
