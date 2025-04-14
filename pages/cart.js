@@ -87,15 +87,15 @@ function CartScreen() {
               </thead>
               <tbody>
                 {cartItems.map((item) => (
-                  <tr key={item.slug} className="border">
+                  <tr key={item._id} className="border">
                     <td className="p-5 border">
                       <Link
-                        href={`/products/${item.slug}`}
+                        href={`/products/${item.manufacturer}-${item.name}-${item._id}`}
                         className="flex flex-col items-center"
                       >
                         <Image
                           src={item.image}
-                          alt={item.slug}
+                          alt={item._id}
                           width={50}
                           height={50}
                           className="mb-1 rounded-lg"

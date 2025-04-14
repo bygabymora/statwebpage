@@ -589,7 +589,7 @@ function OrderScreen() {
                         )}
                         {typeof item._id === 'string' && item._id.trim() !== '' ? (
                           <Link
-                            href={`/products/${item._id}`}
+                            href={`/products/${item.name}-${item._id}`}
                             className="text-[#144e8b] font-bold"
                           >
                             {item.name}

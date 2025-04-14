@@ -2,7 +2,7 @@ import DocumentComponent from "../../components/mailChimp/document/Component";
 
 const handleSendEmails = async (message, contact) => {
   let response;
- const headersToSend = " X-WpEmail";
+ const headersToSend = "X-WpEmail";
 
   try {
       const templateHtml = DocumentComponent({
