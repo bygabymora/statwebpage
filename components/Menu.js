@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const menuItems = [
   { 
-    title: "Home",
+    title: <Link href="/">Home</Link>,
     subcategories: [
       {
         title: "Home",
@@ -15,11 +15,11 @@ const menuItems = [
     ]
   },
   {
-    title: "Manufacturers",
+    title: <Link href="/products">Manufacturers</Link>,
     subcategories: [] // Initially empty, it will be filled with manufacturers from the API
   },
   {
-    title: "Products",
+    title: <Link href="/products">Products</Link>,
     subcategories: [
       {
         title: "Categories",
