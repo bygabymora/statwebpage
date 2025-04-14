@@ -577,7 +577,7 @@ function OrderScreen() {
                         {item.image ? (
                           <Image
                             src={item.image}
-                            alt={item.slug || 'product'}
+                            alt={item._id || 'product'}
                             width={50}
                             height={50}
                             className="rounded"
@@ -587,9 +587,9 @@ function OrderScreen() {
                             N/A
                           </div>
                         )}
-                        {typeof item.slug === 'string' && item.slug.trim() !== '' ? (
+                        {typeof item._id === 'string' && item._id.trim() !== '' ? (
                           <Link
-                            href={`/products/${item.slug}`}
+                            href={`/products/${item._id}`}
                             className="text-[#144e8b] font-bold"
                           >
                             {item.name}
@@ -597,7 +597,7 @@ function OrderScreen() {
                         ) : (
                           <span
                             className="text-red-500 font-bold"
-                            title="Invalid or missing slug"
+                            title="Invalid or missing id"
                           >
                             {item.name || 'Unnamed Product'}
                           </span>

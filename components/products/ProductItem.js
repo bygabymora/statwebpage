@@ -217,7 +217,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
       <div className="flex flex-row justify-between">
         <Link
-          href={`/products/${product.name}?id=${product._id}`}
+          href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
           className="justify-center items-center text-center flex-1"
         >
           <div className="p-2">
@@ -237,7 +237,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
 
         <div className="flex flex-col justify-center items-center px-2 mb-3 flex-1">
           <Link
-            href={`/products/${product.name}?id=${product._id}`}
+            href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
             className="justify-center items-center text-center"
           >
             <div className="max-w-full">

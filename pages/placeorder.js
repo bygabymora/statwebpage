@@ -200,8 +200,8 @@ export default function PlaceOrderScreen() {
                     {cartItems.map((item) => (
                       <tr key={item._id} className="border-b">
                         <td>
-                          <Link href={`/products/${item.slug}`} className="flex items-center p-2">
-                            <Image src={item.image} alt={item.slug} width={50} height={50} className="rounded-lg" />
+                          <Link href={`/products/${item._id}`} className="flex items-center p-2">
+                            <Image src={item.image} alt={item._id} width={50} height={50} className="rounded-lg" />
                             <span className="ml-2 font-medium text-gray-700">{item.name}</span>
                           </Link>
                         </td>

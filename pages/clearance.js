@@ -95,7 +95,7 @@ export default function Clearance({ products }) {
             {filteredProducts.map((product) => (
               <ProductItemPage
                 product={product}
-                key={product.slug}
+                key={product._id}
                 clearancePurchaseType={true}
               ></ProductItemPage>
             ))}
