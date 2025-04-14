@@ -16,31 +16,23 @@ import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
 export async function getServerSideProps({ params }) {
-  try {
-    const { id } = params;
+  const { id: fullId } = params;
+  const id = fullId.split('-').pop();
 
-    if (!id || id === 'products') {
-      return { notFound: true };
-    }
+  await db.connect();
+  const product = await fetchDataWithRetry(async () => {
+    return await Product.findById(id).lean();
+  });
 
-    await db.connect();
-    const product = await fetchDataWithRetry(async () => {
-      return await Product.findById(id).lean();
-    });
-
-    if (!product) {
-      return { notFound: true };
-    }
-
-    return {
-      props: {
-        product: JSON.parse(JSON.stringify(product)),
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching product:", error);
+  if (!product) {
     return { notFound: true };
   }
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+    },
+  };
 }
 
 export default function ProductScreen(props) {

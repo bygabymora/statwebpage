@@ -204,9 +204,8 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         {product.manufacturer}{' '}
       </h2>
       <div className="flex flex-row justify-between">
-      {typeof product._id === 'string' && product._id.trim() !== '' && (
-        <Link href={`/products/${product._id}`} prefetch={false}
-          className="justify-center items-center text-center flex-1"
+        {typeof product._id === 'string' && product._id.trim() !== '' && (
+          <Link href={`/products/${encodeURIComponent( `${product.manufacturer}-${product.name}`).replace(/\s+/g, '-')}-${product._id}`}
         >
           <div className="p-2">
             <Image
@@ -223,7 +222,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
         </Link>
         )}
         <div className="flex flex-col justify-center items-center px-2 flex-1">
-        {typeof product._id === 'string' && product._id.trim() !== '' && (
+          {typeof product._id === 'string' && product._id.trim() !== '' && (
             <Link href={`/products/${product._name}?id=${product._id}`} prefetch={false}
               className="justify-center items-center text-center"
             >
