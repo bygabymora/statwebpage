@@ -87,6 +87,7 @@ export default function Newscreen(props) {
             width={600}
             height={400}
             className="rounded-lg"
+            loading="lazy"
           />
           <div className="flex flex-col justify-center items-center">
             <div

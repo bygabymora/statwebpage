@@ -99,6 +99,7 @@ function CartScreen() {
                           width={50}
                           height={50}
                           className="mb-1 rounded-lg"
+                          loading="lazy"
                         />
                         &nbsp;
                         {item.manufacturer}

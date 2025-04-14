@@ -82,7 +82,6 @@ const Banner = () => {
             ))}
           </AnimatePresence>
         </div>
-
       </div>
     </div>
   );

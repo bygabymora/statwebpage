@@ -16,6 +16,7 @@ export const NewsItem = ({ news }) => {
               className="news-image rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 ease-in-out" 
               width={300}
               height={200}
+              loading="lazy"
             />
           </div>
         </div>

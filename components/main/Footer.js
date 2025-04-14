@@ -94,7 +94,8 @@ export default function Footer() {
         <Image 
           className="footer-logo hidden lg:block"
           src={Logo} 
-          alt="STAT Logo" 
+          alt="STAT Logo"
+          loading="lazy" 
           width={300} 
           height={100} 
         />
@@ -140,6 +141,7 @@ export default function Footer() {
         alt="Payment Methods" 
         width={300} 
         height={'auto'}
+        loading="lazy"
         />
         <div className="flex space-x-4 mt-4 sm:mt-0">
           <Link 
@@ -152,6 +154,7 @@ export default function Footer() {
             alt="Linkedin Logo" 
             width={50} 
             height={50} 
+            loading="lazy"
           />
           </Link>
           <Link 
@@ -164,6 +167,7 @@ export default function Footer() {
             alt="Facebook Logo" 
             width={50} 
             height={50} 
+            loading="lazy"
           />
           </Link>
           <Link 
@@ -176,6 +180,7 @@ export default function Footer() {
             alt="Google Logo" 
             width={50} 
             height={50} 
+            loading="lazy"
             />
           </Link>
         </div>

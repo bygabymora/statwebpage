@@ -31,16 +31,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <StoreProvider>
           <CookieAcceptancePopup />
           <Script
-            strategy="afterInteractive"
-            src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
-            async
+            src={`https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5`}
+            strategy="lazyOnload"
           />
-          <Script id="gtag-init" strategy="afterInteractive">
+          <Script id="gtag-init" strategy="lazyOnload">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-3JJZVPL0B5');
+              gtag('config', 'G-XXXXXX', {
+              page_path: window.location.pathname,
+              });
             `}
           </Script>
 

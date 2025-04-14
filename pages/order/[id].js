@@ -581,6 +581,7 @@ function OrderScreen() {
                             width={50}
                             height={50}
                             className="rounded"
+                            loading="lazy"
                           />
                         ) : (
                           <div className="w-[50px] h-[50px] bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500">
@@ -670,6 +671,7 @@ function OrderScreen() {
                               height={80}
                               width={200}
                               className="mt-2"
+                              loading="lazy"
                             />
                           </button>
                         </section>

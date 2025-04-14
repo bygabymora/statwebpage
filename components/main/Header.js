@@ -117,6 +117,7 @@ const Header = () => {
                 width={50} 
                 height={50} 
                 className="block md:hidden object-contain"
+                loading="lazy"
               />
             </Link>
 

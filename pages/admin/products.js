@@ -128,6 +128,7 @@ export default function AdminProductsScreen() {
                           src={product.image}
                           alt={product.name}
                           className="rounded-lg"
+                          loading="lazy"
                         />
                         <div className="text-sm">
                           <div className="font-bold">{product.name}</div>
