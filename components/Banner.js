@@ -32,28 +32,28 @@ const Banner = () => {
             Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.
           </p>
 
-          <div className="flex gap-4 text-center justify-center">
-            <motion.button
-              className="bg-[#03793d] text-white px-6 py-3 rounded shadow-md hover:bg-green-700 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link href="/products" className="flex items-center gap-3">
-                <TiShoppingCart />
+          <div className="flex flex-wrap gap-4 justify-center text-center w-full">
+            <Link href="/products" className="w-full sm:w-auto">
+              <motion.button
+                className="w-full sm:w-auto bg-[#03793d] text-white px-6 py-3 rounded shadow-md hover:bg-green-700 transition-all flex items-center justify-center gap-3"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+              <TiShoppingCart />
                 Shop Now
-              </Link>
-            </motion.button>
-
-            <motion.button
-              className="border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link href="/#contact" className="flex items-center gap-3">
-                <FiPhoneForwarded />
+              </motion.button>
+            </Link>
+            
+            <Link href="/#contact" className="w-full sm:w-auto">
+              <motion.button
+                className="w-full sm:w-auto border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all flex items-center justify-center gap-3"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+              <FiPhoneForwarded />
                 Contact Us
-              </Link>
-            </motion.button>
+              </motion.button>
+            </Link>
           </div>
         </div>
 

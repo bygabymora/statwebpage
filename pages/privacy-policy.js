@@ -89,7 +89,8 @@ export default function facs() {
             Stat Surgical Supply LLC better understand how the Sites are used
             and how to make them better. By identifying patterns and trends in
             usage, Stat Surgical Supply LLC is able to better design the Sites
-            to improve users’ experiences, both in terms of content and ease of
+            to improve users’ 
+            , both in terms of content and ease of
             use. From time to time, Stat Surgical Supply LLC may also release
             the anonymized information gathered from the users in the aggregate,
             such as by publishing a report on trends in the usage of the Sites.
