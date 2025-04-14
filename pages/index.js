@@ -196,7 +196,7 @@ function Carousel({ products }) {
         onMouseLeave={handleOnMouseLeave} // using combined function here
       >
         {products?.map((product) => (
-          <div className="carousel-item px-3 lg:px-0" key={product.slug}>
+          <div className="carousel-item px-3 lg:px-0" key={product._id}>
             <ProductItem product={product} />
           </div>
         ))}
