@@ -75,7 +75,7 @@ const Banner = () => {
                     width={500}
                     height={500}
                     loading={index === 0 ? "eager" : "lazy"}
-                    className="rounded-lg w-[350px] h-[350px] md:w-[500px] md:h-[500px] object-cover"
+                    className="rounded-lg w-[300px] h-[300px] md:w-[500px] md:h-[500px] object-cover"
                   />
                 </motion.div>
               )

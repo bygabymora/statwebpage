@@ -7,14 +7,13 @@ import Footer from './Footer';
 import {
   generateJSONLD,
   generateProductJSONLD,
-  generateMainPageJSONLD,
 } from '../../utils/seo';
 import Logo from '../../public/images/assets/logo2.png';
 import { signOut, useSession } from 'next-auth/react';
 import { useModalContext } from '../context/ModalContext';
 import { useRouter } from 'next/router';
 
-export default function Layout({ title, children, news, product }) {
+export default function Layout({ children, title, product, news, canonical, description }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const router = useRouter();
@@ -58,31 +57,75 @@ export default function Layout({ title, children, news, product }) {
 
   return (
     <div className="w-full" lang="en">
-      <Head lang="en">
-        <title>{title ? title : 'STAT'}</title>
-        <meta name="description" content="Surgical Supplies at low price" />
+      <Head>
+        <title>{title ? `${title} | Stat Surgical Supply` : 'Stat Surgical Supply'}</title>
+        <meta
+          name="description"
+          content={
+            description
+            ? description
+            : product
+            ? product.description?.slice(0, 160)
+            : 'Buy surgical supplies online at affordable prices. Quality medical products for your needs.'
+          }
+        />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://www.statsurgicalsupply.com/" />
         <link
-          rel="alternate"
-          type="application/ld+json"
-          href="/api/featuredProductsJSONLD"
+          rel="canonical"
+          href={
+            canonical
+            ? canonical
+            : product
+            ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}-${product._id}`
+            : 'https://www.statsurgicalsupply.com/'
+          }
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateMainPageJSONLD()),
-          }}
+        <meta property="og:type" content={product ? 'product' : 'website'} /> 
+        <meta
+          property="og:title"
+          content={
+            product ? `${product.manufacturer} - ${product.name}` : 'Stat Surgical Supply'
+          }
         />
+        <meta
+          property="og:description"
+          content={
+            product
+            ? product.description?.slice(0, 200)
+            : 'Buy surgical supplies online at affordable prices.'
+          }
+        />
+        <meta property="og:image" content={product?.image || Logo} />
+        <meta property="og:url" content={canonical || 'https://www.statsurgicalsupply.com/'} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={product ? `${product.manufacturer} - ${product.name}` : 'Stat Surgical Supply'}
+        />
+        <meta
+          name="twitter:description"
+          content={
+            product
+            ? product.description?.slice(0, 200)
+            : 'Buy surgical supplies online at affordable prices.'
+          }
+        />
+        <meta name="twitter:image" content={product?.image || Logo} />
+
+        {product && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(generateProductJSONLD(product)),
+            }}
+          />
+        )}
         {news && (
           <>
-            <meta name="description" content={news.content.substring(0, 160)} />
+            <meta name="description" content={news.content.slice(0, 160)} />
             <meta name="keywords" content={news.tags.join(', ')} />
             <meta property="og:title" content={news.title} />
-            <meta
-              property="og:description"
-              content={news.content.substring(0, 200)}
-            />
+            <meta property="og:description" content={news.content.slice(0, 200)} />
             <meta property="og:image" content={news.imageUrl} />
             <meta
               property="og:url"
@@ -93,35 +136,14 @@ export default function Layout({ title, children, news, product }) {
               rel="canonical"
               href={`https://www.statsurgicalsupply.com/news/${news.slug}`}
             />
-            <script type="application/ld+json">
-              {JSON.stringify(generateJSONLD(news))}
-            </script>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(generateJSONLD(news)),
+              }}
+            />
           </>
         )}
-        {product && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(generateProductJSONLD(product)),
-            }}
-          />
-        )}
-        <meta property="og:title" content="Stat Surgical Supply" />
-        <meta
-          property="og:description"
-          content="Surgical supplies with low price"
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={Logo} />
-        <meta property="og:url" content="https://www.statsurgicalsupply.com/" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@statsurgicalsupply" />
-        <meta name="twitter:title" content="Stat Surgical Supply" />
-        <meta
-          name="twitter:description"
-          content="Surgical supplies with low price"
-        />
-        <meta name="twitter:image" content={Logo} />
       </Head>
       <ToastContainer position="bottom-center" limit={1} />
       <div className="flex min-h-screen flex-col justify-between">
