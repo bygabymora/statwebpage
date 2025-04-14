@@ -19,7 +19,8 @@ const StaticBanner = () => {
             width={500}
             height={500}
             src="/images/assets/StaticBanner.png"
-            alt="Banner" 
+            alt="Banner"
+            loading={"lazy"}
             className="rounded-lg shadow-lg" 
           />
         </div>

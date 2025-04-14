@@ -230,7 +230,7 @@ export default function Home({ products }) {
       <h2 className="section__title" id="products">
         Featured Products
       </h2>
-      <Carousel products={filteredProducts} />
+      <Carousel products={filteredProducts} loading={ "lazy"}/>
       <Contact className="mt-2" />
     </Layout>
   );
