@@ -74,7 +74,7 @@ const Banner = () => {
                     alt="Surgical Supplies"
                     width={500}
                     height={500}
-                    loading="lazy"
+                    priority
                     className="rounded-lg w-[300px] h-[300px] md:w-[500px] md:h-[500px] object-cover"
                   />
                 </motion.div>
