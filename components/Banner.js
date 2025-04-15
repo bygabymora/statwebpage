@@ -72,7 +72,10 @@ const Banner = () => {
                 alt="Surgical Supplies"
                 width={500}
                 height={500}
-                priority={index === 0} // only the first as a priority for LCP 
+                priority={index === 0} // only the first as a priority for LCP
+                fetchPriority="high" 
+                quality={70}
+                placeholder="blur"
                 className="rounded-lg object-cover"
                 sizes="(max-width: 768px) 330px, (max-width: 1024px) 500px, 500px"
               />
