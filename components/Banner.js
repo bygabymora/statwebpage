@@ -4,9 +4,9 @@ import Banner1 from '../public/images/assets/banner1.webp';
 import Banner2 from '../public/images/assets/banner2.webp';
 import Banner3 from '../public/images/assets/banner3.webp';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FiPhoneForwarded } from 'react-icons/fi';
-import { TiShoppingCart } from "react-icons/ti";
+import { TiShoppingCart } from 'react-icons/ti';
 
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -15,7 +15,7 @@ const Banner = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
-    }, 5000); 
+    }, 5000);
     return () => clearInterval(interval);
   }, [banners.length]);
 
@@ -39,7 +39,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-              <TiShoppingCart />
+                <TiShoppingCart />
                 Shop Now
               </motion.button>
             </Link>
@@ -50,7 +50,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-              <FiPhoneForwarded />
+                <FiPhoneForwarded />
                 Contact Us
               </motion.button>
             </Link>
@@ -58,30 +58,26 @@ const Banner = () => {
         </div>
 
         <div className="relative w-[330px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
-          <AnimatePresence mode="popLayout">
-            {banners.map((banner, index) => (
-              index === currentBanner && (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 1.02 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 2 , ease: "easeInOut" }}
-                  className="absolute"
-                >
-                  <Image
-                    src={banner}
-                    alt="Surgical Supplies"
-                    width={500}
-                    height={500}
-                    priority
-                    className="rounded-lg object-cover"
-                    sizes="(max-width: 768px) 330px, (max-width: 1024px) 500px, 500px"
-                  />
-                </motion.div>
-              )
-            ))}
-          </AnimatePresence>
+          {banners.map((banner, index) => (
+            <motion.div
+              key={index}
+              className="absolute"
+              initial={false}
+              animate={{ opacity: index === currentBanner ? 1 : 0 }}
+              transition={{ duration: 1.5, ease: 'easeInOut' }}
+              style={{ pointerEvents: index === currentBanner ? 'auto' : 'none' }}
+            >
+              <Image
+                src={banner}
+                alt="Surgical Supplies"
+                width={500}
+                height={500}
+                priority={index === 0} // only the first as a priority for LCP 
+                className="rounded-lg object-cover"
+                sizes="(max-width: 768px) 330px, (max-width: 1024px) 500px, 500px"
+              />
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
