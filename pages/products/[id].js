@@ -301,17 +301,17 @@ export default function ProductScreen(props, i) {
         <div className="w-full max-w-lg flex flex-col items-center lg:items-start">
         <ul className="space-y-2">
           <li>
-            <h1 className="text-xl font-bold">{product.name}</h1>
+            <div className="text-xl font-bold text-[#144e8b]">{product.name}</div>
           </li>
           <li>
-            <h1 className="text-xl font-bold">{product.manufacturer}</h1>
+            <div className="text-xl font-bold text-[#144e8b]">{product.manufacturer}</div>
           </li>
           <li>
-            <h1 className="text-xl">{currentDescription}</h1>
+            <div className="text-xl font-bold text-[#144e8bee]">{currentDescription}</div>
           </li>
           {purchaseType === 'Clearance' && (
             <li>
-              <h1 className="text-xl text-red-500">Product on Clearance!</h1>
+              <div className="text-xl text-red-500">Product on Clearance!</div>
               <p>{product.notes}</p>
             </li>
           )}
@@ -321,7 +321,7 @@ export default function ProductScreen(props, i) {
               <br />
               <br />
               <br />
-              <h1 className="text-lg font-semibold">Shipping recomendations:</h1>
+              <div className="text-lg font-semibold text-[#144e8bee]">Shipping recomendations:</div>
               <p className="text-sm text-[#788b9b]">
                 It is recommended that this product ships overnight due to
                 temperature sensitivity. Stat Surgical Supply is not
@@ -447,7 +447,7 @@ export default function ProductScreen(props, i) {
              // If you only have Clearance, show it once without an "Add to Cart" button
               product.each?.clearanceCountInStock > 0 && (
                 <div className="my-5 text-center">
-                  <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+                  <div className="text-red-500 font-bold text-lg">Clearance</div>
                   {active === "loading" ? (
                     "Loading"
                   ) : active ? (

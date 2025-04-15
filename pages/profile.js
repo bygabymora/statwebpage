@@ -106,9 +106,9 @@ export default function ProfileScreen() {
       {showModifyForm && (
         <div className="mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9">
           <form onSubmit={handleSubmit(submitHandler)}>
-            <h1 className="text-2xl font-bold text-[#144e8b] text-center mb-6">
+            <div className="text-2xl font-bold text-[#144e8b] text-center mb-6">
               Update Profile
-            </h1>
+            </div>
             <div className="mb-4">
               <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="name">
                 Full Name *

@@ -474,7 +474,7 @@ export default function ShippingScreen() {
               )}
             </div>
             <div>
-              <h1 className="mb-4 my-4">Additional notes (Specific Instructions)</h1>
+              <div className="mb-4 my-4 font-bold text-[#144e8b]">Additional notes (Specific Instructions)</div>
               <textarea
                 className="w-full contact__form-input contact__message"
                 value={specialNotes}

@@ -105,7 +105,7 @@ const SearchPage = ({ query }) => {
               ref={form}
               onSubmit={submitHandler}
             >
-              <h1 className="mb-3">Product Needed</h1>
+              <div className="mb-4 font-bold text-[#144e8b]">Product Needed</div>
               <div className="contact__form-div" hidden>
                 <label className="contact__form-tag">Searched Word</label>
                 <input
