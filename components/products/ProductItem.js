@@ -10,7 +10,7 @@ import { useModalContext } from '../context/ModalContext';
 import handleSendEmails from '../../utils/alertSystem/documentRelatedEmail';
 import { messageManagement } from '../../utils/alertSystem/customers/messageManagement';
 
-export const ProductItem = ({ product, clearancePurchaseType }) => {
+export const ProductItem = ({ product, clearancePurchaseType, i }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
