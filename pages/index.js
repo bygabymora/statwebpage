@@ -223,7 +223,7 @@ export default function Home({ products }) {
   .slice(0, 9);
 
   return (
-    <Layout title="STAT Surgical Supply">
+    <Layout >
       <Banner />
       <StaticBanner />
       <Benefits className="mt-2"/>
