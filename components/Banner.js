@@ -76,6 +76,7 @@ const Banner = () => {
                     height={500}
                     priority
                     className="rounded-lg object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
                   />
                 </motion.div>
               )
