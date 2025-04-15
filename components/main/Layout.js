@@ -58,7 +58,7 @@ export default function Layout({ children, title, product, news, canonical, desc
   return (
     <div className="w-full" lang="en">
       <Head>
-        <title>{title ? `${title} | Stat Surgical Supply` : 'Stat Surgical Supply'}</title>
+      <title> {title && title !== 'Stat Surgical Supply' ? `${title} | Stat Surgical Supply` : 'Stat Surgical Supply'} </title>
         <meta
           name="description"
           content={
