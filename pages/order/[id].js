@@ -829,4 +829,5 @@ function OrderScreen() {
 }
 
 OrderScreen.auth = true;
+OrderScreen.usePayPal = true;
 export default OrderScreen;

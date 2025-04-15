@@ -3,20 +3,29 @@ import '../styles/global.css';
 import StoreProvider from '../utils/Store';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import dynamic from 'next/dynamic';
 import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
 import Script from 'next/script';
 import { reportWebVitals } from '../utils/reportWebVitals';
 import { ModalProvider } from '../components/context/ModalContext';
 
+// Lazy-load PayPalScriptProvider ONLY when needed
+const LazyPayPalScriptProvider = dynamic(
+  () => import('@paypal/react-paypal-js').then((mod) => mod.PayPalScriptProvider),
+  { ssr: false }
+);
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
+  const isProd = process.env.NODE_ENV === 'production';
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      window.gtag('config', 'G-3JJZVPL0B5', {
-        page_path: url,
-      });
+      if (window.gtag) {
+        window.gtag('config', 'G-3JJZVPL0B5', {
+          page_path: url,
+        });
+      }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -30,30 +39,43 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
       <ModalProvider>
         <StoreProvider>
           <CookieAcceptancePopup />
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5`}
-            strategy="afterInteractive"
-          />
-          <Script id="gtag-init" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-XXXXXX', {
-              page_path: window.location.pathname,
-              });
-            `}
-          </Script>
 
-          <PayPalScriptProvider deferLoading={true}>
-            {Component.auth ? (
-              <Auth adminOnly={Component.auth.adminOnly}>
+          {isProd && (
+            <>
+              <Script
+                src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
+                strategy="afterInteractive"
+              />
+              <Script id="gtag-init" strategy="afterInteractive">
+                {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-3JJZVPL0B5', {
+                    page_path: window.location.pathname,
+                  });
+                `}
+              </Script>
+            </>
+          )}
+
+          {Component.usePayPal ? (
+            <LazyPayPalScriptProvider deferLoading={true}>
+              {Component.auth ? (
+                <Auth adminOnly={Component.auth.adminOnly}>
+                  <Component {...pageProps} />
+                </Auth>
+              ) : (
                 <Component {...pageProps} />
-              </Auth>
-            ) : (
+              )}
+            </LazyPayPalScriptProvider>
+          ) : Component.auth ? (
+            <Auth adminOnly={Component.auth.adminOnly}>
               <Component {...pageProps} />
-            )}
-          </PayPalScriptProvider>
+            </Auth>
+          ) : (
+            <Component {...pageProps} />
+          )}
         </StoreProvider>
       </ModalProvider>
     </SessionProvider>
@@ -69,10 +91,9 @@ function Auth({ children, adminOnly }) {
     },
   });
 
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-  if (adminOnly && !session.user.isAdmin) {
+  if (status === 'loading') return <div>Loading...</div>;
+
+  if (adminOnly && !session.user?.isAdmin) {
     router.push('/unauthorized?message=Admin login required to access page');
     return <div>Redirecting...</div>;
   }

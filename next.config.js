@@ -1,7 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true,
   productionBrowserSourceMaps: true,
+  experimental: {
+    modularizeImports: {
+      'lodash': {
+        transform: 'lodash/{{member}}',
+      },
+    },
+  },
   images: {
     remotePatterns: [
       {
