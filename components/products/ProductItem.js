@@ -230,7 +230,7 @@ export const ProductItem = ({ product, clearancePurchaseType }) => {
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
               quality={5}
-              priority
+              priority={i === 0}
             />
           </div>
         </Link>

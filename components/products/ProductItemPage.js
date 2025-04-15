@@ -217,7 +217,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType }, r
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
-              priority
+              priority={i === 0}
             />
           </div>
         </Link>

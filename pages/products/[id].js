@@ -262,7 +262,7 @@ export default function ProductScreen(props) {
               className="rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300" // <-- Added no-drag class here
               onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
               onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
-              priority
+              priority={i === 0}
             />
             {isHovered && (
               <div
