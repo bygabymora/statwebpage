@@ -38,7 +38,7 @@ const CookieAcceptancePopup = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-center sm:text-left text-sm leading-relaxed">
             We use cookies to enhance your experience. By continuing to use our website, you agree to our use of cookies.
-            <Link href="/privacy-policy" className="ml-1 text-[#144e8b] font-semibold hover:underline">
+            <Link href="/privacy-policy" prefetch={false} className="ml-1 text-[#144e8b] font-semibold hover:underline">
               Learn about our privacy policy
             </Link>
           </p>

@@ -32,9 +32,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <CookieAcceptancePopup />
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5`}
-            strategy="lazyOnload"
+            strategy="afterInteractive"
           />
-          <Script id="gtag-init" strategy="lazyOnload">
+          <Script id="gtag-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}

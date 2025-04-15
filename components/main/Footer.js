@@ -75,7 +75,7 @@ export default function Footer() {
             <Link href="/faqs">FAQs</Link>
             <Link href="/return-policy">Return Policy</Link>
             <Link href="/terms-of-use">Terms of Use</Link>
-            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/privacy-policy" prefetch={false}>Privacy Policy</Link>
           </div>
         </section>
       </div>
