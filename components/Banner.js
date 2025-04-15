@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Banner1 from '../public/images/assets/banner1.svg';
+import Banner1 from '../public/images/assets/banner1.webp';
 import Banner2 from '../public/images/assets/banner2.webp';
-import Banner3 from '../public/images/assets/banner3.svg';
+import Banner3 from '../public/images/assets/banner3.webp';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPhoneForwarded } from 'react-icons/fi';
@@ -75,7 +75,7 @@ const Banner = () => {
                     width={500}
                     height={500}
                     priority
-                    className="rounded-lg w-[300px] h-[300px] md:w-[500px] md:h-[500px] object-cover"
+                    className="rounded-lg object-cover"
                   />
                 </motion.div>
               )
