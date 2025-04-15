@@ -39,7 +39,7 @@ const CookieAcceptancePopup = () => {
           <p className="text-center sm:text-left text-sm leading-relaxed">
             We use cookies to enhance your experience. By continuing to use our website, you agree to our use of cookies.
             <Link href="/privacy-policy" className="ml-1 text-[#144e8b] font-semibold hover:underline">
-              Learn more
+              Learn about our privacy policy
             </Link>
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-end">
