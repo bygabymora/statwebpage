@@ -35,7 +35,7 @@ export async function getServerSideProps({ params }) {
   };
 }
 
-export default function ProductScreen(props) {
+export default function ProductScreen(props, i) {
   const { product } = props;
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
