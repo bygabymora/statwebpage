@@ -172,11 +172,11 @@ function Carousel({ products }) {
   };
 
   return (
-    <div className="carousel-container" lang="en">
+    <div className="carousel-container" lang="en-US">
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
-        className="w-full mt-3 flex flex-row items-center justify-center"
+        className="w-full mt-3 flex flex-row items-center justify-center text-[#144e8b]"
       >
         <BiSkipPreviousCircle className="text-lg" />
         &nbsp;Prev
@@ -204,7 +204,7 @@ function Carousel({ products }) {
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
-        className="w-full mt-3 flex flex-row items-center justify-center card"
+        className="w-full mt-3 flex flex-row items-center justify-center text-[#144e8b] card"
       >
         Next &nbsp; <BiSkipNextCircle className="text-lg" />
       </button>

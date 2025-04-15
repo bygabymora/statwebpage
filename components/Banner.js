@@ -27,7 +27,7 @@ const Banner = () => {
           <div className="text-4xl font-bold mb-6 text-[#144e8b]">
             Welcome to STAT Surgical Supply
           </div>
-          <p className="text-lg text-text-color text-center mb-6">
+          <p className="text-lg text-[#414b53de] text-center mb-6">
             High-Quality Surgical Supplies at Unmatched Prices. <br />
             Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.
           </p>

@@ -56,7 +56,7 @@ export default function Layout({ children, title, product, news, canonical, desc
   }, [session]);
 
   return (
-    <div className="w-full" lang="en">
+    <div className="w-full" lang="en-US">
       <Head>
       <title>   {title ? `${title} | Stat Surgical Supply` : 'Stat Surgical Supply'} </title>
         <meta
