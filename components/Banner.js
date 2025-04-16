@@ -17,7 +17,7 @@ const Banner = () => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [banners.length]);
+  }, []);
 
   return (
     <div className="text-title-color-dark text-center">
@@ -57,11 +57,11 @@ const Banner = () => {
           </div>
         </div>
 
-        <div className="relative w-[330px] h-[350px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden">
+        <div className="relative w-full max-w-[500px] aspect-[1/1] mx-auto">
           {banners.map((banner, index) => (
             <motion.div
               key={index}
-              className="absolute"
+              className="absolute inset-0"
               initial={false}
               animate={{ opacity: index === currentBanner ? 1 : 0 }}
               transition={{ duration: 1.5, ease: 'easeInOut' }}
@@ -70,10 +70,8 @@ const Banner = () => {
               <Image
                 src={banner}
                 alt="Surgical Supplies"
-                width={500}
-                height={500}
-                priority={index === 0} // only the first as a priority for LCP
-                fetchPriority="high" 
+                fill
+                priority={index === 0}
                 className="rounded-lg object-cover"
                 sizes="(max-width: 768px) 330px, (max-width: 1024px) 500px, 500px"
               />

@@ -159,7 +159,7 @@ const Menu = () => {
 
             {item.subcategories.length > 0 && (
               <div
-                className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 max-h-80 overflow-y-auto 
+                className={`absolute left-1/2 -translate-x-1/2 top-full w-80 max-h-80 overflow-y-auto 
                 bg-gray-100 shadow-2xl rounded-lg border border-gray-200 transition-all duration-200 z-50 ${
                   activeIndex === index
                     ? "opacity-100 translate-y-0 pointer-events-auto"
