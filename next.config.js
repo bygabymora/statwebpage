@@ -10,6 +10,13 @@ const nextConfig = {
       },
     },
   },
+  webpack(config) {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      buffer: false,
+    };
+    return config;
+  },
   images: {
     remotePatterns: [
       {
