@@ -4,6 +4,7 @@ const nextConfig = {
   swcMinify: true,
   productionBrowserSourceMaps: true,
   experimental: {
+    modern: true,
     modularizeImports: {
       'lodash': {
         transform: 'lodash/{{member}}',
