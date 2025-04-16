@@ -136,7 +136,7 @@ const Header = () => {
                 </button>
               </div>
               {suggestions.length > 0 && (
-                <div className="suggestions-list absolute w-full mt-1 bg-white shadow-md top-full">
+                <div className="suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999]">
                   {suggestions.map((product, idx) => (
                     <div key={idx} className="p-2 hover:bg-gray-100 cursor-pointer" onMouseDown={() => handleSuggestionClick(product.name)}>
                       {product.name}

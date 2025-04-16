@@ -118,7 +118,7 @@ const SearchPage = ({ query }) => {
               </div>
               <div className="contact__form-div">
                 <label className="contact__form-tag">Reference*</label>
-              <input
+                <input
                   type="text"
                   placeholder="Please enter the product reference"
                   name="name"
@@ -126,8 +126,8 @@ const SearchPage = ({ query }) => {
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                   required
-              />
-            </div>
+                />
+              </div>
               <div className="contact__form-div">
                 <label className="contact__form-tag">Manufacturer*</label>
                 <input
@@ -192,14 +192,14 @@ const SearchPage = ({ query }) => {
 
               <div className="contact__form-div">
                 <label className="contact__form-tag">Message*</label>
-            <textarea
-              name="message"
+                <textarea
+                  name="message"
                   className="contact__form-input contact__message"
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-              required
-            />
-          </div>
+                  onChange={(e) => setMessage(e.target.value)}
+                  value={message}
+                  required
+                />
+              </div>
               <button className="button button--flex btn-contact w-full flex items-center justify-center">
                 <span className="text-white">Send Your Request {tab} </span>
                 <BiMessageAdd className="text-white ml-2" />
