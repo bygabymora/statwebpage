@@ -33,7 +33,7 @@ const CookieAcceptancePopup = () => {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 30, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-4 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto sm:w-[95%] max-w-xl mx-auto p-5 sm:p-6 bg-white/90 backdrop-blur-md border border-gray-300 shadow-xl rounded-xl z-50 text-sm text-[#414b53]"
+        className="fixed bottom-4 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto sm:w-[95%] max-w-xl mx-auto p-5 sm:p-6 bg-white/90 backdrop-blur-md border border-gray-300 shadow-xl rounded-xl z-[9999] text-sm text-[#414b53]"
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-center sm:text-left text-sm leading-relaxed">
