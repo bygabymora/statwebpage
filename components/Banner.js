@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Banner1 from '../public/images/assets/banner1.webp';
-import Banner2 from '../public/images/assets/banner2.webp';
-import Banner3 from '../public/images/assets/banner3.webp';
+import Banner2 from '../public/images/assets/banner2.svg';
+import Banner3 from '../public/images/assets/banner3.svg';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiPhoneForwarded } from 'react-icons/fi';
