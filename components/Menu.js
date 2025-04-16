@@ -15,7 +15,7 @@ const menuItems = [
     ]
   },
   {
-    title: <Link href="/products">Manufacturers</Link>,
+    title: "Manufacturers",
     subcategories: [] // Initially empty, it will be filled with manufacturers from the API
   },
   {
@@ -112,19 +112,30 @@ const Menu = () => {
   if (isSmallScreen) return null;
 
   const updatedMenuItems = menuItems.map(item => {
-    if (item.title === "Manufacturers") {
+    if (item.title === "Manufacturers" || (typeof item.title === 'object' && item.title.props?.children === "Manufacturers")) {
       return {
         ...item,
+        title: (
+          <span
+            onClick={(e) => {
+              e.preventDefault(); // Prevents submenu from closing
+              window.location.href = "/products";
+            }}
+            className="cursor-pointer hover:text-[#03793d]"
+          >
+            Manufacturers
+          </span>
+        ),
         subcategories: [
           {
             title: "Manufacturers",
             links: manufacturers
-            .filter(m => typeof m === 'string' && m.trim() !== '')
-            .map(manufacturer => ({
-              name: manufacturer,
-              href: `/products?manufacturer=${(manufacturer)}`,
-              onClick: () => setSelectedManufacturer(manufacturer)
-            }))
+              .filter(m => typeof m === 'string' && m.trim() !== '')
+              .map(manufacturer => ({
+                name: manufacturer,
+                href: `/products?manufacturer=${(manufacturer)}`,
+                onClick: () => setSelectedManufacturer(manufacturer)
+              }))
           }
         ]
       };
