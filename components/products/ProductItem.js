@@ -246,7 +246,6 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
               </div>
             </div>
           </Link>
-
           {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && active && currentCountInStock > 0 && (
             <div className="mb-2 flex items-center justify-center lg:block">
               <div className="font-bold mt-4">Quantity &nbsp;</div>
@@ -302,7 +301,6 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
           )}
         </div>
       </div>
-
       {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
         <div>
           {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
@@ -359,26 +357,26 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
               </div>
             ) : null
           ) : (
-          // If you only have Clearance, show it once without an "Add to Cart" button
-          product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && ( 
-            <div className="my-5 text-center">
-              <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
-              {active === "loading" ? (
-               "Loading"
-              ) : active ? (
-                <div className="mb-2 flex justify-center">
-                  <div className="font-bold">Price:</div>
-                  <div className="ml-2 text-[#788b9b]">
-                    $ {product.clearance?.price || 'Call for Price'}
+            // If you only have Clearance, show it once without an "Add to Cart" button
+            product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && ( 
+              <div className="my-5 text-center">
+                <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+                {active === "loading" ? (
+                  "Loading"
+                ) : active ? (
+                  <div className="mb-2 flex justify-center">
+                    <div className="font-bold">Price:</div>
+                    <div className="ml-2 text-[#788b9b]">
+                      $ {product.clearance?.price || 'Call for Price'}
+                    </div>
                   </div>
-                </div>
-              ) : null}
-              <div className="text-[#414b53]">{product.notes}</div>
-            </div>
+                ) : null}
+                <div className="text-[#414b53]">{product.notes}</div>
+              </div>
             ) 
-            )}
+          )}
             {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-              product.box?.quickBooksQuantityOnHandProduction > 0) && (
+            product.box?.quickBooksQuantityOnHandProduction > 0) && (
               <div className="mb-2 flex justify-center gap-5 m-2 text-center items-center">
                 <div className="flex-column">
                   <div className="font-bold">Status</div>
@@ -386,13 +384,13 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
                     {(purchaseType === 'Each' && isOutOfStock) ||
                     (purchaseType === 'Box' && isOutOfStockBox) ||
                     (purchaseType === 'Clearance' && isOutOfStockClearance)
-                      ? 'Out of Stock'
-                      : 'In Stock'}
+                    ? 'Out of Stock'
+                    : 'In Stock'}
                   </div>
                 </div>
                 {active === "loading" ? (
                   "Loading"
-                  ) : (
+                ) : (
                   active && (
                     <button
                       className="primary-button align-middle"
@@ -403,7 +401,7 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
                         (purchaseType === 'Box' && isOutOfStockBox) ||
                         (purchaseType === 'Clearance' && isOutOfStockClearance)
                       }
-                      >
+                    >
                       {(purchaseType === 'Each' && isOutOfStock) ||
                       (purchaseType === 'Box' && isOutOfStockBox) ||
                       (purchaseType === 'Clearance' && isOutOfStockClearance)
@@ -414,7 +412,7 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
                 )}
               </div>
             )}
-        </div>
+          </div>
       )}
       {(  
         (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||

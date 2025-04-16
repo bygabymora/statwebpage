@@ -35,7 +35,6 @@ export default function BenefitsSection() {
       <p className="text-center text-lg text-gray-600 mt-2">
         Discover why we are the trusted choice in surgical supplies.
       </p>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10">
         {benefits.map((benefit, index) => (
           <div 
