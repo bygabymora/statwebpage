@@ -184,7 +184,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType, i }
     }
 
     const emailMessage = messageManagement(contactToEmail, "Product Wait List");
-    handleSendEmails(emailMessage, contactToEmail);
+   handleSendEmails(emailMessage, contactToEmail);
 
     // Clear form fields after submission
     setName("");
@@ -291,120 +291,120 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType, i }
           )}
         </div>
       </div>
-        {(  
-            (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
-            (purchaseType === 'Box' && (isOutOfStockBox || currentCountInStock <= 0)) ||
-            (purchaseType === 'Clearance' && isOutOfStockClearance)
-          ) && (
-          <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
-            <label className="mt-3 font-bold">Join Our Wait List</label>
+      {(  
+        (purchaseType === 'Each' && (isOutOfStock || currentCountInStock <= 0)) ||
+        (purchaseType === 'Box' && (isOutOfStockBox || currentCountInStock <= 0)) ||
+        (purchaseType === 'Clearance' && isOutOfStockClearance)
+      ) && (
+        <form className="text-center p-2" ref={form} onSubmit={sendEmail}>
+          <label className="mt-3 font-bold">Join Our Wait List</label>
 
-            <input
-              type="text"
-              name="user_name"
-              className="contact__form-input"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              placeholder="Name"
-              required
-            />
+          <input
+            type="text"
+            name="user_name"
+            className="contact__form-input"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            placeholder="Name"
+            required
+          />
 
-            <input
-              type="email"
-              name="user_email"
-              className="contact__form-input mt-2"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              placeholder="Email"
-              required
-            />
+          <input
+            type="email"
+            name="user_email"
+            className="contact__form-input mt-2"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            placeholder="Email"
+            required
+          />
 
-            <input
-              type="text"
-              name="emailManufacturer"
-              className="contact__form-input"
-              value={emailManufacturer}
-              disabled
-              hidden
-            />
-              <button className="primary-button mt-3" type="submit">
-                Submit
-              </button>
-          </form>
-        )}
-        {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
-          <div>
-            {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+          <input
+            type="text"
+            name="emailManufacturer"
+            className="contact__form-input"
+            value={emailManufacturer}
+            disabled
+            hidden
+          />
+            <button className="primary-button mt-3" type="submit">
+              Submit
+            </button>
+        </form>
+      )}
+      {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
+        <div>
+          {product.each?.quickBooksQuantityOnHandProduction > 0 || product.box?.quickBooksQuantityOnHandProduction > 0 ? (
             purchaseType === 'Each' || purchaseType === 'Box' ? (
-            <div className="flex justify-between items-center gap-2 mx-10 mt-5">
-            {active === "loading" ? (
-              "Loading"
-            ) : (
-              active && (
-                <div className="mb-2 justify-between">
-                  <div className="font-bold">U o M &nbsp;</div>
-                  <select
-                    value={purchaseType}
-                    onChange={(e) => {
-                      setPurchaseType(e.target.value);
-                      if (e.target.value === 'Each' && product.each) {
-                        setCurrentPrice(product.each?.wpPrice || 0);
-                        setCurrentDescription(product.each?.description || '');
-                        setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
-                      } else if (e.target.value === 'Box' && product.box) {
-                        setCurrentPrice(product.box?.wpPrice || 0);
-                        setCurrentDescription(product.box?.description || '');
-                        setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
-                      } else if (e.target.value === 'Clearance' && product.clearance) {
-                        setCurrentPrice(product.clearance?.price || 0);
-                        setCurrentDescription(product.clearance?.description || '');
-                        setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
-                      }
-                    }}
-                  >
-                    {product.each?.quickBooksQuantityOnHandProduction > 0 && (
-                      <option value="Each">Each</option>
-                    )}
-                    {product.box?.quickBooksQuantityOnHandProduction > 0 && (
-                      <option value="Box">Box</option>
-                    )}
-                    {product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
-                      <option value="Clearance">Clearance</option>
-                    )}
-                  </select>
-                </div>
-              )
-            )}
-            {active === "loading" ? (
-              "Loading"
-            ) : (
-              active && (
-                <div className="mb-2 justify-between">
-                  <div className="font-bold">Price</div>
-                  {hasPrice ? `$${currentPrice}` : "Call for Price"}
-                </div>
-              )
-            )}
-          </div>
-        ) : null
-      ) : (
-        // If you only have Clearance, show it once without an "Add to Cart" button
-        product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
-          <div className="my-5 text-center">
-            <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
-            {active === "loading" ? (
-              "Loading"
-            ) : active ? (
-              <div className="mb-2 flex justify-center">
-                <div className="font-bold">Price:</div>
-                <div className="ml-2 text-[#788b9b]">
-                  $ {product.clearance?.price || 'Call for Price'}
-                </div>
+              <div className="flex justify-between items-center gap-2 mx-10 mt-5">
+                {active === "loading" ? (
+                  "Loading"
+                ) : (
+                  active && (
+                    <div className="mb-2 justify-between">
+                      <div className="font-bold">U o M &nbsp;</div>
+                      <select
+                        value={purchaseType}
+                        onChange={(e) => {
+                          setPurchaseType(e.target.value);
+                          if (e.target.value === 'Each' && product.each) {
+                            setCurrentPrice(product.each?.wpPrice || 0);
+                            setCurrentDescription(product.each?.description || '');
+                            setCurrentCountInStock(product.each?.quickBooksQuantityOnHandProduction || 0);
+                          } else if (e.target.value === 'Box' && product.box) {
+                            setCurrentPrice(product.box?.wpPrice || 0);
+                            setCurrentDescription(product.box?.description || '');
+                            setCurrentCountInStock(product.box?.quickBooksQuantityOnHandProduction || 0);
+                          } else if (e.target.value === 'Clearance' && product.clearance) {
+                            setCurrentPrice(product.clearance?.price || 0);
+                            setCurrentDescription(product.clearance?.description || '');
+                            setCurrentCountInStock(product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
+                          }
+                        }}
+                      >
+                        {product.each?.quickBooksQuantityOnHandProduction > 0 && (
+                          <option value="Each">Each</option>
+                        )}
+                        {product.box?.quickBooksQuantityOnHandProduction > 0 && (
+                          <option value="Box">Box</option>
+                        )}
+                        {product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
+                          <option value="Clearance">Clearance</option>
+                        )}
+                      </select>
+                    </div>
+                  )
+                )}
+                {active === "loading" ? (
+                  "Loading"
+                ) : (
+                  active && (
+                    <div className="mb-2 justify-between">
+                      <div className="font-bold">Price</div>
+                      {hasPrice ? `$${currentPrice}` : "Call for Price"}
+                    </div>
+                  )
+                )}
               </div>
-            ) : null}
-            <div className="text-[#414b53]">{product.notes}</div>
-          </div>
-        )
+            ) : null
+          ) : (
+          // If you only have Clearance, show it once without an "Add to Cart" button
+          product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0 && (
+            <div className="my-5 text-center">
+              <h1 className="text-red-500 font-bold text-lg">Clearance</h1>
+              {active === "loading" ? (
+                "Loading"
+              ) : active ? (
+                <div className="mb-2 flex justify-center">
+                  <div className="font-bold">Price:</div>
+                  <div className="ml-2 text-[#788b9b]">
+                    $ {product.clearance?.price || 'Call for Price'}
+                  </div>
+                </div>
+              ) : null}
+              <div className="text-[#414b53]">{product.notes}</div>
+            </div>
+          )
           )}
           {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
             product.box?.quickBooksQuantityOnHandProduction > 0) && (
@@ -444,8 +444,8 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType, i }
                         {(purchaseType === 'Each' && isOutOfStock) ||
                          (purchaseType === 'Box' && isOutOfStockBox) ||
                          (purchaseType === 'Clearance' && isOutOfStockClearance)
-                            ? 'Out of Stock'
-                            : 'Add to Cart'}
+                          ? 'Out of Stock'
+                          : 'Add to Cart'}
                       </button>
                     )}
                   </>

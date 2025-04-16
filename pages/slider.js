@@ -26,7 +26,7 @@ const benefits = [
     description: "Email, phone, or visit our location.", 
     link: "/support" 
   }
-];
+]; 
 
 export default function BenefitsSection() {
   return (
