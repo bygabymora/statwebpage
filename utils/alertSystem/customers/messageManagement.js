@@ -122,7 +122,7 @@ export const messageManagement = (contact, actionName, message) => {
           emailMessage = {
             ...emailMessage,
             subject: `Welcome to Our Newsletter! - ${contact.name}`,
-            p1: `<div style="font-weight: light; font-size: 17px; color: #333333;">
+            p1: `<div style="font-weight: light; font-size: 15px; color: #333333;">
                    ${contact.name}, Thank you for subscribing to our newsletter! We're excited to keep you updated with the latest news, exclusive offers, and valuable insights.
                  </div>`,
             p2: `<div style="font-weight: light; font-size: 18px; color: #333333;">
@@ -130,7 +130,7 @@ export const messageManagement = (contact, actionName, message) => {
                  </div>`,
             p3: `<div style="font-weight: light; font-size: 15px; color: #333333;">
                    We appreciate having you as part of our community! <br><br>
-                   Best regards, <br>
+                   Best regards, <br><br>
                    <strong> Stat Surgical Supply </strong>
                  </div>`,
           };
