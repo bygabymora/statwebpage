@@ -34,9 +34,7 @@ function CartScreen() {
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
-    console.log("Actualizando item:", item);
-    console.log("Nueva cantidad:", quantity);
-
+    
     const { data } = await axios.get(`/api/products/${item._id}`);
 
     if (data.purchaseType === 'Each' && item.each?.quickBooksQuantityOnHandProduction < quantity) {

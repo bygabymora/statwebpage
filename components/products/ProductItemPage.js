@@ -67,10 +67,6 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType, i }
   }, [purchaseType, product.each]);
 
   useEffect(() => {
-    console.log("Product Data: ", product);
-  }, [product]);
-
-  useEffect(() => {
     if (clearancePurchaseType) {
       setPurchaseType('Clearance');
       setCurrentPrice(product.clearance?.price ?? null);
