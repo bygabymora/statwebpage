@@ -454,7 +454,7 @@ export const ProductItemPage = forwardRef(({ product, clearancePurchaseType, i }
             </div>
           )}
         </div>
-        )}
+      )}
     </div>
   );
 } );
