@@ -14,9 +14,9 @@ const StatusMessage = ({ type, message, isVisible }) => {
       className={`fixed ${bgColor} ${borderColor} ${textColor} px-1 rounded z-50
         left-[0.5rem] top-[80%] h-[2rem] w-auto flex items-center justify-center transform -rotate-90 origin-top-left
         overflow-visible md:top-[9rem] md:right-2 md:w-full md:h-[2rem] md:rotate-0 md:text-base`}
-      role="alert"
+      role='alert'
     >
-      <span className="block text-center">{message}</span>
+      <span className='block text-center'>{message}</span>
       {console.log("StatusMessage", type, message)}
     </div>
   );

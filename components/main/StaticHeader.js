@@ -6,11 +6,13 @@ import { FaHandsHelping, FaBoxOpen } from "react-icons/fa";
 const messages = [
   {
     text: "Welcome to Stat Surgical Supply!",
-    icon: <FaHandsHelping className="text-xl text-[#144e8b] animate-bounce mr-2" />,
+    icon: (
+      <FaHandsHelping className='text-xl text-[#144e8b] animate-bounce mr-2' />
+    ),
   },
   {
     text: "We work with top manufacturers to bring you the best products!",
-    icon: <FaBoxOpen className="text-xl text-[#144e8b] animate-bounce mr-2" />,
+    icon: <FaBoxOpen className='text-xl text-[#144e8b] animate-bounce mr-2' />,
   },
 ];
 
@@ -29,15 +31,15 @@ const StaticHeader = () => {
   if (pathname !== "/products") return null;
 
   return (
-    <div className="bg-[#f5f5f5fb] text-[#144e8b] text-center py-2 text-lg font-semibold flex justify-center items-center gap-2">
-     <AnimatePresence mode="wait">
+    <div className='bg-[#f5f5f5fb] text-[#144e8b] text-center py-2 text-lg font-semibold flex justify-center items-center gap-2'>
+      <AnimatePresence mode='wait'>
         <motion.div
           key={currentMessageIndex}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center gap-2"
+          className='flex items-center gap-2'
         >
           {messages[currentMessageIndex].icon}
           <span>{messages[currentMessageIndex].text}</span>

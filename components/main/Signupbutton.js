@@ -1,17 +1,20 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { BsPerson } from 'react-icons/bs';
-import { signOut, useSession } from 'next-auth/react';
-import { Menu } from '@headlessui/react';
-import DropdownLink from '../DropdownLink';
-import Cookies from 'js-cookie';
-import { Store } from '../../utils/Store';
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { BsPerson } from "react-icons/bs";
+import { signOut, useSession } from "next-auth/react";
+import { Menu } from "@headlessui/react";
+import DropdownLink from "../DropdownLink";
+import Cookies from "js-cookie";
+import { Store } from "../../utils/Store";
 
 const SignupButton = () => {
   const { status, data: session } = useSession();
   const { dispatch } = useContext(Store);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
+  const active =
+    session?.user?.active &&
+    session?.user?.approved &&
+    status === "authenticated";
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -20,10 +23,10 @@ const SignupButton = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
 
@@ -32,51 +35,69 @@ const SignupButton = () => {
   };
 
   const logoutClickHandler = () => {
-    Cookies.remove('cart');
-    dispatch({ type: 'CART_RESET' });
-    signOut({ callbackUrl: '/Login' });
+    Cookies.remove("cart");
+    dispatch({ type: "CART_RESET" });
+    signOut({ callbackUrl: "/Login" });
   };
 
   return (
-    <div className="relative">
-      <Menu as="div" className="flex items-center">
-        <Menu.Button className="p-2" aria-label="user">
-          <BsPerson  className="text-[#03793d] text-3xl cursor-pointer" onClick={handleMenuToggle} />
+    <div className='relative'>
+      <Menu as='div' className='flex items-center'>
+        <Menu.Button className='p-2' aria-label='user'>
+          <BsPerson
+            className='text-[#03793d] text-3xl cursor-pointer'
+            onClick={handleMenuToggle}
+          />
         </Menu.Button>
 
         {menuOpen && (
           <div
             ref={menuRef}
-            className="absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200"
-            role="menu"
-            aria-orientation="vertical"
+            className='absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200'
+            role='menu'
+            aria-orientation='vertical'
           >
-            {status === 'loading' ? (
-              <div className="p-4 text-center text-gray-700">Loading...</div>
+            {status === "loading" ? (
+              <div className='p-4 text-center text-gray-700'>Loading...</div>
             ) : session?.user ? (
-              <Menu.Items className="divide-y divide-gray-200">
-                <div className="px-4 py-2 text-sm text-[#03793d] font-semibold">Hello, {session.user.name}</div>
+              <Menu.Items className='divide-y divide-gray-200'>
+                <div className='px-4 py-2 text-sm text-[#03793d] font-semibold'>
+                  Hello, {session.user.name}
+                </div>
                 <Menu.Item>
-                  <DropdownLink href="/profile" className="block px-4 py-2 hover:bg-[#f4f4f4]">Profile</DropdownLink>
+                  <DropdownLink
+                    href='/profile'
+                    className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                  >
+                    Profile
+                  </DropdownLink>
                 </Menu.Item>
-                {active === "loading" ? (
-              "Loading"
-            ) : (
-              active && (
-                <Menu.Item>
-                  <DropdownLink href="/order-history" className="block px-4 py-2 hover:bg-[#f4f4f4]">Order History</DropdownLink>
-                </Menu.Item>
-                )
-              )}
+                {active === "loading"
+                  ? "Loading"
+                  : active && (
+                      <Menu.Item>
+                        <DropdownLink
+                          href='/order-history'
+                          className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                        >
+                          Order History
+                        </DropdownLink>
+                      </Menu.Item>
+                    )}
                 {session.user.isAdmin && (
                   <Menu.Item>
-                    <DropdownLink href="/admin/dashboard" className="block px-4 py-2 hover:bg-[#f4f4f4]">Admin Dashboard</DropdownLink>
+                    <DropdownLink
+                      href='/admin/dashboard'
+                      className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                    >
+                      Admin Dashboard
+                    </DropdownLink>
                   </Menu.Item>
                 )}
                 <Menu.Item>
                   <button
                     onClick={logoutClickHandler}
-                    className="block w-full text-left px-4 py-2 hover:bg-[#f4f4f4]"
+                    className='block w-full text-left px-4 py-2 hover:bg-[#f4f4f4]'
                   >
                     Log Out
                   </button>
@@ -85,10 +106,20 @@ const SignupButton = () => {
             ) : (
               <Menu.Items>
                 <Menu.Item>
-                  <DropdownLink href="/Login" className="block px-4 py-2 hover:bg-[#f4f4f4]">Login</DropdownLink>
+                  <DropdownLink
+                    href='/Login'
+                    className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                  >
+                    Login
+                  </DropdownLink>
                 </Menu.Item>
                 <Menu.Item>
-                  <DropdownLink href="/Register" className="block px-4 py-2 hover:bg-[#f4f4f4]">Register</DropdownLink>
+                  <DropdownLink
+                    href='/Register'
+                    className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                  >
+                    Register
+                  </DropdownLink>
                 </Menu.Item>
               </Menu.Items>
             )}
