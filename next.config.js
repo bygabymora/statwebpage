@@ -1,16 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   productionBrowserSourceMaps: true,
-  experimental: {
-    modern: true,
-    modularizeImports: {
-      'lodash': {
-        transform: 'lodash/{{member}}',
-      },
-    },
-  },
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback,
