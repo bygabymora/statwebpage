@@ -2,15 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import Layout from "../../components/main/Layout";
 import { ProductItemPage } from "../../components/products/ProductItemPage";
 import { AiOutlineMenuFold } from "react-icons/ai";
-import axios from 'axios';
+import axios from "axios";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 export default function Products() {
   const router = useRouter();
   const { manufacturer } = router.query; // Get the query parameter from the URL
-  const [selectedManufacturer, setSelectedManufacturer] = useState(manufacturer || null);
+  const [selectedManufacturer, setSelectedManufacturer] = useState(
+    manufacturer || null
+  );
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
   const firstProductRef = useRef(null);
@@ -47,54 +49,60 @@ export default function Products() {
 
   const filteredProducts = selectedManufacturer
     ? products.filter(
-        (product) => product.manufacturer.trim().toLowerCase() === selectedManufacturer.trim().toLowerCase()
+        (product) =>
+          product.manufacturer.trim().toLowerCase() ===
+          selectedManufacturer.trim().toLowerCase()
       )
     : products;
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
-    router.push(`/products?manufacturer=${encodeURIComponent(manufacturer)}`, undefined, { shallow: true });
+    router.push(
+      `/products?manufacturer=${encodeURIComponent(manufacturer)}`,
+      undefined,
+      { shallow: true }
+    );
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleShowAll = () => {
     setSelectedManufacturer(null);
-    router.push('/products', undefined, { shallow: true });
+    router.push("/products", undefined, { shallow: true });
   };
 
-  const breadcrumbs = [
-    { name: "Home", href: "/" },
-    { name: "Products" },
-  ];
+  const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
 
   return (
-    <Layout title="Products">
-      <nav className="text-sm text-gray-700">
-        <ul className="flex ml-0 lg:ml-20 items-center space-x-2">
+    <Layout title='Products'>
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
-            <li key={index} className="flex items-center">
+            <li key={index} className='flex items-center'>
               {breadcrumb.href ? (
-                <Link href={breadcrumb.href} className="hover:underline text-[#144e8b]">
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#144e8b]'
+                >
                   {breadcrumb.name}
                 </Link>
               ) : (
                 <span>{breadcrumb.name}</span>
               )}
               {index < breadcrumbs.length - 1 && (
-                <BsChevronRight className="mx-2 text-gray-500" />
+                <BsChevronRight className='mx-2 text-gray-500' />
               )}
             </li>
           ))}
         </ul>
       </nav>
-      <div className="grid grid-cols-1 md:grid-cols-4">
-        <div className="md:col-span-1 p-4">
-          <div className="block md:hidden mb-4">
+      <div className='grid grid-cols-1 md:grid-cols-4'>
+        <div className='md:col-span-1 p-4'>
+          <div className='block md:hidden mb-4'>
             <button
-              className="bg-[#144e8b] px-4 py-2 rounded"
+              className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}
             >
-              <AiOutlineMenuFold color="white"/>
+              <AiOutlineMenuFold color='white' />
             </button>
           </div>
           <ul
@@ -113,37 +121,38 @@ export default function Products() {
               ALL PRODUCTS
             </div>
             <h2
-              className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
-              id="manufacturers"
+              className='block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3'
+              id='manufacturers'
             >
               Manufacturers
             </h2>
-            {manufacturers.map((manufacturer, index) => (
-              <div
-                key={index}
-                onClick={() => handleManufacturerClick(manufacturer)}
-                className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
-                  selectedManufacturer === manufacturer
-                    ? "bg-slate-200 cursor-pointer"
-                    : ""
-                }`}
-              >
-                {manufacturer}
-              </div>
-            ))}
+            {manufacturers
+              .slice() // copy the array so as not to mutate the original
+              .sort((a, b) => a.localeCompare(b)) // alphabetic order
+              .map((manufacturer, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleManufacturerClick(manufacturer)}
+                  className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
+                    selectedManufacturer === manufacturer ? "bg-slate-200" : ""
+                  }`}
+                >
+                  {manufacturer}
+                </div>
+              ))}
           </ul>
         </div>
-        <div className="md:col-span-3">
-          <h2 className="section__title" id="products">
+        <div className='md:col-span-3'>
+          <h2 className='section__title' id='products'>
             Products
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2">
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2'>
             {loading ? (
               <p>Loading products...</p>
             ) : (
               filteredProducts.map((product, index) => (
-                <ProductItemPage 
-                  product={product} 
+                <ProductItemPage
+                  product={product}
                   key={product.name}
                   ref={index === 0 ? firstProductRef : null}
                 />
