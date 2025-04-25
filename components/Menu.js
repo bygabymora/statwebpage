@@ -57,15 +57,13 @@ const menuItems = [
       },
     ],
   },
+
   {
-    title: "News",
+    title: <Link href='/news'>News</Link>,
     subcategories: [
       {
         title: "Latest News",
-        links: [
-          { name: "News", href: "/news" },
-          { name: "Blog", href: "/news" },
-        ],
+        links: [{ name: "News", href: "/news" }],
       },
     ],
   },
