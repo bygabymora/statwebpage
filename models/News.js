@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const newsSchema = new mongoose.Schema(
   {
@@ -27,6 +27,6 @@ const newsSchema = new mongoose.Schema(
   }
 );
 
-const News = mongoose.models.News || mongoose.model('News', newsSchema);
+const News = mongoose.models.News || mongoose.model("News", newsSchema);
 
 export default News;

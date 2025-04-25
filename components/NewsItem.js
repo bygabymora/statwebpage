@@ -1,11 +1,12 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const NewsItem = ({ news }) => {
   return (
     <div className='flex flex-row justify-between items-center text-center mb-3 text-xs lg:text-lg max-w-full gap-3 border border-gray-200 shadow-lg rounded-lg p-4 hover:shadow-xl  transition-shadow duration-300 ease-in-out'>
       <div className='flex flex-col justify-center items-center'>
-        <div
+        <Link
           href={{ pathname: `news/${news.slug}` }}
           className='group flex justify-center items-center text-center'
         >
@@ -19,7 +20,7 @@ export const NewsItem = ({ news }) => {
               loading='lazy'
             />
           </div>
-        </div>
+        </Link>
         <div className='max-w-full text-center mt-2'>
           <div className='text-4xl font-bold text-[#144e8b]'>
             {new Date(news.createdAt).getDate()}
@@ -35,7 +36,7 @@ export const NewsItem = ({ news }) => {
         </div>
       </div>
       <div className='flex flex-col justify-center items-center w-[150px] md:w-[300px]'>
-        <div
+        <Link
           href={{ pathname: `news/${news.slug}` }}
           className='justify-center items-center text-center'
         >
@@ -45,7 +46,7 @@ export const NewsItem = ({ news }) => {
           </h2>
           <br />
           <div className='max-w-full'>{news.slug}</div>
-        </div>
+        </Link>
       </div>
     </div>
   );

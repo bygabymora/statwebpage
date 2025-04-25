@@ -628,7 +628,14 @@ function OrderScreen() {
                         </td>
                         <td className='p-3 text-center'>{item.quantity}</td>
                         <td className='p-3 text-center'>{item.purchaseType}</td>
-                        <td className='p-3 text-right'>${item.price}</td>
+                        <td className='p-3 text-right'>
+                          {" "}
+                          $
+                          {new Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(item.price)}
+                        </td>
                         <td className='p-3 text-right'>
                           ${(item.quantity * item.price).toFixed(2)}
                         </td>
@@ -658,7 +665,13 @@ function OrderScreen() {
                 <li>
                   <div className='mb-2  px-3 flex justify-between'>
                     <div>Total</div>
-                    <div>${totalPrice}</div>
+                    <div>
+                      $
+                      {new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(totalPrice)}
+                    </div>
                   </div>
                 </li>
                 {!isPaid && (
