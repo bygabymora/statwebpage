@@ -210,7 +210,14 @@ function CartScreen() {
                         </select>
                       </td>
                     )}
-                    <td className='p-5 text-right border'>${item.price}</td>
+                    <td className='p-5 text-right border'>
+                      {" "}
+                      $
+                      {new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(item.price)}
+                    </td>
                     <td className='p-5 text-center'>
                       <button onClick={() => removeItemHandler(item)}>
                         <BsTrash3 className='h-5 w-5' />
@@ -227,7 +234,12 @@ function CartScreen() {
                 <div className='pb-3 font-xl'>
                   Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}){" "}
                   {""}: $
-                  {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
+                  {new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }).format(
+                    cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
+                  )}
                 </div>
               </li>
               <li>
