@@ -193,9 +193,9 @@ export default function PlaceOrderScreen() {
               <div className='text-gray-700'>
                 {shippingAddress.fullName},
                 {shippingAddress.company && <>{shippingAddress.company},</>}
-                {shippingAddress.phone}, {shippingAddress.address},
-                {shippingAddress.city}, {shippingAddress.postalCode},{" "}
-                {shippingAddress.email}
+                {shippingAddress.phone}, {shippingAddress.address},{" "}
+                {shippingAddress.state}, {shippingAddress.city},{" "}
+                {shippingAddress.postalCode}, {shippingAddress.email}
                 {shippingAddress.notes && (
                   <div className='mt-3 p-3 bg-gray-100 border-l-4 border-gray-500 rounded-lg'>
                     <h3 className='font-bold'>Shipping Instructions</h3>
