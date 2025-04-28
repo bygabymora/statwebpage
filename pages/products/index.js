@@ -9,15 +9,12 @@ import { useRouter } from "next/router";
 
 export default function Products() {
   const router = useRouter();
-  const { manufacturer } = router.query; // Get the query parameter from the URL
-  const [selectedManufacturer, setSelectedManufacturer] = useState(
-    manufacturer || null
-  );
+  const { manufacturer } = router.query;
+  const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
   const firstProductRef = useRef(null);
   const manufacturersMap = new Map();
-
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -38,6 +35,15 @@ export default function Products() {
     fetchData();
   }, []);
 
+  // FIX: Every time you change manufacturers in the URL, it updates the selected manufacturer
+  useEffect(() => {
+    if (manufacturer) {
+      setSelectedManufacturer(decodeURIComponent(manufacturer));
+    } else {
+      setSelectedManufacturer(null);
+    }
+  }, [manufacturer]);
+
   products.forEach((product) => {
     const normalized = product.manufacturer?.trim().toLowerCase();
     if (!manufacturersMap.has(normalized)) {
@@ -56,7 +62,6 @@ export default function Products() {
     : products;
 
   const handleManufacturerClick = (manufacturer) => {
-    setSelectedManufacturer(manufacturer);
     router.push(
       `/products?manufacturer=${encodeURIComponent(manufacturer)}`,
       undefined,
@@ -66,7 +71,6 @@ export default function Products() {
   };
 
   const handleShowAll = () => {
-    setSelectedManufacturer(null);
     router.push("/products", undefined, { shallow: true });
   };
 
@@ -113,9 +117,7 @@ export default function Products() {
             <div
               onClick={handleShowAll}
               className={`manufacturer-item cursor-pointer ${
-                selectedManufacturer === null
-                  ? "bg-slate-200 cursor-pointer"
-                  : ""
+                selectedManufacturer === null ? "bg-slate-200" : ""
               }`}
             >
               ALL PRODUCTS
@@ -127,8 +129,8 @@ export default function Products() {
               Manufacturers
             </h2>
             {manufacturers
-              .slice() // copy the array so as not to mutate the original
-              .sort((a, b) => a.localeCompare(b)) // alphabetic order
+              .slice()
+              .sort((a, b) => a.localeCompare(b))
               .map((manufacturer, index) => (
                 <div
                   key={index}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import axios from "axios";
 
 const menuItems = [
@@ -42,7 +43,6 @@ const menuItems = [
       },
     ],
   },
-
   {
     title: "Our Key Benefits",
     subcategories: [
@@ -57,7 +57,6 @@ const menuItems = [
       },
     ],
   },
-
   {
     title: <Link href='/news'>News</Link>,
     subcategories: [
@@ -74,6 +73,7 @@ const Menu = () => {
   const [manufacturers, setManufacturers] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleResize = () => {
@@ -95,7 +95,9 @@ const Menu = () => {
           manufacturersSet.add(product.manufacturer.trim());
         }
       });
-      setManufacturers([...manufacturersSet]);
+      const manufacturersArray = [...manufacturersSet];
+      manufacturersArray.sort((a, b) => a.localeCompare(b)); // Orden alfabético
+      setManufacturers(manufacturersArray);
     } catch (error) {
       console.error(
         "Error fetching manufacturers:",
@@ -110,6 +112,11 @@ const Menu = () => {
 
   if (isSmallScreen) return null;
 
+  const handleManufacturerClick = (manufacturer) => {
+    setSelectedManufacturer(manufacturer);
+    router.push(`/products?manufacturer=${encodeURIComponent(manufacturer)}`);
+  };
+
   const updatedMenuItems = menuItems.map((item) => {
     if (
       item.title === "Manufacturers" ||
@@ -121,8 +128,8 @@ const Menu = () => {
         title: (
           <span
             onClick={(e) => {
-              e.preventDefault(); // Prevents submenu from closing
-              window.location.href = "/products";
+              e.preventDefault();
+              router.push("/products");
             }}
             className='cursor-pointer hover:text-[#03793d]'
           >
@@ -136,8 +143,13 @@ const Menu = () => {
               .filter((m) => typeof m === "string" && m.trim() !== "")
               .map((manufacturer) => ({
                 name: manufacturer,
-                href: `/products?manufacturer=${manufacturer}`,
-                onClick: () => setSelectedManufacturer(manufacturer),
+                href: `/products?manufacturer=${encodeURIComponent(
+                  manufacturer
+                )}`,
+                onClick: (e) => {
+                  e.preventDefault();
+                  handleManufacturerClick(manufacturer);
+                },
               })),
           },
         ],

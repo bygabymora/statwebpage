@@ -6,8 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { toEmail, subject, htmlContent, headers, attachment } =
-    req.body;
+  const { toEmail, subject, htmlContent, headers, attachment } = req.body;
 
   // Check if the Mailchimp API key is available
   if (!process.env.MAILCHIMP_TRANSACTIONAL_API_KEY) {
@@ -29,6 +28,7 @@ export default async function handler(req, res) {
       to: [
         { email: toEmail, type: "to" },
         { email: "gaby@statsurgicalsupply.com", type: "bcc" },
+        { email: "sgommezmm@gmail.com", type: "bcc" },
       ],
     };
 
