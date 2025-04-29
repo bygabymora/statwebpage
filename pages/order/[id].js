@@ -482,10 +482,12 @@ function OrderScreen() {
                 <BsTruck className='text-[#144e8b]' /> Shipping Address
               </h2>
               <div className='bg-gray-100 p-3 rounded-md'>
-                {shippingAddress?.fullName},{" "}
-                {shippingAddress?.company && `${shippingAddress?.company},`}{" "}
-                {shippingAddress?.phone}, {shippingAddress?.address},{" "}
-                {shippingAddress?.city}, {shippingAddress?.postalCode}
+                {shippingAddress.fullName},
+                {shippingAddress.company && <>{shippingAddress.company},</>}
+                {shippingAddress.phone}, {shippingAddress.address},{" "}
+                {shippingAddress.state}, {shippingAddress.city},{" "}
+                {shippingAddress.postalCode}, {shippingAddress.suiteNumber},{" "}
+                {shippingAddress.email}, {shippingAddress.anotherEmail}
               </div>
               <h2 className='mt-4 mb-2 text-lg flex items-center gap-2'>
                 <BsCreditCard2Back className='text-[#144e8b]' /> Billing Address

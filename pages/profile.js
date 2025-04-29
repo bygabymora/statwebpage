@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { getError } from '../utils/error';
-import axios from 'axios';
-import Layout from '../components/main/Layout';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { getError } from "../utils/error";
+import axios from "axios";
+import Layout from "../components/main/Layout";
+import Link from "next/link";
 
 export default function ProfileScreen() {
   const { data: session, status } = useSession();
-  const active = session?.user?.active && session?.user?.approved && status === "authenticated";
+  const active =
+    session?.user?.active &&
+    session?.user?.approved &&
+    status === "authenticated";
   const {
     handleSubmit,
     register,
@@ -20,12 +23,12 @@ export default function ProfileScreen() {
   } = useForm();
 
   useEffect(() => {
-    setValue('name', session.user.name);
-    setValue('email', session.user.email);
-    setValue('companyName', session.user.companyName);
-    setValue('companyEinCode', session.user.companyEinCode);
-    console.log('companyEinCode:', session.user.companyEinCode);
-    console.log('name:', session.user.name);
+    setValue("name", session.user.name);
+    setValue("email", session.user.email);
+    setValue("companyName", session.user.companyName);
+    setValue("companyEinCode", session.user.companyEinCode);
+    console.log("companyEinCode:", session.user.companyEinCode);
+    console.log("name:", session.user.name);
   }, [session.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);
@@ -36,12 +39,12 @@ export default function ProfileScreen() {
 
   const submitHandler = async ({ name, email, password }) => {
     try {
-      await axios.put('/api/auth/update', {
+      await axios.put("/api/auth/update", {
         name,
         email,
         password,
       });
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
@@ -49,9 +52,9 @@ export default function ProfileScreen() {
       if (!result.error) {
         // Toggle the form only if there's no error
         toggleModifyForm();
-        toast.success('Profile updated successfully');
+        toast.success("Profile updated successfully");
         // Optional: Reset the form with new values
-        reset({ name, email, password: '' });
+        reset({ name, email, password: "" });
       } else {
         toast.error(result.error);
       }
@@ -64,37 +67,37 @@ export default function ProfileScreen() {
   };
 
   return (
-    <Layout title="Profile">
-      <section className="profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md">
-        <h1 className="text-2xl font-bold text-[#144e8b] text-center mb-6">
+    <Layout title='Profile'>
+      <section className='profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
+        <h1 className='text-2xl font-bold text-[#144e8b] text-center mb-6'>
           {session.user.name} Profile Information
         </h1>
-        <div className="grid md:grid-cols-2 gap-6 text-[#414b53]">
+        <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
           <div>
-            <p className="text-sm font-semibold text-gray-500">Full Name</p>
-            <p className="text-base">{session.user.name}</p>
+            <p className='text-sm font-semibold text-gray-500'>Full Name</p>
+            <p className='text-base'>{session.user.name}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-500">Email</p>
-            <p className="text-base">{session.user.email}</p>
+            <p className='text-sm font-semibold text-gray-500'>Email</p>
+            <p className='text-base'>{session.user.email}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-500">Company Name</p>
-            <p className="text-base">{session.user.companyName}</p>
+            <p className='text-sm font-semibold text-gray-500'>Company Name</p>
+            <p className='text-base'>{session.user.companyName}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-500">Company EIN</p>
-            <p className="text-base">{session.user.companyEinCode}</p>
+            <p className='text-sm font-semibold text-gray-500'>Company EIN</p>
+            <p className='text-base'>{session.user.companyEinCode}</p>
           </div>
         </div>
-        <div className="mt-6 text-center">
+        <div className='mt-6 text-center'>
           {active === "loading" ? (
-            <p className="text-gray-400 italic">Loading...</p>
+            <p className='text-gray-400 italic'>Loading...</p>
           ) : (
             active && (
               <Link
-                href="/order-history"
-                className="inline-block text-[#144e8b] font-medium border border-[#144e8b] px-4 py-2 rounded-full hover:bg-[#144e8b] hover:text-white transition"
+                href='/order-history'
+                className='inline-block text-[#144e8b] font-medium border border-[#144e8b] px-4 py-2 rounded-full hover:bg-[#144e8b] hover:text-white transition'
               >
                 View Order History
               </Link>
@@ -104,83 +107,111 @@ export default function ProfileScreen() {
       </section>
 
       {showModifyForm && (
-        <div className="mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9">
+        <div className='mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9'>
           <form onSubmit={handleSubmit(submitHandler)}>
-            <div className="text-2xl font-bold text-[#144e8b] text-center mb-6">
+            <div className='text-2xl font-bold text-[#144e8b] text-center mb-6'>
               Update Profile
             </div>
-            <div className="mb-4">
-              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="name">
+            <div className='mb-4'>
+              <label
+                className='block mb-1 text-sm font-semibold text-gray-600'
+                htmlFor='name'
+              >
                 Full Name *
               </label>
               <input
-                type="text"
-                id="name"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                type='text'
+                id='name'
+                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
                 {...register("name", { required: "Please enter name" })}
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+              {errors.name && (
+                <p className='text-red-500 text-sm'>{errors.name.message}</p>
+              )}
             </div>
-            <div className="mb-4">
-              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="email">
+            <div className='mb-4'>
+              <label
+                className='block mb-1 text-sm font-semibold text-gray-600'
+                htmlFor='email'
+              >
                 Email *
               </label>
               <input
-                type="email"
-                id="email"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
-                  {...register("email", {
-                    required: "Please enter email",
-                    pattern: {
-                      value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
-                      message: "Please enter valid email",
-                    },
-                  })}
-                />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                type='email'
+                id='email'
+                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
+                {...register("email", {
+                  required: "Please enter email",
+                  pattern: {
+                    value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
+                    message: "Please enter valid email",
+                  },
+                })}
+              />
+              {errors.email && (
+                <p className='text-red-500 text-sm'>{errors.email.message}</p>
+              )}
             </div>
-            <div className="mb-4">
-              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="password">
+            <div className='mb-4'>
+              <label
+                className='block mb-1 text-sm font-semibold text-gray-600'
+                htmlFor='password'
+              >
                 New Password *
               </label>
               <input
-                type="password"
-                id="password"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                type='password'
+                id='password'
+                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
                 {...register("password", {
                   required: "Please enter new password",
-                  minLength: { value: 6, message: "Password must be at least 6 characters" },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
               />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+              {errors.password && (
+                <p className='text-red-500 text-sm'>
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
-            <div className="mb-4">
-              <label className="block mb-1 text-sm font-semibold text-gray-600" htmlFor="confirmPassword">
+            <div className='mb-4'>
+              <label
+                className='block mb-1 text-sm font-semibold text-gray-600'
+                htmlFor='confirmPassword'
+              >
                 Confirm New Password *
               </label>
               <input
-                type="password"
-                id="confirmPassword"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]"
+                type='password'
+                id='confirmPassword'
+                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
                 {...register("confirmPassword", {
                   required: "Please confirm new password",
                   validate: (value) => value === getValues("password"),
-                  minLength: { value: 6, message: "Confirm password must be at least 6 characters" },
+                  minLength: {
+                    value: 6,
+                    message: "Confirm password must be at least 6 characters",
+                  },
                 })}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+                <p className='text-red-500 text-sm'>
+                  {errors.confirmPassword.message}
+                </p>
               )}
               {errors.confirmPassword?.type === "validate" && (
-                <p className="text-red-500 text-sm">Passwords do not match</p>
+                <p className='text-red-500 text-sm'>Passwords do not match</p>
               )}
             </div>
 
-            <div className="text-center">
+            <div className='text-center'>
               <button
-                type="submit"
-                className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition"
+                type='submit'
+                className='bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition'
               >
                 Update Profile
               </button>
@@ -190,10 +221,10 @@ export default function ProfileScreen() {
       )}
 
       {!showModifyForm && (
-        <div className="text-center mt-6 my-9">
+        <div className='text-center mt-6 my-9'>
           <button
             onClick={toggleModifyForm}
-            className="bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition"
+            className='bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition'
           >
             Modify Profile
           </button>

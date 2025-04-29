@@ -170,6 +170,7 @@ export default function ShippingScreen() {
     setInputValue(shippingAddress?.state || "");
     setValue("city", shippingAddress?.city);
     setValue("postalCode", shippingAddress?.postalCode);
+    setValue("suiteNumber", shippingAddress?.suiteNumber);
     setValue("email", shippingAddress?.email);
     setValue("notes", shippingAddress?.notes);
   }, [setValue, shippingAddress]);
@@ -230,6 +231,7 @@ export default function ShippingScreen() {
         data.stateB = data.state;
         data.cityB = data.city;
         data.postalCodeB = data.postalCode;
+        data.suiteNumberB = data.suiteNumber;
         data.emailB = data.email;
       }
 
@@ -275,6 +277,7 @@ export default function ShippingScreen() {
       setValue("state", shippingAddress?.state);
       setValue("city", shippingAddress?.city);
       setValue("postalCode", shippingAddress?.postalCode);
+      setValue("suiteNumber", shippingAddress?.suiteNumber);
       setValue("email", shippingAddress?.email);
       setValue("notes", shippingAddress?.notes);
     }
@@ -296,22 +299,6 @@ export default function ShippingScreen() {
         <p className='text-xl text-center font-bold mb-5'>
           Please select your preferences at the end.
         </p>
-        {lastOrder && (
-          <div className='mb-2 mt-2'>
-            <div className='mb-2'>
-              <p className='text-sm'>
-                {lastOrder.shippingAddress?.fullName}
-                {lastOrder.shippingAddress?.company}
-                {lastOrder.shippingAddress?.phone}
-                {lastOrder.shippingAddress?.address}
-                {lastOrder.shippingAddress?.state}
-                {lastOrder.shippingAddress?.city}
-                {lastOrder.shippingAddress?.postalCode}
-                {lastOrder.shippingAddress?.email}
-              </p>
-            </div>
-          </div>
-        )}
         <form className='space-y-6 my-5' onSubmit={handleSubmit(submitHandler)}>
           {/* SHIPPING ADDRESS */}
           <div className='bg-white shadow-md rounded-lg p-6'>
@@ -320,20 +307,21 @@ export default function ShippingScreen() {
               Shipping Address
             </h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
-              {lastOrder && (
+              {lastOrder && !lastOrder.warning && (
                 <div className='col-span-2 bg-blue-50 border border-blue-300 rounded-md p-4 mt-4 flex items-center justify-between'>
                   <div>
                     <p className='text-sm text-gray-700'>
                       We found a previous address from your last order.
                     </p>
                     <p className='text-sm text-gray-600 italic'>
-                      {shippingAddress.fullName},
-                      {shippingAddress.company && (
-                        <>{shippingAddress.company},</>
-                      )}
-                      {shippingAddress.phone}, {shippingAddress.address},{" "}
-                      {shippingAddress.state}, {shippingAddress.city},{" "}
-                      {shippingAddress.postalCode}, {shippingAddress.email}
+                      {lastOrder.shippingAddress?.fullName},
+                      {lastOrder.shippingAddress?.company},
+                      {lastOrder.shippingAddress?.phone},
+                      {lastOrder.shippingAddress?.address},
+                      {lastOrder.shippingAddress?.state},
+                      {lastOrder.shippingAddress?.city},
+                      {lastOrder.shippingAddress?.postalCode},
+                      {lastOrder.shippingAddress?.suiteNumber},
                     </p>
                   </div>
                   <div className='flex items-center gap-2'>
@@ -341,7 +329,7 @@ export default function ShippingScreen() {
                       htmlFor='useLastAddress'
                       className='text-sm font-medium'
                     >
-                      Use another address?
+                      Use address?
                     </label>
                     <input
                       type='checkbox'
@@ -368,13 +356,13 @@ export default function ShippingScreen() {
                 )}
               </div>
               <div>
-                <label className='block font-medium'>Company</label>
+                <label className='block font-medium'>Company*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
                   id='company'
                   placeholder="Company's Name"
-                  {...register("company", { required: false, minLength: 3 })}
+                  {...register("company", { required: true, minLength: 3 })}
                   autoCapitalize='true'
                 />
                 {errors.company && (
@@ -475,13 +463,40 @@ export default function ShippingScreen() {
                 )}
               </div>
               <div>
-                <label className='block font-medium'>Email*</label>
+                <label className='block font-medium'>Suite Number*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
+                  id='suiteNumber'
+                  placeholder='Enter Suite Number'
+                  {...register("suiteNumber", { required: true, minLength: 3 })}
+                  autoCapitalize='true'
+                />
+                {errors.email && (
+                  <p className='text-red-500'>Email is required.</p>
+                )}
+              </div>
+              <div>
+                <label className='block font-medium'>Email*</label>
+                <input
+                  className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
+                  type='text'
                   id='email'
-                  placeholder='Enter email'
-                  {...register("email", { required: true, minLength: 3 })}
+                  value={session?.user?.email || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <label className='block font-medium'>Another Email*</label>
+                <input
+                  className='w-full contact__form-input'
+                  type='text'
+                  id='anotherEmail'
+                  placeholder='Enter Another email'
+                  {...register("anotherEmail", {
+                    required: false,
+                    minLength: 3,
+                  })}
                   autoCapitalize='true'
                 />
                 {errors.email && (
@@ -528,7 +543,7 @@ export default function ShippingScreen() {
           <div className='bg-white shadow-md rounded-lg p-6'>
             <h2 className='text-xl font-semibold flex items-center gap-2 text-gray-700'>
               <FaBuilding className='text-[#144e8b]' />
-              Payment Method
+              Payment Method for shipping charges
             </h2>
             <div className='mt-4'>
               <label className='block font-semibold'>
