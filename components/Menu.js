@@ -30,7 +30,7 @@ const menuItems = [
     ],
   },
   {
-    title: "About Us",
+    title: <Link href='/about'>About Us</Link>,
     subcategories: [
       {
         title: "Company",
