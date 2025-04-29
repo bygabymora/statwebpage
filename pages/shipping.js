@@ -278,10 +278,12 @@ export default function ShippingScreen() {
       setValue("city", shippingAddress?.city);
       setValue("postalCode", shippingAddress?.postalCode);
       setValue("suiteNumber", shippingAddress?.suiteNumber);
-      setValue("email", shippingAddress?.email);
       setValue("notes", shippingAddress?.notes);
+
+      // Email is ALWAYS maintained from the session
+      setValue("email", session?.user?.email || "");
     }
-  }, [lastOrder, setValue, useLastAddress]);
+  }, [lastOrder, setValue, useLastAddress, session]);
 
   return (
     <Layout title='Shipping Address'>
@@ -472,8 +474,8 @@ export default function ShippingScreen() {
                   {...register("suiteNumber", { required: true, minLength: 3 })}
                   autoCapitalize='true'
                 />
-                {errors.email && (
-                  <p className='text-red-500'>Email is required.</p>
+                {errors.suiteNumber && (
+                  <p className='text-red-500'>Suite Number is required.</p>
                 )}
               </div>
               <div>
@@ -482,7 +484,7 @@ export default function ShippingScreen() {
                   className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
                   type='text'
                   id='email'
-                  value={session?.user?.email || ""}
+                  {...register("email", { required: false, minLength: 3 })}
                   readOnly
                 />
               </div>

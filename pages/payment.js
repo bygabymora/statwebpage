@@ -52,44 +52,44 @@ export default function PaymentScreen() {
         </p>
 
         <form className='space-y-4' onSubmit={submitHandler}>
-          {["Credit Card (powered by Stripe)", "Paypal", "Pay by Wire"].map(
-            (method) => (
-              <label
-                key={method}
-                htmlFor={method}
-                className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
-                  selectedPaymentMethod === method
-                    ? "border-[#03793d] bg-green-50 shadow-md"
-                    : "border-gray-300 hover:border-gray-400"
-                }`}
-              >
-                <div className='flex items-center space-x-4'>
-                  <input
-                    name='paymentMethod'
-                    id={method}
-                    type='radio'
-                    className='hidden'
-                    checked={selectedPaymentMethod === method}
-                    onChange={() => setSelectedPaymentMethod(method)}
-                  />
-                  <div
-                    className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
-                      selectedPaymentMethod === method
-                        ? "border-[#03793d] bg-[#03793d]"
-                        : "border-gray-400"
-                    }`}
-                  >
-                    {selectedPaymentMethod === method && (
-                      <div className='w-2.5 h-2.5 bg-white rounded-full'></div>
-                    )}
-                  </div>
-                  <span className='text-lg font-medium text-gray-800'>
-                    {method}
-                  </span>
+          {["Stripe", "Paypal", "Pay by Wire"].map((method) => (
+            <label
+              key={method}
+              htmlFor={method}
+              className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
+                selectedPaymentMethod === method
+                  ? "border-[#03793d] bg-green-50 shadow-md"
+                  : "border-gray-300 hover:border-gray-400"
+              }`}
+            >
+              <div className='flex items-center space-x-4'>
+                <input
+                  name='paymentMethod'
+                  id={method}
+                  type='radio'
+                  className='hidden'
+                  checked={selectedPaymentMethod === method}
+                  onChange={() => setSelectedPaymentMethod(method)}
+                />
+                <div
+                  className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
+                    selectedPaymentMethod === method
+                      ? "border-[#03793d] bg-[#03793d]"
+                      : "border-gray-400"
+                  }`}
+                >
+                  {selectedPaymentMethod === method && (
+                    <div className='w-2.5 h-2.5 bg-white rounded-full'></div>
+                  )}
                 </div>
-              </label>
-            )
-          )}
+                <span className='text-lg font-medium text-gray-800'>
+                  {method === "Stripe"
+                    ? "Credit Card (Powered by Stripe)"
+                    : method}
+                </span>
+              </div>
+            </label>
+          ))}
 
           <div className='mt-6 flex justify-between'>
             <button
