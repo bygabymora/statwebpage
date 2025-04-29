@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -20,16 +21,17 @@ export default function PlaceOrderScreen() {
   const { cartItems, shippingAddress, billingAddress, paymentMethod } = cart;
   const { showStatusMessage } = useModalContext();
   const [loading] = useState(false);
-
   const form = useRef();
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [emailName, setEmailName] = useState("");
   const [Phone, setPhone] = useState("");
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
+  const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+    : null;
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -125,6 +127,7 @@ export default function PlaceOrderScreen() {
     sendEmail();
 
     try {
+      // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
         shippingAddress,
@@ -138,7 +141,26 @@ export default function PlaceOrderScreen() {
       dispatch({ type: "CART_CLEAR_ITEMS" });
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
-      router.push(`/order/${data._id}`);
+      // If the payment method is Stripe, redirect to the Stripe checkout
+      if (paymentMethod === "Stripe") {
+        const stripe = await stripePromise;
+
+        const checkoutSession = await axios.post("/api/checkout_sessions", {
+          totalPrice: totalPrice,
+          orderId: data._id,
+        });
+
+        const result = await stripe.redirectToCheckout({
+          sessionId: checkoutSession.data.id,
+        });
+
+        if (result.error) {
+          toast.error(result.error.message);
+        }
+      } else {
+        // If not Stripe, redirect to normal order page
+        router.push(`/order/${data._id}`);
+      }
     } catch (error) {
       toast.error(getError(error));
     }
