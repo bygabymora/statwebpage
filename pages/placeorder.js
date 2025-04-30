@@ -13,6 +13,9 @@ import Link from "next/link";
 import Image from "next/image";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -28,9 +31,6 @@ export default function PlaceOrderScreen() {
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-    : null;
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -138,40 +138,33 @@ export default function PlaceOrderScreen() {
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
       if (paymentMethod === "Stripe") {
-        if (!stripePromise) {
-          toast.error("Stripe is not properly configured.");
-          return;
-        }
-
         const stripe = await stripePromise;
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-          toast.error("Stripe failed to initialize.");
+          toast.error("Stripe is not available.");
           return;
         }
 
-        const { data: checkoutSession } = await axios.post(
-          "/api/checkout_sessions",
-          {
-            totalPrice,
-            orderId: data._id,
-          }
-        );
-
-        const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession.id,
+        const checkoutSession = await axios.post("/api/checkout_sessions", {
+          totalPrice,
+          orderId: data._id,
         });
 
-        if (result?.error) toast.error(result.error.message);
+        const result = await stripe.redirectToCheckout({
+          sessionId: checkoutSession.data.id,
+        });
+
+        if (result.error) {
+          toast.error(result.error.message);
+        }
       } else {
-        // Send email only if NOT Stripe payment method
-        sendEmail();
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
       toast.error(getError(error));
     }
   };
+
   console.log(
     "Stripe public key:",
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY

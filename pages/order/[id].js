@@ -22,6 +22,9 @@ import { AiTwotoneLock } from "react-icons/ai";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -88,10 +91,6 @@ function OrderScreen() {
     order: {},
     error: "",
   });
-
-  const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-    : null;
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -200,11 +199,8 @@ function OrderScreen() {
   const handleCheckout = async () => {
     try {
       dispatch({ type: "FETCH_REQUEST" });
+
       const stripe = await stripePromise;
-      const { checkoutSession } = await axios.post("/api/checkout_sessions", {
-        totalPrice: totalPrice,
-        orderId: orderId,
-      });
 
       if (!stripe || typeof stripe.redirectToCheckout !== "function") {
         console.error("Stripe not initialized correctly:", stripe);
@@ -212,15 +208,21 @@ function OrderScreen() {
         return;
       }
 
+      const { checkoutSession } = await axios.post("/api/checkout_sessions", {
+        totalPrice,
+        orderId,
+      });
+
       const result = await stripe.redirectToCheckout({
         sessionId: checkoutSession.data.id,
       });
 
       if (result.error) {
-        alert(result.error.message);
+        toast.error(result.error.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Checkout error:", error);
+      toast.error(getError(error));
     }
   };
 
