@@ -29,12 +29,6 @@ export default function PlaceOrderScreen() {
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const stripePromise = useMemo(() => {
-    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-      : null;
-  }, []);
-
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
