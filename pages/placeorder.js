@@ -140,6 +140,11 @@ export default function PlaceOrderScreen() {
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
       if (paymentMethod === "Stripe") {
+        if (!stripePromise) {
+          toast.error("Stripe is not properly configured.");
+          return;
+        }
+
         const stripe = await stripePromise;
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
