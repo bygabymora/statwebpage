@@ -200,10 +200,6 @@ function OrderScreen() {
 
     handleSendEmails(emailmessage, contactToEmail);
   };
-  console.log(
-    "Stripe public key:",
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  );
 
   const handleCheckout = async () => {
     try {
