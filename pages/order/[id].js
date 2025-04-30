@@ -167,9 +167,7 @@ function OrderScreen() {
     }
   }, [paymentMethod, order, totalPrice]);
 
-  const sendEmail = (e) => {
-    e.preventDefault();
-
+  const sendEmail = () => {
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage(
         "error",
