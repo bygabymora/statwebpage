@@ -125,10 +125,7 @@ export default function PlaceOrderScreen() {
       return;
     }
 
-    sendEmail();
-
     try {
-      // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
         shippingAddress,
@@ -142,29 +139,30 @@ export default function PlaceOrderScreen() {
       dispatch({ type: "CART_CLEAR_ITEMS" });
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
-      // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
         const stripe = await stripePromise;
 
-        const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: totalPrice,
-          orderId: data._id,
-        });
-
-        if (!stripe) {
+        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
           toast.error("Stripe failed to initialize.");
           return;
         }
 
+        const { data: checkoutSession } = await axios.post(
+          "/api/checkout_sessions",
+          {
+            totalPrice,
+            orderId: data._id,
+          }
+        );
+
         const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession.data.id,
+          sessionId: checkoutSession.id,
         });
 
-        if (result.error) {
-          toast.error(result.error.message);
-        }
+        if (result?.error) toast.error(result.error.message);
       } else {
-        // If not Stripe, redirect to normal order page
+        // Send email only if NOT Stripe payment method
+        sendEmail();
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
