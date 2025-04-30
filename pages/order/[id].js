@@ -21,7 +21,7 @@ import Stripe from "../../public/images/assets/PBS.png";
 import { AiTwotoneLock } from "react-icons/ai";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-import { useModalContext } from "../../components/context/ModalContext";
+
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -49,18 +49,13 @@ function reducer(state, action) {
     case "DELIVER_FAIL":
       return { ...state, loadingDeliver: false };
     case "DELIVER_RESET":
-      return {
-        ...state,
-        loadingDeliver: false,
-        successDeliver: false,
-      };
+      return { ...state, loadingDeliver: false, successDeliver: false };
     case "AT_COSTUMERS_REQUEST":
       return { ...state, loadingAtCostumers: true };
     case "AT_COSTUMERS_SUCCESS":
       return { ...state, loadingAtCostumers: false, successAtCostumers: true };
     case "AT_COSTUMERS_FAIL":
       return { ...state, loadingAtCostumers: false, successAtCostumers: false };
-
     default:
       return state;
   }
@@ -74,7 +69,6 @@ function OrderScreen() {
   const orderId = query.id;
   const trackUrlRef = useRef(null);
   const trackNumberRef = useRef(null);
-
   const [
     {
       loading,
@@ -92,12 +86,29 @@ function OrderScreen() {
     error: "",
   });
 
+  const [emailData, setEmailData] = useState({});
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/orders/${orderId}`);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
+
+        const { shippingAddress, paymentMethod, totalPrice, orderItems } = data;
+        setEmailData({
+          name: shippingAddress.fullName,
+          email: shippingAddress.email,
+          phone: shippingAddress.phone,
+          total: totalPrice,
+          paymentMethod,
+          shippingPreference: shippingAddress.notes,
+          items: orderItems.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        });
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: getError(error) });
       }
@@ -121,172 +132,75 @@ function OrderScreen() {
       };
       loadPaypalScript();
     }
-  }, [orderId, successPay, successDeliver, paypalDispatch]);
-
-  const {
-    shippingAddress,
-    billingAddress,
-    paymentMethod,
-    orderItems,
-    itemsPrice,
-    totalPrice,
-    isPaid,
-    paidAt,
-    isDelivered,
-    deliveredAt,
-    atCostumersDate,
-    isAtCostumers,
-    trackNumber,
-    trackUrl,
-  } = order;
-  const discountAmount = itemsPrice * 0.015;
-
-  //----Email----//
-
-  const form = useRef();
-  const [message] = useState("");
-  const { showStatusMessage } = useModalContext();
-  const [email, setEmail] = useState("");
-  const [emailName, setEmailName] = useState("");
-  const [emailPhone, setEmailPhone] = useState("");
-  const [emailTotalOrder, setEmailTotalOrder] = useState("");
-  const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
-
-  useEffect(() => {
-    if (order & order.shippingAddress) {
-      setEmail(shippingAddress.email);
-      setEmailName(shippingAddress.fullName);
-      setEmailPhone(shippingAddress.phone);
-      setEmailPaymentMethod(paymentMethod);
-      setEmailTotalOrder(totalPrice);
-      setSpecialNotes(shippingAddress.notes);
-    }
-  }, [paymentMethod, order, totalPrice]);
+  }, [orderId, order._id, successPay, successDeliver, paypalDispatch]);
 
   const sendEmail = () => {
-    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
-      showStatusMessage(
-        "error",
-        "Please fill all the fields before sending the email."
-      );
+    if (
+      !emailData.name ||
+      !emailData.email ||
+      !emailData.total ||
+      !emailData.paymentMethod
+    )
       return;
-    }
 
-    const contactToEmail = {
-      name: emailName,
-      email: email,
-      phone: emailPhone,
-      total: emailTotalOrder,
-      paymentMethod: emailPaymentMethod,
-      shippingPreference: specialNotes,
-      items: orderItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-    };
-
-    const emailmessage = messageManagement(
-      contactToEmail,
-      "Order Confirmation",
-      message
-    );
-
-    handleSendEmails(emailmessage, contactToEmail);
+    const message = messageManagement(emailData, "Order Confirmation", "");
+    handleSendEmails(message, emailData);
   };
 
   const handleCheckout = async () => {
     try {
       dispatch({ type: "FETCH_REQUEST" });
-
       const stripe = await stripePromise;
 
       if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-        console.error("Stripe not initialized correctly:", stripe);
         toast.error("Stripe is not available in this environment.");
         return;
       }
 
       const { data } = await axios.post("/api/checkout_sessions", {
-        totalPrice,
-        orderId,
+        totalPrice: order.totalPrice,
+        orderId: orderId,
       });
 
-      const result = await stripe.redirectToCheckout({
-        sessionId: data.id,
-      });
-
-      if (result.error) {
-        toast.error(result.error.message);
-      }
+      const result = await stripe.redirectToCheckout({ sessionId: data.id });
+      if (result.error) toast.error(result.error.message);
     } catch (error) {
-      console.error("Checkout error:", error);
       toast.error(getError(error));
     }
   };
 
   const createOrder = (data, actions) => {
-    if (!actions || !actions.order) {
-      toast.error(
-        "PayPal SDK is not loaded properly. Please refresh the page."
-      );
-      return;
-    }
-
     return actions.order
       .create({
-        purchase_units: [
-          {
-            amount: {
-              value: totalPrice,
-            },
-          },
-        ],
+        purchase_units: [{ amount: { value: order.totalPrice } }],
       })
       .then((orderID) => orderID);
   };
 
-  function onApprove(data, actions) {
-    return actions.order.capture().then(async function (details) {
-      try {
-        dispatch({ type: "PAY_REQUEST" });
-        const { data } = await axios.put(
-          `/api/orders/${order._id}/pay`,
-          details
-        );
-        dispatch({ type: "PAY_SUCCESS", payload: data });
-        toast.success("Order is paid successfully");
-        sendEmail();
-
-        // Mark payment as complete and show success message
-        setPaymentComplete(true);
-
-        // Reload the page after a short delay (e.g., 2 seconds)
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      } catch (error) {
-        dispatch({ type: "PAY_FAIL", payload: getError(error) });
-        toast.error(getError(error));
-      }
-    });
-  }
-  const handlePayment = async () => {
+  const onApprove = async (data, actions) => {
+    const details = await actions.order.capture();
     try {
       dispatch({ type: "PAY_REQUEST" });
-      const { data } = await axios.put(
-        `/api/orders/${order._id}/pay`
-        // Include any necessary payload here
-      );
+      const { data } = await axios.put(`/api/orders/${order._id}/pay`, details);
       dispatch({ type: "PAY_SUCCESS", payload: data });
       toast.success("Order is paid successfully");
       sendEmail();
-
-      // Mark payment as complete and show success message
       setPaymentComplete(true);
+      setTimeout(() => window.location.reload(), 2000);
+    } catch (error) {
+      dispatch({ type: "PAY_FAIL", payload: getError(error) });
+      toast.error(getError(error));
+    }
+  };
 
-      // Reload the page after payment success
+  const handlePayment = async () => {
+    try {
+      dispatch({ type: "PAY_REQUEST" });
+      const { data } = await axios.put(`/api/orders/${order._id}/pay`);
+      dispatch({ type: "PAY_SUCCESS", payload: data });
+      toast.success("Order is paid successfully");
+      sendEmail();
+      setPaymentComplete(true);
       window.location.reload();
     } catch (error) {
       dispatch({ type: "PAY_FAIL", payload: getError(error) });
@@ -299,104 +213,29 @@ function OrderScreen() {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentSuccess = urlParams.get("paymentSuccess");
       if (paymentSuccess === "true") {
-        const handleOnApprove = async () => {
+        (async () => {
           try {
             dispatch({ type: "PAY_REQUEST" });
-            const { data } = await axios.put(
-              `/api/orders/${order._id}/pay`
-              // Include any necessary payload here
-            );
+            const { data } = await axios.put(`/api/orders/${order._id}/pay`);
             dispatch({ type: "PAY_SUCCESS", payload: data });
             toast.success("Order is paid successfully");
-
-            // Mark payment as complete and show success message
             sendEmail();
             setPaymentComplete(true);
-
-            // Remove 'paymentSuccess' from the URL without reloading
             urlParams.delete("paymentSuccess");
             window.history.replaceState(
               {},
               document.title,
-              window.location.pathname + "?" + urlParams.toString()
+              window.location.pathname
             );
-
-            // It will not process payment again since the 'paymentSuccess' query parameter has been removed
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
+            setTimeout(() => window.location.reload(), 2000);
           } catch (error) {
             dispatch({ type: "PAY_FAIL", payload: getError(error) });
             toast.error(getError(error));
           }
-        };
-
-        // Call handleOnApprove here
-        handleOnApprove();
-      } else {
-        console.log("Payment failed");
+        })();
       }
     }
-  }, [order._id, sendEmail]);
-
-  function onError(error) {
-    toast.error(getError(error));
-  }
-
-  async function deliverOrderHandler(e) {
-    e.preventDefault(); // prevent default form submission
-
-    const trackUrl = trackUrlRef.current.value;
-    const trackNumber = trackNumberRef.current.value;
-
-    // Validation: Check for whitespace-only strings
-    if (!trackUrl.trim() || !trackNumber.trim()) {
-      toast.error("Please provide valid inputs.");
-      return; // exit function
-    }
-
-    try {
-      dispatch({ type: "DELIVER_REQUEST" });
-
-      // Send tracking URL and number with the axios request
-      const { data } = await axios.put(
-        `/api/admin/orders/${order._id}/deliver`,
-        {
-          trackUrl: trackUrl,
-          trackNumber: trackNumber,
-        }
-      );
-
-      dispatch({ type: "DELIVER_SUCCESS", payload: data });
-      toast.success("Order is processed");
-    } catch (error) {
-      dispatch({ type: "DELIVER_FAIL", payload: getError(error) });
-      toast.error(getError(error));
-    }
-  }
-  async function atCostumersOrderHandler() {
-    try {
-      dispatch({ type: "AT_COSTUMERS_REQUEST" });
-      const { data } = await axios.put(
-        `/api/admin/orders/${order._id}/atcostumers`,
-        {}
-      );
-      dispatch({ type: "AT_COSTUMERS_SUCCESS", payload: data });
-      toast.success("Order is delivered");
-    } catch (error) {
-      dispatch({ type: "AT_COSTUMERS_FAIL", payload: getError(error) });
-      toast.error(getError(error));
-    }
-  }
-
-  const handleCallButtonClick = (event) => {
-    event.preventDefault();
-    if (window.innerWidth >= 400) {
-      alert("Our phone number: 813-252-0727");
-    } else {
-      window.location.href = "tel:8132520727";
-    }
-  };
+  }, [order._id]);
 
   const handleButtonClick = () => {
     handlePayment();
