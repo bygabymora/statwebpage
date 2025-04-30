@@ -25,6 +25,7 @@ export default function PlaceOrderScreen() {
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
+  const [loading] = useState(false);
 
   const stripePromise = useMemo(() => {
     return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
