@@ -89,11 +89,9 @@ function OrderScreen() {
     error: "",
   });
 
-  const stripePromise = useMemo(() => {
-    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-      : null;
-  }, []);
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  );
 
   useEffect(() => {
     const fetchOrder = async () => {
