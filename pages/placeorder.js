@@ -7,11 +7,8 @@ import CheckoutWizard from "../components/CheckoutWizard";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
 import { Store } from "../utils/Store";
-import { useModalContext } from "../components/context/ModalContext";
-import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import Link from "next/link";
 import Image from "next/image";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -21,7 +18,6 @@ export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const { cartItems, shippingAddress, billingAddress, paymentMethod } = cart;
-  const { showStatusMessage } = useModalContext();
   const [loading] = useState(false);
   const form = useRef();
   const router = useRouter();
@@ -78,33 +74,6 @@ export default function PlaceOrderScreen() {
     wpPrice: item.wpPrice || item.price,
   }));
 
-  const sendEmail = (e = { preventDefault: () => {} }) => {
-    e.preventDefault();
-
-    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
-      showStatusMessage(
-        "error",
-        "Please fill all the fields before sending the email."
-      );
-      return;
-    }
-
-    const contactToEmail = {
-      name: emailName,
-      email: email,
-      total: emailTotalOrder,
-      paymentMethod: emailPaymentMethod,
-      shippingPreference: specialNotes,
-    };
-
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Order Confirmation"
-    );
-
-    handleSendEmails(emailMessage, contactToEmail);
-  };
-
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
       toast.error("Please fill all required fields.");
@@ -158,7 +127,6 @@ export default function PlaceOrderScreen() {
           toast.error(result.error.message);
         }
       } else {
-        sendEmail();
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
