@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import CheckoutWizard from "../components/CheckoutWizard";
 import Layout from "../components/main/Layout";
@@ -9,10 +9,9 @@ import { getError } from "../utils/error";
 import { Store } from "../utils/Store";
 import { useModalContext } from "../components/context/ModalContext";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
-import { useMemo } from "react";
+import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import Link from "next/link";
 import Image from "next/image";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
 
 export default function PlaceOrderScreen() {
@@ -20,29 +19,38 @@ export default function PlaceOrderScreen() {
   const { cart } = state;
   const { cartItems, shippingAddress, billingAddress, paymentMethod } = cart;
   const { showStatusMessage } = useModalContext();
+  const router = useRouter();
   const [loading] = useState(false);
   const form = useRef();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [emailName, setEmailName] = useState("");
   const [Phone, setPhone] = useState("");
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
+
   const stripePromise = useMemo(() => {
-    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-      : null;
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    if (!key) {
+      console.error("❌ Stripe public key is missing");
+      return null;
+    }
+    try {
+      return loadStripe(key);
+    } catch (err) {
+      console.error("❌ Error loading Stripe:", err);
+      return null;
+    }
   }, []);
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
-
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
+  const isPayByWire = paymentMethod === "Pay by Wire";
+
   const itemsPrice = useMemo(
     () => round2(cartItems.reduce((a, c) => a + c.quantity * c.price, 0)),
     [cartItems]
   );
-  const isPayByWire = paymentMethod === "Pay by Wire";
   const discountAmount = useMemo(
     () =>
       round2(
@@ -54,18 +62,6 @@ export default function PlaceOrderScreen() {
     () => round2(itemsPrice - discountAmount),
     [itemsPrice, discountAmount]
   );
-
-  const validateOrder = () => {
-    if (
-      !shippingAddress ||
-      !billingAddress ||
-      !paymentMethod ||
-      cartItems.length === 0
-    ) {
-      return false;
-    }
-    return true;
-  };
 
   useEffect(() => {
     setEmail(shippingAddress.email);
@@ -94,7 +90,7 @@ export default function PlaceOrderScreen() {
 
     const contactToEmail = {
       name: emailName,
-      email: email,
+      email,
       total: emailTotalOrder,
       paymentMethod: emailPaymentMethod,
       shippingPreference: specialNotes,
@@ -104,34 +100,30 @@ export default function PlaceOrderScreen() {
       contactToEmail,
       "Order Confirmation"
     );
-
     handleSendEmails(emailMessage, contactToEmail);
   };
 
   const placeOrderHandler = async () => {
-    if (!validateOrder()) {
+    if (
+      !shippingAddress ||
+      !billingAddress ||
+      !paymentMethod ||
+      cartItems.length === 0
+    ) {
       toast.error("Please fill all required fields.");
       return;
     }
 
     if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
-      toast.error("Total price is invalid. Please review your cart.");
-      return;
-    }
-
-    const currentCartItems = [...cartItemsWithPrice];
-
-    if (!currentCartItems.length) {
-      toast.error("Cart is empty.");
+      toast.error("Total price is invalid.");
       return;
     }
 
     sendEmail();
 
     try {
-      // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
-        orderItems: currentCartItems,
+        orderItems: cartItemsWithPrice,
         shippingAddress,
         billingAddress,
         paymentMethod,
@@ -143,29 +135,29 @@ export default function PlaceOrderScreen() {
       dispatch({ type: "CART_CLEAR_ITEMS" });
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
-      // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
         const stripe = await stripePromise;
 
-        const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: totalPrice,
-          orderId: data._id,
-        });
-
-        if (!stripe) {
-          toast.error("Stripe failed to initialize.");
+        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+          console.error("❌ Stripe instance invalid:", stripe);
+          toast.error("Stripe failed to initialize. Please refresh.");
           return;
         }
 
+        const { data: checkoutSession } = await axios.post(
+          "/api/checkout_sessions",
+          {
+            totalPrice,
+            orderId: data._id,
+          }
+        );
+
         const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession.data.id,
+          sessionId: checkoutSession.id,
         });
 
-        if (result.error) {
-          toast.error(result.error.message);
-        }
+        if (result?.error) toast.error(result.error.message);
       } else {
-        // If not Stripe, redirect to normal order page
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
