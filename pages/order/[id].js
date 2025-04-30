@@ -2,7 +2,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { useSession } from "next-auth/react";
@@ -22,10 +22,11 @@ import { AiTwotoneLock } from "react-icons/ai";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
-
-const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-  : null;
+const stripePromise = useMemo(() => {
+  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+    : null;
+}, []);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -207,6 +208,11 @@ function OrderScreen() {
         totalPrice: totalPrice,
         orderId: orderId,
       });
+
+      if (!stripe) {
+        toast.error("Stripe failed to initialize.");
+        return;
+      }
 
       const result = await stripe.redirectToCheckout({
         sessionId: checkoutSession.data.id,

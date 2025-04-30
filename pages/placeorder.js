@@ -152,6 +152,11 @@ export default function PlaceOrderScreen() {
           orderId: data._id,
         });
 
+        if (!stripe) {
+          toast.error("Stripe failed to initialize.");
+          return;
+        }
+
         const result = await stripe.redirectToCheckout({
           sessionId: checkoutSession.data.id,
         });
