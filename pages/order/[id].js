@@ -200,6 +200,10 @@ function OrderScreen() {
 
     handleSendEmails(emailmessage, contactToEmail);
   };
+  console.log(
+    "Stripe public key:",
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  );
 
   const handleCheckout = async () => {
     try {
@@ -210,8 +214,9 @@ function OrderScreen() {
         orderId: orderId,
       });
 
-      if (!stripe) {
-        toast.error("Stripe failed to initialize.");
+      if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+        console.error("Stripe not initialized correctly:", stripe);
+        toast.error("Stripe is not available in this environment.");
         return;
       }
 
