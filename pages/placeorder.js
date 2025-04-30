@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import CheckoutWizard from "../components/CheckoutWizard";
 import Layout from "../components/main/Layout";
@@ -9,13 +9,11 @@ import { getError } from "../utils/error";
 import { Store } from "../utils/Store";
 import { useModalContext } from "../components/context/ModalContext";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -31,6 +29,11 @@ export default function PlaceOrderScreen() {
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
+  const stripePromise = useMemo(() => {
+    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+      : null;
+  }, []);
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -123,7 +126,10 @@ export default function PlaceOrderScreen() {
       return;
     }
 
+    sendEmail();
+
     try {
+      // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
         shippingAddress,
@@ -137,18 +143,19 @@ export default function PlaceOrderScreen() {
       dispatch({ type: "CART_CLEAR_ITEMS" });
       Cookies.set("cart", JSON.stringify({ ...cart, cartItems: [] }));
 
+      // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
         const stripe = await stripePromise;
 
-        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-          toast.error("Stripe is not available.");
-          return;
-        }
-
         const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice,
+          totalPrice: totalPrice,
           orderId: data._id,
         });
+
+        if (!stripe) {
+          toast.error("Stripe failed to initialize.");
+          return;
+        }
 
         const result = await stripe.redirectToCheckout({
           sessionId: checkoutSession.data.id,
@@ -158,7 +165,7 @@ export default function PlaceOrderScreen() {
           toast.error(result.error.message);
         }
       } else {
-        sendEmail();
+        // If not Stripe, redirect to normal order page
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
@@ -166,10 +173,6 @@ export default function PlaceOrderScreen() {
     }
   };
 
-  console.log(
-    "Stripe public key:",
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  );
   console.log("Cart Items before order:", cartItems);
   return (
     <Layout title='Confirm Order'>
