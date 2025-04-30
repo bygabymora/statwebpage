@@ -1,4 +1,3 @@
-import ReactDOMServer from "react-dom/server";
 import DocumentComponent from "../../components/mailChimp/document/Component";
 
 const handleSendEmails = async (message, contact) => {
@@ -6,9 +5,10 @@ const handleSendEmails = async (message, contact) => {
   const headersToSend = "X-WpEmail";
 
   try {
-    const templateHtml = ReactDOMServer.renderToStaticMarkup(
-      <DocumentComponent message={message} contact={contact} />
-    );
+    const templateHtml = DocumentComponent({
+      message,
+      contact,
+    });
 
     const payload = {
       toEmail: contact.email,
@@ -28,8 +28,8 @@ const handleSendEmails = async (message, contact) => {
     });
 
     return response;
-  } catch (err) {
-    console.error("Error sending emails:", err);
+  } catch (error) {
+    console.error("Error sending emails:", error);
   }
 };
 
