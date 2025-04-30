@@ -208,13 +208,13 @@ function OrderScreen() {
         return;
       }
 
-      const { checkoutSession } = await axios.post("/api/checkout_sessions", {
+      const { data } = await axios.post("/api/checkout_sessions", {
         totalPrice,
         orderId,
       });
 
       const result = await stripe.redirectToCheckout({
-        sessionId: checkoutSession.data.id,
+        sessionId: data.id,
       });
 
       if (result.error) {
