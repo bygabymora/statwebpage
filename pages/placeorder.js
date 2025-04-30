@@ -158,6 +158,7 @@ export default function PlaceOrderScreen() {
           toast.error(result.error.message);
         }
       } else {
+        sendEmail();
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
