@@ -1,18 +1,16 @@
 import htmlFile from "!!raw-loader!./htmlFile.html";
 
-// Function to replace placeholders in the template
+// Replaces {{placeholder}} in the HTML with actual data
 const replacePlaceholders = (template, data) => {
   let output = template;
   for (const key in data) {
     const regex = new RegExp(`{{${key}}}`, "g");
-    output = output.replace(regex, data[key] || ""); // Replace with an empty string if the value is missing
+    output = output.replace(regex, data[key] || "");
   }
-
   return output;
 };
 
-const DocumentComponent = ({ message, contact }) => {
-  // Prepare data to inject into the template
+export const generateEmailHTML = ({ message, contact }) => {
   const data = {
     contactName: contact.name,
     p1: message.p1,
@@ -20,11 +18,5 @@ const DocumentComponent = ({ message, contact }) => {
     p3: message.p3,
   };
 
-  let bodyContent = replacePlaceholders(htmlFile, {
-    ...data,
-  });
-
-  return bodyContent;
+  return replacePlaceholders(htmlFile, data);
 };
-
-export default DocumentComponent;
