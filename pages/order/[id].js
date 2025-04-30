@@ -90,20 +90,9 @@ function OrderScreen() {
   });
 
   const stripePromise = useMemo(() => {
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
-    if (!key) {
-      console.error("❌ Stripe public key is missing");
-      return null;
-    }
-
-    try {
-      const stripe = loadStripe(key);
-      return stripe;
-    } catch (err) {
-      console.error("❌ Stripe loadStripe() threw an error:", err);
-      return null;
-    }
+    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+      : null;
   }, []);
 
   useEffect(() => {
