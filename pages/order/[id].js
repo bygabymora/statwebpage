@@ -402,6 +402,11 @@ function OrderScreen() {
     handlePayment();
   };
 
+  console.log(
+    "Stripe public key:",
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  );
+
   return (
     <Layout
       title={`Order ${

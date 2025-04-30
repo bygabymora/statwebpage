@@ -172,6 +172,10 @@ export default function PlaceOrderScreen() {
       toast.error(getError(error));
     }
   };
+  console.log(
+    "Stripe public key:",
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  );
 
   console.log("Cart Items before order:", cartItems);
   return (
