@@ -120,7 +120,6 @@ export default function PlaceOrderScreen() {
     }
 
     const currentCartItems = [...cartItemsWithPrice];
-
     if (!currentCartItems.length) {
       toast.error("Cart is empty.");
       return;
@@ -145,17 +144,20 @@ export default function PlaceOrderScreen() {
 
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
-        const stripe = await stripePromise;
+        const stripe = await loadStripe(
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        );
 
-        const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: totalPrice,
-          orderId: data._id,
-        });
-
-        if (!stripe) {
-          toast.error("Stripe failed to initialize.");
+        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+          console.error("Stripe initialization failed:", stripe);
+          toast.error("Stripe is not available. Please try again later.");
           return;
         }
+
+        const checkoutSession = await axios.post("/api/checkout_sessions", {
+          totalPrice,
+          orderId: data._id,
+        });
 
         const result = await stripe.redirectToCheckout({
           sessionId: checkoutSession.data.id,
