@@ -22,11 +22,6 @@ import { AiTwotoneLock } from "react-icons/ai";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
-const stripePromise = useMemo(() => {
-  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-    : null;
-}, []);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -93,6 +88,12 @@ function OrderScreen() {
     order: {},
     error: "",
   });
+
+  const stripePromise = useMemo(() => {
+    return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+      : null;
+  }, []);
 
   useEffect(() => {
     const fetchOrder = async () => {
