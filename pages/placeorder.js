@@ -48,6 +48,9 @@ export default function PlaceOrderScreen() {
     () => round2(itemsPrice - discountAmount),
     [itemsPrice, discountAmount]
   );
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  );
 
   const validateOrder = () => {
     if (
@@ -138,20 +141,14 @@ export default function PlaceOrderScreen() {
 
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
-        const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
-        if (!key) {
-          toast.error("Stripe public key is missing.");
-          return;
-        }
-
-        const stripe = await loadStripe(key);
+        const stripe = await stripePromise;
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-          toast.error("Stripe initialization failed. Check environment setup.");
+          toast.error("Stripe initialization failed.");
           return;
         }
 
+        console.log("Stripe loaded:", stripe);
         const checkoutSession = await axios.post("/api/checkout_sessions", {
           totalPrice,
           orderId: data._id,
