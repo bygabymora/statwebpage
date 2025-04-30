@@ -1,13 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    WpUser: { type: mongoose.Schema.Types.ObjectId, ref: 'WpUser', required: true },
+    WpUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "WpUser",
+      required: true,
+    },
     orderItems: [
       {
         name: { type: String, required: true },
         slug: { type: String, required: true },
-        price: { type: Number, required: true},
+        price: { type: Number, required: true },
         wpPrice: { type: Number, required: true },
         quantity: { type: Number, required: true },
         purchaseType: { type: String, required: true },
@@ -23,6 +27,7 @@ const orderSchema = new mongoose.Schema(
       state: { type: String, required: true },
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
+      suiteNumber: { type: String, required: true },
       notes: { type: String, required: false },
     },
     billingAddress: {
@@ -53,5 +58,5 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 export default Order;

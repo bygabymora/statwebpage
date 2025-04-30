@@ -1,11 +1,11 @@
-import { getToken } from 'next-auth/jwt';
-import Order from '../../../../../models/Order';
-import db from '../../../../../utils/db';
+import { getToken } from "next-auth/jwt";
+import Order from "../../../../../models/Order";
+import db from "../../../../../utils/db";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || (user && !user.isAdmin)) {
-    return res.status(401).send('Error: signin required');
+    return res.status(401).send("Error: signin required");
   }
   await db.connect();
 
@@ -17,12 +17,12 @@ const handler = async (req, res) => {
     const atCostumersOrder = await order.save();
     await db.disconnect();
     res.send({
-      message: 'Order is registered as at customers',
+      message: "Order is registered as at customers",
       order: atCostumersOrder,
     });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: 'Error: order not found' });
+    res.status(404).send({ message: "Error: order not found" });
   }
 };
 

@@ -15,6 +15,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 export default function ShippingScreen() {
   const { data: session } = useSession();
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     console.log(name);
@@ -156,8 +157,13 @@ export default function ShippingScreen() {
   } = useForm();
 
   useEffect(() => {
-    if (session && session.user && session.user.name) {
-      setName(session.user.name);
+    if (session?.user) {
+      if (session.user.name) {
+        setName(session.user.name);
+      }
+      if (session.user.email) {
+        setEmail(session.user.email);
+      }
     }
   }, [session]);
 
@@ -484,6 +490,7 @@ export default function ShippingScreen() {
                   className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
                   type='text'
                   id='email'
+                  value={email}
                   {...register("email", { required: false, minLength: 3 })}
                   readOnly
                 />

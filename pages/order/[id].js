@@ -104,32 +104,25 @@ function OrderScreen() {
       }
     };
 
-    if (
-      !order._id ||
-      successPay ||
-      successDeliver ||
-      (order._id && order._id !== orderId)
-    ) {
+    if (!order._id || successPay || successDeliver || order._id !== orderId) {
       fetchOrder();
-      if (successPay) dispatch({ type: "PAY_RESET" });
-      if (successDeliver) dispatch({ type: "DELIVER_RESET" });
-    } else if (!order.isPaid) {
+    }
+
+    if (orderId && !order.isPaid && !window.paypal) {
       const loadPaypalScript = async () => {
-        if (!window.paypal) {
-          const { data: clientId } = await axios.get("/api/keys/paypal");
-          paypalDispatch({
-            type: "resetOptions",
-            value: {
-              "client-id": clientId,
-              currency: "USD",
-            },
-          });
-          paypalDispatch({ type: "setLoadingStatus", value: "pending" });
-        }
+        const { data: clientId } = await axios.get("/api/keys/paypal");
+        paypalDispatch({
+          type: "resetOptions",
+          value: {
+            "client-id": clientId,
+            currency: "USD",
+          },
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
       };
       loadPaypalScript();
     }
-  }, [order, orderId, dispatch, paypalDispatch, successDeliver, successPay]);
+  }, [orderId, successPay, successDeliver, paypalDispatch]);
 
   const {
     shippingAddress,
@@ -482,12 +475,12 @@ function OrderScreen() {
                 <BsTruck className='text-[#144e8b]' /> Shipping Address
               </h2>
               <div className='bg-gray-100 p-3 rounded-md'>
-                {shippingAddress.fullName},
-                {shippingAddress.company && <>{shippingAddress.company},</>}
-                {shippingAddress.phone}, {shippingAddress.address},{" "}
-                {shippingAddress.state}, {shippingAddress.city},{" "}
-                {shippingAddress.postalCode}, {shippingAddress.suiteNumber},{" "}
-                {shippingAddress.email}, {shippingAddress.anotherEmail}
+                {shippingAddress?.fullName},
+                {shippingAddress?.company && <>{shippingAddress?.company},</>}
+                {shippingAddress?.phone}, {shippingAddress?.address},{" "}
+                {shippingAddress?.state}, {shippingAddress?.city},{" "}
+                {shippingAddress?.postalCode}, {shippingAddress?.suiteNumber},{" "}
+                {shippingAddress?.email}, {shippingAddress?.anotherEmail}
               </div>
               <h2 className='mt-4 mb-2 text-lg flex items-center gap-2'>
                 <BsCreditCard2Back className='text-[#144e8b]' /> Billing Address
@@ -751,6 +744,7 @@ function OrderScreen() {
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
+                          forceReRender={[totalPrice]}
                         ></PayPalButtons>
                       )
                     ) : null}
