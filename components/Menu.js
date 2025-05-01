@@ -96,7 +96,7 @@ const Menu = () => {
         }
       });
       const manufacturersArray = [...manufacturersSet];
-      manufacturersArray.sort((a, b) => a.localeCompare(b)); // Orden alfabético
+      manufacturersArray.sort((a, b) => a.localeCompare(b)); // Alphabetic order
       setManufacturers(manufacturersArray);
     } catch (error) {
       console.error(

@@ -183,7 +183,7 @@ export default function ShippingScreen() {
 
   const handleStateChange = (event) => {
     const value = event.target.value;
-    setInputValue(value); // Muestra en el input
+    setInputValue(value); // Sample in input
 
     const filtered = stateMap.filter((state) =>
       state.toLowerCase().startsWith(value.toLowerCase())
