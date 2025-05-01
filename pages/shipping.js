@@ -168,6 +168,14 @@ export default function ShippingScreen() {
   }, [session]);
 
   useEffect(() => {
+    if (shippingSpeed.includes("FedEx")) {
+      setShippingCompany("FedEx");
+    } else if (shippingSpeed.includes("UPS")) {
+      setShippingCompany("UPS");
+    }
+  }, [shippingSpeed]);
+
+  useEffect(() => {
     setValue("fullName", shippingAddress?.fullName);
     setValue("company", shippingAddress?.company);
     setValue("phone", shippingAddress?.phone);
@@ -534,6 +542,26 @@ export default function ShippingScreen() {
                 <option value='FedEx 2nd Day AM'>FedEx 2nd Day AM</option>
                 <option value='FedEx Standard Overnight'>
                   FedEx Standard Overnight
+                </option>
+                <option value='FedEx Priority Overnight'>
+                  FedEx Priority Overnight
+                </option>
+                <option value='FedEx First Overnight'>
+                  FedEx First Overnight
+                </option>
+                <option value='FedEx Saturday'>FedEx Saturday</option>
+                <option value='UPS Ground'>UPS Ground</option>
+                <option value='UPS 3 Day Select'>UPS 3 Day Select</option>
+                <option value='UPS 2nd Day Air'>UPS 2nd Day Air</option>
+                <option value='UPS 2nd Day Air Early'>
+                  UPS 2nd Day Air Early
+                </option>
+                <option value='UPS Next Day Air Saver'>
+                  UPS Next Day Air Saver
+                </option>
+                <option value='UPS Next Day Air'>UPS Next Day Air</option>
+                <option value='UPS Next Day Air Early'>
+                  UPS Next Day Air Early
                 </option>
               </select>
             </div>
