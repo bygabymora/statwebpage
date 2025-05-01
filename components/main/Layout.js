@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Header from "./Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,24 +22,30 @@ export default function Layout({
   const { showStatusMessage, openAlertModal } = useModalContext();
   const router = useRouter();
 
-  const approvalMessage = {
-    title: "Account Verification",
-    body: "Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.",
-    warning:
-      "If it takes longer than expected, please contact us for more information. Thank you for choosing us!",
-  };
+  const approvalMessage = useMemo(
+    () => ({
+      title: "Account Verification",
+      body: "Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.",
+      warning:
+        "If it takes longer than expected, please contact us for more information. Thank you for choosing us!",
+    }),
+    []
+  );
 
-  const disabledMessage = {
-    title: "Account Disabled",
-    body: "Your account has been disabled. Please contact support for more information.",
-    warning:
-      "If you believe this is an error, please reach out to customer service immediately.",
-  };
+  const disabledMessage = useMemo(
+    () => ({
+      title: "Account Disabled",
+      body: "Your account has been disabled. Please contact support for more information.",
+      warning:
+        "If you believe this is an error, please reach out to customer service immediately.",
+    }),
+    []
+  );
 
-  const redirectHandler = async () => {
+  const redirectHandler = useCallback(async () => {
     await signOut({ redirect: false });
     router.push("/");
-  };
+  }, [router]);
 
   useEffect(() => {
     if (!session?.user) return;

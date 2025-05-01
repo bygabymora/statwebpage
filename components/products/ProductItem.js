@@ -142,7 +142,12 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
           product.box?.clearanceCountInStock > 0
       );
     }
-  }, [clearancePurchaseType, product.clearance]);
+  }, [
+    clearancePurchaseType,
+    product.clearance,
+    product.box?.clearanceCountInStock,
+    product.each?.clearanceCountInStock,
+  ]);
 
   const addToCartHandler = async () => {
     const exisItem = cart.cartItems.find(

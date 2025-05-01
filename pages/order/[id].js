@@ -121,7 +121,14 @@ function OrderScreen() {
       };
       loadPaypalScript();
     }
-  }, [orderId, successPay, successDeliver, paypalDispatch]);
+  }, [
+    orderId,
+    successPay,
+    successDeliver,
+    paypalDispatch,
+    order._id,
+    order.isPaid,
+  ]);
 
   const {
     shippingAddress,
@@ -162,9 +169,18 @@ function OrderScreen() {
       setEmailTotalOrder(totalPrice);
       setSpecialNotes(shippingAddress.notes);
     }
-  }, [paymentMethod, order, totalPrice]);
+  }, [
+    paymentMethod,
+    order,
+    totalPrice,
+    shippingAddress.email,
+    shippingAddress.fullName,
+    shippingAddress.notes,
+    shippingAddress.phone,
+    sendEmail,
+  ]);
 
-  const sendEmail = () => {
+  const sendEmail = useCallback(() => {
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage(
         "error",
@@ -194,7 +210,18 @@ function OrderScreen() {
     );
 
     handleSendEmails(emailmessage, contactToEmail);
-  };
+  }, [
+    emailName,
+    email,
+    emailPhone,
+    emailTotalOrder,
+    emailPaymentMethod,
+    specialNotes,
+    orderItems,
+    message,
+    showStatusMessage,
+    handleSendEmails,
+  ]);
 
   const handleCheckout = async () => {
     try {
