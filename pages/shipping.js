@@ -528,10 +528,13 @@ export default function ShippingScreen() {
                 value={shippingSpeed}
                 onChange={(e) => setShippingSpeed(e.target.value)}
               >
-                <option value='Overnight'>Overnight</option>
-                <option value='2-day'>2-day</option>
-                <option value='3-day'>3-day</option>
-                <option value='Ground'>Ground</option>
+                <option value='FedEx Ground'>FedEx Ground</option>
+                <option value='FedEx Express Saver'>FedEx Express Saver</option>
+                <option value='FedEx 2nd Day'>FedEx 2nd Day</option>
+                <option value='FedEx 2nd Day AM'>FedEx 2nd Day AM</option>
+                <option value='FedEx Standard Overnight'>
+                  FedEx Standard Overnight
+                </option>
               </select>
             </div>
 
