@@ -17,7 +17,7 @@ const Banner = () => {
       setCurrentBanner((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [banners.length]);
 
   return (
     <div className='text-title-color-dark text-center'>

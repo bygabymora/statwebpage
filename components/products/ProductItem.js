@@ -116,7 +116,11 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
           : product.box?.clearanceCountInStock
       );
     }
-  }, [product]);
+  }, [
+    product,
+    product.box?.clearanceCountInStock,
+    product.each?.clearanceCountInStock,
+  ]);
 
   useEffect(() => {
     if (purchaseType === "Each") {

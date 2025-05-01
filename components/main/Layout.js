@@ -59,7 +59,14 @@ export default function Layout({
         await redirectHandler();
       }, 5000);
     }
-  }, [session]);
+  }, [
+    session,
+    approvalMessage,
+    disabledMessage,
+    openAlertModal,
+    redirectHandler,
+    showStatusMessage,
+  ]);
 
   return (
     <div className='w-full' lang='en-US'>

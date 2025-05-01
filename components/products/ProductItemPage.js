@@ -97,7 +97,13 @@ export const ProductItemPage = forwardRef(
             product.box?.clearanceCountInStock > 0
         );
       }
-    }, [clearancePurchaseType, product.clearance]);
+    }, [
+      clearancePurchaseType,
+      product.clearance,
+      product.box?.clearanceCountInStock,
+      product.each?.clearanceCountInStock,
+      product.each?.description,
+    ]);
 
     useEffect(() => {
       if (purchaseType === "Each") {
