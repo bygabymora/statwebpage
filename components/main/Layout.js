@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "./Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,6 +20,7 @@ export default function Layout({
 }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
+  const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
 
   const approvalMessage = useMemo(
@@ -53,6 +54,7 @@ export default function Layout({
     const { approved, active } = session.user;
 
     if (approved === false) {
+      setApprovalPending(true); // Mark as pending
       showStatusMessage("error", approvalMessage.body);
       openAlertModal(approvalMessage);
     } else if (active === false) {
@@ -73,6 +75,17 @@ export default function Layout({
     redirectHandler,
     showStatusMessage,
   ]);
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const { approved } = session.user;
+
+    if (approved === true && approvalPending) {
+      setApprovalPending(false);
+      showStatusMessage("success", "Your account has been approved.");
+    }
+  }, [session?.user?.approved]);
 
   return (
     <div className='w-full' lang='en-US'>
