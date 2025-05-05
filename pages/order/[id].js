@@ -522,10 +522,12 @@ function OrderScreen() {
               </div>
               {shippingAddress?.notes && (
                 <div className='mt-4'>
-                  <h3 className='text-lg font-bold'>
+                  <h3 className='text-lg font-bold my-5'>
                     📦 Shipping Instructions
                   </h3>
-                  <p className='text-gray-700'>{shippingAddress?.notes}</p>
+                  <div className='bg-gray-100 p-3 rounded-md'>
+                    <p className='text-gray-700'>{shippingAddress?.notes}</p>
+                  </div>
                 </div>
               )}
               {/* Order status */}

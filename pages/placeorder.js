@@ -116,6 +116,24 @@ export default function PlaceOrderScreen() {
       return;
     }
 
+    const composedNotes = [
+      shippingAddress.shippingSpeed
+        ? `Shipping Speed: ${shippingAddress.shippingSpeed}`
+        : null,
+      shippingAddress.shippingCompany
+        ? `Shipping Company: ${shippingAddress.shippingCompany}`
+        : null,
+      shippingAddress.notes ? `Instructions: ${shippingAddress.notes}` : null,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    // Sobrescribe el campo `notes`
+    const shippingAddressWithNotes = {
+      ...shippingAddress,
+      notes: composedNotes,
+    };
+
     const currentCartItems = [...cartItemsWithPrice];
     if (!currentCartItems.length) {
       toast.error("Cart is empty.");
@@ -128,7 +146,7 @@ export default function PlaceOrderScreen() {
       // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
-        shippingAddress,
+        shippingAddress: shippingAddressWithNotes,
         billingAddress,
         paymentMethod,
         itemsPrice,
