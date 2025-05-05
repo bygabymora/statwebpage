@@ -168,6 +168,12 @@ export default function ShippingScreen() {
   }, [session]);
 
   useEffect(() => {
+    if (email) {
+      setValue("email", email);
+    }
+  }, [email, setValue]);
+
+  useEffect(() => {
     if (shippingSpeed.includes("FedEx")) {
       setShippingCompany("FedEx");
     } else if (shippingSpeed.includes("UPS")) {
