@@ -168,7 +168,7 @@ export default function PlaceOrderScreen() {
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
           totalPrice: Number(totalPrice),
-          orderId: order._id,
+          orderId: data._id,
         });
 
         const result = await stripe.redirectToCheckout({
