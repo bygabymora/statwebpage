@@ -1,36 +1,50 @@
-import React, { useEffect } from 'react';
-import '../styles/global.css';
-import StoreProvider from '../utils/Store';
-import { SessionProvider, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
-import CookieAcceptancePopup from '../components/CookieAcceptancePopup';
-import Script from 'next/script';
-import { reportWebVitals } from '../utils/reportWebVitals';
-import { ModalProvider } from '../components/context/ModalContext';
+import React, { useEffect } from "react";
+import "../styles/global.css";
+import StoreProvider from "../utils/Store";
+import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import CookieAcceptancePopup from "../components/CookieAcceptancePopup";
+import Script from "next/script";
+import { reportWebVitals } from "../utils/reportWebVitals";
+import { ModalProvider } from "../components/context/ModalContext";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 // Lazy-load PayPalScriptProvider ONLY when needed
 const LazyPayPalScriptProvider = dynamic(
-  () => import('@paypal/react-paypal-js').then((mod) => mod.PayPalScriptProvider),
+  () =>
+    import("@paypal/react-paypal-js").then((mod) => mod.PayPalScriptProvider),
   { ssr: false }
 );
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
-  const isProd = process.env.NODE_ENV === 'production';
+  const isProd = process.env.NODE_ENV === "production";
 
   useEffect(() => {
     const handleRouteChange = (url) => {
       if (window.gtag) {
-        window.gtag('config', 'G-3JJZVPL0B5', {
+        window.gtag("config", "G-3JJZVPL0B5", {
           page_path: url,
         });
       }
     };
 
-    router.events.on('routeChangeComplete', handleRouteChange);
+    stripePromise.then((stripe) => {
+      if (!stripe) {
+        console.warn("Stripe failed to initialize correctly.");
+      } else {
+        console.log("Preloaded stripe");
+      }
+    });
+
+    router.events.on("routeChangeComplete", handleRouteChange);
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
 
@@ -43,10 +57,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           {isProd && (
             <>
               <Script
-                src="https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5"
-                strategy="afterInteractive"
+                src='https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5'
+                strategy='afterInteractive'
               />
-              <Script id="gtag-init" strategy="afterInteractive">
+              <Script id='gtag-init' strategy='afterInteractive'>
                 {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
@@ -87,14 +101,14 @@ function Auth({ children, adminOnly }) {
   const { status, data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push('/unauthorized?message=Login required');
+      router.push("/unauthorized?message=Login required");
     },
   });
 
-  if (status === 'loading') return <div>Loading...</div>;
+  if (status === "loading") return <div>Loading...</div>;
 
   if (adminOnly && !session.user?.isAdmin) {
-    router.push('/unauthorized?message=Admin login required to access page');
+    router.push("/unauthorized?message=Admin login required to access page");
     return <div>Redirecting...</div>;
   }
 
