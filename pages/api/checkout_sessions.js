@@ -9,19 +9,30 @@ export default async function handler(req, res) {
   const user = await getToken({ req });
 
   if (!user) {
-    return res.status(401).send("signin required");
+    return res.status(401).json({ message: "Sign-in required" });
   }
 
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
-    return res.status(405).end("Method Not Allowed");
+    return res.status(405).json({ message: "Method Not Allowed" });
   }
 
   try {
-    const { totalPrice, orderId } = req.body;
+    let { totalPrice, orderId } = req.body;
 
-    if (!totalPrice || !orderId) {
-      return res.status(400).json({ message: "Missing totalPrice or orderId" });
+    // Asegurar que totalPrice es número
+    totalPrice = Number(totalPrice);
+    if (!totalPrice || isNaN(totalPrice)) {
+      return res.status(400).json({ message: "Invalid totalPrice" });
+    }
+
+    if (!orderId) {
+      return res.status(400).json({ message: "Missing orderId" });
+    }
+
+    const amount = Math.round(totalPrice * 100);
+    if (amount < 50) {
+      return res.status(400).json({ message: "Total must be at least $0.50" });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -34,7 +45,7 @@ export default async function handler(req, res) {
               name: "Order Total",
               description: "Your order total",
             },
-            unit_amount: Math.round(totalPrice * 100),
+            unit_amount: amount,
           },
           quantity: 1,
         },
@@ -47,6 +58,12 @@ export default async function handler(req, res) {
     return res.status(200).json({ id: session.id });
   } catch (error) {
     console.error("Stripe Checkout Session Error:", error);
-    return res.status(error.statusCode || 500).json({ message: error.message });
+
+    return res.status(error.statusCode || 500).json({
+      message:
+        typeof error.message === "string"
+          ? error.message
+          : "Unexpected error during Stripe session creation",
+    });
   }
 }

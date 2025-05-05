@@ -166,9 +166,8 @@ export default function PlaceOrderScreen() {
           return;
         }
 
-        console.log("Stripe loaded:", stripe);
         const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice,
+          totalPrice: Number(totalPrice),
           orderId: data._id,
         });
 
