@@ -1,6 +1,8 @@
 const getError = (error) =>
-  error.response && error.response.data && error.response.data.message
-    ? error.response.data.message
-    : error.message;
+  String(
+    error?.response?.data?.message ||
+      error?.message ||
+      "An unexpected error occurred"
+  );
 
 export { getError };
