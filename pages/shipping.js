@@ -317,14 +317,14 @@ export default function ShippingScreen() {
         </p>
         <form className='space-y-6 my-5' onSubmit={handleSubmit(submitHandler)}>
           {/* SHIPPING ADDRESS */}
-          <div className='bg-white shadow-md rounded-lg p-6'>
-            <h2 className='text-xl font-semibold flex items-center gap-2 text-gray-700'>
+          <div className='bg-white shadow-md rounded-lg p-4 sm:p-6'>
+            <h2 className='text-lg sm:text-xl font-semibold flex items-center gap-2 text-gray-700'>
               <FaTruckMoving className='text-[#144e8b]' />
               Shipping Address
             </h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
               {lastOrder && !lastOrder.warning && (
-                <div className='col-span-2 bg-blue-50 border border-blue-300 rounded-md p-4 mt-4 flex items-center justify-between'>
+                <div className='col-span-1 sm:col-span-2 bg-blue-50 border border-blue-300 rounded-md p-4 mt-2 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between'>
                   <div>
                     <p className='text-sm text-gray-700'>
                       We found a previous address from your last order.
