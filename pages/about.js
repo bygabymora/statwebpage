@@ -1,14 +1,16 @@
-import React from 'react';
-import Layout from '../components/main/Layout';
-import Image from 'next/image';
-import image from '../public/images/assets/about.svg';
-import { useSpring, animated } from 'react-spring';
+import React from "react";
+import Layout from "../components/main/Layout";
+import Image from "next/image";
+import image from "../public/images/assets/about.svg";
+import { useSpring, animated } from "react-spring";
+import Link from "next/link";
+import { BsChevronRight } from "react-icons/bs";
 
 export default function AboutScreen() {
   const imageAnimation = useSpring({
     opacity: 1,
-    transform: 'translateY(0)',
-    from: { opacity: 0, transform: 'translateY(100px)' },
+    transform: "translateY(0)",
+    from: { opacity: 0, transform: "translateY(100px)" },
     config: { duration: 1000 },
   });
 
@@ -19,15 +21,38 @@ export default function AboutScreen() {
     config: { duration: 800 },
   });
 
+  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "About Us" }];
+
   return (
-    <Layout title="About Us">
-      <div className="grid lg:grid-cols-2 md:grid-cols-1  banner-container mx-auto px-4 my-5 tems-center">
-        <animated.div className="image-container" style={imageAnimation}>
-          <Image src={image} alt="About Us" className="about-image" />
-        </animated.div>{' '}
-        <animated.div className="content-container" style={contentAnimation}>
-          <h2 className="section__title"> About Us</h2>
-          <p className="about-content">
+    <Layout title='About Us'>
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className='flex items-center'>
+              {breadcrumb.href ? (
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#144e8b]'
+                >
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className='mx-2 text-gray-500' />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto items-center lg:h-screen lg:items-center lg:justify-center'>
+        <animated.div className='image-container' style={imageAnimation}>
+          <Image src={image} alt='About Us' className='about-image' />
+        </animated.div>{" "}
+        <animated.div className='content-container' style={contentAnimation}>
+          <h2 className='section__title'> About Us</h2>
+          <p className='about-content'>
             Stat Surgical was founded to combat the rising costs of healthcare
             supply chains. Our company targets the &quot;small &quot; portion of
             &quot;off-contract&quot; purchases and backorders. Stat Surgical

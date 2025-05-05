@@ -22,10 +22,7 @@ const menuItems = [
     subcategories: [
       {
         title: "Categories",
-        links: [
-          { name: "Surgical Supplies", href: "/products" },
-          { name: "Instruments", href: "/products" },
-        ],
+        links: [{ name: "Surgical Supplies", href: "/products" }],
       },
     ],
   },
