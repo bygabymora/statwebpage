@@ -14,9 +14,13 @@ import Link from "next/link";
 import Image from "next/image";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
+let stripePromise;
+const getStripe = () => {
+  if (!stripePromise) {
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  }
+  return stripePromise;
+};
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -159,7 +163,7 @@ export default function PlaceOrderScreen() {
 
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
-        const stripe = await stripePromise;
+        const stripe = await getStripe();
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
           toast.error("Stripe initialization failed.");
@@ -246,7 +250,7 @@ export default function PlaceOrderScreen() {
                 {shippingAddress.postalCode}, {shippingAddress.suiteNumber},{" "}
                 {shippingAddress.email}, {shippingAddress.anotherEmail}
                 {shippingAddress.notes && (
-                  <div className='mt-3 p-3 bg-gray-100 border-l-4 border-gray-500 rounded-lg'>
+                  <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg'>
                     <h3 className='font-bold'>Shipping Instructions</h3>
                     <p>{shippingAddress.notes}</p>
                   </div>
