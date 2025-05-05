@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   try {
     let { totalPrice, orderId } = req.body;
 
-    // Asegurar que totalPrice es número
+    // Ensure totalPrice is number
     totalPrice = Number(totalPrice);
     if (!totalPrice || isNaN(totalPrice)) {
       return res.status(400).json({ message: "Invalid totalPrice" });

@@ -168,7 +168,7 @@ export default function PlaceOrderScreen() {
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
           totalPrice: Number(totalPrice),
-          orderId: data._id,
+          orderId: order._id,
         });
 
         const result = await stripe.redirectToCheckout({
@@ -176,11 +176,13 @@ export default function PlaceOrderScreen() {
         });
 
         if (result.error) {
-          toast.error(result.error.message);
+          toast.error(
+            result.error.message || "An error occurred with Stripe checkout."
+          );
         }
       } else {
         // If not Stripe, redirect to normal order page
-        router.push(`/order/${data._id}`);
+        router.push(`/order/${order._id}`);
       }
     } catch (error) {
       toast.error(String(getError(error)));
