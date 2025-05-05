@@ -169,16 +169,7 @@ function OrderScreen() {
       setEmailTotalOrder(totalPrice);
       setSpecialNotes(shippingAddress.notes);
     }
-  }, [
-    paymentMethod,
-    order,
-    totalPrice,
-    shippingAddress.email,
-    shippingAddress.fullName,
-    shippingAddress.notes,
-    shippingAddress.phone,
-    sendEmail,
-  ]);
+  }, [paymentMethod, order, totalPrice]);
 
   const sendEmail = useCallback(() => {
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
