@@ -499,7 +499,7 @@ export default function ShippingScreen() {
                   type='text'
                   id='email'
                   value={email}
-                  {...register("email", { required: false, minLength: 3 })}
+                  {...register("email", { required: true, minLength: 3 })}
                   readOnly
                 />
               </div>
