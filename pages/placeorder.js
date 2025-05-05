@@ -118,12 +118,12 @@ export default function PlaceOrderScreen() {
 
     const composedNotes = [
       shippingAddress.shippingSpeed
-        ? `Shipping Speed: ${shippingAddress.shippingSpeed}`
+        ? `Shipping Speed: ${shippingAddress?.shippingSpeed}`
         : null,
       shippingAddress.shippingCompany
-        ? `Shipping Company: ${shippingAddress.shippingCompany}`
+        ? `Shipping Company: ${shippingAddress?.shippingCompany}`
         : null,
-      shippingAddress.notes ? `Instructions: ${shippingAddress.notes}` : null,
+      shippingAddress.notes ? `Instructions: ${shippingAddress?.notes}` : null,
     ]
       .filter(Boolean)
       .join(", ");
@@ -144,7 +144,7 @@ export default function PlaceOrderScreen() {
 
     try {
       // Create the order in your backend
-      const { data, order } = await axios.post("/api/orders", {
+      const { data } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
         shippingAddress: shippingAddressWithNotes,
         billingAddress,
@@ -172,7 +172,7 @@ export default function PlaceOrderScreen() {
         });
 
         const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession.data.id,
+          sessionId: checkoutSession?.data?.id,
         });
 
         if (result.error) {
@@ -182,7 +182,7 @@ export default function PlaceOrderScreen() {
         }
       } else {
         // If not Stripe, redirect to normal order page
-        router.push(`/order/${order._id}`);
+        router.push(`/order/${data._id}`);
       }
     } catch (error) {
       toast.error(String(getError(error)));
