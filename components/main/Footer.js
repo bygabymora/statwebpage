@@ -141,7 +141,7 @@ export default function Footer() {
       <div className='flex flex-col sm:flex-row justify-between items-center w-full max-w-5xl mt-6'>
         <div className='text-center sm:text-left font-bold'>
           <p className='text-[#144e8b]'>Email: sales@statsurgicalsupply.com</p>
-          <p className='text-[#144e8b]'>Phone: (813) 607-4110</p>
+          <p className='text-[#144e8b]'>Phone: (813) 252-0727</p>
         </div>
         <br />
         <Image
