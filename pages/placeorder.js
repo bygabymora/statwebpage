@@ -184,7 +184,7 @@ export default function PlaceOrderScreen() {
         router.push(`/order/${data._id}`);
       }
     } catch (error) {
-      toast.error(getError(error));
+      toast.error(String(getError(error)));
     }
   };
   console.log(

@@ -47,11 +47,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ id: session.id });
   } catch (error) {
     console.error("Stripe Checkout Session Error:", error);
-    return res.status(error.statusCode || 500).json({
-      message:
-        typeof error.message === "string"
-          ? error.message
-          : "An unexpected error occurred during checkout session creation",
-    });
+    return res.status(error.statusCode || 500).json({ message: error.message });
   }
 }
