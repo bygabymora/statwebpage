@@ -144,7 +144,7 @@ export default function PlaceOrderScreen() {
 
     try {
       // Create the order in your backend
-      const { data } = await axios.post("/api/orders", {
+      const { data, order } = await axios.post("/api/orders", {
         orderItems: currentCartItems,
         shippingAddress: shippingAddressWithNotes,
         billingAddress,
