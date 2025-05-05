@@ -14,13 +14,9 @@ import Link from "next/link";
 import Image from "next/image";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { loadStripe } from "@stripe/stripe-js";
-let stripePromise;
-const getStripe = () => {
-  if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-  }
-  return stripePromise;
-};
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 export default function PlaceOrderScreen() {
   const { state, dispatch } = useContext(Store);
@@ -163,7 +159,7 @@ export default function PlaceOrderScreen() {
 
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
-        const stripe = await getStripe();
+        const stripe = await stripePromise;
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
           toast.error("Stripe initialization failed.");

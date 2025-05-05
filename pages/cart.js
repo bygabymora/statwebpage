@@ -37,8 +37,8 @@ function CartScreen() {
               available: availableQuantity,
             });
           }
-        } catch (err) {
-          console.error("Stock check failed", err);
+        } catch (error) {
+          console.error("Stock check failed", error);
         }
       }
     };
