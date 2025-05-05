@@ -1,15 +1,15 @@
-import React from 'react';
-import Layout from '../components/main/Layout';
+import React from "react";
+import Layout from "../components/main/Layout";
 
 export default function facs() {
   return (
     <>
-      <Layout title="Return policy">
-        <div className="card p-5 mb-10">
-          <h1 className="section__title">Return Policy</h1>
+      <Layout title='Return policy'>
+        <div className='card p-5 mb-10'>
+          <h1 className='section__title'>Return Policy</h1>
           <br />
-          <h2 className="section__subtitle">Last updated October 19, 2023</h2>
-          <h3 className="text-gray-500">
+          <h2 className='section__subtitle'>Last updated October 19, 2023</h2>
+          <h3 className='text-gray-500'>
             Thank you for your purchase. We hope you are happy with it.
           </h3>
           <br />
@@ -33,14 +33,14 @@ export default function facs() {
             following address:
           </p>
           <br />
-          <p className="text-gray-500 font-bold ml-5">
+          <p className='text-gray-500 font-bold ml-5'>
             Stat Surgical Supply LLC
             <br />
             Attn: Returns RMA#
             <br />
-            100 South Ashley Drive Suite 600
+            2501 N. Armenia Avenue Unit 2
             <br />
-            Tampa, FL 33602
+            Tampa, Florida 33607
             <br />
             United States.
             <br />
@@ -49,12 +49,12 @@ export default function facs() {
           <p>
             Please note you will be responsible for all return shipping charges.
             We strongly recommend using a trackable method to mail your return,
-            like FedEx or UPS.{' '}
+            like FedEx or UPS.{" "}
           </p>
           <br />
           <h2>RETURN PROCESSING</h2>
           <p>
-            {' '}
+            {" "}
             After receiving your return and inspecting the condition of your
             item(s), we will process your return. Please allow at least two (2)
             days from receiving your item to process your return. We will notify
@@ -72,11 +72,11 @@ export default function facs() {
           <br />
           <h2>EXCEPTIONS</h2>
           <p>
-            {' '}
+            {" "}
             Certain items are not returnable due to their high temperature and
             humidity sensitivity:
           </p>
-          <p className="text-gray-500 font-bold ml-5 mb-10">
+          <p className='text-gray-500 font-bold ml-5 mb-10'>
             <br />
             Integra Duraseal
             <br />
@@ -92,7 +92,7 @@ export default function facs() {
             If you have any questions concerning our return policy, please get
             in touch with us at:
           </p>
-          <p className="text-gray-500 font-bold ml-5 mb-10">
+          <p className='text-gray-500 font-bold ml-5 mb-10'>
             <br />
             813-252-0727
             <br />

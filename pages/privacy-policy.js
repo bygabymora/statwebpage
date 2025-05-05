@@ -1,22 +1,22 @@
-import React from 'react';
-import Layout from '../components/main/Layout';
+import React from "react";
+import Layout from "../components/main/Layout";
 
 export default function facs() {
   const handleCallButtonClick = (event) => {
     event.preventDefault();
     if (window.innerWidth >= 400) {
-      alert('Our phone number: 813-252-0727');
+      alert("Our phone number: 813-252-0727");
     } else {
-      window.location.href = 'tel:8132520727';
+      window.location.href = "tel:8132520727";
     }
   };
   return (
     <>
-      <Layout title="Privacy policy">
-        <div className="card p-5 my-10">
-          <h1 className="section__title">Privacy Policy</h1>
+      <Layout title='Privacy policy'>
+        <div className='card p-5 my-10'>
+          <h1 className='section__title'>Privacy Policy</h1>
           <br />
-          <h2 className="section__subtitle">Last updated October 24, 2023</h2>
+          <h2 className='section__subtitle'>Last updated October 24, 2023</h2>
           <h2>GENERAL</h2>
           <br />
           <p>
@@ -48,7 +48,7 @@ export default function facs() {
           <h3>Company Information</h3>
 
           <br />
-          <p className="text-gray-500 font-bold ml-5">
+          <p className='text-gray-500 font-bold ml-5'>
             Stat Surgical Supply LLC
             <br />
             100 South Ashley Drive Suite 600
@@ -57,14 +57,14 @@ export default function facs() {
             <br />
             United States.
             <br />
-            <a href="mailto:admin@statsurgicalsupply.com" target="_blank">
+            <a href='mailto:admin@statsurgicalsupply.com' target='_blank'>
               Email: admin@statsurgicalsupply.com
             </a>
             <br />
             <a
-              href="tel:8132520727"
+              href='tel:8132520727'
               onClick={handleCallButtonClick}
-              target="_blank"
+              target='_blank'
             >
               Phone: 813-252-0727
             </a>
@@ -89,10 +89,9 @@ export default function facs() {
             Stat Surgical Supply LLC better understand how the Sites are used
             and how to make them better. By identifying patterns and trends in
             usage, Stat Surgical Supply LLC is able to better design the Sites
-            to improve users’ 
-            , both in terms of content and ease of
-            use. From time to time, Stat Surgical Supply LLC may also release
-            the anonymized information gathered from the users in the aggregate,
+            to improve users’ , both in terms of content and ease of use. From
+            time to time, Stat Surgical Supply LLC may also release the
+            anonymized information gathered from the users in the aggregate,
             such as by publishing a report on trends in the usage of the Sites.
             <br />
             <br />
@@ -251,9 +250,9 @@ export default function facs() {
             unsubscribe button found in the footer of our emails <br />• Email
             us at &nbsp;
             <a
-              href="mailto:sales@statsurgicalsupply.com"
-              target="_blank"
-              className="font-bold"
+              href='mailto:sales@statsurgicalsupply.com'
+              target='_blank'
+              className='font-bold'
             >
               sales@statsurgicalsupply.com
             </a>
@@ -335,9 +334,9 @@ export default function facs() {
             If you have any questions or comments about your privacy rights, you
             may email us at &nbsp;
             <a
-              href="mailto:sales@statsurgicalsupply.com"
-              target="_blank"
-              className="font-bold"
+              href='mailto:sales@statsurgicalsupply.com'
+              target='_blank'
+              className='font-bold'
             >
               sales@statsurgicalsupply.com
             </a>
@@ -444,7 +443,7 @@ export default function facs() {
             contact us at:
           </p>
           <br />
-          <p className="text-gray-500 font-bold ml-5">
+          <p className='text-gray-500 font-bold ml-5'>
             Stat Surgical Supply LLC
             <br />
             100 South Ashley Drive Suite 600
@@ -453,20 +452,20 @@ export default function facs() {
             <br />
             United States.
             <br />
-            <a href="mailto:admin@statsurgicalsupply.com" target="_blank">
+            <a href='mailto:admin@statsurgicalsupply.com' target='_blank'>
               Email: admin@statsurgicalsupply.com
             </a>
             <br />
             <a
-              href="tel:8132520727"
+              href='tel:8132520727'
               onClick={handleCallButtonClick}
-              target="_blank"
+              target='_blank'
             >
               Phone: 813-252-0727
             </a>
             <br />
           </p>
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <h2>Privacy Notice (Rev. 13461BC)</h2>
           </div>
         </div>

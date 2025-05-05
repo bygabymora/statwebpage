@@ -41,7 +41,7 @@ const StaticBanner = () => {
 
           <ul className='text-lg text-[#414b53] mb-6 space-y-2'>
             {[
-              "We pay top dollar for unused medical supplies.",
+              "We pay top dollar for unused and in-date surgical disposables and implants",
               "Fast and secure transaction process.",
               "Contribute to reducing medical waste.",
             ].map((item, index) => (

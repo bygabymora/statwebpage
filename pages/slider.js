@@ -16,7 +16,7 @@ const benefits = [
   {
     icon: <FaBoxOpen />,
     title: "Available Stock",
-    description: "Wide catalog with fast delivery.",
+    description: "Diverse catalog with fast delivery.",
     link: "/products",
   },
   {
@@ -28,7 +28,7 @@ const benefits = [
   {
     icon: <FaHeadset />,
     title: "Support",
-    description: "Email, phone, or visit our location.",
+    description: "Email, phone, or schedule a visit at our location.",
     link: "/support",
   },
 ];

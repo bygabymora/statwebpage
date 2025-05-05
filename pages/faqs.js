@@ -1,12 +1,12 @@
-import React from 'react';
-import Layout from '../components/main/Layout';
+import React from "react";
+import Layout from "../components/main/Layout";
 
 export default function facs() {
   return (
     <>
-      <Layout title="FAQS">
-        <div className="card p-5 mb-10">
-          <h1 className="mb-4 text-xl">FAQS</h1>
+      <Layout title='FAQS'>
+        <div className='card p-5 mb-10'>
+          <h1 className='mb-4 text-xl'>FAQS</h1>
           <h2>How do you acquire your products?</h2>
           <p>
             Stat Surgical acquires products from domestic hospitals, surgery
@@ -36,11 +36,12 @@ export default function facs() {
           <h2>What payment methods do you accept? </h2>
           <p>
             We accept purchase orders from domestic hospitals and surgery
-            centers, credit cards, PayPal, and Venmo.
+            centers. We accept ACH, wire transfers, domestic credit cards, and
+            domestic PayPal for all other approved customers.
           </p>
           <br />
           <h2>
-            Can I buy items by the each, or do I have to buy a whole box?{' '}
+            Can I buy items by the each, or do I have to buy a whole box?{" "}
           </h2>
           <p>
             Unlike buying products from the manufacturer, you can purchase items
