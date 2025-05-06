@@ -6,6 +6,7 @@ import axios from "axios";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export default function Products() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const manufacturersMap = new Map();
   const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
 
   const fetchData = async () => {
     try {
@@ -53,12 +55,30 @@ export default function Products() {
   const manufacturers = [...manufacturersMap.values()];
 
   const filteredProducts = selectedManufacturer
-    ? products.filter(
-        (product) =>
+    ? products.filter((product) => {
+        const isProtectedUser =
+          session?.user?.protectedInventory === true &&
+          status === "authenticated";
+        const isProtectedProduct = product?.protected === true;
+
+        // If the user is protected and the product too, we exclude it
+        if (isProtectedUser && isProtectedProduct) return false;
+
+        return (
           product.manufacturer.trim().toLowerCase() ===
           selectedManufacturer.trim().toLowerCase()
-      )
-    : products;
+        );
+      })
+    : products.filter((product) => {
+        const isProtectedUser =
+          session?.user?.protectedInventory === true &&
+          status === "authenticated";
+        const isProtectedProduct = product?.protected === true;
+
+        if (isProtectedUser && isProtectedProduct) return false;
+
+        return true;
+      });
 
   const handleManufacturerClick = (manufacturer) => {
     router.push(

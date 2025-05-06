@@ -1,4 +1,3 @@
-import { getToken } from "next-auth/jwt";
 import Product from "../../../models/Product";
 import db from "../../../utils/db";
 
@@ -20,32 +19,18 @@ const handler = async (req, res) => {
 
 const getHandler = async (req, res) => {
   try {
-    const secret = process.env.JWT_SECRET;
-    const token = await getToken({ req, secret });
+    const sortDirection = req.query.sort === "asc" ? 1 : -1; // Determine the sort direction from the query parameter
 
-    await db.connect();
-
-    const sortDirection = req.query.sort === "asc" ? 1 : -1;
     let sortField = "name";
     if (sortDirection === -1) {
       sortField = `-${sortField}`;
     }
-
-    // Conditional logic based on token
-    let filter = { approved: true, active: true };
-
-    if (token?.protectedInventory === true) {
-      // Restricted user: do not show protected products
-      filter.protected = false;
-    }
-
-    const products = await Product.find(filter)
+    const products = await Product.find({ approved: true, active: true })
       .sort({ [sortField]: sortDirection })
       .lean();
-
+    console.log("leaked products:", products);
     res.send(products);
-  } catch (error) {
-    console.error("Error fetching products:", error);
+  } catch {
     res.status(500).send({ message: "Error fetching products" });
   }
 };
