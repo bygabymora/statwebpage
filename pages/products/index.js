@@ -13,7 +13,6 @@ export default function Products() {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
-  const firstProductRef = useRef(null);
   const manufacturersMap = new Map();
   const [loading, setLoading] = useState(true);
 
@@ -153,11 +152,13 @@ export default function Products() {
               <p>Loading products...</p>
             ) : (
               filteredProducts.map((product, index) => (
-                <ProductItemPage
-                  product={product}
-                  key={product.name}
-                  ref={index === 0 ? firstProductRef : null}
-                />
+                <div key={index}>
+                  <ProductItemPage
+                    product={product}
+                    clearancePurchaseType={product.clearancePurchaseType}
+                    index={index}
+                  />
+                </div>
               ))
             )}
           </div>

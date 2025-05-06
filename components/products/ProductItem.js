@@ -418,14 +418,16 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
                         </select>
                       </div>
                     )}
-                {active === "loading"
-                  ? "Loading"
-                  : active && (
-                      <div className='mb-2 justify-between'>
-                        <div className='font-bold'>Price</div>
-                        <div className=''>&nbsp; ${currentPrice}</div>
-                      </div>
-                    )}
+                {active === "loading" ? (
+                  "Loading"
+                ) : active && currentPrice > 0 ? (
+                  <div className='mb-2 justify-between'>
+                    <div className='font-bold'>Price</div>
+                    <div className=''>&nbsp; $ {currentPrice}</div>
+                  </div>
+                ) : (
+                  "Call for Price"
+                )}
               </div>
             ) : null
           ) : (
