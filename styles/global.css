@@ -4,7 +4,7 @@
 @tailwind utilities;
 /*=============== VARIABLES CSS ===============*/
 :root {
-  --header-height: 7rem;
+  --header-height: 5rem;
 
   /*========== Colors ==========*/
 
@@ -17,9 +17,9 @@
   --yellow: #ffd700;
 
   /*========== Font and typography ==========*/
-  --title-font: 'Montserrat', sans-serif;
-  --subtitle-font: 'Roboto', serif;
-  --text-font: 'Lato', sans-serif;
+  --title-font: "Montserrat", sans-serif;
+  --subtitle-font: "Roboto", serif;
+  --text-font: "Lato", sans-serif;
 
   /*.5rem = 8px | 1rem = 16px ...*/
   --big-font-size: 3.5rem;
@@ -126,7 +126,8 @@ img {
   height: auto;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -141,7 +142,6 @@ html, body {
 main {
   flex: 1;
 }
-
 
 /*=============== REUSABLE CSS CLASSES ===============*/
 .section {
@@ -174,6 +174,27 @@ main {
 .grid {
   display: grid;
   gap: 1.5rem;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 14px; /* Width of the scrollbar */
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #e6e4e4;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #144e8b; /* Thumb color */
+  border-radius: 8px; /* Round edges of the scrollbar thumb */
+  border: 3px solid #144e8b; /* To create padding-like effect, make thumb narrower */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #5b8756; /* Change thumb color when hovered */
+  border: 3px solid #5b8756; /* Keep the padding-like effect when hovered */
 }
 
 /*=============== BUTTONS ===============*/
@@ -219,13 +240,10 @@ main {
 }
 
 .nav {
-  height: 7rem;
+  height: 5rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 95%;
-  margin-right: 3%;
-  margin-left: 3%;
+  justify-content: space-evenly;
+  width: 80%;
 }
 
 .nav__logo,
@@ -403,7 +421,8 @@ main {
   background-color: var(--title-color);
 }
 
-.table-auto th, .table-auto td {
+.table-auto th,
+.table-auto td {
   padding: 12px 15px;
 }
 
@@ -714,8 +733,8 @@ main {
 .contact__form-input,
 .contact__form-inputs {
   height: 45px;
-  min-height: 40px; 
-  padding: 10px 14px; 
+  min-height: 40px;
+  padding: 10px 14px;
   font-size: 1rem;
   line-height: normal;
 }
@@ -961,7 +980,7 @@ main {
   .nav {
     height: var(--header-height);
     width: 90%;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     gap: 1rem;
   }

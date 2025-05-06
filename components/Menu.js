@@ -157,7 +157,7 @@ const Menu = () => {
 
   return (
     <nav className='bg-gray-100 shadow w-full'>
-      <ul className='flex justify-center space-x-6 py-3 text-[#144e8b] font-medium text-sm lg:text-base'>
+      <ul className='flex justify-center space-x-6 py-1 text-[#144e8b] font-medium text-sm lg:text-base'>
         {updatedMenuItems.map((item, index) => (
           <li
             key={index}
@@ -165,13 +165,13 @@ const Menu = () => {
             onMouseEnter={() => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
           >
-            <span className='px-3 py-3 inline-block hover:text-[#03793d] transition-colors duration-200'>
+            <span className='px-3 py-1 inline-block hover:text-[#03793d] transition-colors duration-200'>
               {item.title}
             </span>
 
             {item.subcategories.length > 0 && (
               <div
-                className={`absolute left-1/2 -translate-x-1/2 top-full w-80 max-h-80 overflow-y-auto 
+                className={`custom-scrollbar absolute left-1/2 -translate-x-1/2 top-full w-80 max-h-80 overflow-y-auto 
                 bg-gray-100 shadow-2xl rounded-lg border border-gray-200 transition-all duration-200 z-50 ${
                   activeIndex === index
                     ? "opacity-100 translate-y-0 pointer-events-auto"

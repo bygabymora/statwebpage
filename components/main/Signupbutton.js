@@ -1,11 +1,9 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { BsPerson } from "react-icons/bs";
 import { signOut, useSession } from "next-auth/react";
-import { Menu } from "@headlessui/react";
-import DropdownLink from "../DropdownLink";
 import Cookies from "js-cookie";
 import { Store } from "../../utils/Store";
-
+import Link from "next/link";
 const SignupButton = () => {
   const { status, data: session } = useSession();
   const { dispatch } = useContext(Store);
@@ -42,17 +40,21 @@ const SignupButton = () => {
 
   return (
     <div className='relative'>
-      <Menu as='div' className='flex items-center'>
-        <Menu.Button className='p-2' aria-label='user'>
-          <BsPerson
-            className='text-[#03793d] text-3xl cursor-pointer'
-            onClick={handleMenuToggle}
-          />
-        </Menu.Button>
+      <div className='flex items-center w-fit h-full'>
+        <button
+          className='relative font-bold flex items-center group'
+          aria-label='user'
+          onClick={(e) => {
+            e.preventDefault();
+            handleMenuToggle();
+          }}
+        >
+          {/* User Icon (Unchanged Size) */}
+          <BsPerson className='font-bold text-[2rem] text-[#03793d] cursor-pointer place-self-center' />
+        </button>
 
         {menuOpen && (
           <div
-            ref={menuRef}
             className='absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200'
             role='menu'
             aria-orientation='vertical'
@@ -60,72 +62,59 @@ const SignupButton = () => {
             {status === "loading" ? (
               <div className='p-4 text-center text-gray-700'>Loading...</div>
             ) : session?.user ? (
-              <Menu.Items className='divide-y divide-gray-200'>
+              <>
                 <div className='px-4 py-2 text-sm text-[#03793d] font-semibold'>
                   Hello, {session.user.name}
                 </div>
-                <Menu.Item>
-                  <DropdownLink
+                <div className='block px-4 py-2 text-sm'>
+                  <Link
                     href='/profile'
                     className='block px-4 py-2 hover:bg-[#f4f4f4]'
                   >
                     Profile
-                  </DropdownLink>
-                </Menu.Item>
+                  </Link>
+                </div>
                 {active === "loading"
                   ? "Loading"
                   : active && (
-                      <Menu.Item>
-                        <DropdownLink
+                      <div className='block px-4 py-2 text-sm'>
+                        <Link
                           href='/order-history'
                           className='block px-4 py-2 hover:bg-[#f4f4f4]'
                         >
                           Order History
-                        </DropdownLink>
-                      </Menu.Item>
+                        </Link>
+                      </div>
                     )}
-                {session.user.isAdmin && (
-                  <Menu.Item>
-                    <DropdownLink
+                {session.user?.isAdmin && (
+                  <div className='block px-4 py-2 text-sm'>
+                    <Link
                       href='/admin/dashboard'
                       className='block px-4 py-2 hover:bg-[#f4f4f4]'
                     >
                       Admin Dashboard
-                    </DropdownLink>
-                  </Menu.Item>
+                    </Link>
+                  </div>
                 )}
-                <Menu.Item>
-                  <button
-                    onClick={logoutClickHandler}
-                    className='block w-full text-left px-4 py-2 hover:bg-[#f4f4f4]'
-                  >
+                <div className='block px-4 py-2 text-sm font-bold'>
+                  <Link href='/' onClick={logoutClickHandler}>
                     Log Out
-                  </button>
-                </Menu.Item>
-              </Menu.Items>
+                  </Link>
+                </div>
+              </>
             ) : (
-              <Menu.Items>
-                <Menu.Item>
-                  <DropdownLink
-                    href='/Login'
-                    className='block px-4 py-2 hover:bg-[#f4f4f4]'
-                  >
-                    Login
-                  </DropdownLink>
-                </Menu.Item>
-                <Menu.Item>
-                  <DropdownLink
-                    href='/Register'
-                    className='block px-4 py-2 hover:bg-[#f4f4f4]'
-                  >
-                    Register
-                  </DropdownLink>
-                </Menu.Item>
-              </Menu.Items>
+              <>
+                <div className='block px-4 py-2 text-sm'>
+                  <Link href='/Login'>Login</Link>
+                </div>
+                <div className='block px-4 py-2 text-sm'>
+                  <Link href='/Register'>Register</Link>
+                </div>
+              </>
             )}
           </div>
         )}
-      </Menu>
+      </div>
     </div>
   );
 };

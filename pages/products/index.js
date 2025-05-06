@@ -122,25 +122,29 @@ export default function Products() {
               ALL PRODUCTS
             </div>
             <h2
-              className='block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3'
+              className='block justify-center items-center text-center my-3 text-xs lg:text-lg pb-3'
               id='manufacturers'
             >
               Manufacturers
             </h2>
-            {manufacturers
-              .slice()
-              .sort((a, b) => a.localeCompare(b))
-              .map((manufacturer, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleManufacturerClick(manufacturer)}
-                  className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
-                    selectedManufacturer === manufacturer ? "bg-slate-200" : ""
-                  }`}
-                >
-                  {manufacturer}
-                </div>
-              ))}
+            <div className='max-h-[60vh] pt-2 overflow-y-auto custom-scrollbar'>
+              {manufacturers
+                .slice()
+                .sort((a, b) => a.localeCompare(b))
+                .map((manufacturer, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleManufacturerClick(manufacturer)}
+                    className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
+                      selectedManufacturer === manufacturer
+                        ? "bg-slate-200"
+                        : ""
+                    }`}
+                  >
+                    {manufacturer}
+                  </div>
+                ))}
+            </div>
           </ul>
         </div>
         <div className='md:col-span-3'>

@@ -15,6 +15,15 @@ import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 
+const calculateLogoWidth = () => {
+  if (typeof window !== "undefined") {
+    const windowWidth = window.innerWidth;
+    if (windowWidth >= 768) return 70;
+    return 50;
+  }
+  return 50; // fallback for SSR
+};
+
 const Header = () => {
   const router = useRouter();
   const { state } = useContext(Store);
@@ -24,11 +33,20 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [logoWidth, setLogoWidth] = useState(calculateLogoWidth());
 
   const active =
     session?.user?.active &&
     session?.user?.approved &&
     status === "authenticated";
+  useEffect(() => {
+    const handleResize = () => {
+      setLogoWidth(calculateLogoWidth());
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
@@ -104,88 +122,116 @@ const Header = () => {
   }, [isScrolled]);
 
   return (
-    <>
-      <MiniHeader />
-      <header
-        className={`bg-white shadow-md sticky top-0 z-[9999] transition-all duration-300`}
-      >
-        <div
-          className={`transition-all duration-300 ${
-            isScrolled ? "py-1" : "py-3"
-          }`}
-        >
-          <nav className='container mx-auto flex items-center justify-between px-4 lg:px-6'>
-            <Link href='/' onClick={handleHomeClick} aria-label='Home'>
-              <Image
-                src={Logo2}
-                alt='logo'
-                width={65}
-                height={50}
-                className='hidden md:block object-contain'
-              />
-              <Image
-                src={Logo2}
-                alt='logo'
-                width={50}
-                height={50}
-                className='block md:hidden object-contain'
-                loading='lazy'
-              />
-            </Link>
-
-            <div className='relative flex-1 max-w-md mx-4 w-full'>
-              <div className='flex items-center border rounded-full px-3 py-1 bg-gray-100'>
-                <input
-                  type='text'
-                  value={searchQuery}
-                  onChange={handleSearchInputChange}
-                  onKeyDown={handleKeyDown}
-                  className='w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
-                  placeholder='Search...'
-                />
-                <button
-                  onClick={() => handleSearch()}
-                  aria-label='Search'
-                  className='p-2'
-                >
-                  <BiSearch className='text-[#03793d] text-lg' />
-                </button>
-              </div>
-              {suggestions.length > 0 && (
-                <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999]'>
-                  {suggestions.map((product, idx) => (
-                    <div
-                      key={idx}
-                      className='p-2 hover:bg-gray-100 cursor-pointer'
-                      onMouseDown={() => handleSuggestionClick(product.name)}
-                    >
-                      {product.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className='flex items-center gap-6 relative'>
-              {active && (
-                <Link href='/cart' aria-label='Cart' className='relative group'>
-                  <BsCart2 className='text-3xl text-[#144e8b] transition-transform transform group-hover:scale-110' />
-                  {cartItemsCount > 0 && (
-                    <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </Link>
-              )}
-              <Signupbutton aria-label='Profile' />
-              <Navbar />
-            </div>
-          </nav>
+    <header
+      className={`header mx-auto transition-all duration-300 ${
+        isScrolled ? "pt-1" : "pt-3"
+      } sm:pt-${isScrolled ? "1" : "3"}`}
+    >
+      {!isScrolled && <MiniHeader />}
+      <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
+        <div className='flex items-center w-[90%] justify-between border rounded-full px-3  bg-gray-100'>
+          <input
+            type='text'
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleKeyDown}
+            className=' bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+            placeholder='Search...'
+          />
+          <button
+            onClick={() => handleSearch()}
+            aria-label='Search'
+            className='p-1'
+          >
+            <BiSearch className='text-[#03793d] text-lg' />
+          </button>
         </div>
-        <Menu />
-      </header>
+        {suggestions.length > 0 && (
+          <div className='suggestions-list absolute w-[90%] mt-1 overflow-auto max-h-[50vh] bg-white shadow-md bottom-full z-[9999] custom-scrollbar'>
+            {suggestions.map((product, index) => (
+              <div
+                key={index}
+                className='p-2 hover:bg-gray-100 cursor-pointer'
+                onMouseDown={() => handleSuggestionClick(product.name)}
+              >
+                {product.name}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <nav className='h-[15vh] nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
+        <div className='flex h-12 items-center flex-shrink-0'>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleHomeClick();
+            }}
+          >
+            <div>
+              <Image
+                src={Logo2}
+                alt='logo'
+                width={logoWidth}
+                height={logoWidth}
+              />
+            </div>
+          </button>
+        </div>
+
+        <div className='relative md:block hidden flex-1 max-w-md mx-4 w-full'>
+          <div className='flex items-center border rounded-full px-3 py-1 bg-gray-100'>
+            <input
+              type='text'
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+              onKeyDown={handleKeyDown}
+              className='w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+              placeholder='Search...'
+            />
+            <button
+              onClick={() => handleSearch()}
+              aria-label='Search'
+              className='p-2'
+            >
+              <BiSearch className='text-[#03793d] text-lg' />
+            </button>
+          </div>
+          {suggestions.length > 0 && (
+            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999]'>
+              {suggestions.map((product, index) => (
+                <div
+                  key={index}
+                  className='p-2 hover:bg-gray-100 cursor-pointer'
+                  onMouseDown={() => handleSuggestionClick(product.name)}
+                >
+                  {product.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className='flex items-center gap-6 relative'>
+          {active && (
+            <Link href='/cart' aria-label='Cart' className='relative group'>
+              <BsCart2 className='text-3xl text-[#144e8b] transition-transform transform group-hover:scale-110' />
+              {cartItemsCount > 0 && (
+                <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
+                  {cartItemsCount}
+                </span>
+              )}
+            </Link>
+          )}
+          <Signupbutton aria-label='Profile' />
+          <Navbar />
+        </div>
+      </nav>
+
+      <Menu />
+
       <StaticHeader />
-    </>
+    </header>
   );
 };
 
