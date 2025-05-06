@@ -10,7 +10,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
-export const ProductItem = ({ product, clearancePurchaseType, i }) => {
+export const ProductItem = ({ product, clearancePurchaseType, index }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -41,6 +41,7 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
     product.each?.quickBooksQuantityOnHandProduction ?? null
   );
   const [showModal, setShowModal] = useState(false);
+  const hasPrice = currentPrice !== null && currentPrice !== 0;
 
   const active =
     session?.user?.active &&
@@ -278,12 +279,12 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
               quality={5}
-              priority={i === 0}
+              priority={index === 0}
             />
           </div>
         </Link>
 
-        <div className='flex flex-col justify-center items-center px-2 mb-3 flex-1'>
+        <div className='flex flex-col justify-center items-center px-2 flex-1'>
           <Link
             href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
             className='justify-center items-center text-center'
@@ -418,16 +419,14 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
                         </select>
                       </div>
                     )}
-                {active === "loading" ? (
-                  "Loading"
-                ) : active && currentPrice > 0 ? (
-                  <div className='mb-2 justify-between'>
-                    <div className='font-bold'>Price</div>
-                    <div className=''>&nbsp; $ {currentPrice}</div>
-                  </div>
-                ) : (
-                  "Call for Price"
-                )}
+                {active === "loading"
+                  ? "Loading"
+                  : active && (
+                      <div className='mb-2 justify-between'>
+                        <div className='font-bold'>Price</div>
+                        {hasPrice ? `$${currentPrice}` : "Call for Price"}
+                      </div>
+                    )}
               </div>
             ) : null
           ) : (
@@ -466,22 +465,34 @@ export const ProductItem = ({ product, clearancePurchaseType, i }) => {
               {active === "loading"
                 ? "Loading"
                 : active && (
-                    <button
-                      className='primary-button align-middle'
-                      type='button'
-                      onClick={addToCartHandler}
-                      disabled={
-                        (purchaseType === "Each" && isOutOfStock) ||
-                        (purchaseType === "Box" && isOutOfStockBox) ||
-                        (purchaseType === "Clearance" && isOutOfStockClearance)
-                      }
-                    >
-                      {(purchaseType === "Each" && isOutOfStock) ||
-                      (purchaseType === "Box" && isOutOfStockBox) ||
-                      (purchaseType === "Clearance" && isOutOfStockClearance)
-                        ? "Out of Stock"
-                        : "Add to Cart"}
-                    </button>
+                    <>
+                      {!hasPrice || currentPrice === 0 ? (
+                        <Link href='/support'>
+                          <button className='primary-button align-middle text-white'>
+                            Call for Price
+                          </button>
+                        </Link>
+                      ) : (
+                        <button
+                          className='primary-button align-middle'
+                          type='button'
+                          onClick={addToCartHandler}
+                          disabled={
+                            (purchaseType === "Each" && isOutOfStock) ||
+                            (purchaseType === "Box" && isOutOfStockBox) ||
+                            (purchaseType === "Clearance" &&
+                              isOutOfStockClearance)
+                          }
+                        >
+                          {(purchaseType === "Each" && isOutOfStock) ||
+                          (purchaseType === "Box" && isOutOfStockBox) ||
+                          (purchaseType === "Clearance" &&
+                            isOutOfStockClearance)
+                            ? "Out of Stock"
+                            : "Add to Cart"}
+                        </button>
+                      )}
+                    </>
                   )}
             </div>
           )}

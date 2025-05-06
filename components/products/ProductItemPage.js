@@ -245,7 +245,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
             href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
-            prefetch={false}
             className='justify-center items-center text-center flex-1'
           >
             <div className='p-2'>
@@ -257,6 +256,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
                 height={1000}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
+                quality={5}
                 priority={index === 0}
               />
             </div>
