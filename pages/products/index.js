@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../components/main/Layout";
 import { ProductItemPage } from "../../components/products/ProductItemPage";
 import { AiOutlineMenuFold } from "react-icons/ai";
