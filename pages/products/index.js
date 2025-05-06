@@ -100,7 +100,7 @@ export default function Products() {
       </nav>
       <div className='grid grid-cols-1 md:grid-cols-4'>
         <div className='md:col-span-1 p-4'>
-          <div className='block md:hidden mb-4'>
+          <div className='block md:hidden '>
             <button
               className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}

@@ -34,6 +34,11 @@ const Header = () => {
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [logoWidth, setLogoWidth] = useState(calculateLogoWidth());
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const active =
     session?.user?.active &&
@@ -168,14 +173,14 @@ const Header = () => {
               handleHomeClick();
             }}
           >
-            <div>
+            {isClient && (
               <Image
                 src={Logo2}
                 alt='logo'
                 width={logoWidth}
                 height={logoWidth}
               />
-            </div>
+            )}
           </button>
         </div>
 
