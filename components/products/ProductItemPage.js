@@ -30,7 +30,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
     }
     return "Each";
   });
-  const { status, data: session } = useSession();
+  const { data: session, status } = useSession();
   const [currentPrice, setCurrentPrice] = useState(
     product.each?.wpPrice ?? null
   );

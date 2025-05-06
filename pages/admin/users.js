@@ -123,6 +123,7 @@ function AdminUsersScreen() {
                     "Active",
                     "Approved",
                     "Admin",
+                    "Protected Inventory",
                     "Actions",
                   ].map((header) => (
                     <th
@@ -155,6 +156,9 @@ function AdminUsersScreen() {
                       {user.approved ? "✅" : "❌"}
                     </td>
                     <td className='border p-4'>{user.isAdmin ? "✅" : "❌"}</td>
+                    <td className='border border-collapse p-4'>
+                      {user.protectedInventory ? "✅" : "❌"}
+                    </td>
                     <td className='p-4 flex items-center space-x-2'>
                       <button
                         onClick={() => router.push(`/admin/user/${user._id}`)}

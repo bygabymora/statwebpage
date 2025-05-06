@@ -1,21 +1,21 @@
-import bcryptjs from 'bcryptjs';
-import WpUser from '../../../models/WpUser';
-import db from '../../../utils/db';
+import bcryptjs from "bcryptjs";
+import WpUser from "../../../models/WpUser";
+import db from "../../../utils/db";
 
 async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method !== "POST") {
     return;
   }
   const { name, email, password, companyEinCode, companyName } = req.body;
   if (
     !name ||
     !email ||
-    !email.includes('@') ||
+    !email.includes("@") ||
     !password ||
     password.trim().length < 5
   ) {
     res.status(422).json({
-      message: 'Validation error',
+      message: "Validation error",
     });
     return;
   }
@@ -24,7 +24,7 @@ async function handler(req, res) {
 
   const existingUser = await WpUser.findOne({ email: email });
   if (existingUser) {
-    res.status(422).json({ message: 'User exists already!' });
+    res.status(422).json({ message: "User exists already!" });
     await db.disconnect();
     return;
   }
@@ -38,12 +38,13 @@ async function handler(req, res) {
     companyEinCode,
     active: true,
     approved: false,
+    protectedInventory: false,
   });
 
   const user = await newUser.save();
   await db.disconnect();
   res.status(201).send({
-    message: 'Created user!',
+    message: "Created user!",
     _id: user._id,
     name: user.name,
     email: user.email,

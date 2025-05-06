@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const wpUserSchema = new mongoose.Schema(
   {
@@ -8,14 +8,15 @@ const wpUserSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, required: true, default: false },
     companyName: { type: String, required: false },
     companyEinCode: { type: String, required: false },
-    active: { type: Boolean, required: true, default: true }, 
+    active: { type: Boolean, required: true, default: true },
     approved: { type: Boolean, required: true, default: false },
+    protectedInventory: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,
   }
 );
 
-const WpUser = mongoose.models.WpUser || mongoose.model('WpUser', wpUserSchema);
+const WpUser = mongoose.models.WpUser || mongoose.model("WpUser", wpUserSchema);
 
 export default WpUser;

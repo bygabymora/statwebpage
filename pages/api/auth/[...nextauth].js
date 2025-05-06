@@ -1,12 +1,12 @@
-import NextAuth from 'next-auth/next';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import db from '../../../utils/db';
-import WpUser from '../../../models/WpUser';
-import bcryptjs from 'bcryptjs';
+import NextAuth from "next-auth/next";
+import CredentialsProvider from "next-auth/providers/credentials";
+import db from "../../../utils/db";
+import WpUser from "../../../models/WpUser";
+import bcryptjs from "bcryptjs";
 
 export default NextAuth({
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
 
   callbacks: {
@@ -21,10 +21,13 @@ export default NextAuth({
         token.companyEinCode = user.companyEinCode;
         token.active = user.active;
         token.approved = user.approved;
+        token.protectedInventory = user.protectedInventory;
       } else if (token._id) {
         // Check the database if the user is still active
         await db.connect();
-        const dbUser = await WpUser.findById(token._id).select('name email active approved');
+        const dbUser = await WpUser.findById(token._id).select(
+          "name email active approved protectedInventory"
+        );
         await db.disconnect();
 
         if (dbUser) {
@@ -32,6 +35,7 @@ export default NextAuth({
           token.email = dbUser.email;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
+          token.protectedInventory = dbUser.protectedInventory;
         } else {
           token.active = false;
         }
@@ -43,17 +47,18 @@ export default NextAuth({
     async session({ session, token }) {
       session.user = {
         _id: token._id,
-        name: token.name, 
-        email: token.email, 
+        name: token.name,
+        email: token.email,
         isAdmin: token.isAdmin,
         companyName: token.companyName,
         companyEinCode: token.companyEinCode,
         active: token.active,
         approved: token.approved,
+        protectedInventory: token.protectedInventory,
       };
-      console.log('Session final:', session);
+      console.log("Session final:", session);
       return session;
-    }
+    },
   },
 
   providers: [
@@ -62,17 +67,17 @@ export default NextAuth({
         await db.connect();
         const user = await WpUser.findOne({ email: credentials.email });
         await db.disconnect();
-      
+
         if (!user) {
-          throw new Error('Invalid email or password');
+          throw new Error("Invalid email or password");
         }
 
         if (!user.active) {
-          throw new Error('Your account is inactive. Please contact support.');
+          throw new Error("Your account is inactive. Please contact support.");
         }
-      
+
         if (!bcryptjs.compareSync(credentials.password, user.password)) {
-          throw new Error('Invalid email or password');
+          throw new Error("Invalid email or password");
         }
 
         return {
@@ -81,12 +86,13 @@ export default NextAuth({
           email: user.email,
           companyName: user.companyName,
           companyEinCode: user.companyEinCode,
-          image: 'f',
+          image: "f",
           isAdmin: user.isAdmin,
           active: user.active,
           approved: user.approved,
+          protectedInventory: user.protectedInventory,
         };
-      }
+      },
     }),
   ],
 });
