@@ -55,7 +55,8 @@ const SignupButton = () => {
 
         {menuOpen && (
           <div
-            className='absolute top-12 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200'
+            className='absolute bottom-full mb-2 right-0 w-40 bg-white rounded-lg shadow-lg z-[9999] overflow-hidden border border-gray-200 sm:top-12 sm:bottom-auto sm:mb-0 left-1/2 -translate-x-1/2 sm:right-auto'
+            ref={menuRef}
             role='menu'
             aria-orientation='vertical'
           >
