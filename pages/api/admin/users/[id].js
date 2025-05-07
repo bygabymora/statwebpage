@@ -1,4 +1,5 @@
 import WpUser from "../../../../models/WpUser";
+import Customer from "../../../../models/Customer";
 import db from "../../../../utils/db";
 import { getToken } from "next-auth/jwt";
 
@@ -30,7 +31,11 @@ const getHandler = async (req, res) => {
     if (!user) {
       return res.status(404).json({ type: "error", message: "User not found" });
     }
-    return res.json({ type: "success", user });
+    let customer = null;
+    if (user.customerId) {
+      customer = await Customer.findById(user.customerId);
+    }
+    return res.json({ type: "success", user, customer });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res
@@ -48,11 +53,12 @@ const putHandler = async (req, res) => {
     if (!user) {
       return res.status(404).json({ type: "error", message: "User not found" });
     }
-
+    console.log("user", req.body);
     user.name = req.body.name ?? user.name;
+    user.firstName = req.body.firstName ?? user.firstName;
+    user.lastName = req.body.lastName ?? user.lastName;
     user.email = req.body.email ?? user.email;
-    user.companyName = req.body.companyName ?? user.companyName;
-    user.companyEinCode = req.body.companyEinCode ?? user.companyEinCode;
+    user.customerId = req.body.customerId ?? user.customerId;
     user.isAdmin =
       req.body.isAdmin !== undefined ? Boolean(req.body.isAdmin) : user.isAdmin;
     user.active =
@@ -61,8 +67,8 @@ const putHandler = async (req, res) => {
       req.body.approved !== undefined
         ? Boolean(req.body.approved)
         : user.approved;
-    if (typeof req.body.protectedInventory === "boolean") {
-      user.protectedInventory = req.body.protectedInventory;
+    if (typeof req.body.restricted === "boolean") {
+      user.restricted = req.body.restricted;
     }
 
     await user.save();

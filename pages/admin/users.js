@@ -157,7 +157,7 @@ function AdminUsersScreen() {
                     </td>
                     <td className='border p-4'>{user.isAdmin ? "✅" : "❌"}</td>
                     <td className='border border-collapse p-4'>
-                      {user.protectedInventory ? "✅" : "❌"}
+                      {user.restricted ? "✅" : "❌"}
                     </td>
                     <td className='p-4 flex items-center space-x-2'>
                       <button

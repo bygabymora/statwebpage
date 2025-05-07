@@ -1,13 +1,8 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
-export default function CheckoutWizard({ activeStep = 0 }) {
-  const steps = [
-    "User Login",
-    "Shipping Address",
-    "Payment Method",
-    "Confirm Order",
-  ];
+export default function CheckoutWizard({ activeStep }) {
+  const steps = ["Cart", "Shipping Address", "Payment Method", "Confirm Order"];
 
   return (
     <div className='mb-8 flex items-center justify-center relative'>

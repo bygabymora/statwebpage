@@ -21,12 +21,12 @@ export default NextAuth({
         token.companyEinCode = user.companyEinCode;
         token.active = user.active;
         token.approved = user.approved;
-        token.protectedInventory = user.protectedInventory;
+        token.restricted = user.restricted;
       } else if (token._id) {
         // Check the database if the user is still active
         await db.connect();
         const dbUser = await WpUser.findById(token._id).select(
-          "name email active approved protectedInventory"
+          "name email active approved restricted"
         );
         await db.disconnect();
 
@@ -35,7 +35,7 @@ export default NextAuth({
           token.email = dbUser.email;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
-          token.protectedInventory = dbUser.protectedInventory;
+          token.restricted = dbUser.restricted;
         } else {
           token.active = false;
         }
@@ -54,7 +54,7 @@ export default NextAuth({
         companyEinCode: token.companyEinCode,
         active: token.active,
         approved: token.approved,
-        protectedInventory: token.protectedInventory,
+        restricted: token.restricted,
       };
       return session;
     },
@@ -89,7 +89,7 @@ export default NextAuth({
           isAdmin: user.isAdmin,
           active: user.active,
           approved: user.approved,
-          protectedInventory: user.protectedInventory,
+          restricted: user.restricted,
         };
       },
     }),

@@ -2,11 +2,11 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
-import CustomAlertModal from "../../../components/main/CustomAlertModal";
+import CustomerLinking from "../../../components/users/CustomerLinking";
+import { useModalContext } from "../../../components/context/ModalContext";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -28,124 +28,50 @@ function reducer(state, action) {
 }
 
 export default function AdminUserEditScreen() {
-  const [originalData, setOriginalData] = useState(null); // Status to save the original user data
-  const [isAdmin, setEsAdmin] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isApproved, setIsApproved] = useState(false);
-  const [isProtectedInventory, setIsProtectedInventory] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState({
-    title: "",
-    body: "",
-    warning: "",
-  });
-
+  const [customer, setCustomer] = useState({});
+  const [user, setUser] = useState(null);
+  const { showStatusMessage } = useModalContext();
   const { query } = useRouter();
   const userId = query.id;
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+  const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
   });
 
-  const { register, handleSubmit, setValue } = useForm();
+  const fetchData = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const response = await axios.get(`/api/admin/users/${userId}`);
+      const userInDB = response.data.user;
+      const customerInDB = response.data.customer;
+      dispatch({ type: "FETCH_SUCCESS" });
+      console.log("userInDB", userInDB);
+      console.log("customerInDB", customerInDB);
+      setUser(userInDB);
+      setCustomer(customerInDB);
+    } catch (error) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(error) });
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get(`/api/admin/users/${userId}`);
-        const data = response.data.user;
-        dispatch({ type: "FETCH_SUCCESS" });
-
-        // Save original data to compare later
-        setOriginalData(data);
-
-        setValue("name", data.name);
-        setValue("email", data.email);
-        setValue("companyName", data.companyName);
-        setValue("companyEinCode", data.companyEinCode);
-        setValue("isAdmin", data.isAdmin);
-        setValue("active", data.active);
-        setValue("approved", data.approved);
-        setValue("protectedInventory", data.protectedInventory);
-
-        setEsAdmin(data.isAdmin);
-        setIsActive(data.active);
-        setIsApproved(data.approved);
-        setIsProtectedInventory(data.protectedInventory);
-      } catch (error) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(error) });
-      }
-    };
-
     fetchData();
-  }, [userId, setValue]);
+  }, [userId]);
 
   const router = useRouter();
 
-  const submitHandler = async (formData) => {
+  const submitHandler = async () => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      await axios.put(`/api/admin/users/${userId}`, {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        companyName: formData.companyName || "",
-        companyEinCode: formData.companyEinCode || "",
-        isAdmin,
-        active: isActive,
-        approved: isApproved,
-        protectedInventory: isProtectedInventory,
-      });
+      await axios.put(`/api/admin/users/${userId}`, user);
 
       dispatch({ type: "UPDATE_SUCCESS" });
-
-      // Generate personalized message according to the changes made
-      generateCustomMessage(formData);
-
-      setShowModal(true);
+      showStatusMessage("success", "User updated successfully");
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: getError(error) });
       toast.error(getError(error));
     }
-  };
-
-  const generateCustomMessage = (formData) => {
-    let changes = [];
-
-    if (formData.name !== originalData.name) changes.push("Name updated.");
-    if (formData.email !== originalData.email) changes.push("Email updated.");
-    if (formData.companyName !== originalData.companyName)
-      changes.push("Company Name updated.");
-    if (formData.companyEinCode !== originalData.companyEinCode)
-      changes.push("Company EIN Code updated.");
-    if (isAdmin !== originalData.isAdmin) changes.push("Admin status changed.");
-    if (isActive !== originalData.active)
-      changes.push("Active status changed.");
-    if (isProtectedInventory !== originalData.protectedInventory)
-      changes.push("Protected Inventory status changed.");
-    if (isApproved !== originalData.approved)
-      changes.push("Approved status changed.");
-
-    if (changes.length === 0) {
-      setModalMessage({
-        title: "No Changes Made",
-        body: "No changes were detected in the user profile.",
-        warning: "You can modify the user data and save again.",
-      });
-    } else {
-      setModalMessage({
-        title: "User Updated Successfully",
-        body: changes.join(" "),
-        warning: "These changes have been saved successfully.",
-      });
-    }
-  };
-
-  const handleAlertConfirm = () => {
-    setShowModal(false);
-    router.push("/admin/users");
   };
 
   const links = [
@@ -156,8 +82,12 @@ export default function AdminUserEditScreen() {
     { href: "/admin/news", label: "News" },
   ];
 
+  const handleInputChange = (field, value) => {
+    setUser({ ...user, [field]: value });
+  };
+
   return (
-    <Layout title={`Editar Usuario ${userId}`}>
+    <Layout title={`Edit User${userId}`}>
       <div className='grid md:grid-cols-4 md:gap-5'>
         <div className='flex justify-center'>
           <ul className='flex flex-col space-y-4 my-3 lg:text-lg w-full'>
@@ -175,115 +105,112 @@ export default function AdminUserEditScreen() {
             ))}
           </ul>
         </div>
-        <div className='md:col-span-3'>
-          {loading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div className='alert-error'>{error}</div>
-          ) : (
-            <form
-              className='mx-auto max-w-screen-md'
-              onSubmit={handleSubmit(submitHandler)}
-            >
-              <h1 className='mb-4 text-xl'>{`Edit User ${userId
-                .substring(userId.length - 8)
-                .toUpperCase()}`}</h1>
-
-              <div className='flex gap-4 my-4'>
-                <label>
-                  <input
-                    type='checkbox'
-                    {...register("active")}
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                  />
-                  &nbsp; Is Active?
-                </label>
-                <label>
-                  <input
-                    type='checkbox'
-                    {...register("approved")}
-                    checked={isApproved}
-                    onChange={(e) => setIsApproved(e.target.checked)}
-                  />
-                  &nbsp; Is Approved?
-                </label>
-                <label>
-                  <input
-                    type='checkbox'
-                    {...register("isAdmin")}
-                    checked={isAdmin}
-                    onChange={(e) => setEsAdmin(e.target.checked)}
-                  />
-                  &nbsp; Is Admin?
-                </label>
-                <label>
-                  <input
-                    type='checkbox'
-                    {...register("protectedInventory")}
-                    checked={isProtectedInventory}
-                    onChange={(e) =>
-                      setIsProtectedInventory(e.target.checked === true)
-                    }
-                  />
-                  &nbsp; Protected Inventory?
-                </label>
-              </div>
-
-              <div className='mb-4'>
+        {console.log("user", user)}
+        <div className='md:col-span-3 p-6'>
+          <div className='flex justify-between items-center mb-4 sticky top-[8rem] bg-white z-10'>
+            <h1 className='text-xl'>{`Edit User ${user?.firstName} ${user?.lastName}`}</h1>
+            <div className='flex flex-row my-5'>
+              <button
+                disabled={loadingUpdate}
+                className='primary-button mr-2'
+                onClick={submitHandler}
+              >
+                {loadingUpdate ? "Loading" : "Update"}
+              </button>
+              <button
+                onClick={() => router.push(`/`)}
+                className='primary-button'
+              >
+                Back
+              </button>
+            </div>
+          </div>
+          <div className=''>
+            <div className='flex gap-4 my-4'>
+              <label>
+                <input
+                  checked={user?.active || false}
+                  type='checkbox'
+                  onChange={(e) =>
+                    handleInputChange("active", e.target.checked)
+                  }
+                />
+                &nbsp; Is Active?
+              </label>
+              <label>
+                <input
+                  checked={user?.approved || false}
+                  type='checkbox'
+                  onChange={(e) =>
+                    handleInputChange("approved", e.target.checked)
+                  }
+                />
+                &nbsp; Is Approved?
+              </label>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={user?.isAdmin || false}
+                  onChange={(e) =>
+                    handleInputChange("isAdmin", e.target.checked)
+                  }
+                />
+                &nbsp; Is Admin?
+              </label>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={user?.restricted || false}
+                  onChange={(e) =>
+                    handleInputChange("restricted", e.target.checked)
+                  }
+                />
+                &nbsp; Restricted?
+              </label>
+            </div>
+            <div className='mb-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='mb-2'>
                 <label>Name</label>
                 <input
-                  {...register("name")}
+                  type='text'
+                  value={user?.firstName || ""}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
                   className='w-full px-3 py-2 border rounded'
                 />
               </div>
-              <div className='mb-4'>
+              <div className='mb-2'>
+                <label>Last Name</label>
+                <input
+                  type='text'
+                  value={user?.lastName || ""}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
+                  className='w-full px-3 py-2 border rounded'
+                />
+              </div>
+              <div className='mb-2 md:col-span-2'>
                 <label>Email</label>
                 <input
-                  {...register("email")}
+                  type='email'
+                  value={user?.email || ""}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   className='w-full px-3 py-2 border rounded'
                 />
               </div>
-              <div className='mb-4'>
-                <label>Company Name</label>
-                <input
-                  {...register("companyName")}
-                  className='w-full px-3 py-2 border rounded'
-                />
-              </div>
-              <div className='mb-4'>
-                <label>Company EIN Code</label>
-                <input
-                  {...register("companyEinCode")}
-                  className='w-full px-3 py-2 border rounded'
-                />
-              </div>
-
-              <div className='flex flex-row my-5'>
-                <button
-                  disabled={loadingUpdate}
-                  className='primary-button mr-2'
-                >
-                  {loadingUpdate ? "Loading" : "Update"}
-                </button>
-                <button
-                  onClick={() => router.push(`/`)}
-                  className='primary-button'
-                >
-                  Back
-                </button>
-              </div>
-            </form>
-          )}
+            </div>
+          </div>
+          <CustomerLinking
+            user={user}
+            setUser={setUser}
+            customer={customer}
+            setCustomer={setCustomer}
+          />
         </div>
       </div>
-      <div className='fixed z-[9999] bg-gray bg-opacity-50'>
-        <CustomAlertModal
-          isOpen={showModal}
-          message={modalMessage}
-          onConfirm={handleAlertConfirm}
-        />
-      </div>
+      <div className='fixed z-[9999] bg-gray bg-opacity-50'></div>
     </Layout>
   );
 }

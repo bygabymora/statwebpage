@@ -38,7 +38,7 @@ async function handler(req, res) {
     companyEinCode,
     active: true,
     approved: false,
-    protectedInventory: false,
+    restricted: false,
   });
 
   const user = await newUser.save();

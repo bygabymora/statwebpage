@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../components/main/Layout";
-import CheckoutWizard from "../components/CheckoutWizard";
-import { useForm } from "react-hook-form";
 import { useContext } from "react";
-import { Store } from "../utils/Store";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -11,160 +7,109 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { FaTruckMoving, FaClipboardCheck, FaBuilding } from "react-icons/fa";
 import { AiFillCheckCircle } from "react-icons/ai";
+import { Store } from "../../utils/Store";
+import states from "../../utils/states.json";
+import formatPhoneNumber from "../../utils/functions/phoneModified";
 
-export default function ShippingScreen() {
+export default function Shipping({ setActiveStep, order, setOrder }) {
   const { data: session } = useSession();
-  const [email, setEmail] = useState("");
-
-  const stateMap = [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-  ];
-
-  const stateAbbreviations = {
-    Alabama: "AL",
-    Alaska: "AK",
-    Arizona: "AZ",
-    Arkansas: "AR",
-    California: "CA",
-    Colorado: "CO",
-    Connecticut: "CT",
-    Delaware: "DE",
-    Florida: "FL",
-    Georgia: "GA",
-    Hawaii: "HI",
-    Idaho: "ID",
-    Illinois: "IL",
-    Indiana: "IN",
-    Iowa: "IA",
-    Kansas: "KS",
-    Kentucky: "KY",
-    Louisiana: "LA",
-    Maine: "ME",
-    Maryland: "MD",
-    Massachusetts: "MA",
-    Michigan: "MI",
-    Minnesota: "MN",
-    Mississippi: "MS",
-    Missouri: "MO",
-    Montana: "MT",
-    Nebraska: "NE",
-    Nevada: "NV",
-    "New Hampshire": "NH",
-    "New Jersey": "NJ",
-    "New Mexico": "NM",
-    "New York": "NY",
-    "North Carolina": "NC",
-    "North Dakota": "ND",
-    Ohio: "OH",
-    Oklahoma: "OK",
-    Oregon: "OR",
-    Pennsylvania: "PA",
-    "Rhode Island": "RI",
-    "South Carolina": "SC",
-    "South Dakota": "SD",
-    Tennessee: "TN",
-    Texas: "TX",
-    Utah: "UT",
-    Vermont: "VT",
-    Virginia: "VA",
-    Washington: "WA",
-    "West Virginia": "WV",
-    Wisconsin: "WI",
-    Wyoming: "WY",
-  };
-
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const { shippingAddress } = cart;
-
   const [lastOrder, setLastOrder] = useState(null);
   const [useLastAddress, setUseLastAddress] = useState(false);
-  const [filteredStates, setFilteredStates] = useState(stateMap);
-  const [inputValue, setInputValue] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
   const [shippingSpeed, setShippingSpeed] = useState("Overnight");
   const [shippingCompany, setShippingCompany] = useState("FedEx");
   const [shippingPaymentMethod, setPaymentMethod] = useState("Bill me");
   const [accountNumber, setAccountNumber] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const [sameAddress] = useState(true);
 
   const handleSpecialNotesChange = (event) => {
     setSpecialNotes(event.target.value);
   };
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    setValue,
-  } = useForm();
-
-  useEffect(() => {
-    if (session?.user) {
-      if (session.user.email) {
-        setEmail(session.user.email);
-      }
+  const fetchUserData = async () => {
+    const response = await axios.get(`api/users/${session.user._id}`);
+    const userData = response.data.user;
+    const customerData = response.data.customer;
+    if (userData && customerData) {
+      setOrder((prev) => ({
+        ...prev,
+        wpUser: {
+          userId: userData._id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+        },
+        shippingAddress: {
+          contactInfo: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          },
+          companyName: customerData.companyName,
+          phone: customerData.phone,
+          address: customerData.location?.address,
+          state: customerData.location?.state,
+          city: customerData.location?.city,
+          postalCode: customerData.location?.postalCode,
+          suiteNumber: customerData.location?.suiteNumber,
+          notes: specialNotes,
+        },
+        billingAddress: {
+          contactInfo: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          },
+          companyName: customerData.companyName,
+          phone: customerData.phone,
+          address: customerData.billAddr?.address,
+          state: customerData.billAddr?.state,
+          city: customerData.billAddr?.city,
+          postalCode: customerData.billAddr?.postalCode,
+        },
+      }));
+    } else if (userData) {
+      setOrder((prev) => ({
+        ...prev,
+        wpUser: {
+          userId: userData._id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+        },
+        shippingAddress: {
+          contactInfo: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          },
+          companyName: "",
+          phone: "",
+          address: "",
+          state: "",
+          city: "",
+          postalCode: "",
+          suiteNumber: "",
+          notes: specialNotes,
+        },
+        billingAddress: {
+          contactInfo: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          },
+          companyName: "",
+          phone: "",
+          address: "",
+          state: "",
+          city: "",
+          postalCode: "",
+        },
+      }));
     }
-  }, [session]);
-
-  useEffect(() => {
-    if (email) {
-      setValue("email", email);
-    }
-  }, [email, setValue]);
-
+  };
   useEffect(() => {
     if (shippingSpeed.includes("FedEx")) {
       setShippingCompany("FedEx");
@@ -173,85 +118,20 @@ export default function ShippingScreen() {
     }
   }, [shippingSpeed]);
 
-  useEffect(() => {
-    setValue("fullName", shippingAddress?.fullName);
-    setValue("company", shippingAddress?.company);
-    setValue("phone", shippingAddress?.phone);
-    setValue("address", shippingAddress?.address);
-    setValue("state", shippingAddress?.state);
-    setInputValue(shippingAddress?.state || "");
-    setValue("city", shippingAddress?.city);
-    setValue("postalCode", shippingAddress?.postalCode);
-    setValue("suiteNumber", shippingAddress?.suiteNumber);
-    setValue("email", shippingAddress?.email);
-    setValue("notes", shippingAddress?.notes);
-  }, [setValue, shippingAddress]);
-
-  const handleStateChange = (event) => {
-    const value = event.target.value;
-    setInputValue(value); // Sample in input
-
-    const filtered = stateMap.filter((state) =>
-      state.toLowerCase().startsWith(value.toLowerCase())
-    );
-    setFilteredStates(filtered);
-    setShowSuggestions(true);
-    setSelectedSuggestion(-1);
-  };
-
-  const handleSelectState = (state) => {
-    setValue("state", state);
-    setShowSuggestions(false);
-    setInputValue(state);
-    setSelectedSuggestion(-1); // Reset the selected suggestion when an option is clicked
-  };
-
-  const handleKeyDown = (event) => {
-    if (filteredStates.length > 0) {
-      if (event.key === "ArrowDown") {
-        // Move selection down when ArrowDown key is pressed
-        setSelectedSuggestion((prev) =>
-          prev < filteredStates.length - 1 ? prev + 1 : prev
-        );
-      } else if (event.key === "ArrowUp") {
-        // Move selection up when ArrowUp key is pressed
-        setSelectedSuggestion((prev) => (prev > 0 ? prev - 1 : prev));
-      } else if (event.key === "Enter") {
-        // Select the currently highlighted suggestion when Enter key is pressed
-        if (selectedSuggestion !== -1) {
-          handleSelectState(filteredStates[selectedSuggestion]);
-        }
-      }
-    }
-  };
-
   const submitHandler = async (data) => {
+    setActiveStep(2);
     try {
       const response = await axios.get(`api/users/${session.user._id}`);
-      const userData = response.data;
-
+      const userData = response.data.user;
+      const customerData = response.data.customer;
       if (!userData) {
         toast.error("User not found, please try to login again");
         return;
       }
-
-      if (sameAddress) {
-        data.fullNameB = data.fullName;
-        data.companyB = data.company;
-        data.phoneB = data.phone;
-        data.addressB = data.address;
-        data.stateB = data.state;
-        data.cityB = data.city;
-        data.postalCodeB = data.postalCode;
-        data.suiteNumberB = data.suiteNumber;
-        data.emailB = data.email;
+      if (!customerData) {
+        console.log("Customer not found, No Customer Linked to User");
       }
-
       data.notes = specialNotes;
-      const fullState = data.state;
-      const abbreviation = stateAbbreviations[fullState] || fullState;
-      data.state = abbreviation;
-
       dispatch({
         type: "SAVE_SHIPPING_ADDRESS",
         payload: data,
@@ -275,31 +155,32 @@ export default function ShippingScreen() {
         console.error(error);
       }
     };
-
+    fetchUserData();
     fetchLastOrder();
   }, []);
 
-  useEffect(() => {
-    if (useLastAddress && lastOrder) {
-      const { shippingAddress } = lastOrder;
-      setValue("fullName", shippingAddress?.fullName);
-      setValue("company", shippingAddress?.company);
-      setValue("phone", shippingAddress?.phone);
-      setValue("address", shippingAddress?.address);
-      setValue("state", shippingAddress?.state);
-      setValue("city", shippingAddress?.city);
-      setValue("postalCode", shippingAddress?.postalCode);
-      setValue("suiteNumber", shippingAddress?.suiteNumber);
-      setValue("notes", shippingAddress?.notes);
-
-      // Email is ALWAYS maintained from the session
-      setValue("email", session?.user?.email || "");
+  const handleInputChange = (type, field, value) => {
+    if (type === "shipping") {
+      setOrder((prev) => ({
+        ...prev,
+        shippingAddress: {
+          ...prev.shippingAddress,
+          [field]: value,
+        },
+      }));
+    } else if (type === "billing") {
+      setOrder((prev) => ({
+        ...prev,
+        billingAddress: {
+          ...prev.billingAddress,
+          [field]: value,
+        },
+      }));
     }
-  }, [lastOrder, setValue, useLastAddress, session]);
+  };
 
   return (
-    <Layout title='Shipping Address'>
-      <CheckoutWizard activeStep={1} />
+    <>
       <div className='mx-auto max-w-2xl'>
         <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
           Shipping & Billing Information
@@ -313,7 +194,7 @@ export default function ShippingScreen() {
         <p className='text-xl text-center font-bold mb-5'>
           Please select your preferences at the end.
         </p>
-        <form className='space-y-6 my-5' onSubmit={handleSubmit(submitHandler)}>
+        <div className='space-y-6 my-5'>
           {/* SHIPPING ADDRESS */}
           <div className='bg-white shadow-md rounded-lg p-4 sm:p-6'>
             <h2 className='text-lg sm:text-xl font-semibold flex items-center gap-2 text-gray-700'>
@@ -355,168 +236,181 @@ export default function ShippingScreen() {
                   </div>
                 </div>
               )}
-              <div>
-                <label className='block font-medium'>Full Name*</label>
-                <input
-                  className='w-full contact__form-input'
-                  type='text'
-                  id='fullName'
-                  placeholder='Enter Full Name'
-                  {...register("fullName", { required: true, minLength: 3 })}
-                  autoCapitalize='true'
-                />
-                {errors.fullName && (
-                  <p className='text-red-500'>Full Name is required.</p>
-                )}
+              <div className='col-span-1 sm:col-span-2 border p-3 rounded-md'>
+                <h2 className='block font-medium '>Attn To:</h2>
+                <div className=' grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <div>
+                    <label className='block font-medium'>First Name*</label>
+                    <input
+                      className='w-full contact__form-input'
+                      type='text'
+                      placeholder='First Name'
+                      onChange={(e) =>
+                        handleInputChange(
+                          "shipping",
+                          "contactInfo.firstName",
+                          e.target.value
+                        )
+                      }
+                      value={
+                        order.shippingAddress?.contactInfo?.firstName || ""
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className='block font-medium'>Last Name*</label>
+                    <input
+                      className='w-full contact__form-input'
+                      type='text'
+                      placeholder='Last Name'
+                      onChange={(e) =>
+                        handleInputChange(
+                          "shipping",
+                          "contactInfo.lastName",
+                          e.target.value
+                        )
+                      }
+                      value={order.shippingAddress?.contactInfo?.lastName || ""}
+                    />
+                  </div>
+                </div>
               </div>
               <div>
                 <label className='block font-medium'>Company*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
-                  id='company'
+                  onChange={(e) =>
+                    handleInputChange("shipping", "companyName", e.target.value)
+                  }
+                  value={order.shippingAddress?.companyName || ""}
                   placeholder="Company's Name"
-                  {...register("company", { required: true, minLength: 3 })}
                   autoCapitalize='true'
                 />
-                {errors.company && (
-                  <p className='text-red-500'>
-                    Please check Company{"'"}s name.
-                  </p>
-                )}
               </div>
               <div>
                 <label className='block font-medium'>Phone Number*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
-                  id='phone'
+                  onChange={(e) => {
+                    const { formattedDisplayValue, numericValue } =
+                      formatPhoneNumber(e.target.value, false); // Get both values
+                    handleInputChange("shipping", "phone", numericValue);
+                    e.target.value = formattedDisplayValue;
+                  }}
+                  value={formatPhoneNumber(order.shippingAddress?.phone) || ""}
                   placeholder='Enter Phone Number'
-                  {...register("phone", { required: true, minLength: 3 })}
                   autoCapitalize='true'
                 />
-                {errors.phone && (
-                  <p className='text-red-500'>Phone Number is required.</p>
-                )}
               </div>
               <div>
                 <label className='block font-medium'>Address*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
-                  id='address'
-                  placeholder='Enter address'
-                  {...register("address", { required: true, minLength: 3 })}
+                  onChange={(e) =>
+                    handleInputChange("shipping", "address", e.target.value)
+                  }
+                  value={order.shippingAddress?.address || ""}
+                  placeholder='Address'
                   autoCapitalize='true'
                 />
-                {errors.address && (
-                  <p className='text-red-500'>Address is required.</p>
-                )}
-              </div>
-              <div className='relative w-full max-w-sm'>
-                <label htmlFor='state' className='block font-medium mb-1'>
-                  State*
-                </label>
-                <input
-                  type='text'
-                  id='state'
-                  {...register("state", { required: true, minLength: 2 })}
-                  className='w-full contact__form-input'
-                  placeholder='Enter state'
-                  onChange={handleStateChange}
-                  onFocus={() => setShowSuggestions(true)}
-                  onKeyDown={handleKeyDown}
-                  value={inputValue}
-                  autoCapitalize='true'
-                />
-                {showSuggestions && filteredStates.length > 0 && (
-                  <ul className='absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1 max-h-48 overflow-y-auto'>
-                    {filteredStates.map((state, index) => (
-                      <li
-                        key={state}
-                        onClick={() => handleSelectState(state)}
-                        className={`px-3 py-2 cursor-pointer ${
-                          selectedSuggestion === index ? "bg-gray-100" : ""
-                        }`}
-                      >
-                        {state}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {errors.state && (
-                  <p className='text-red-500'>State is required.</p>
-                )}
-              </div>
-              <div>
-                <label className='block font-medium'>City*</label>
-                <input
-                  className='w-full contact__form-input'
-                  type='text'
-                  id='city'
-                  placeholder='Enter city'
-                  {...register("city", { required: true, minLength: 3 })}
-                  autoCapitalize='true'
-                />
-                {errors.city && (
-                  <p className='text-red-500'>City is required.</p>
-                )}
-              </div>
-              <div>
-                <label className='block font-medium'>Postal Code*</label>
-                <input
-                  className='w-full contact__form-input'
-                  type='text'
-                  id='postalCode'
-                  placeholder='Enter postal code'
-                  {...register("postalCode", { required: true, minLength: 3 })}
-                  autoCapitalize='true'
-                />
-                {errors.postalCode && (
-                  <p className='text-red-500'>Postal Code is required.</p>
-                )}
               </div>
               <div>
                 <label className='block font-medium'>Suite Number*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
-                  id='suiteNumber'
-                  placeholder='Enter Suite Number'
-                  {...register("suiteNumber", { required: true, minLength: 3 })}
+                  onChange={(e) =>
+                    handleInputChange("shipping", "suiteNumber", e.target.value)
+                  }
+                  value={order.shippingAddress?.suiteNumber || ""}
+                  placeholder='Suite Number'
                   autoCapitalize='true'
                 />
-                {errors.suiteNumber && (
-                  <p className='text-red-500'>Suite Number is required.</p>
-                )}
               </div>
+              <div className='relative w-full max-w-sm'>
+                <label htmlFor='state' className='block font-medium mb-1'>
+                  State*
+                </label>
+                <select
+                  autoComplete='off'
+                  onChange={(e) =>
+                    handleInputChange("shipping", "state", e.target.value)
+                  }
+                  value={order.shippingAddress?.state || ""}
+                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                >
+                  <option value='' className='text-gray-400'>
+                    Select...
+                  </option>
+                  {states.map((state, index) => (
+                    <option key={index} value={state.key}>
+                      {state.value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className='block font-medium'>City*</label>
+                <input
+                  className='w-full contact__form-input'
+                  type='text'
+                  onChange={(e) =>
+                    handleInputChange("shipping", "city", e.target.value)
+                  }
+                  value={order.shippingAddress?.city || ""}
+                  placeholder='City'
+                  autoCapitalize='true'
+                />
+              </div>
+              <div>
+                <label className='block font-medium'>Zip Code*</label>
+                <input
+                  className='w-full contact__form-input'
+                  type='text'
+                  onChange={(e) =>
+                    handleInputChange("shipping", "postalCode", e.target.value)
+                  }
+                  value={order.shippingAddress?.postalCode || ""}
+                  placeholder='Zip'
+                  autoCapitalize='true'
+                />
+              </div>
+
               <div>
                 <label className='block font-medium'>Email*</label>
                 <input
                   className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
                   type='text'
-                  id='email'
-                  value={email}
-                  {...register("email", { required: true, minLength: 3 })}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "shipping",
+                      "contactInfo.email",
+                      e.target.value
+                    )
+                  }
+                  value={order.shippingAddress?.contactInfo?.email || ""}
                   readOnly
                 />
               </div>
               <div>
-                <label className='block font-medium'>Another Email*</label>
+                <label className='block font-medium'>Second Email*</label>
                 <input
                   className='w-full contact__form-input'
                   type='text'
-                  id='anotherEmail'
+                  onChange={(e) =>
+                    handleInputChange(
+                      "shipping",
+                      "contactInfo.secondEmail",
+                      e.target.value
+                    )
+                  }
+                  value={order.shippingAddress?.contactInfo?.secondEmail || ""}
                   placeholder='Enter Another email'
-                  {...register("anotherEmail", {
-                    required: false,
-                    minLength: 3,
-                  })}
                   autoCapitalize='true'
                 />
-                {errors.email && (
-                  <p className='text-red-500'>Email is required.</p>
-                )}
               </div>
             </div>
           </div>
@@ -619,15 +513,14 @@ export default function ShippingScreen() {
 
           <button
             type='submit'
+            onClick={submitHandler}
             className='primary-button w-full flex items-center justify-center gap-2'
           >
             <AiFillCheckCircle className='text-xl' />
             Continue
           </button>
-        </form>
+        </div>
       </div>
-    </Layout>
+    </>
   );
 }
-
-ShippingScreen.auth = true;

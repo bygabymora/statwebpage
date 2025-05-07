@@ -2,10 +2,15 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    WpUser: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "WpUser",
-      required: true,
+    wpUser: {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "WpUser",
+        required: true,
+      },
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
+      email: { type: String, required: true },
     },
     orderItems: [
       {
@@ -19,9 +24,15 @@ const orderSchema = new mongoose.Schema(
         sentOverNight: { type: Boolean, default: false, required: true },
       },
     ],
+
     shippingAddress: {
-      fullName: { type: String, required: true },
-      company: { type: String, required: false },
+      contactInfo: {
+        firstName: { type: String, required: false },
+        lastName: { type: String, required: false },
+        email: { type: String, required: false },
+        secondEmail: { type: String, required: false },
+      },
+      companyName: { type: String, required: false },
       phone: { type: String, required: true },
       address: { type: String, required: true },
       state: { type: String, required: true },
@@ -31,13 +42,18 @@ const orderSchema = new mongoose.Schema(
       notes: { type: String, required: false },
     },
     billingAddress: {
-      fullNameB: { type: String, required: false },
-      companyB: { type: String, required: false },
-      phoneB: { type: String, required: false },
-      addressB: { type: String, required: false },
-      stateB: { type: String, required: false },
-      cityB: { type: String, required: false },
-      postalCodeB: { type: String, required: false },
+      contactInfo: {
+        firstName: { type: String, required: false },
+        lastName: { type: String, required: false },
+        email: { type: String, required: false },
+        secondEmail: { type: String, required: false },
+      },
+      companyName: { type: String, required: false },
+      phone: { type: String, required: false },
+      address: { type: String, required: false },
+      state: { type: String, required: false },
+      city: { type: String, required: false },
+      postalCode: { type: String, required: false },
     },
     paymentMethod: { type: String, required: true },
     paymentResult: { id: String, status: String, email_address: String },

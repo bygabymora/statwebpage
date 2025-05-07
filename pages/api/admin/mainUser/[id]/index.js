@@ -1,7 +1,6 @@
-import Customer from "../../../models/Customer";
-import WpUser from "../../../models/WpUser";
-import db from "../../../utils/db";
 import { getToken } from "next-auth/jwt";
+import db from "../../../../utils/db";
+import User from "../../../../models/User";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
@@ -25,19 +24,14 @@ const getHandler = async (req, res) => {
     return res.status(400).json({ message: "Missing user ID" });
   }
 
-  const user = await WpUser.findById(id);
-  let customer = null;
-  if (user.customerId) {
-    customer = await Customer.findById(user.customerId);
-  }
-
+  const user = await User.findById(id);
   await db.disconnect();
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  res.send({ user, customer });
+  res.send(user);
 };
 
 export default handler;

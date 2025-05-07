@@ -57,8 +57,7 @@ export default function Products() {
   const filteredProducts = selectedManufacturer
     ? products.filter((product) => {
         const isProtectedUser =
-          session?.user?.protectedInventory === true &&
-          status === "authenticated";
+          session?.user?.restricted === true && status === "authenticated";
         const isProtectedProduct = product?.protected === true;
 
         // If the user is protected and the product too, we exclude it
@@ -71,8 +70,7 @@ export default function Products() {
       })
     : products.filter((product) => {
         const isProtectedUser =
-          session?.user?.protectedInventory === true &&
-          status === "authenticated";
+          session?.user?.restricted === true && status === "authenticated";
         const isProtectedProduct = product?.protected === true;
 
         if (isProtectedUser && isProtectedProduct) return false;
