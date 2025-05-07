@@ -56,7 +56,6 @@ export default NextAuth({
         approved: token.approved,
         protectedInventory: token.protectedInventory,
       };
-      console.log("Session final:", session);
       return session;
     },
   },

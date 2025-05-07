@@ -352,7 +352,7 @@ function OrderScreen() {
         // Call handleOnApprove here
         handleOnApprove();
       } else {
-        console.log("Payment failed");
+        console.error("Payment failed");
       }
     }
   }, [order._id, sendEmail]);
@@ -419,11 +419,6 @@ function OrderScreen() {
   const handleButtonClick = () => {
     handlePayment();
   };
-
-  console.log(
-    "Stripe public key:",
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  );
 
   return (
     <Layout

@@ -27,8 +27,6 @@ export default function ProfileScreen() {
     setValue("email", session.user.email);
     setValue("companyName", session.user.companyName);
     setValue("companyEinCode", session.user.companyEinCode);
-    console.log("companyEinCode:", session.user.companyEinCode);
-    console.log("name:", session.user.name);
   }, [session.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);

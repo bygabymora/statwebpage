@@ -32,7 +32,6 @@ export const ModalProvider = ({ children }) => {
 
   const openAlertModal = (message, action) => {
     if (!hasSeenModal) {
-      console.log("Opening modal with message:", message);
       setAlertMessage(message);
       setAlertAction(() => action);
       setIsAlertVisible(true);
@@ -47,7 +46,6 @@ export const ModalProvider = ({ children }) => {
   }, []);
 
   const handleAlertConfirm = () => {
-    console.log("Modal confirmed, executing action:", alertAction);
     setIsAlertVisible(false);
     if (alertAction) alertAction(); // Execute the action associated with the modal
   };

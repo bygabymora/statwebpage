@@ -1,10 +1,9 @@
-import Searched from '../../../models/Searched';
-import db from '../../../utils/db';
+import Searched from "../../../models/Searched";
+import db from "../../../utils/db";
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     try {
-      console.log("🔍 Request body:", req.body);
       await db.connect();
       const searched = new Searched({
         searchedWord: req.body.searchedWord,
@@ -17,12 +16,14 @@ export default async function handler(req, res) {
       });
       const createdSearched = await searched.save();
       await db.disconnect();
-      res.status(201).send({ message: 'Searched created', searched: createdSearched });
+      res
+        .status(201)
+        .send({ message: "Searched created", searched: createdSearched });
     } catch (error) {
       await db.disconnect();
-      res.status(500).send({ message: 'Error in creating searched', error });
+      res.status(500).send({ message: "Error in creating searched", error });
     }
   } else {
-    res.status(405).send({ message: 'Method not allowed' });
+    res.status(405).send({ message: "Method not allowed" });
   }
 }

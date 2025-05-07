@@ -145,7 +145,6 @@ export async function getServerSideProps(context) {
   await db.connect();
 
   const news = await News.findOne({ slug }).lean();
-  console.log("Fetched news:", news);
 
   if (!news) {
     return {
@@ -168,9 +167,6 @@ export async function getServerSideProps(context) {
       updatedAt: news.updatedAt.toISOString(),
       sources: formattedSources,
     };
-
-    console.log("Formatted news:", formattedNews);
-
     await db.disconnect();
 
     return {

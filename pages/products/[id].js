@@ -48,14 +48,13 @@ export default function ProductScreen() {
   });
 
   const fetchData = async () => {
-    console.log("Fetching product data...");
     try {
       const data = await axios.get(`/api/products/${pId}`);
       if (!data) {
         showStatusMessage("error", "Product not found");
         return;
       }
-      console.log("Product data:", data);
+
       setProduct(data.data);
     } catch (error) {
       console.error("Error fetching product data:", error);
@@ -64,7 +63,6 @@ export default function ProductScreen() {
   };
 
   useEffect(() => {
-    console.log("Product ID from router:", pId);
     if (pId) {
       fetchData();
     }
@@ -334,15 +332,7 @@ export default function ProductScreen() {
                 {currentDescription}
               </div>
             </li>
-            {console.log(purchaseType)}
-            {purchaseType === "Clearance" && (
-              <li>
-                <div className='text-xl text-red-500'>
-                  Product on Clearance!
-                </div>
-                <p>{product.notes}</p>
-              </li>
-            )}
+
             {product.sentOverNight && (
               <li className='space-y-2'>
                 <br />

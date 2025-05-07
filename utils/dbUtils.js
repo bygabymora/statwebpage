@@ -7,7 +7,7 @@ export async function fetchDataWithRetry(fetchFunction, retries = 3) {
       return await fetchFunction();
     } catch (error) {
       if (error instanceof MongoExpiredSessionError) {
-        console.log("Session expired, reconnecting...");
+        console.error("Session expired, reconnecting...");
         await db.connect(); // Reconnect to MongoDB
       } else {
         throw error; // Rethrow if it's not a session error

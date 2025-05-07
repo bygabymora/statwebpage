@@ -1,13 +1,13 @@
-import Layout from './../components/main/Layout';
-import { ProductItem } from '../components/products/ProductItem';
-import React from 'react';
-import Banner from '../components/Banner';
-import Contact from '../components/contact/Contact';
-import StaticBanner from '../components/StaticBanner';
+import Layout from "./../components/main/Layout";
+import { ProductItem } from "../components/products/ProductItem";
+import React from "react";
+import Banner from "../components/Banner";
+import Contact from "../components/contact/Contact";
+import StaticBanner from "../components/StaticBanner";
 import db from "../utils/db";
-import Product from '../models/Product';
-import { BiSkipNextCircle, BiSkipPreviousCircle } from 'react-icons/bi';
-import Benefits from './slider';
+import Product from "../models/Product";
+import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
+import Benefits from "./slider";
 
 export async function getServerSideProps() {
   try {
@@ -17,9 +17,12 @@ export async function getServerSideProps() {
     const serializeObjectIds = (obj) => {
       if (Array.isArray(obj)) {
         return obj.map(serializeObjectIds);
-      } else if (obj && typeof obj === 'object') {
+      } else if (obj && typeof obj === "object") {
         return Object.keys(obj).reduce((acc, key) => {
-          acc[key] = obj[key] && obj[key]._id ? obj[key]._id.toString() : serializeObjectIds(obj[key]);
+          acc[key] =
+            obj[key] && obj[key]._id
+              ? obj[key]._id.toString()
+              : serializeObjectIds(obj[key]);
           return acc;
         }, {});
       }
@@ -41,7 +44,7 @@ export async function getServerSideProps() {
       },
     };
   } catch (error) {
-    console.error('Error loading products:', error.message);
+    console.error("Error loading products:", error.message);
     return {
       props: {
         products: [],
@@ -97,7 +100,7 @@ function Carousel({ products }) {
   };
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (window.innerWidth < 768) {
         setTotalSlides(9);
       } else {
@@ -111,7 +114,6 @@ function Carousel({ products }) {
   };
 
   const nextSlide = React.useCallback(() => {
-    console.log('Next slide');
     setCurrentSlide((oldSlide) => {
       if (oldSlide + 1 < totalSlides) {
         return oldSlide + 1;
@@ -130,9 +132,9 @@ function Carousel({ products }) {
       }
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -172,17 +174,17 @@ function Carousel({ products }) {
   };
 
   return (
-    <div className="carousel-container" lang="en-US">
+    <div className='carousel-container' lang='en-US'>
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
-        className="w-full mt-3 flex flex-row items-center justify-center text-[#144e8b]"
+        className='w-full mt-3 flex flex-row items-center justify-center text-[#144e8b]'
       >
-        <BiSkipPreviousCircle className="text-lg" />
+        <BiSkipPreviousCircle className='text-lg' />
         &nbsp;Prev
       </button>
       <div
-        className="carousel-items"
+        className='carousel-items'
         style={{
           transform: `translateX(-${currentSlide * (100 / visibleItems)}%)`,
         }}
@@ -196,7 +198,7 @@ function Carousel({ products }) {
         onMouseLeave={handleOnMouseLeave} // using combined function here
       >
         {products?.map((product) => (
-          <div className="carousel-item px-3 lg:px-0" key={product._id}>
+          <div className='carousel-item px-3 lg:px-0' key={product._id}>
             <ProductItem product={product} />
           </div>
         ))}
@@ -204,35 +206,35 @@ function Carousel({ products }) {
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
-        className="w-full mt-3 flex flex-row items-center justify-center text-[#144e8b] card"
+        className='w-full mt-3 flex flex-row items-center justify-center text-[#144e8b] card'
       >
-        Next &nbsp; <BiSkipNextCircle className="text-lg" />
+        Next &nbsp; <BiSkipNextCircle className='text-lg' />
       </button>
     </div>
   );
 }
 
 export default function Home({ products }) {
-  const filteredProducts = products?.filter(
-    (product) =>
-      product.each?.wpPrice > 0 && // Valid price greater than 0
-      product.each?.description && 
-      product.each?.quickBooksQuantityOnHandProduction > 0 && // Valid quantity greater than 0
-      product.each?.description.trim() !== '' // Non-empty description
-  )
-  .slice(0, 9);
+  const filteredProducts = products
+    ?.filter(
+      (product) =>
+        product.each?.wpPrice > 0 && // Valid price greater than 0
+        product.each?.description &&
+        product.each?.quickBooksQuantityOnHandProduction > 0 && // Valid quantity greater than 0
+        product.each?.description.trim() !== "" // Non-empty description
+    )
+    .slice(0, 9);
 
   return (
-    <Layout >
+    <Layout>
       <Banner />
       <StaticBanner />
-      <Benefits className="mt-2"/>
-      <h2 className="section__title" id="products">
+      <Benefits className='mt-2' />
+      <h2 className='section__title' id='products'>
         Featured Products
       </h2>
-      <Carousel products={filteredProducts} loading={ "lazy"}/>
-      <Contact className="mt-2" />
+      <Carousel products={filteredProducts} loading={"lazy"} />
+      <Contact className='mt-2' />
     </Layout>
   );
 }
-
