@@ -113,7 +113,7 @@ export default function Layout({
             canonical
               ? canonical
               : product
-              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}-${product._id}`
+              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
               : "https://www.statsurgicalsupply.com/"
           }
         />

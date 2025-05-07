@@ -3,11 +3,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { BsCart2, BsChevronRight } from "react-icons/bs";
 import Image from "next/image";
-import { fetchDataWithRetry } from "../../utils/dbUtils";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Store } from "../../utils/Store";
-import db from "../../utils/db";
-import Product from "../../models/Product";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -15,29 +12,10 @@ import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
-export async function getServerSideProps({ params }) {
-  const { id: fullId } = params;
-  const id = fullId.split("-").pop();
-
-  await db.connect();
-  const product = await fetchDataWithRetry(async () => {
-    return await Product.findById(id).lean();
-  });
-
-  if (!product) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      product: JSON.parse(JSON.stringify(product)),
-    },
-  };
-}
-
-export default function ProductScreen(props, i) {
-  const { product } = props;
+export default function ProductScreen() {
   const router = useRouter();
+  const { pId: pId } = router.query;
+  const [product, setProduct] = useState({});
   const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -45,9 +23,7 @@ export default function ProductScreen(props, i) {
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
   const [qty, setQty] = useState(1);
   const { status, data: session } = useSession();
-  const [currentPrice, setCurrentPrice] = useState(
-    product.each?.wpPrice || null
-  );
+  const [currentPrice, setCurrentPrice] = useState();
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ""
   );
@@ -67,11 +43,32 @@ export default function ProductScreen(props, i) {
       return "Box";
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return "Each";
-    } else if ((product.each?.clearanceCountInStock ?? 0) > 0) {
-      return "Clearance";
     }
     return "Each";
   });
+
+  const fetchData = async () => {
+    console.log("Fetching product data...");
+    try {
+      const data = await axios.get(`/api/products/${pId}`);
+      if (!data) {
+        showStatusMessage("error", "Product not found");
+        return;
+      }
+      console.log("Product data:", data);
+      setProduct(data.data);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+      showStatusMessage("error", "Failed to fetch product data");
+    }
+  };
+
+  useEffect(() => {
+    console.log("Product ID from router:", pId);
+    if (pId) {
+      fetchData();
+    }
+  }, [pId]);
 
   useEffect(() => {
     if (product.countInStock || 0) {
@@ -87,17 +84,10 @@ export default function ProductScreen(props, i) {
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
     const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
-    const clearanceStock = product.each?.clearanceCountInStock ?? 0 <= 0;
 
-    if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
-      setPurchaseType("Clearance");
-      setCurrentPrice(
-        product.clearance?.price
-          ? `$${product.clearance?.price}`
-          : "Contact us for price"
-      );
+    if (eachStock === 0 && boxStock === 0) {
       setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(clearanceStock);
+      setCurrentCountInStock(0);
     }
   }, [product]);
 
@@ -285,14 +275,13 @@ export default function ProductScreen(props, i) {
             className='relative '
           >
             <Image
+              alt={product.name || ""}
               src={product.image}
-              alt={product.name}
               width={350}
               height={350}
               className='rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300' // <-- Added no-drag class here
               onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
               onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
-              priority={i === 0}
             />
             {isHovered && (
               <div
@@ -345,6 +334,7 @@ export default function ProductScreen(props, i) {
                 {currentDescription}
               </div>
             </li>
+            {console.log(purchaseType)}
             {purchaseType === "Clearance" && (
               <li>
                 <div className='text-xl text-red-500'>
@@ -479,19 +469,6 @@ export default function ProductScreen(props, i) {
                                         product.box
                                           ?.quickBooksQuantityOnHandProduction ||
                                           0
-                                      );
-                                    } else if (
-                                      e.target.value === "Clearance" &&
-                                      product.clearance
-                                    ) {
-                                      setCurrentPrice(
-                                        product.clearance?.price || 0
-                                      );
-                                      setCurrentDescription(
-                                        product.clearance?.description || ""
-                                      );
-                                      setCurrentCountInStock(
-                                        product.clearance?.countInStock || 0
                                       );
                                     }
                                   }}

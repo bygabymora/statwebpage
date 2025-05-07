@@ -1,17 +1,24 @@
+// .eslintrc.json
 {
+  "ignorePatterns": [".next/", "node_modules/", "public/"],
   "env": {
     "browser": true,
     "es6": true,
     "node": true,
     "serviceworker": true
   },
-  "rules": {
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "react-hooks/exhaustive-deps": "off"
-  },
   "extends": ["next/core-web-vitals", "eslint:recommended"],
   "globals": {
     "importScripts": "readonly",
     "workbox": "readonly"
+  },
+  "rules": {
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "react-hooks/exhaustive-deps": "off"
   }
 }

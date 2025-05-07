@@ -177,11 +177,7 @@ export default function Products() {
             ) : (
               filteredProducts.map((product, index) => (
                 <div key={index}>
-                  <ProductItemPage
-                    product={product}
-                    clearancePurchaseType={product.clearancePurchaseType}
-                    index={index}
-                  />
+                  <ProductItemPage product={product} />
                 </div>
               ))
             )}

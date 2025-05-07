@@ -149,7 +149,7 @@ export default function AdminNewsEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      const response = await axios.put(`/api/admin/news/${newsId}`, {
+      await axios.put(`/api/admin/news/${newsId}`, {
         title,
         slug,
         content,

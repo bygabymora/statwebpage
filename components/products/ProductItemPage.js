@@ -10,7 +10,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
-export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
+export const ProductItemPage = ({ product }) => {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -87,24 +87,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
   }, [purchaseType, product.each]);
 
   useEffect(() => {
-    if (clearancePurchaseType) {
-      setPurchaseType("Clearance");
-      setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0
-      );
-    }
-  }, [
-    clearancePurchaseType,
-    product.clearance,
-    product.box?.clearanceCountInStock,
-    product.each?.clearanceCountInStock,
-    product.each?.description,
-  ]);
-
-  useEffect(() => {
     if (purchaseType === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
@@ -116,13 +98,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
       setCurrentDescription(product.box?.description || "");
       setCurrentCountInStock(
         product.box?.quickBooksQuantityOnHandProduction ?? 0
-      );
-    } else if (purchaseType === "Clearance") {
-      setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0
       );
     }
   }, [purchaseType, product]);
@@ -244,7 +219,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
       <div className='flex flex-row justify-between'>
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
-            href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
+            href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
             className='justify-center items-center text-center flex-1'
           >
             <div className='p-2'>
@@ -257,7 +232,6 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
                 quality={5}
-                priority={index === 0}
               />
             </div>
           </Link>
@@ -265,7 +239,7 @@ export const ProductItemPage = ({ product, clearancePurchaseType, index }) => {
         <div className='flex flex-col justify-center items-center px-2 flex-1'>
           {typeof product._id === "string" && product._id.trim() !== "" && (
             <Link
-              href={`/products/${product.manufacturer}-${product.name}-${product._id}`}
+              href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
               prefetch={false}
               className='justify-center items-center text-center'
             >
