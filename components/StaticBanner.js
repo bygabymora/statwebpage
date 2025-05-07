@@ -46,7 +46,8 @@ const StaticBanner = () => {
               "Contribute to reducing medical waste.",
             ].map((item, index) => (
               <li key={index} className='flex items-center'>
-                <AiOutlineSend className='mr-2 text-[#144e8b]' /> {item}
+                <AiOutlineSend className='mr-2 text-[#144e8b] shrink-0' />{" "}
+                {item}
               </li>
             ))}
           </ul>
