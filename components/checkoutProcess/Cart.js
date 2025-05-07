@@ -138,7 +138,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
       ) : (
         <div className='grid sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
           <div className=' md:col-span-3'>
-            <table className='table-auto min-w-full border-collapse border'>
+            <table className='table-auto w-full border-collapse border'>
               <thead className='border'>
                 <tr>
                   <th className='px-5 border text-left'>Product</th>

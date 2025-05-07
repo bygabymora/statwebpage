@@ -168,6 +168,7 @@ main {
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+  padding-top: 27px;
 }
 
 .grid {
@@ -1007,10 +1008,6 @@ main {
     box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
     border-radius: 1.5rem 1.5rem 0 0;
     transition: 0.3s;
-  }
-
-  .section__title {
-    margin-top: 2rem;
   }
 
   /* Show menu  */

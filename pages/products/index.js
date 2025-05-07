@@ -96,29 +96,27 @@ export default function Products() {
   return (
     <Layout title='Products'>
       <nav className='text-sm text-gray-700'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
-          {breadcrumbs.map((breadcrumb, index) => (
-            <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
-                <Link
-                  href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
-                >
-                  {breadcrumb.name}
-                </Link>
-              ) : (
-                <span>{breadcrumb.name}</span>
-              )}
-              {index < breadcrumbs.length - 1 && (
-                <BsChevronRight className='mx-2 text-gray-500' />
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className='grid grid-cols-1 md:grid-cols-4'>
-        <div className='md:col-span-1 p-4'>
-          <div className='block md:hidden '>
+        <div className='flex justify-between items-center'>
+          <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+            {breadcrumbs.map((breadcrumb, index) => (
+              <li key={index} className='flex items-center'>
+                {breadcrumb.href ? (
+                  <Link
+                    href={breadcrumb.href}
+                    className='hover:underline text-[#144e8b]'
+                  >
+                    {breadcrumb.name}
+                  </Link>
+                ) : (
+                  <span>{breadcrumb.name}</span>
+                )}
+                {index < breadcrumbs.length - 1 && (
+                  <BsChevronRight className='mx-2 text-gray-500' />
+                )}
+              </li>
+            ))}
+          </ul>
+          <div className='block md:hidden'>
             <button
               className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}
@@ -126,6 +124,10 @@ export default function Products() {
               <AiOutlineMenuFold color='white' />
             </button>
           </div>
+        </div>
+      </nav>
+      <div className='grid grid-cols-1 md:grid-cols-4'>
+        <div className='md:col-span-1 p-4'>
           <ul
             className={`${
               showManufacturers ? "block" : "hidden"
