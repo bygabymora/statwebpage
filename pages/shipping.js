@@ -14,12 +14,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 
 export default function ShippingScreen() {
   const { data: session } = useSession();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    console.log(name);
-  }, [name]);
 
   const stateMap = [
     "Alabama",
@@ -158,9 +153,6 @@ export default function ShippingScreen() {
 
   useEffect(() => {
     if (session?.user) {
-      if (session.user.name) {
-        setName(session.user.name);
-      }
       if (session.user.email) {
         setEmail(session.user.email);
       }
