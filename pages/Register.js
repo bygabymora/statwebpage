@@ -40,7 +40,8 @@ export default function LoginScreen() {
   } = useForm();
 
   const submitHandler = async ({
-    name,
+    firstName,
+    lastName,
     email,
     password,
     companyName,
@@ -49,7 +50,8 @@ export default function LoginScreen() {
     try {
       // Create the user with active and approved set to false by default
       await axios.post("/api/auth/signup", {
-        name,
+        firstName,
+        lastName,
         email,
         password,
         companyName,
@@ -65,7 +67,7 @@ export default function LoginScreen() {
       setIsModalOpen(true);
       setShouldRedirect(true);
       const contactToEmail = {
-        name,
+        name: firstName,
         email,
       };
       const emailmessage = messageManagement(contactToEmail, "Register");
@@ -99,19 +101,42 @@ export default function LoginScreen() {
             className='block mb-2 text-sm font-bold text-gray-700'
             htmlFor='name'
           >
-            Full Name*
+            First Name*
           </label>
           <input
             type='text'
             className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-            id='name'
+            id='firstName'
+            placeholder='First Name'
             autoFocus
-            {...register("name", {
-              required: "Please enter name",
+            {...register("firstName", {
+              required: "Please enter First Name",
             })}
           />
-          {errors.name && (
-            <div className='text-red-500'>{errors.name.message}</div>
+          {errors.firstName && (
+            <div className='text-red-500'>{errors.firstName.message}</div>
+          )}
+        </div>
+
+        <div className='mb-4'>
+          <label
+            className='block mb-2 text-sm font-bold text-gray-700'
+            htmlFor='name'
+          >
+            Last Name*
+          </label>
+          <input
+            type='text'
+            className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+            id='lastName'
+            placeholder='Last Name'
+            autoFocus
+            {...register("lastName", {
+              required: "Please enter Last Name",
+            })}
+          />
+          {errors.lastName && (
+            <div className='text-red-500'>{errors.lastName.message}</div>
           )}
         </div>
 

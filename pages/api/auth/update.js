@@ -1,35 +1,37 @@
-import bcryptjs from 'bcryptjs';
-import WpUser from '../../../models/WpUser';
-import db from '../../../utils/db';
-import { getToken } from 'next-auth/jwt';
+import bcryptjs from "bcryptjs";
+import WpUser from "../../../models/WpUser";
+import db from "../../../utils/db";
+import { getToken } from "next-auth/jwt";
 
 async function handler(req, res) {
-  if (req.method !== 'PUT') {
+  if (req.method !== "PUT") {
     return res.status(400).send({ message: `${req.method} not supported` });
   }
 
   const user = await getToken({ req });
   if (!user) {
-    return res.status(401).send({ message: 'signin required' });
+    return res.status(401).send({ message: "signin required" });
   }
 
-  const { name, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   if (
-    !name ||
+    !firstName ||
+    !lastName ||
     !email ||
-    !email.includes('@') ||
+    !email.includes("@") ||
     (password && password.trim().length < 5)
   ) {
     res.status(422).json({
-      message: 'Validation error',
+      message: "Validation error",
     });
     return;
   }
 
   await db.connect();
   const toUpdateUser = await WpUser.findById(user._id);
-  toUpdateUser.name = name;
+  toUpdateUser.firstName = firstName;
+  toUpdateUser.lastName = lastName;
   toUpdateUser.email = email;
 
   if (password) {
@@ -39,7 +41,7 @@ async function handler(req, res) {
   await toUpdateUser.save();
   await db.disconnect();
   res.send({
-    message: 'User updated',
+    message: "User updated",
   });
 }
 

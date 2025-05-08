@@ -14,7 +14,8 @@ export default NextAuth({
       if (user) {
         // Newly authenticated user
         token._id = user._id;
-        token.name = user.name;
+        token.lastName = user.lastName;
+        token.firstName = user.firstName;
         token.email = user.email;
         token.isAdmin = user.isAdmin;
         token.companyName = user.companyName;
@@ -31,7 +32,8 @@ export default NextAuth({
         await db.disconnect();
 
         if (dbUser) {
-          token.name = dbUser.name;
+          token.lastName = dbUser.lastName;
+          token.firstName = dbUser.firstName;
           token.email = dbUser.email;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
@@ -47,7 +49,8 @@ export default NextAuth({
     async session({ session, token }) {
       session.user = {
         _id: token._id,
-        name: token.name,
+        lastName: token.lastName,
+        firstName: token.firstName,
         email: token.email,
         isAdmin: token.isAdmin,
         companyName: token.companyName,
@@ -81,7 +84,8 @@ export default NextAuth({
 
         return {
           _id: user._id,
-          name: user.name,
+          lastName: user.lastName,
+          firstName: user.firstName,
           email: user.email,
           companyName: user.companyName,
           companyEinCode: user.companyEinCode,

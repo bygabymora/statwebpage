@@ -23,7 +23,7 @@ export default function ProfileScreen() {
   } = useForm();
 
   useEffect(() => {
-    setValue("name", session.user.name);
+    setValue("name", session.user.lastName);
     setValue("email", session.user.email);
     setValue("companyName", session.user.companyName);
     setValue("companyEinCode", session.user.companyEinCode);
@@ -72,8 +72,8 @@ export default function ProfileScreen() {
         </h1>
         <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
           <div>
-            <p className='text-sm font-semibold text-gray-500'>Full Name</p>
-            <p className='text-base'>{session.user.name}</p>
+            <p className='text-sm font-semibold text-gray-500'>Last Name</p>
+            <p className='text-base'>{session?.user?.lastName}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Email</p>
