@@ -15,15 +15,6 @@ import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 
-const calculateLogoWidth = () => {
-  if (typeof window !== "undefined") {
-    const windowWidth = window.innerWidth;
-    if (windowWidth >= 768) return 70;
-    return 50;
-  }
-  return 50; // fallback for SSR
-};
-
 const Header = () => {
   const router = useRouter();
   const { state } = useContext(Store);
@@ -33,25 +24,19 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [logoWidth, setLogoWidth] = useState(calculateLogoWidth());
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    isMobileHandler();
+    window.addEventListener("resize", isMobileHandler);
   }, []);
 
   const active =
     session?.user?.active &&
     session?.user?.approved &&
     status === "authenticated";
-  useEffect(() => {
-    const handleResize = () => {
-      setLogoWidth(calculateLogoWidth());
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
@@ -126,9 +111,19 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
+  const isMobileHandler = () => {
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 768) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    }
+  };
+
   return (
     <header
-      className={`header mx-auto transition-all duration-300 ${
+      className={`header mx-auto transition-all  duration-300 ${
         isScrolled ? "pt-1" : "pt-3"
       } sm:pt-${isScrolled ? "1" : "3"}`}
     >
@@ -165,8 +160,8 @@ const Header = () => {
           </div>
         )}
       </div>
-      <nav className='h-[15vh] nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
-        <div className='flex h-12 items-center flex-shrink-0'>
+      <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
+        <div className='flex items-center'>
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -177,8 +172,8 @@ const Header = () => {
               <Image
                 src={Logo2}
                 alt='logo'
-                width={logoWidth}
-                height={logoWidth}
+                width={isMobile ? 50 : 100}
+                height={isMobile ? 50 : 100}
               />
             )}
           </button>

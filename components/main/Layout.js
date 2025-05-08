@@ -91,10 +91,7 @@ export default function Layout({
     <div className='w-full' lang='en-US'>
       <Head>
         <title>
-          {" "}
-          {title
-            ? `${title} | Stat Surgical Supply`
-            : "Stat Surgical Supply"}{" "}
+          {title ? `${title} | Stat Surgical Supply` : "Stat Surgical Supply"}
         </title>
         <meta
           name='description'

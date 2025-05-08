@@ -156,7 +156,7 @@ const Menu = () => {
   });
 
   return (
-    <nav className='bg-gray-100 shadow w-full'>
+    <nav className='bg-gray-100 shadow  w-full'>
       <ul className='flex justify-center space-x-6 py-1 text-[#144e8b] font-medium text-sm lg:text-base'>
         {updatedMenuItems.map((item, index) => (
           <li

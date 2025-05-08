@@ -8,7 +8,7 @@ import {
 
 export default function Header() {
   return (
-    <div className=' hidden md:flex bg-white text-[#144e8b] text-sm z-[9999] max-w-7xl mx-auto justify-between items-center px-4'>
+    <div className=' hidden md:flex bg-white text-[#144e8b] text-sm md:text-lg z-[9999] max-w-7xl mx-auto justify-between items-center px-4'>
       <div className='flex space-x-4'>
         <a href='#contact' className='hover:underline'>
           Contact Us
