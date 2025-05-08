@@ -26,7 +26,7 @@ export default function CheckoutWizard({ activeStep }) {
             )}
           </motion.div>
           <p
-            className={`mt-2 text-sm font-semibold ${
+            className={`mt-2 text-xs sm:text-sm font-semibold ${
               index <= activeStep ? "text-green-700" : "text-gray-500"
             }`}
           >
