@@ -65,7 +65,7 @@ const SignupButton = () => {
             ) : session?.user ? (
               <>
                 <div className='px-4 py-2 text-sm text-[#03793d] font-semibold'>
-                  Hello, {session.user.name}
+                  Hello, {session.user.firstName}!
                 </div>
                 <div className='block px-4 py-2 text-sm'>
                   <Link

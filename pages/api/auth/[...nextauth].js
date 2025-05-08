@@ -27,7 +27,7 @@ export default NextAuth({
         // Check the database if the user is still active
         await db.connect();
         const dbUser = await WpUser.findById(token._id).select(
-          "name email active approved restricted"
+          "firstName lastName email active approved restricted"
         );
         await db.disconnect();
 

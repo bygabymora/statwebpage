@@ -23,7 +23,9 @@ export default function ProfileScreen() {
   } = useForm();
 
   useEffect(() => {
-    setValue("name", session.user.lastName);
+    console.log("Session data:", session);
+    setValue("lastName", session.user.lastName);
+    setValue("firstName", session.user.firstName);
     setValue("email", session.user.email);
     setValue("companyName", session.user.companyName);
     setValue("companyEinCode", session.user.companyEinCode);
@@ -35,10 +37,11 @@ export default function ProfileScreen() {
     setShowModifyForm((prevShowModifyForm) => !prevShowModifyForm);
   };
 
-  const submitHandler = async ({ name, email, password }) => {
+  const submitHandler = async ({ firstName, lastName, email, password }) => {
     try {
       await axios.put("/api/auth/update", {
-        name,
+        firstName,
+        lastName,
         email,
         password,
       });
@@ -52,15 +55,15 @@ export default function ProfileScreen() {
         toggleModifyForm();
         toast.success("Profile updated successfully");
         // Optional: Reset the form with new values
-        reset({ name, email, password: "" });
+        reset({ firstName, lastName, email, password: "" });
       } else {
         toast.error(result.error);
       }
-    } catch (err) {
+    } catch (error) {
       toast.error(
         "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
       );
-      toast.error(getError(err));
+      toast.error(getError(error));
     }
   };
 
@@ -68,12 +71,16 @@ export default function ProfileScreen() {
     <Layout title='Profile'>
       <section className='profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
         <h1 className='text-2xl font-bold text-[#144e8b] text-center mb-6'>
-          {session.user.name} Profile Information
+          {session.user.firstName} {session.user.lastName} Profile Information
         </h1>
         <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Last Name</p>
-            <p className='text-base'>{session?.user?.lastName}</p>
+            <p className='text-base'>{session?.user.lastName}</p>
+          </div>
+          <div>
+            <p className='text-sm font-semibold text-gray-500'>First Name</p>
+            <p className='text-base'>{session?.user.firstName}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Email</p>
@@ -115,16 +122,39 @@ export default function ProfileScreen() {
                 className='block mb-1 text-sm font-semibold text-gray-600'
                 htmlFor='name'
               >
-                Full Name *
+                First Name *
               </label>
               <input
                 type='text'
-                id='name'
+                id='firstName'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("name", { required: "Please enter name" })}
+                {...register("firstName", {
+                  required: "Please enter first Name",
+                })}
               />
-              {errors.name && (
-                <p className='text-red-500 text-sm'>{errors.name.message}</p>
+              {errors.firstName && (
+                <p className='text-red-500 text-sm'>
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div className='mb-4'>
+              <label
+                className='block mb-1 text-sm font-semibold text-gray-600'
+                htmlFor='name'
+              >
+                Last Name *
+              </label>
+              <input
+                type='text'
+                id='lastName'
+                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
+                {...register("lastName", { required: "Please enter lastName" })}
+              />
+              {errors.lastName && (
+                <p className='text-red-500 text-sm'>
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
             <div className='mb-4'>
