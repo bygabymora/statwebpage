@@ -197,7 +197,7 @@ export default function Layout({
       <ToastContainer position='bottom-center' limit={1} />
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
-        <main className='main pt-65 m-auto mt-[11rem] max-w-[1400px] px-4 pt-10 min-h-[30vh] w-full overflow-x-hidden'>
+        <main className='main m-auto mt-[11rem] max-w-[1400px] px-4 pt-10 min-h-[30vh] w-full'>
           {children}
         </main>
         <Footer />
