@@ -158,6 +158,7 @@ export default function LoginScreen() {
             })}
             className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
             id='email'
+            placeholder='Email'
           ></input>
           {errors.email && (
             <div className='text-red-500'>{errors.email.message}</div>
@@ -174,6 +175,7 @@ export default function LoginScreen() {
             type='text'
             className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
             id='companyName'
+            placeholder='Company Name'
             autoFocus
             {...register("companyName", {
               required: "Please enter company name",
@@ -194,6 +196,7 @@ export default function LoginScreen() {
             type='text'
             className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
             id='companyEinCode'
+            placeholder='Company EIN'
             autoFocus
             {...register("companyEinCode", {
               required: "Please enter company name",
@@ -227,6 +230,7 @@ export default function LoginScreen() {
               })}
               className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='password'
+              placeholder='Password'
             />
             <button
               type='button'
@@ -254,6 +258,7 @@ export default function LoginScreen() {
               type={showPassword ? "text" : "password"}
               className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='confirmPassword'
+              placeholder='Confirm Password'
               {...register("confirmPassword", {
                 required: "Please enter confirm password",
                 validate: (value) => value === getValues("password"),
