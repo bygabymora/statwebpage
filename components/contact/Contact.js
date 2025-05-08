@@ -23,8 +23,8 @@ const Contact = () => {
     <section className='contact' id='contact'>
       <div className='contact__container'>
         <h1 className='section__title my-10'>Contact us!</h1>
-        <div className='contact__container container grid'>
-          <div className='contact__content my-2 space-y-1.5'>
+        <div className='contact__container grid'>
+          <div className='contact__content space-y-1.5'>
             <motion.div
               className='contact__card bg-white shadow-lg rounded-lg p-6'
               initial='hidden'

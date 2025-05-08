@@ -23,7 +23,7 @@ const Banner = () => {
     <div className='text-title-color-dark text-center'>
       <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 items-center'>
         <div className='text-left'>
-          <div className='text-4xl font-bold mb-6 text-[#144e8b]'>
+          <div className='text-4xl font-bold mb-6 text-center text-[#144e8b]'>
             Welcome to STAT Surgical Supply
           </div>
           <p className='text-lg text-[#414b53de] text-center mb-6'>
