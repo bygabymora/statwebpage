@@ -323,6 +323,7 @@ export const ProductItemPage = ({ product }) => {
           <label className='mt-3 font-bold'>Join Our Wait List</label>
 
           <input
+            autoComplete='off'
             type='text'
             name='user_name'
             className='contact__form-input'
@@ -333,6 +334,7 @@ export const ProductItemPage = ({ product }) => {
           />
 
           <input
+            autoComplete='off'
             type='email'
             name='user_email'
             className='contact__form-input mt-2'
@@ -343,6 +345,7 @@ export const ProductItemPage = ({ product }) => {
           />
 
           <input
+            autoComplete='off'
             type='text'
             name='emailManufacturer'
             className='contact__form-input'

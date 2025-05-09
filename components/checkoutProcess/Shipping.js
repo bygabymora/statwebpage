@@ -227,6 +227,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                       Use address?
                     </label>
                     <input
+                      autoComplete='off'
                       type='checkbox'
                       id='useLastAddress'
                       checked={useLastAddress}
@@ -242,6 +243,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                   <div>
                     <label className='block font-medium'>First Name*</label>
                     <input
+                      autoComplete='off'
                       className='w-full contact__form-input'
                       type='text'
                       placeholder='First Name'
@@ -260,6 +262,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                   <div>
                     <label className='block font-medium'>Last Name*</label>
                     <input
+                      autoComplete='off'
                       className='w-full contact__form-input'
                       type='text'
                       placeholder='Last Name'
@@ -278,6 +281,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Company*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -291,6 +295,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Phone Number*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) => {
@@ -307,6 +312,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Address*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -320,6 +326,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Suite Number*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -355,6 +362,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>City*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -368,6 +376,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Zip Code*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -382,6 +391,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Email*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
                   type='text'
                   onChange={(e) =>
@@ -398,6 +408,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               <div>
                 <label className='block font-medium'>Second Email*</label>
                 <input
+                  autoComplete='off'
                   className='w-full contact__form-input'
                   type='text'
                   onChange={(e) =>
@@ -491,6 +502,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               </select>
               {shippingPaymentMethod === "use my account" && (
                 <input
+                  autoComplete='off'
                   className='input-field mt-2'
                   type='text'
                   placeholder='Enter your account number'

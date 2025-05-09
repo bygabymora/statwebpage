@@ -64,7 +64,7 @@ export default function AdminUserEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      await axios.put(`/api/admin/users/${userId}`, user);
+      await axios.put(`/api/admin/users/${userId}`, { user, customer });
 
       dispatch({ type: "UPDATE_SUCCESS" });
       showStatusMessage("success", "User updated successfully");
@@ -106,6 +106,7 @@ export default function AdminUserEditScreen() {
           </ul>
         </div>
         {console.log("user", user)}
+        {console.log("customer", customer)}
         <div className='md:col-span-3 p-6'>
           <div className='flex justify-between items-center mb-4 sticky top-[8rem] bg-white z-10'>
             <h1 className='text-xl'>{`Edit User ${user?.firstName} ${user?.lastName}`}</h1>
@@ -129,6 +130,7 @@ export default function AdminUserEditScreen() {
             <div className='flex gap-4 my-4'>
               <label>
                 <input
+                  autoComplete='off'
                   checked={user?.active || false}
                   type='checkbox'
                   onChange={(e) =>
@@ -139,6 +141,7 @@ export default function AdminUserEditScreen() {
               </label>
               <label>
                 <input
+                  autoComplete='off'
                   checked={user?.approved || false}
                   type='checkbox'
                   onChange={(e) =>
@@ -149,6 +152,7 @@ export default function AdminUserEditScreen() {
               </label>
               <label>
                 <input
+                  autoComplete='off'
                   type='checkbox'
                   checked={user?.isAdmin || false}
                   onChange={(e) =>
@@ -159,6 +163,7 @@ export default function AdminUserEditScreen() {
               </label>
               <label>
                 <input
+                  autoComplete='off'
                   type='checkbox'
                   checked={user?.restricted || false}
                   onChange={(e) =>
@@ -172,6 +177,7 @@ export default function AdminUserEditScreen() {
               <div className='mb-2'>
                 <label>Name</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   value={user?.firstName || ""}
                   onChange={(e) =>
@@ -183,6 +189,7 @@ export default function AdminUserEditScreen() {
               <div className='mb-2'>
                 <label>Last Name</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   value={user?.lastName || ""}
                   onChange={(e) =>
@@ -194,6 +201,7 @@ export default function AdminUserEditScreen() {
               <div className='mb-2 md:col-span-2'>
                 <label>Email</label>
                 <input
+                  autoComplete='off'
                   type='email'
                   value={user?.email || ""}
                   onChange={(e) => handleInputChange("email", e.target.value)}

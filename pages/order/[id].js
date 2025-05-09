@@ -701,12 +701,14 @@ function OrderScreen() {
                       <form action='/api/checkout_sessions' method='POST'>
                         <section>
                           <input
+                            autoComplete='off'
                             hidden
                             name='totalPrice'
                             value={totalPrice}
                             readOnly
                           />
                           <input
+                            autoComplete='off'
                             hidden
                             name='orderId'
                             value={orderId}
@@ -786,6 +788,7 @@ function OrderScreen() {
                     >
                       <section>
                         <input
+                          autoComplete='off'
                           ref={trackUrlRef}
                           name='trackUrl'
                           placeholder='Tracking URL'
@@ -793,6 +796,7 @@ function OrderScreen() {
                           required
                         />
                         <input
+                          autoComplete='off'
                           ref={trackNumberRef}
                           name='trackNumber'
                           placeholder='Tracking Number'
@@ -841,37 +845,49 @@ function OrderScreen() {
           </div>
           <form ref={form} hidden>
             <input
+              autoComplete='off'
               type='hidden'
               name='order_id'
               value={orderId.substring(orderId.length - 8).toUpperCase()}
               readOnly
             />
             <input
+              autoComplete='off'
               type='hidden'
               name='user_name'
               value={shippingAddress.fullName}
               readOnly
             />
             <input
+              autoComplete='off'
               type='hidden'
               name='user_phone'
               value={shippingAddress.phone}
               readOnly
             />
-            <input type='hidden' name='user_email' value={email} readOnly />
             <input
+              autoComplete='off'
+              type='hidden'
+              name='user_email'
+              value={email}
+              readOnly
+            />
+            <input
+              autoComplete='off'
               type='hidden'
               name='total_order'
               value={totalPrice}
               readOnly
             />
             <input
+              autoComplete='off'
               type='hidden'
               name='payment_method'
               value={paymentMethod}
               readOnly
             />
             <input
+              autoComplete='off'
               type='hidden'
               name='shipping_preference'
               value={shippingAddress.notes}

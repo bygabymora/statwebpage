@@ -24,7 +24,7 @@ const getHandler = async (req, res) => {
     await db.disconnect();
     return res.status(400).json({ message: "Missing user ID" });
   }
-
+  console.log("id", id);
   const user = await WpUser.findById(id);
   let customer = null;
   if (user.customerId) {

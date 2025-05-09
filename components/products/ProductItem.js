@@ -506,6 +506,7 @@ export const ProductItem = ({ product, clearancePurchaseType, index }) => {
         <form className='text-center p-2' ref={form} onSubmit={sendEmail}>
           <label className='mt-3 font-bold'>Join Our Wait List</label>
           <input
+            autoComplete='off'
             type='text'
             name='user_name'
             className='contact__form-input'
@@ -515,6 +516,7 @@ export const ProductItem = ({ product, clearancePurchaseType, index }) => {
             required
           />
           <input
+            autoComplete='off'
             type='email'
             name='user_email'
             className='contact__form-input mt-2'
@@ -524,6 +526,7 @@ export const ProductItem = ({ product, clearancePurchaseType, index }) => {
             required
           />
           <input
+            autoComplete='off'
             type='text'
             name='emailManufacturer'
             className='contact__form-input'

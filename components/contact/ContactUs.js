@@ -59,6 +59,7 @@ const ContactUs = () => {
             Name*
           </label>
           <input
+            autoComplete='off'
             type='text'
             name='user_name'
             className='contact__form-input'
@@ -74,6 +75,7 @@ const ContactUs = () => {
             Email*
           </label>
           <input
+            autoComplete='off'
             type='email'
             name='user_email'
             className='contact__form-input'

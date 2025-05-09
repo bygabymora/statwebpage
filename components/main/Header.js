@@ -131,6 +131,7 @@ const Header = () => {
       <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
         <div className='flex items-center w-[90%] justify-between border rounded-full px-3  bg-gray-100'>
           <input
+            autoComplete='off'
             type='text'
             value={searchQuery}
             onChange={handleSearchInputChange}
@@ -182,6 +183,7 @@ const Header = () => {
         <div className='relative md:block hidden flex-1 max-w-md mx-4 w-full'>
           <div className='flex items-center border rounded-full px-3 py-1 bg-gray-100'>
             <input
+              autoComplete='off'
               type='text'
               value={searchQuery}
               onChange={handleSearchInputChange}

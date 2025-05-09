@@ -114,6 +114,7 @@ export default function Footer() {
             onSubmit={sendEmail}
           >
             <input
+              autoComplete='off'
               type='text'
               placeholder='Name'
               className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b] disabled:bg-gray-100'
@@ -122,6 +123,7 @@ export default function Footer() {
               disabled={!!user?.isApproved}
             />
             <input
+              autoComplete='off'
               type='email'
               placeholder='Email'
               className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b]'

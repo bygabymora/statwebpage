@@ -94,6 +94,7 @@ const customerSchema = new mongoose.Schema(
     purchaseExecutive: [
       {
         title: { type: String, required: false },
+        wpId: { type: String, required: false },
         role: { type: String, required: false },
         opOutEmail: { type: Boolean, required: false, default: false },
         name: { type: String, required: false },

@@ -36,7 +36,52 @@ export default function CustomerLinking({
   };
 
   const handleSelect = (customer) => {
-    setCustomer(customer);
+    const executiveMatch = customer.purchaseExecutive
+      .map((exec) => exec.email)
+      .includes(user.email);
+
+    console.log("executiveMatch", executiveMatch);
+    console.log("userInFunction", user);
+    console.log(
+      "customerInFunction",
+      customer.purchaseExecutive.map((exec) => exec.email)
+    );
+    console.log(
+      "customerInFunction",
+      customer.purchaseExecutive.map((exec) => exec.email).includes(user.email)
+    );
+    let updatedCustomer = customer;
+    if (!executiveMatch) {
+      const hasPrincipal = customer.purchaseExecutive.some((exec) => {
+        return exec.principalPurchaseExecutive;
+      });
+
+      updatedCustomer = {
+        ...customer,
+        purchaseExecutive: [
+          ...(customer.purchaseExecutive || []),
+          {
+            name: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: "Buyer",
+            principalPurchaseExecutive: !hasPrincipal,
+            wpId: user._id,
+          },
+        ],
+      };
+    } else {
+      updatedCustomer = {
+        ...customer,
+        purchaseExecutive: updatedCustomer.purchaseExecutive.map((exec) => {
+          if (exec.email === user.email) {
+            return { ...exec, wpId: user._id };
+          }
+          return exec;
+        }),
+      };
+    }
+    setCustomer(updatedCustomer);
     setUser({ ...user, customerId: customer._id, customerData: customer });
     setKeyword(customer.companyName);
     setSuggestions([]);
@@ -54,6 +99,7 @@ export default function CustomerLinking({
           Search Customer
         </label>
         <input
+          autoComplete='off'
           id='customer-search'
           type='text'
           value={keyword}

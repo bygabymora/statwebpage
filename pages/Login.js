@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
-import Layout from '../components/main/Layout';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { signIn } from 'next-auth/react';
-import { toast } from 'react-toastify';
-import { getError } from '../utils/error';
-import { useSession } from 'next-auth/react';
+import Layout from "../components/main/Layout";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
+import { getError } from "../utils/error";
+import { useSession } from "next-auth/react";
 import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import CustomAlertModal from "../components/main/CustomAlertModal";
 
 export default function Login() {
   const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState({ title: '', body: '', warning: '' });
+  const [alertMessage, setAlertMessage] = useState({
+    title: "",
+    body: "",
+    warning: "",
+  });
 
   const router = useRouter();
   const { redirect } = router.query;
@@ -25,7 +29,7 @@ export default function Login() {
 
   useEffect(() => {
     if (session?.user) {
-      router.push(redirect || '/');
+      router.push(redirect || "/");
     }
   }, [router, session, redirect]);
 
@@ -37,17 +41,19 @@ export default function Login() {
 
   const submitHandler = async ({ email, password }) => {
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
       if (result.error) {
-        if (result.error === "Your account is inactive. Please contact support.") {
+        if (
+          result.error === "Your account is inactive. Please contact support."
+        ) {
           setAlertMessage({
-            title: 'Account Inactive',
-            body: 'Your account is currently inactive.',
-            warning: 'Please contact support to reactivate your account.',
+            title: "Account Inactive",
+            body: "Your account is currently inactive.",
+            warning: "Please contact support to reactivate your account.",
           });
           setIsAlertOpen(true);
         } else {
@@ -60,46 +66,48 @@ export default function Login() {
   };
 
   return (
-    <Layout title="Login">
-      <form className="mx-2 pr-5" onSubmit={handleSubmit(submitHandler)}>
-        <h1 className="mb-1 text-xl font-bold">Login</h1>
-        <div className="mb-4">
+    <Layout title='Login'>
+      <form className='mx-2 pr-5' onSubmit={handleSubmit(submitHandler)}>
+        <h1 className='mb-1 text-xl font-bold'>Login</h1>
+        <div className='mb-4'>
           <label
-            className="block mb-2 text-sm font-bold text-gray-700"
-            htmlFor="email"
+            className='block mb-2 text-sm font-bold text-gray-700'
+            htmlFor='email'
           >
             Email
           </label>
           <input
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            autoComplete='off'
+            className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
             autoFocus
-            id="email"
-            type="email"
-            {...register('email', {
-              required: 'Please enter email',
+            id='email'
+            type='email'
+            {...register("email", {
+              required: "Please enter email",
               pattern: {
                 value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
-                message: 'Invalid email',
+                message: "Invalid email",
               },
             })}
-            placeholder="Email"
+            placeholder='Email'
           ></input>
           {errors.email && (
-            <div className="text-blue-950">{errors.email.message}</div>
+            <div className='text-blue-950'>{errors.email.message}</div>
           )}
         </div>
-        <div className="mb-4">
+        <div className='mb-4'>
           <label
-            className="block mb-2 text-sm font-bold text-gray-700"
-            htmlFor="password"
+            className='block mb-2 text-sm font-bold text-gray-700'
+            htmlFor='password'
           >
             Password
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              autoComplete='off'
+              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               autoFocus
-              id="password"
+              id='password'
               type={showPassword ? "text" : "password"}
               {...register("password", {
                 required: "Please enter a password",
@@ -111,38 +119,42 @@ export default function Login() {
                   /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(value) ||
                   "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
               })}
-              placeholder="Password"
+              placeholder='Password'
             />
             <button
-              type="button"
+              type='button'
               onClick={(e) => {
                 e.preventDefault(), togglePasswordVisibility();
               }}
-              className="absolute inset-y-0 right-0 px-3 py-2 text-gray-700"
+              className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
             >
               {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
             </button>
           </div>
           {errors.password && (
-            <div className="text-blue-950">{errors.password.message}</div>
+            <div className='text-blue-950'>{errors.password.message}</div>
           )}
         </div>
-        <div className="mb-4">
-          <button className="primary-button" type="submit">
+        <div className='mb-4'>
+          <button className='primary-button' type='submit'>
             Login
           </button>
         </div>
-        <div className="mb-4">
+        <div className='mb-4'>
           Don&apos;t have an account? &nbsp;
           <Link
-            href="/Register"
-            className="font-bold underline active:text-[#144e8b]"
+            href='/Register'
+            className='font-bold underline active:text-[#144e8b]'
           >
             Register
           </Link>
         </div>
       </form>
-      <CustomAlertModal isOpen={isAlertOpen} message={alertMessage} onConfirm={() => setIsAlertOpen(false)} />
+      <CustomAlertModal
+        isOpen={isAlertOpen}
+        message={alertMessage}
+        onConfirm={() => setIsAlertOpen(false)}
+      />
     </Layout>
   );
 }

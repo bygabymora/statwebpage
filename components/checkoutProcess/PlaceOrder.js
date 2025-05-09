@@ -381,24 +381,28 @@ export default function PlaceOrder() {
           </div>
           <form ref={form} hidden>
             <input
+              autoComplete='off'
               type='text'
               name='user_name'
               value={emailName ?? ""}
               readOnly
             />
             <input
+              autoComplete='off'
               type='text'
               name='user_phone'
               value={Phone ?? ""}
               onChange={(e) => setPhone(e.target.value)}
             />
             <input
+              autoComplete='off'
               type='text'
               name='total_order'
               value={emailTotalOrder ?? ""}
               readOnly
             />
             <input
+              autoComplete='off'
               readOnly
               type='text'
               name='payment_method'
@@ -409,12 +413,19 @@ export default function PlaceOrder() {
               }
             />
             <input
+              autoComplete='off'
               type='text'
               name='shipping_preference'
               value={specialNotes ?? ""}
               readOnly
             />
-            <input type='text' name='user_email' value={email ?? ""} readOnly />
+            <input
+              autoComplete='off'
+              type='text'
+              name='user_email'
+              value={email ?? ""}
+              readOnly
+            />
           </form>
         </div>
       )}

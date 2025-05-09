@@ -49,29 +49,38 @@ const getHandler = async (req, res) => {
 const putHandler = async (req, res) => {
   await db.connect();
   try {
-    const user = await WpUser.findById(req.query.id);
-    if (!user) {
+    const userInDB = await WpUser.findById(req.query.id);
+    if (!userInDB) {
       return res.status(404).json({ type: "error", message: "User not found" });
     }
-    console.log("user", req.body);
-    user.name = req.body.name ?? user.name;
-    user.firstName = req.body.firstName ?? user.firstName;
-    user.lastName = req.body.lastName ?? user.lastName;
-    user.email = req.body.email ?? user.email;
-    user.customerId = req.body.customerId ?? user.customerId;
-    user.isAdmin =
-      req.body.isAdmin !== undefined ? Boolean(req.body.isAdmin) : user.isAdmin;
-    user.active =
-      req.body.active !== undefined ? Boolean(req.body.active) : user.active;
-    user.approved =
-      req.body.approved !== undefined
-        ? Boolean(req.body.approved)
-        : user.approved;
-    if (typeof req.body.restricted === "boolean") {
-      user.restricted = req.body.restricted;
+    const { user, customer } = req.body;
+    let customerInDB = null;
+    if (customer) {
+      customerInDB = await Customer.findById(customer._id);
+      if (!customerInDB) {
+        return res
+          .status(404)
+          .json({ type: "error", message: "Customer not found" });
+      }
+      customerInDB.purchaseExecutive = customer.purchaseExecutive;
+      await customerInDB.save();
+    }
+    userInDB.name = user.name ?? user.name;
+    userInDB.firstName = user.firstName ?? user.firstName;
+    userInDB.lastName = user.lastName ?? user.lastName;
+    userInDB.email = user.email ?? user.email;
+    userInDB.customerId = user.customerId ?? user.customerId;
+    userInDB.isAdmin =
+      user.isAdmin !== undefined ? Boolean(user.isAdmin) : user.isAdmin;
+    userInDB.active =
+      user.active !== undefined ? Boolean(user.active) : user.active;
+    userInDB.approved =
+      user.approved !== undefined ? Boolean(user.approved) : user.approved;
+    if (typeof user.restricted === "boolean") {
+      userInDB.restricted = user.restricted;
     }
 
-    await user.save();
+    await userInDB.save();
     return res.json({ type: "success", message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);

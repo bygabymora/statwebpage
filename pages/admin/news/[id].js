@@ -223,6 +223,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='title'>Title</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='name'
@@ -238,6 +239,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='slug'>Reference</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='slug'
@@ -266,6 +268,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='imageUrl'>Image</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='imageUrl'
@@ -281,6 +284,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='imageFile'>Upload image</label>
                 <input
+                  autoComplete='off'
                   type='file'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='imageFile'
@@ -297,6 +301,7 @@ export default function AdminNewsEditScreen() {
                   Embedded Image
                 </label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='embeddedImageUrl'
@@ -325,6 +330,7 @@ export default function AdminNewsEditScreen() {
                   field){" "}
                 </label>
                 <input
+                  autoComplete='off'
                   type='file'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='embeddedImageFile'
@@ -337,6 +343,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='category'>Category</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='category'
@@ -351,6 +358,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='tags'>Tags (separated by commas) </label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='tags'
@@ -365,6 +373,7 @@ export default function AdminNewsEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='author'>Author</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='author'
@@ -381,6 +390,7 @@ export default function AdminNewsEditScreen() {
                 {links.map((link, index) => (
                   <div key={index} className='flex flex-row space-x-4'>
                     <input
+                      autoComplete='off'
                       type='text'
                       placeholder='Title'
                       value={link.title}
@@ -389,6 +399,7 @@ export default function AdminNewsEditScreen() {
                       }
                     />
                     <input
+                      autoComplete='off'
                       type='text'
                       placeholder='URL'
                       value={link.url}

@@ -214,6 +214,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='name'>Name</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='name'
@@ -227,6 +228,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='manufacturer'>Manufacturer</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline uppercase'
                   id='slug'
@@ -241,6 +243,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='slug'>Reference</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='slug'
@@ -255,6 +258,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='image'>Image</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='image'
@@ -269,6 +273,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='imageFile'>Upload image</label>
                 <input
+                  autoComplete='off'
                   type='file'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='imageFile'
@@ -282,6 +287,7 @@ export default function AdminProductEditScreen() {
                   Reference
                 </label>
                 <input
+                  autoComplete='off'
                   hidden
                   value={productId}
                   type='text'
@@ -298,6 +304,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='description'>Description Each</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='description'
@@ -312,6 +319,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='price'>Price Each</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='price'
@@ -324,6 +332,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='countInStock'>Count In Stock Each</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='countInStock'
@@ -341,6 +350,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='descriptionBox'>Description Box</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='descriptionBox'
@@ -355,6 +365,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='priceBox'>Price Box</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='priceBox'
@@ -367,6 +378,7 @@ export default function AdminProductEditScreen() {
                 <div className='mb-4'>
                   <label htmlFor='countInStockBox'>Count In Stock Box</label>
                   <input
+                    autoComplete='off'
                     type='text'
                     className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                     id='countInStockBox'
@@ -385,6 +397,7 @@ export default function AdminProductEditScreen() {
                 <label htmlFor='isInClearance'>Is in Clearance</label>
                 &nbsp;
                 <input
+                  autoComplete='off'
                   type='checkbox'
                   id='isInClearance'
                   {...register("isInClearance")}
@@ -398,6 +411,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='descriptionBox'>Description Clearance</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='descriptionClearance'
@@ -413,6 +427,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='priceClearance'>Price Clearance</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='priceClearance'
@@ -429,6 +444,7 @@ export default function AdminProductEditScreen() {
                   Count In Stock Clearance
                 </label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='countInStockClearance'
@@ -443,6 +459,7 @@ export default function AdminProductEditScreen() {
               <div className='mb-4'>
                 <label htmlFor='category'>Notes</label>
                 <input
+                  autoComplete='off'
                   type='text'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='notes'
@@ -456,6 +473,7 @@ export default function AdminProductEditScreen() {
                 <label htmlFor='sentOverNight'>Sent Overnight</label>
                 &nbsp;
                 <input
+                  autoComplete='off'
                   type='checkbox'
                   id='sentOverNight'
                   {...register("sentOverNight")}

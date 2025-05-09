@@ -125,6 +125,7 @@ export default function ProfileScreen() {
                 First Name *
               </label>
               <input
+                autoComplete='off'
                 type='text'
                 id='firstName'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
@@ -146,6 +147,7 @@ export default function ProfileScreen() {
                 Last Name *
               </label>
               <input
+                autoComplete='off'
                 type='text'
                 id='lastName'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
@@ -165,6 +167,7 @@ export default function ProfileScreen() {
                 Email *
               </label>
               <input
+                autoComplete='off'
                 type='email'
                 id='email'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
@@ -188,6 +191,7 @@ export default function ProfileScreen() {
                 New Password *
               </label>
               <input
+                autoComplete='off'
                 type='password'
                 id='password'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
@@ -214,6 +218,7 @@ export default function ProfileScreen() {
                 Confirm New Password *
               </label>
               <input
+                autoComplete='off'
                 type='password'
                 id='confirmPassword'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'

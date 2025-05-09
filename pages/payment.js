@@ -64,6 +64,7 @@ export default function PaymentScreen() {
             >
               <div className='flex items-center space-x-4'>
                 <input
+                  autoComplete='off'
                   name='paymentMethod'
                   id={method}
                   type='radio'

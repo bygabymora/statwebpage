@@ -39,29 +39,33 @@ export const ModalProvider = ({ children }) => {
     }
   };
 
-  const showStatusMessage = useCallback((type, message) => {
-    setStatusMessage(message);
-    setMessageType(type);
-    setIsVisible(true);
-  }, []);
-
   const handleAlertConfirm = () => {
     setIsAlertVisible(false);
     if (alertAction) alertAction(); // Execute the action associated with the modal
   };
+
+  const showStatusMessage = useCallback((type, message) => {
+    setStatusMessage(message);
+    setMessageType(type);
+    setIsVisible(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      setStatusMessage("");
+    }, 5000);
+  }, []);
 
   return (
     <ModalContext.Provider
       value={{ showStatusMessage, openAlertModal, contact }}
     >
       {children}
-      {isVisible && (
-        <StatusMessage
-          type={messageType}
-          message={statusMessage}
-          isVisible={isVisible}
-        />
-      )}
+
+      <StatusMessage
+        type={messageType}
+        message={statusMessage}
+        isVisible={isVisible}
+      />
+
       <CustomAlertModal
         isOpen={isAlertVisible}
         message={alertMessage}
