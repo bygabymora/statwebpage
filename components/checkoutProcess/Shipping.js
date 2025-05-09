@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
-import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -11,28 +10,26 @@ import { Store } from "../../utils/Store";
 import states from "../../utils/states.json";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 
-export default function Shipping({ setActiveStep, order, setOrder }) {
+export default function Shipping({
+  setActiveStep,
+  order,
+  setOrder,
+  customer,
+  setCustomer,
+  user,
+  setUser,
+}) {
   const { data: session } = useSession();
-  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const [lastOrder, setLastOrder] = useState(null);
-  const [useLastAddress, setUseLastAddress] = useState(false);
-  const [shippingSpeed, setShippingSpeed] = useState("Overnight");
-  const [shippingCompany, setShippingCompany] = useState("FedEx");
-  const [shippingPaymentMethod, setPaymentMethod] = useState("Bill me");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
-
-  const handleSpecialNotesChange = (event) => {
-    setSpecialNotes(event.target.value);
-  };
 
   const fetchUserData = async () => {
-    const response = await axios.get(`api/users/${session.user._id}`);
+    const response = await axios.get(`api/users/${session?.user?._id}`);
     const userData = response.data.user;
     const customerData = response.data.customer;
     if (userData && customerData) {
+      setCustomer({ ...customerData, email: userData.email });
+      setUser(userData);
       setOrder((prev) => ({
         ...prev,
         wpUser: {
@@ -54,7 +51,6 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
           city: customerData.location?.city,
           postalCode: customerData.location?.postalCode,
           suiteNumber: customerData.location?.suiteNumber,
-          notes: specialNotes,
         },
         billingAddress: {
           contactInfo: {
@@ -68,6 +64,23 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
           state: customerData.billAddr?.state,
           city: customerData.billAddr?.city,
           postalCode: customerData.billAddr?.postalCode,
+        },
+        defaultTerm: customerData.defaultTerm || "Net. 30",
+        shippingPreferences: {
+          paymentMethod:
+            customerData.fedexAccountNumber || customerData.upsAccountNumber
+              ? "Use My Account"
+              : "Bill me",
+          carrier: customerData.fedexAccountNumber
+            ? "FedEx"
+            : customerData.upsAccountNumber
+            ? "UPS"
+            : "FedEx",
+          account: customerData.fedexAccountNumber
+            ? customerData.fedexAccountNumber
+            : customerData.upsAccountNumber
+            ? customerData.upsAccountNumber
+            : "",
         },
       }));
     } else if (userData) {
@@ -92,7 +105,6 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
           city: "",
           postalCode: "",
           suiteNumber: "",
-          notes: specialNotes,
         },
         billingAddress: {
           contactInfo: {
@@ -111,19 +123,23 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
     }
   };
   useEffect(() => {
-    if (shippingSpeed.includes("FedEx")) {
-      setShippingCompany("FedEx");
-    } else if (shippingSpeed.includes("UPS")) {
-      setShippingCompany("UPS");
-    }
-  }, [shippingSpeed]);
+    if (session?.user?._id) fetchUserData();
+  }, [session]);
 
   const submitHandler = async (data) => {
-    setActiveStep(2);
     try {
       const response = await axios.get(`api/users/${session.user._id}`);
       const userData = response.data.user;
       const customerData = response.data.customer;
+
+      const updatedCustomer = await axios.put(
+        `/api/customer/${customerData._id}/updateAddresses`,
+        {
+          customer,
+        }
+      );
+      console.log("Customer updated successfully", updatedCustomer.data);
+
       if (!userData) {
         toast.error("User not found, please try to login again");
         return;
@@ -131,51 +147,132 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
       if (!customerData) {
         console.log("Customer not found, No Customer Linked to User");
       }
-      data.notes = specialNotes;
+
       dispatch({
         type: "SAVE_SHIPPING_ADDRESS",
         payload: data,
       });
 
-      Cookies.set("cart", JSON.stringify({ ...cart, shippingAddress: data }));
+      Cookies.set(
+        "cart",
+        JSON.stringify({ ...cart, shippingAddress: order.shippingAddress })
+      );
 
-      router.push("/payment");
+      setActiveStep(2);
     } catch (error) {
       toast.error("An error occurred while fetching user data.");
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    const fetchLastOrder = async () => {
-      try {
-        const { data } = await axios.get("/api/orders/lastOrder");
-        setLastOrder(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchUserData();
-    fetchLastOrder();
-  }, []);
+  const handleInputChange = (type, field, value, secondField) => {
+    if (field === "phone") {
+      setCustomer((prev) => ({
+        ...prev,
+        purchaseExecutive: [
+          ...prev.purchaseExecutive.map((executive) => {
+            if (executive.email === user.email) {
+              return {
+                ...executive,
+                phone: value,
+              };
+            }
+            return executive;
+          }),
+        ],
+      }));
+    }
 
-  const handleInputChange = (type, field, value) => {
     if (type === "shipping") {
-      setOrder((prev) => ({
+      if (field === "contactInfo") {
+        setOrder((prev) => ({
+          ...prev,
+          shippingAddress: {
+            ...prev.shippingAddress,
+            contactInfo: {
+              ...prev.shippingAddress.contactInfo,
+              [secondField]: value,
+            },
+          },
+        }));
+      } else {
+        setOrder((prev) => ({
+          ...prev,
+          shippingAddress: {
+            ...prev.shippingAddress,
+            [field]: value,
+            country: "USA",
+          },
+        }));
+      }
+      setCustomer((prev) => ({
         ...prev,
-        shippingAddress: {
-          ...prev.shippingAddress,
+        location: {
+          ...prev.location,
           [field]: value,
+          country: "USA",
         },
       }));
-    } else if (type === "billing") {
-      setOrder((prev) => ({
-        ...prev,
-        billingAddress: {
-          ...prev.billingAddress,
-          [field]: value,
-        },
-      }));
+    }
+  };
+
+  const shippingOptions = [
+    "FedEx Ground",
+    "FedEx Express Saver",
+    "FedEx 2nd Day",
+    "FedEx 2nd Day AM",
+    "FedEx Standard Overnight",
+    "FedEx Priority Overnight",
+    "FedEx First Overnight",
+    "FedEx Saturday",
+    "UPS Ground",
+    "UPS 3 Day Select",
+    "UPS 2nd Day Air",
+    "UPS 2nd Day Air Early",
+    "UPS Next Day Air Saver",
+    "UPS Next Day Air",
+    "UPS Next Day Air Early",
+  ];
+
+  const shippingPreferencesHandler = (field, value) => {
+    setOrder((prev) => ({
+      ...prev,
+      shippingPreferences: {
+        ...prev.shippingPreferences,
+        [field]: value,
+      },
+    }));
+    if (field === "shippingMethod") {
+      if (value.includes("FedEx")) {
+        setOrder((prev) => ({
+          ...prev,
+          shippingPreferences: {
+            ...prev.shippingPreferences,
+            carrier: "FedEx",
+          },
+        }));
+      } else if (value.includes("UPS")) {
+        setOrder((prev) => ({
+          ...prev,
+          shippingPreferences: {
+            ...prev.shippingPreferences,
+            carrier: "UPS",
+          },
+        }));
+      }
+    }
+    if (field === "account") {
+      if (order.shippingPreferences?.carrier === "FedEx") {
+        setCustomer((prev) => ({
+          ...prev,
+          fedexAccountNumber: value,
+        }));
+      } else if (order.shippingPreferences?.carrier === "UPS") {
+        setCustomer((prev) => ({
+          ...prev,
+          upsAccountNumber: value,
+        }));
+      }
     }
   };
 
@@ -183,7 +280,7 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
     <>
       <div className='mx-auto max-w-2xl'>
         <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
-          Shipping & Billing Information
+          Shipping Information
         </h1>
         <p className='text-center font-semibold m-5 '>
           Shipping charges are not included. We can either bill your shipping
@@ -202,41 +299,6 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               Shipping Address
             </h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
-              {lastOrder && !lastOrder.warning && (
-                <div className='col-span-1 sm:col-span-2 bg-blue-50 border border-blue-300 rounded-md p-4 mt-2 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between'>
-                  <div>
-                    <p className='text-sm text-gray-700'>
-                      We found a previous address from your last order.
-                    </p>
-                    <p className='text-sm text-gray-600 italic'>
-                      {lastOrder.shippingAddress?.fullName},
-                      {lastOrder.shippingAddress?.company},
-                      {lastOrder.shippingAddress?.phone},
-                      {lastOrder.shippingAddress?.address},
-                      {lastOrder.shippingAddress?.state},
-                      {lastOrder.shippingAddress?.city},
-                      {lastOrder.shippingAddress?.postalCode},
-                      {lastOrder.shippingAddress?.suiteNumber},
-                    </p>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <label
-                      htmlFor='useLastAddress'
-                      className='text-sm font-medium'
-                    >
-                      Use address?
-                    </label>
-                    <input
-                      autoComplete='off'
-                      type='checkbox'
-                      id='useLastAddress'
-                      checked={useLastAddress}
-                      onChange={(e) => setUseLastAddress(e.target.checked)}
-                      className='h-4 w-4 accent-[#144e8b]'
-                    />
-                  </div>
-                </div>
-              )}
               <div className='col-span-1 sm:col-span-2 border p-3 rounded-md'>
                 <h2 className='block font-medium '>Attn To:</h2>
                 <div className=' grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -250,8 +312,9 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                       onChange={(e) =>
                         handleInputChange(
                           "shipping",
-                          "contactInfo.firstName",
-                          e.target.value
+                          "contactInfo",
+                          e.target.value,
+                          "firstName"
                         )
                       }
                       value={
@@ -269,8 +332,9 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                       onChange={(e) =>
                         handleInputChange(
                           "shipping",
-                          "contactInfo.lastName",
-                          e.target.value
+                          "contactInfo",
+                          e.target.value,
+                          "lastName"
                         )
                       }
                       value={order.shippingAddress?.contactInfo?.lastName || ""}
@@ -414,8 +478,9 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
                   onChange={(e) =>
                     handleInputChange(
                       "shipping",
-                      "contactInfo.secondEmail",
-                      e.target.value
+                      "contactInfo",
+                      e.target.value,
+                      "secondEmail"
                     )
                   }
                   value={order.shippingAddress?.contactInfo?.secondEmail || ""}
@@ -433,48 +498,30 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               Shipping Preferences
             </h2>
             <div className='mt-4'>
-              <h3 className='font-semibold'>Shipping Speed</h3>
+              <h3 className='font-semibold'>Shipment Speed</h3>
               <select
                 className='input-field'
-                value={shippingSpeed}
-                onChange={(e) => setShippingSpeed(e.target.value)}
+                value={order.shippingPreferences?.shippingMethod || ""}
+                onChange={(e) =>
+                  shippingPreferencesHandler("shippingMethod", e.target.value)
+                }
               >
-                <option value='FedEx Ground'>FedEx Ground</option>
-                <option value='FedEx Express Saver'>FedEx Express Saver</option>
-                <option value='FedEx 2nd Day'>FedEx 2nd Day</option>
-                <option value='FedEx 2nd Day AM'>FedEx 2nd Day AM</option>
-                <option value='FedEx Standard Overnight'>
-                  FedEx Standard Overnight
-                </option>
-                <option value='FedEx Priority Overnight'>
-                  FedEx Priority Overnight
-                </option>
-                <option value='FedEx First Overnight'>
-                  FedEx First Overnight
-                </option>
-                <option value='FedEx Saturday'>FedEx Saturday</option>
-                <option value='UPS Ground'>UPS Ground</option>
-                <option value='UPS 3 Day Select'>UPS 3 Day Select</option>
-                <option value='UPS 2nd Day Air'>UPS 2nd Day Air</option>
-                <option value='UPS 2nd Day Air Early'>
-                  UPS 2nd Day Air Early
-                </option>
-                <option value='UPS Next Day Air Saver'>
-                  UPS Next Day Air Saver
-                </option>
-                <option value='UPS Next Day Air'>UPS Next Day Air</option>
-                <option value='UPS Next Day Air Early'>
-                  UPS Next Day Air Early
-                </option>
+                {shippingOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div className='mt-4'>
-              <h3 className='font-semibold'>Shipping Company</h3>
+              <h3 className='font-semibold'>Carrier</h3>
               <select
                 className='input-field'
-                value={shippingCompany}
-                onChange={(e) => setShippingCompany(e.target.value)}
+                value={order.shippingPreferences?.carrier || ""}
+                onChange={(e) =>
+                  shippingPreferencesHandler("carrier", e.target.value)
+                }
               >
                 <option value='FedEx'>FedEx</option>
                 <option value='UPS'>UPS</option>
@@ -494,21 +541,35 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               </label>
               <select
                 className='input-field'
-                value={shippingPaymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
+                value={order.shippingPreferences?.paymentMethod}
+                onChange={(e) =>
+                  shippingPreferencesHandler("paymentMethod", e.target.value)
+                }
               >
-                <option value='Bill me'>Bill me</option>
-                <option value='use my account'>Use my account</option>
+                <option value='Bill me'>Bill Me</option>
+                <option value='Use My Account'>Use My account</option>
               </select>
-              {shippingPaymentMethod === "use my account" && (
-                <input
-                  autoComplete='off'
-                  className='input-field mt-2'
-                  type='text'
-                  placeholder='Enter your account number'
-                  value={accountNumber}
-                  onChange={(e) => setAccountNumber(e.target.value)}
-                />
+              {order.shippingPreferences?.paymentMethod ===
+                "Use My Account" && (
+                <div className='flex gap-2 items-center'>
+                  <input
+                    autoComplete='off'
+                    className='input-field '
+                    type='text'
+                    placeholder='Enter your account number'
+                    value={order.shippingPreferences?.account || ""}
+                    onChange={(e) =>
+                      shippingPreferencesHandler("account", e.target.value)
+                    }
+                  />
+                  {order.shippingPreferences?.carrier === "FedEx" ? (
+                    <p className='text-sm text-gray-500'>
+                      FedEx Account Number
+                    </p>
+                  ) : order.shippingPreferences?.carrier === "UPS" ? (
+                    <p className='text-sm text-gray-500'>UPS Account Number</p>
+                  ) : null}
+                </div>
               )}
             </div>
             <div>
@@ -517,8 +578,10 @@ export default function Shipping({ setActiveStep, order, setOrder }) {
               </div>
               <textarea
                 className='w-full contact__form-input contact__message'
-                value={specialNotes}
-                onChange={handleSpecialNotesChange}
+                value={order.shippingAddress?.notes || ""}
+                onChange={(e) =>
+                  handleInputChange("shipping", "notes", e.target.value)
+                }
               />
             </div>
           </div>

@@ -9,24 +9,54 @@ import Cart from "../components/checkoutProcess/Cart";
 export default function CartScreen() {
   const [activeStep, setActiveStep] = useState(0);
   const [order, setOrder] = useState({});
+  const [customer, setCustomer] = useState({});
+  const [user, setUser] = useState({});
+  const [hasShippingAddress, setHasShippingAddress] = useState(false);
+  const [hasBillingAddress, setHasBillingAddress] = useState(false);
 
   return (
     <Layout title='Cart'>
-      {console.log("activeStep", activeStep)}
       {console.log("order", order)}
+      {console.log("customer", customer)}
+      {console.log("hasShippingAddress", hasShippingAddress)}
+      {console.log("hasBillingAddress", hasBillingAddress)}
       <CheckoutWizard activeStep={activeStep} />
       {activeStep === 0 ? (
         <Cart setActiveStep={setActiveStep} order={order} setOrder={setOrder} />
       ) : activeStep === 1 ? (
         <Shipping
+          customer={customer}
+          setCustomer={setCustomer}
           order={order}
           setOrder={setOrder}
           setActiveStep={setActiveStep}
+          hasShippingAddress={hasShippingAddress}
+          setHasShippingAddress={setHasShippingAddress}
+          hasBillingAddress={hasBillingAddress}
+          setHasBillingAddress={setHasBillingAddress}
+          setUser={setUser}
+          user={user}
         />
       ) : activeStep === 2 ? (
-        <PaymentMethod order={order} setOrder={setOrder} />
+        <PaymentMethod
+          setActiveStep={setActiveStep}
+          order={order}
+          setOrder={setOrder}
+          customer={customer}
+        />
       ) : activeStep === 3 ? (
-        <PlaceOrder order={order} setOrder={setOrder} />
+        <PlaceOrder
+          customer={customer}
+          setCustomer={setCustomer}
+          order={order}
+          setOrder={setOrder}
+          hasShippingAddress={hasShippingAddress}
+          setHasShippingAddress={setHasShippingAddress}
+          hasBillingAddress={hasBillingAddress}
+          setHasBillingAddress={setHasBillingAddress}
+          setUser={setUser}
+          user={user}
+        />
       ) : null}
     </Layout>
   );

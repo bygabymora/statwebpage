@@ -45,8 +45,6 @@ export default function AdminUserEditScreen() {
       const userInDB = response.data.user;
       const customerInDB = response.data.customer;
       dispatch({ type: "FETCH_SUCCESS" });
-      console.log("userInDB", userInDB);
-      console.log("customerInDB", customerInDB);
       setUser(userInDB);
       setCustomer(customerInDB);
     } catch (error) {
@@ -105,8 +103,7 @@ export default function AdminUserEditScreen() {
             ))}
           </ul>
         </div>
-        {console.log("user", user)}
-        {console.log("customer", customer)}
+
         <div className='md:col-span-3 p-6'>
           <div className='flex justify-between items-center mb-4 sticky top-[8rem] bg-white z-10'>
             <h1 className='text-xl'>{`Edit User ${user?.firstName} ${user?.lastName}`}</h1>

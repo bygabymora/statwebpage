@@ -10,10 +10,16 @@ export default function CustomerLinking({
   const [keyword, setKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (customer) {
+      setKeyword(customer.companyName);
+      setSuggestions([]);
+    }
+  }, [customer]);
 
   // Fetch suggestions on keyword change with debounce
   useEffect(() => {
-    if (keyword.trim() === "") {
+    if (keyword?.trim() === "") {
       setSuggestions([]);
       return;
     }
@@ -36,20 +42,11 @@ export default function CustomerLinking({
   };
 
   const handleSelect = (customer) => {
+    setKeyword(customer.companyName);
     const executiveMatch = customer.purchaseExecutive
       .map((exec) => exec.email)
       .includes(user.email);
 
-    console.log("executiveMatch", executiveMatch);
-    console.log("userInFunction", user);
-    console.log(
-      "customerInFunction",
-      customer.purchaseExecutive.map((exec) => exec.email)
-    );
-    console.log(
-      "customerInFunction",
-      customer.purchaseExecutive.map((exec) => exec.email).includes(user.email)
-    );
     let updatedCustomer = customer;
     if (!executiveMatch) {
       const hasPrincipal = customer.purchaseExecutive.some((exec) => {
@@ -83,14 +80,14 @@ export default function CustomerLinking({
     }
     setCustomer(updatedCustomer);
     setUser({ ...user, customerId: customer._id, customerData: customer });
-    setKeyword(customer.companyName);
+
     setSuggestions([]);
   };
 
   return (
     <div className='bg-white w-full mx-auto'>
       <h1 className='text-xl font-semibold mb-4 '>
-        Link Customer - {user?.companyName}
+        Link Customer - {user?.companyName} - {user?.companyEinCode}
       </h1>
 
       {/* Search Input */}
