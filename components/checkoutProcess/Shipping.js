@@ -5,7 +5,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { FaTruckMoving, FaClipboardCheck, FaBuilding } from "react-icons/fa";
-import { AiFillCheckCircle } from "react-icons/ai";
 import { Store } from "../../utils/Store";
 import states from "../../utils/states.json";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
@@ -585,15 +584,22 @@ export default function Shipping({
               />
             </div>
           </div>
-
-          <button
-            type='submit'
-            onClick={submitHandler}
-            className='primary-button w-full flex items-center justify-center gap-2'
-          >
-            <AiFillCheckCircle className='text-xl' />
-            Continue
-          </button>
+          <div className='mt-6 flex justify-between'>
+            <button
+              type='button'
+              className='px-6 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-200 transition-all'
+              onClick={() => setActiveStep(0)}
+            >
+              Back
+            </button>
+            <button
+              onClick={submitHandler}
+              type='submit'
+              className='px-6 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition-all'
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </>

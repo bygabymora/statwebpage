@@ -7,11 +7,11 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
-import Store from "../../utils/Store";
 import { useModalContext } from "../context/ModalContext";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { getError } from "../../utils/error";
+import { Store } from "../../utils/Store";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );

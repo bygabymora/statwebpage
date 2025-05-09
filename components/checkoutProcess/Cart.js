@@ -14,8 +14,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   }, []);
 
   useEffect(() => {
+    if (!order.orderItems) return;
     const verifyStockOnCartLoad = async () => {
-      for (const item of cartItems) {
+      for (const item of order.orderItems) {
         try {
           const { data } = await axios.get(`/api/products/${item._id}`);
           let availableQuantity = 0;
@@ -47,27 +48,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     verifyStockOnCartLoad();
   }, []);
 
-  const { state, dispatch } = useContext(Store);
+  const { dispatch } = useContext(Store);
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
-
-  const {
-    cart: { cartItems },
-  } = state;
-
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      setOrder((prevOrder) => ({
-        ...prevOrder,
-        orderItems: cartItems,
-      }));
-    } else {
-      setOrder((prevOrder) => ({
-        ...prevOrder,
-        orderItems: [],
-      }));
-    }
-  }, [cartItems]);
 
   const removeItemHandler = (item) => {
     setProductToRemove(item);
@@ -113,9 +96,12 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
       payload: { ...item, quantity },
     });
 
-    const itemsPrice = cartItems.reduce((a, c) => a + c.quantity * c.price, 0);
+    const itemsPrice = order.orderItems?.reduce(
+      (a, c) => a + c.quantity * c.price,
+      0
+    );
 
-    setOrder({ ...order, orderItems: cartItems, itemsPrice });
+    setOrder({ ...order, orderItems: order.orderItems, itemsPrice });
   };
 
   if (!mounted) return null;
@@ -124,7 +110,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     <div>
       <h1 className='text-2xl font-bold text-[#144e8b] my-2'>Shopping Cart</h1>
       <div className='w-16 h-1 bg-[#03793d] mt-1 rounded-full my-3'></div>
-      {cartItems.length === 0 ? (
+      {order.orderItems?.length === 0 ? (
         <div className='p-6 flex flex-col items-center text-center space-y-4 my-5'>
           <BsCartX className='text-[#144e8b] text-4xl' />
           <p className='text-[#414b53] text-lg font-semibold'>Cart is empty.</p>
@@ -149,7 +135,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((item) => (
+                {order.orderItems?.map((item) => (
                   <tr key={item._id} className='border'>
                     <td className='p-5 border'>
                       <Link
@@ -253,13 +239,17 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             <ul>
               <li>
                 <div className='pb-3 font-xl'>
-                  Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}){" "}
-                  {""}: $
+                  Subtotal (
+                  {order.orderItems?.reduce((a, c) => a + c.quantity, 0)}) {""}:
+                  $
                   {new Intl.NumberFormat("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   }).format(
-                    cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
+                    order.orderItems?.reduce(
+                      (a, c) => a + c.quantity * c.price,
+                      0
+                    )
                   )}
                 </div>
               </li>

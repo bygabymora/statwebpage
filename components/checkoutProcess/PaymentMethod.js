@@ -1,22 +1,22 @@
-// components/PaymentMethod.js
-
-import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { Store } from "../../utils/Store";
+import { useModalContext } from "../context/ModalContext";
+import axios from "axios";
 
-export default function PaymentMethod({ setActiveStep, order, setOrder }) {
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
-  const router = useRouter();
+export default function PaymentMethod({
+  setActiveStep,
+  order,
+  setOrder,
+  customer,
+}) {
+  const { dispatch } = useContext(Store);
+  const { showStatusMessage } = useModalContext();
 
-  // Track selected method for styling
   const [selectedMethod, setSelectedMethod] = useState(
     order.paymentMethod || null
   );
-
-  // File upload state
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -36,60 +36,29 @@ export default function PaymentMethod({ setActiveStep, order, setOrder }) {
     }));
   };
 
-  const submitHandler = (e) => {
+  // File upload/download handlers unchanged...
+  const handleFileChange = (e) => {
     e.preventDefault();
-    if (!order.paymentMethod) {
-      return toast.error("Please select a payment method");
-    }
-    dispatch({ type: "SAVE_PAYMENT_METHOD", payload: order.paymentMethod });
-    Cookies.set(
-      "cart",
-      JSON.stringify({
-        ...cart,
-        paymentMethod: order.paymentMethod,
-      })
-    );
-    router.push("/placeorder");
-  };
-
-  const handleFileChange = (event) => {
-    event.preventDefault();
-    setSelectedFile(event.target.files[0]);
+    setSelectedFile(e.target.files[0]);
     setNewFile(true);
   };
 
   const handleFileDownload = async (e) => {
     e.preventDefault();
     if (!order.fileId) return;
-
-    const response = await fetch(
-      `/api/seller/estimate/uploadPO?fileId=${order.fileId}`,
-      {
-        method: "GET",
-      }
-    );
-
-    if (response.ok) {
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = "downloaded_file";
-      if (contentDisposition && contentDisposition.includes("filename=")) {
-        filename = contentDisposition
-          .split("filename=")[1]
-          .split(";")[0]
-          .replace(/['"]/g, "")
-          .trim();
-      }
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } else {
-      console.error("Failed to download file");
-    }
+    const resp = await fetch(`/api/orders/uploadPO?fileId=${order.fileId}`);
+    if (!resp.ok) return console.error("Failed to download file");
+    const blob = await resp.blob();
+    const cd = resp.headers.get("Content-Disposition") || "";
+    const match = cd.match(/filename="(.+)"/);
+    const filename = match ? match[1] : "download";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   const handleFileUpload = async (e) => {
@@ -98,33 +67,66 @@ export default function PaymentMethod({ setActiveStep, order, setOrder }) {
     setNewFile(false);
 
     try {
-      const newFileName = `"PO".${selectedFile.name.split(".").pop()}`;
+      const ext = selectedFile.name.split(".").pop();
+      const newFileName = `PO-${order.poNumber}-${customer.companyName}.${ext}`;
       const renamedFile = new File([selectedFile], newFileName, {
         type: selectedFile.type,
       });
 
       const formData = new FormData();
       formData.append("file", renamedFile);
-      formData.append("orderId", order._id);
+      formData.append("order", JSON.stringify(order));
 
-      const response = await fetch("/api/seller/estimate/uploadPO", {
+      const response = await fetch("/api/orders/uploadPO", {
         method: "POST",
         body: formData,
       });
-
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to upload file");
-      }
+      if (!response.ok) throw new Error(data.message || "Upload failed");
 
-      setOrder((current) => ({
-        ...current,
-        fileId: data.fileId,
-        fileName: newFileName,
+      setOrder((cur) => ({
+        ...cur,
+        ...data.order,
+        fileId: data.order.fileId,
+        fileName: data.order.fileName,
       }));
       setSelectedFile(null);
-    } catch (error) {
-      console.log("Upload Error:", error);
+      showStatusMessage("success", "P.O. document uploaded");
+    } catch (err) {
+      console.error("Upload Error:", err);
+      showStatusMessage("error", err.message);
+    }
+  };
+
+  // ── MERGED submit handler ───────────────────────────────────────
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!order.paymentMethod) {
+      return toast.error("Please select a payment method");
+    }
+
+    // 1) Save payment method to global state
+    dispatch({ type: "SAVE_PAYMENT_METHOD", payload: order.paymentMethod });
+
+    // 2) Persist (create/update) the order
+    try {
+      const { data } = await axios.post("/api/orders", { order });
+      const saved = data.order;
+
+      // 3) Store only the order ID in a cookie
+      Cookies.set("orderId", saved._id);
+      setOrder(saved);
+
+      // 4) Update local order state
+      setOrder(saved);
+      showStatusMessage("success", "Order saved successfully");
+
+      // 5) Move to the next step
+      setActiveStep(3);
+    } catch (err) {
+      console.error("Error saving order:", err);
+      showStatusMessage("error", "Failed to save order");
     }
   };
 
@@ -138,7 +140,8 @@ export default function PaymentMethod({ setActiveStep, order, setOrder }) {
         bank wire transfer.
       </p>
 
-      <form className='space-y-4' onSubmit={submitHandler}>
+      {/* use handleSubmit on the form */}
+      <form className='space-y-4' onSubmit={handleSubmit}>
         {["Stripe", "Paypal", "Pay by Wire"].map((method) => (
           <label
             key={method}
@@ -248,13 +251,13 @@ export default function PaymentMethod({ setActiveStep, order, setOrder }) {
                   className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
                   onChange={handleFileChange}
                 />
-                {selectedFile !== null ? (
+                {selectedFile ? (
                   <button
                     type='button'
                     onClick={handleFileUpload}
                     className='primary-button h-10'
                   >
-                    {newFile ? "Uploading..." : "Upload"}
+                    {newFile ? "Upload" : "Uploading..."}
                   </button>
                 ) : order.fileId ? (
                   <button
