@@ -43,6 +43,8 @@ export default function CartScreen() {
                     item.purchaseType.toLowerCase()
                   ].quickBooksQuantityOnHandProduction?.toString()
                 : item.quickBooksItemIdProduction,
+              unitPrice: item.price,
+              typeOfPurchase: item.purchaseType,
             }));
             finalOrder = {
               ...finalOrder,
