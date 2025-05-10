@@ -107,9 +107,11 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   if (!mounted) return null;
 
   return (
-    <div>
-      <h1 className='text-2xl font-bold text-[#144e8b] my-2'>Shopping Cart</h1>
-      <div className='w-16 h-1 bg-[#03793d] mt-1 rounded-full my-3'></div>
+    <div className='mx-auto'>
+      <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
+        Shopping Cart
+      </h1>
+
       {order.orderItems?.length === 0 ? (
         <div className='p-6 flex flex-col items-center text-center space-y-4 my-5'>
           <BsCartX className='text-[#144e8b] text-4xl' />
@@ -122,120 +124,128 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
           </Link>
         </div>
       ) : (
-        <div className='grid sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
-          <div className=' md:col-span-3'>
-            <table className='table-auto w-full border-collapse border'>
-              <thead className='border'>
-                <tr>
-                  <th className='px-5 border text-left'>Product</th>
-                  <th className='p-5 py-2 border text-right'>Type</th>
-                  <th className='p-5 py-2 border text-right'>Quantity</th>
-                  <th className='p-5 py-2 text-right'>Price</th>
-                  <th className='p-5'></th>
-                </tr>
-              </thead>
-              <tbody>
+        <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg mb-4 grid flex-1 sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
+          <div className=' bg-white p-2 rounded-md gap-4 md:col-span-3 '>
+            <div className=' '>
+              <div className='w-full space-y-4'>
                 {order.orderItems?.map((item) => (
-                  <tr key={item._id} className='border'>
-                    <td className='p-5 border'>
-                      <Link
-                        href={`/products/${item.manufacturer}-${item.name}-${item._id}`}
-                        className='flex flex-col items-center'
+                  <div
+                    key={item._id}
+                    className='border rounded-lg p-4 shadow-sm flex  md:items-center'
+                  >
+                    {/* Product */}
+                    <div className='flex flex-1 items-center  space-x-4 mb-4 md:mb-0 md:flex-1'>
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={50}
+                        height={50}
+                        className='rounded-lg'
+                        loading='lazy'
+                      />
+                      <div>
+                        <Link
+                          href={`/products/${item.manufacturer}-${item.name}-${item._id}`}
+                          className='block font-medium text-gray-800'
+                        >
+                          {item.manufacturer}
+                        </Link>
+                        <div className='text-gray-600 text-sm'>{item.name}</div>
+                      </div>
+                    </div>
+                    <div className='flex flex-1 flex-col md:flex-row justify-between items-start'>
+                      {/* Type */}
+                      <div className='flex-1'>
+                        <div className='flex flex-1 items-center'>
+                          <span className='font-semibold  mr-1'>U o M:</span>
+                          <span className='text-gray-700'>
+                            {item.purchaseType === "Box"
+                              ? "Box"
+                              : item.purchaseType}
+                          </span>
+                        </div>
+
+                        {/* Quantity */}
+                        <div className='flex flex-1 items-center'>
+                          <span className='font-semibold mr-1'>Qty:</span>
+                          <select
+                            value={item.quantity}
+                            onChange={(e) =>
+                              updateCartHandler(item, Number(e.target.value))
+                            }
+                            className='border rounded px-2 py-1'
+                          >
+                            {item.purchaseType === "Each" &&
+                              [
+                                ...Array(
+                                  item.each?.quickBooksQuantityOnHandProduction
+                                ).keys(),
+                              ].map((x) => (
+                                <option key={x + 1} value={x + 1}>
+                                  {x + 1}
+                                </option>
+                              ))}
+                            {item.purchaseType === "Box" &&
+                              [
+                                ...Array(
+                                  item.box?.quickBooksQuantityOnHandProduction
+                                ).keys(),
+                              ].map((x) => (
+                                <option key={x + 1} value={x + 1}>
+                                  {x + 1}
+                                </option>
+                              ))}
+                            {item.purchaseType === "Clearance" &&
+                              [...Array(item.countInStockClearance).keys()].map(
+                                (x) => (
+                                  <option key={x + 1} value={x + 1}>
+                                    {x + 1}
+                                  </option>
+                                )
+                              )}
+                          </select>
+                        </div>
+                      </div>
+                      {/* Price */}
+                      <div className='flex-1'>
+                        <div className='flex flex-1 items-center'>
+                          <span className='font-semibold mr-1'>Price:</span>
+                          <span className='text-gray-700'>
+                            $
+                            {new Intl.NumberFormat("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).format(item.price)}
+                          </span>
+                        </div>
+                        <div className='flex flex-1 items-center'>
+                          <span className='font-semibold mr-1'>Total:</span>
+                          <span className='text-gray-700'>
+                            $
+                            {new Intl.NumberFormat("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).format(item.price * item.quantity)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='flex items-center justify-end md:justify-center'>
+                      <button
+                        onClick={() => removeItemHandler(item)}
+                        className='p-2 hover:bg-gray-100 rounded'
                       >
-                        <Image
-                          src={item.image}
-                          alt={item._id}
-                          width={50}
-                          height={50}
-                          className='mb-1 rounded-lg'
-                          loading='lazy'
-                        />
-                        &nbsp;
-                        {item.manufacturer}
-                        <br />
-                        &nbsp;{item.name}
-                      </Link>
-                    </td>
-                    <td className='p-5 text-right border'>
-                      {item.purchaseType === "Box" ? "Box" : item.purchaseType}
-                    </td>
-                    {item.purchaseType === "Each" && (
-                      <td className='p-5 text-right border'>
-                        <select
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateCartHandler(item, Number(e.target.value))
-                          }
-                        >
-                          {[
-                            ...Array(
-                              item.each?.quickBooksQuantityOnHandProduction
-                            ).keys(),
-                          ].map((x) => (
-                            <option key={x + 1} value={x + 1}>
-                              {x + 1}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                    )}
-                    {item.purchaseType === "Box" && (
-                      <td className='p-5 text-right'>
-                        <select
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateCartHandler(item, Number(e.target.value))
-                          }
-                        >
-                          {[
-                            ...Array(
-                              item.box?.quickBooksQuantityOnHandProduction
-                            ).keys(),
-                          ].map((x) => (
-                            <option key={x + 1} value={x + 1}>
-                              {x + 1}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                    )}
-                    {item.purchaseType === "Clearance" && (
-                      <td className='p-5 text-right'>
-                        <select
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateCartHandler(item, Number(e.target.value))
-                          }
-                        >
-                          {[...Array(item.countInStockClearance).keys()].map(
-                            (x) => (
-                              <option key={x + 1} value={x + 1}>
-                                {x + 1}
-                              </option>
-                            )
-                          )}
-                        </select>
-                      </td>
-                    )}
-                    <td className='p-5 text-right border'>
-                      {" "}
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(item.price)}
-                    </td>
-                    <td className='p-5 text-center'>
-                      <button onClick={() => removeItemHandler(item)}>
-                        <BsTrash3 className='h-5 w-5' />
+                        <BsTrash3 className='h-5 w-5 text-gray-600' />
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+
+                    {/* Remove */}
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-          <div className='card p-5 mb-4 max-h-60 overflow-y-auto'>
+          <div className=' bg-white rounded-md gap-4 p-4'>
             <ul>
               <li>
                 <div className='pb-3 font-xl'>

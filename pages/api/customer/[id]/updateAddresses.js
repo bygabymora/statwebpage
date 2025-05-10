@@ -20,8 +20,12 @@ const putHandler = async (req, res) => {
   const customerInDB = await Customer.findById(req.query.id);
   const { customer } = req.body;
   if (customerInDB) {
-    customerInDB.billAddr = customer.billAddr;
-    customerInDB.location = customer.location;
+    customerInDB.billAddr = customer.billAddr
+      ? customer.billAddr
+      : customerInDB.billAddr || {};
+    customerInDB.location = customer.location
+      ? customer.location
+      : customerInDB.location || {};
     customerInDB.purchaseExecutive = customer.purchaseExecutive;
     customerInDB.fedexAccountNumber = customer.fedexAccountNumber;
     customerInDB.upsAccountNumber = customer.upsAccountNumber;

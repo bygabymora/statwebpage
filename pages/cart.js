@@ -14,56 +14,53 @@ export default function CartScreen() {
   const [order, setOrder] = useState({});
   const [customer, setCustomer] = useState({});
   const [user, setUser] = useState({});
-  const [hasShippingAddress, setHasShippingAddress] = useState(false);
-  const [hasBillingAddress, setHasBillingAddress] = useState(false);
   const { state } = useContext(Store);
-
+  const orderId = Cookies.get("orderId");
   const {
     cart: { cartItems },
   } = state;
-
+  const fetchOrder = async () => {
+    try {
+      const { data } = await axios.get(`/api/orders/${orderId}`);
+      let finalOrder = data;
+      if (cartItems.length > 0) {
+        const itemsPrice = cartItems.reduce(
+          (a, c) => a + c.quantity * c.price,
+          0
+        );
+        const updatedItems = cartItems.map((item) => ({
+          ...item,
+          quickBooksItemIdProduction: item[item.purchaseType.toLowerCase()]
+            .quickBooksQuantityOnHandProduction
+            ? item[
+                item.purchaseType.toLowerCase()
+              ].quickBooksQuantityOnHandProduction?.toString()
+            : item.quickBooksItemIdProduction,
+          unitPrice: item.price,
+          typeOfPurchase: item.purchaseType,
+          productId: item._id,
+        }));
+        finalOrder = {
+          ...finalOrder,
+          orderItems: updatedItems,
+          itemsPrice,
+          totalPrice: itemsPrice,
+        };
+      } else {
+        finalOrder = {
+          ...finalOrder,
+          orderItems: [],
+        };
+      }
+      setOrder(finalOrder);
+    } catch (err) {
+      console.error("Failed to load saved order:", err);
+      Cookies.remove("orderId"); // clear invalid cookie
+    }
+  };
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    const orderId = Cookies.get("orderId");
     if (orderId) {
-      const fetchOrder = async () => {
-        try {
-          const { data } = await axios.get(`/api/orders/${orderId}`);
-          let finalOrder = data;
-          if (cartItems.length > 0) {
-            const itemsPrice = cartItems.reduce(
-              (a, c) => a + c.quantity * c.price,
-              0
-            );
-            const updatedItems = cartItems.map((item) => ({
-              ...item,
-              quickBooksItemIdProduction: item[item.purchaseType.toLowerCase()]
-                .quickBooksQuantityOnHandProduction
-                ? item[
-                    item.purchaseType.toLowerCase()
-                  ].quickBooksQuantityOnHandProduction?.toString()
-                : item.quickBooksItemIdProduction,
-              unitPrice: item.price,
-              typeOfPurchase: item.purchaseType,
-            }));
-            finalOrder = {
-              ...finalOrder,
-              orderItems: updatedItems,
-              itemsPrice,
-              totalPrice: itemsPrice,
-            };
-          } else {
-            finalOrder = {
-              ...finalOrder,
-              orderItems: [],
-            };
-          }
-          setOrder(finalOrder);
-        } catch (err) {
-          console.error("Failed to load saved order:", err);
-          Cookies.remove("orderId"); // clear invalid cookie
-        }
-      };
       fetchOrder();
     }
   }, [cartItems]);
@@ -72,8 +69,6 @@ export default function CartScreen() {
     <Layout title='Cart'>
       {console.log("order", order)}
       {console.log("customer", customer)}
-      {console.log("hasShippingAddress", hasShippingAddress)}
-      {console.log("hasBillingAddress", hasBillingAddress)}
       <CheckoutWizard activeStep={activeStep} />
 
       {activeStep === 0 ? (
@@ -85,10 +80,6 @@ export default function CartScreen() {
           order={order}
           setOrder={setOrder}
           setActiveStep={setActiveStep}
-          hasShippingAddress={hasShippingAddress}
-          setHasShippingAddress={setHasShippingAddress}
-          hasBillingAddress={hasBillingAddress}
-          setHasBillingAddress={setHasBillingAddress}
           setUser={setUser}
           user={user}
         />
@@ -98,6 +89,7 @@ export default function CartScreen() {
           order={order}
           setOrder={setOrder}
           customer={customer}
+          fetchOrder={fetchOrder}
         />
       ) : activeStep === 3 ? (
         <PlaceOrder
@@ -105,12 +97,10 @@ export default function CartScreen() {
           setCustomer={setCustomer}
           order={order}
           setOrder={setOrder}
-          hasShippingAddress={hasShippingAddress}
-          setHasShippingAddress={setHasShippingAddress}
-          hasBillingAddress={hasBillingAddress}
-          setHasBillingAddress={setHasBillingAddress}
           setUser={setUser}
           user={user}
+          setActiveStep={setActiveStep}
+          fetchOrder={fetchOrder}
         />
       ) : null}
     </Layout>
