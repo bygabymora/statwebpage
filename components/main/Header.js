@@ -1,12 +1,11 @@
 "use client";
 import Signupbutton from "./Signupbutton";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
 import Image from "next/image";
 import Logo2 from "../../public/images/assets/logo.png";
 import Navbar from "./Navbar";
-import { Store } from "../../utils/Store";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { BiSearch } from "react-icons/bi";
@@ -14,12 +13,11 @@ import axios from "axios";
 import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
+import { useModalContext } from "../context/ModalContext";
 
 const Header = () => {
   const router = useRouter();
-  const { state } = useContext(Store);
-  const { cart } = state;
-  const [cartItemsCount, setCartItemsCount] = useState(0);
+  const { user } = useModalContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
@@ -38,9 +36,7 @@ const Header = () => {
     session?.user?.approved &&
     status === "authenticated";
 
-  useEffect(() => {
-    setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
-  }, [cart.cartItems]);
+  const cartItemsCount = user?.cart?.reduce((a, c) => a + c.quantity, 0) || 0;
 
   const handleHomeClick = () => {
     if (router.pathname === "/") {

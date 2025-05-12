@@ -636,9 +636,9 @@ export default function PlaceOrder({
                           <div className='flex items-center'>
                             <span className='font-semibold mr-1'>U o M:</span>
                             <span className='text-gray-700'>
-                              {item.purchaseType === "Box"
+                              {item.typeOfPurchase === "Box"
                                 ? "Box"
-                                : item.purchaseType}
+                                : item.typeOfPurchase}
                             </span>
                           </div>
 

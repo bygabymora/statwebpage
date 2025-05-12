@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useModalContext } from "../context/ModalContext";
 
-export default function CustomerLinking({
-  user,
-  setUser,
-  setCustomer,
-  customer,
-}) {
+export default function CustomerLinking() {
   const [keyword, setKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user, setUser, customer, setCustomer } = useModalContext();
+
   useEffect(() => {
     if (customer) {
       setKeyword(customer.companyName);

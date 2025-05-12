@@ -15,11 +15,11 @@ const orderSchema = new mongoose.Schema(
     orderItems: [
       {
         name: { type: String, required: false },
+        productId: { type: String, required: false },
         slug: { type: String, required: false },
         price: { type: Number, required: false },
         wpPrice: { type: Number, required: false },
         quantity: { type: Number, required: false },
-        purchaseType: { type: String, required: false },
         typeOfPurchase: { type: String, required: false },
         image: { type: String, required: false },
         sentOverNight: { type: Boolean, default: false, required: false },
@@ -28,6 +28,10 @@ const orderSchema = new mongoose.Schema(
           required: false,
         },
         unitPrice: { type: Number, required: false },
+        _id: {
+          type: String,
+          required: false,
+        },
       },
     ],
     docNumber: { type: String, required: false },

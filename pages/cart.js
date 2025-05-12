@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import Layout from "../components/main/Layout";
@@ -7,42 +7,40 @@ import Shipping from "../components/checkoutProcess/Shipping";
 import PaymentMethod from "../components/checkoutProcess/PaymentMethod";
 import PlaceOrder from "../components/checkoutProcess/PlaceOrder";
 import Cart from "../components/checkoutProcess/Cart";
-import { Store } from "../utils/Store";
+import { useModalContext } from "../components/context/ModalContext";
 
 export default function CartScreen() {
   const [activeStep, setActiveStep] = useState(0);
   const [order, setOrder] = useState({});
-  const [customer, setCustomer] = useState({});
-  const [user, setUser] = useState({});
-  const { state } = useContext(Store);
+  const { user, setUser, customer, setCustomer } = useModalContext();
   const orderId = Cookies.get("orderId");
-  const {
-    cart: { cartItems },
-  } = state;
+
   const fetchOrder = async () => {
     try {
-      const { data } = await axios.get(`/api/orders/${orderId}`);
-      let finalOrder = data;
-      if (cartItems.length > 0) {
-        const itemsPrice = cartItems.reduce(
+      let finalOrder;
+      if (orderId) {
+        const { data } = await axios.get(`/api/orders/${orderId}`);
+        finalOrder = data;
+      }
+      console.log("user In CartScreen", user);
+      if (user && user.cart?.length > 0) {
+        const { data: updatedCart } = await axios.post(
+          "/api/cart/updateProducts",
+          {
+            cartItems: user.cart,
+          }
+        );
+
+        console.log("updatedCart", updatedCart);
+
+        const itemsPrice = updatedCart.updatedCart.reduce(
           (a, c) => a + c.quantity * c.price,
           0
         );
-        const updatedItems = cartItems.map((item) => ({
-          ...item,
-          quickBooksItemIdProduction: item[item.purchaseType.toLowerCase()]
-            .quickBooksQuantityOnHandProduction
-            ? item[
-                item.purchaseType.toLowerCase()
-              ].quickBooksQuantityOnHandProduction?.toString()
-            : item.quickBooksItemIdProduction,
-          unitPrice: item.price,
-          typeOfPurchase: item.purchaseType,
-          productId: item._id,
-        }));
+
         finalOrder = {
           ...finalOrder,
-          orderItems: updatedItems,
+          orderItems: updatedCart.updatedCart,
           itemsPrice,
           totalPrice: itemsPrice,
         };
@@ -55,15 +53,12 @@ export default function CartScreen() {
       setOrder(finalOrder);
     } catch (err) {
       console.error("Failed to load saved order:", err);
-      Cookies.remove("orderId"); // clear invalid cookie
     }
   };
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    if (orderId) {
-      fetchOrder();
-    }
-  }, [cartItems]);
+    fetchOrder();
+  }, [user]);
 
   return (
     <Layout title='Cart'>

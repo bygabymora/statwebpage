@@ -18,16 +18,16 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     const verifyStockOnCartLoad = async () => {
       for (const item of order.orderItems) {
         try {
-          const { data } = await axios.get(`/api/products/${item._id}`);
+          const { data } = await axios.get(`/api/products/${item.productId}`);
           let availableQuantity = 0;
 
-          if (item.purchaseType === "Each") {
+          if (item.typeOfPurchase === "Each") {
             availableQuantity =
               data.each?.quickBooksQuantityOnHandProduction ?? 0;
-          } else if (item.purchaseType === "Box") {
+          } else if (item.typeOfPurchase === "Box") {
             availableQuantity =
               data.box?.quickBooksQuantityOnHandProduction ?? 0;
-          } else if (item.purchaseType === "Clearance") {
+          } else if (item.typeOfPurchase === "Clearance") {
             availableQuantity = data.countInStockClearance ?? 0;
           }
 
@@ -35,7 +35,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             dispatch({ type: "CART_REMOVE_ITEM", payload: item });
             setStockAlert({
               name: item.name,
-              type: item.purchaseType,
+              type: item.typeOfPurchase,
               available: availableQuantity,
             });
           }
@@ -68,24 +68,24 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
 
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const { data } = await axios.get(`/api/products/${item.productId}`);
 
     if (
-      data.purchaseType === "Each" &&
+      data.typeOfPurchase === "Each" &&
       item.each?.quickBooksQuantityOnHandProduction < quantity
     ) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
     if (
-      data.purchaseType === "Box" &&
+      data.typeOfPurchase === "Box" &&
       item.box?.quickBooksQuantityOnHandProduction < quantity
     ) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
     if (
-      data.purchaseType === "Clearance" &&
+      data.typeOfPurchase === "Clearance" &&
       item.countInStockClearance < quantity
     ) {
       alert("Sorry, we don't have enough of that item in stock.");
@@ -159,9 +159,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                         <div className='flex flex-1 items-center'>
                           <span className='font-semibold  mr-1'>U o M:</span>
                           <span className='text-gray-700'>
-                            {item.purchaseType === "Box"
+                            {item.typeOfPurchase === "Box"
                               ? "Box"
-                              : item.purchaseType}
+                              : item.typeOfPurchase}
                           </span>
                         </div>
 
@@ -173,36 +173,15 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                             onChange={(e) =>
                               updateCartHandler(item, Number(e.target.value))
                             }
-                            className='border rounded px-2 py-1'
+                            className='px-3 py-2 leading-tight text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline'
                           >
-                            {item.purchaseType === "Each" &&
-                              [
-                                ...Array(
-                                  item.each?.quickBooksQuantityOnHandProduction
-                                ).keys(),
-                              ].map((x) => (
+                            {[...Array(item.countInStock || 0).keys()].map(
+                              (x) => (
                                 <option key={x + 1} value={x + 1}>
                                   {x + 1}
                                 </option>
-                              ))}
-                            {item.purchaseType === "Box" &&
-                              [
-                                ...Array(
-                                  item.box?.quickBooksQuantityOnHandProduction
-                                ).keys(),
-                              ].map((x) => (
-                                <option key={x + 1} value={x + 1}>
-                                  {x + 1}
-                                </option>
-                              ))}
-                            {item.purchaseType === "Clearance" &&
-                              [...Array(item.countInStockClearance).keys()].map(
-                                (x) => (
-                                  <option key={x + 1} value={x + 1}>
-                                    {x + 1}
-                                  </option>
-                                )
-                              )}
+                              )
+                            )}
                           </select>
                         </div>
                       </div>

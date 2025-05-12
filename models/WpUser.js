@@ -13,6 +13,16 @@ const wpUserSchema = new mongoose.Schema(
     approved: { type: Boolean, required: true, default: false },
     restricted: { type: Boolean, required: true, default: false },
     customerId: { type: String, required: false },
+    cart: [
+      {
+        productId: { type: String, required: false },
+        price: { type: Number, required: false },
+        wpPrice: { type: Number, required: false },
+        quantity: { type: Number, required: false },
+        typeOfPurchase: { type: String, required: false },
+        unitPrice: { type: Number, required: false },
+      },
+    ],
   },
   {
     timestamps: true,

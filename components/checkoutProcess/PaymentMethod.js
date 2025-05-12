@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { Store } from "../../utils/Store";
 import { useModalContext } from "../context/ModalContext";
 import axios from "axios";
 
@@ -12,7 +11,6 @@ export default function PaymentMethod({
   customer,
   fetchOrder,
 }) {
-  const { dispatch } = useContext(Store);
   const { showStatusMessage } = useModalContext();
 
   const [selectedMethod, setSelectedMethod] = useState(
@@ -107,9 +105,6 @@ export default function PaymentMethod({
     if (!order.paymentMethod) {
       return toast.error("Please select a payment method");
     }
-
-    // 1) Save payment method to global state
-    dispatch({ type: "SAVE_PAYMENT_METHOD", payload: order.paymentMethod });
 
     // 2) Persist (create/update) the order
     try {

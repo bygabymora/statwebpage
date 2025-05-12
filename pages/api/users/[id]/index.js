@@ -1,7 +1,7 @@
-import Customer from "../../../models/Customer";
-import WpUser from "../../../models/WpUser";
-import db from "../../../utils/db";
 import { getToken } from "next-auth/jwt";
+import WpUser from "../../../../models/WpUser";
+import db from "../../../../utils/db";
+import Customer from "../../../../models/Customer";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });

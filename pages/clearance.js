@@ -10,25 +10,30 @@ export default function Clearance({ products }) {
   const manufacturers = [
     ...new Set(
       (products || [])
-        .filter((product) => (product.each?.clearanceCountInStock > 0) || (product.box?.clearanceCountInStock > 0))
+        .filter(
+          (product) =>
+            product.each?.clearanceCountInStock > 0 ||
+            product.box?.clearanceCountInStock > 0
+        )
         .map((product) => product.manufacturer)
     ),
   ];
 
   const filteredProducts = selectedManufacturer
-  ? (products || []).filter(
-      (product) =>
-        product.manufacturer === selectedManufacturer &&
-      (
-        product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0
+    ? (products || []).filter(
+        (product) =>
+          product.manufacturer === selectedManufacturer &&
+          (product.each?.clearanceCountInStock > 0 ||
+            product.box?.clearanceCountInStock > 0)
       )
-    )
-  : (products || []).filter(
-      (product) =>
-      product.each?.clearanceCountInStock > 0 || product.box?.clearanceCountInStock > 0);
+    : (products || []).filter(
+        (product) =>
+          product.each?.clearanceCountInStock > 0 ||
+          product.box?.clearanceCountInStock > 0
+      );
 
   const handleManufacturerClick = (manufacturer) => {
-    setSelectedManufacturer(manufacturer)
+    setSelectedManufacturer(manufacturer);
   };
 
   const handleShowAll = () => {
@@ -38,16 +43,16 @@ export default function Clearance({ products }) {
   };
 
   return (
-    <Layout title="Clearance Products" products={products}>
-      <div className="grid grid-cols-1 md:grid-cols-4">
+    <Layout title='Clearance Products' products={products}>
+      <div className='grid grid-cols-1 md:grid-cols-4'>
         {/* Left Sidebar */}
-        <div className="md:col-span-1 p-4">
-          <div className="block md:hidden mb-4">
+        <div className='md:col-span-1 p-4'>
+          <div className='block md:hidden mb-4'>
             <button
-              className="bg-[#144e8b] px-4 py-2 rounded"
+              className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}
             >
-              <AiOutlineMenuFold color="white" />
+              <AiOutlineMenuFold color='white' />
             </button>
           </div>
           <ul
@@ -66,8 +71,8 @@ export default function Clearance({ products }) {
               ALL PRODUCTS
             </div>
             <h2
-              className="block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3"
-              id="manufacturers"
+              className='block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3'
+              id='manufacturers'
             >
               Manufacturers
             </h2>
@@ -87,16 +92,16 @@ export default function Clearance({ products }) {
           </ul>
         </div>
         {/* Right Product Display */}
-        <div className="md:col-span-3">
-          <h2 className="section__title" id="products">
+        <div className='md:col-span-3'>
+          <h2 className='section__title' id='products'>
             Clearance Products
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3">
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 mb-3'>
             {filteredProducts.map((product, i) => (
               <ProductItemPage
                 product={product}
                 key={product._id}
-                clearancePurchaseType={true}
+                clearanceTypeOfPurchase={true}
                 priority={i === 0}
               ></ProductItemPage>
             ))}

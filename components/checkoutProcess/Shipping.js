@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { useContext } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { Store } from "../../utils/Store";
 import states from "../../utils/states.json";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
+import { useModalContext } from "../context/ModalContext";
 
 export default function Shipping({
   setActiveStep,
@@ -13,20 +12,13 @@ export default function Shipping({
   setOrder,
   customer,
   setCustomer,
-  user,
-  setUser,
 }) {
   const { data: session } = useSession();
-  const { dispatch } = useContext(Store);
+  const { fetchUserData, user } = useModalContext();
 
-  const fetchUserData = async () => {
-    const response = await axios.get(`api/users/${session?.user?._id}`);
-    const userData = response.data.user;
-    const customerData = response.data.customer;
-
+  const fetchOrderData = async () => {
+    const { userData, customerData } = await fetchUserData();
     if (userData) {
-      setCustomer({ ...customerData, email: userData.email });
-      setUser(userData);
       setOrder((prev) => ({
         ...prev,
         wpUser: {
@@ -136,10 +128,10 @@ export default function Shipping({
     }
   };
   useEffect(() => {
-    if (session?.user?._id) fetchUserData();
+    if (session?.user?._id) fetchOrderData();
   }, [session]);
 
-  const submitHandler = async (data) => {
+  const submitHandler = async () => {
     try {
       const response = await axios.get(`api/users/${session.user._id}`);
       const userData = response.data.user;
@@ -191,11 +183,6 @@ export default function Shipping({
       if (!customerData) {
         console.log("Customer not found, No Customer Linked to User");
       }
-
-      dispatch({
-        type: "SAVE_SHIPPING_ADDRESS",
-        payload: data,
-      });
 
       setActiveStep(2);
     } catch (error) {

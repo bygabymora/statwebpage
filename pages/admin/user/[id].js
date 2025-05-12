@@ -29,8 +29,7 @@ function reducer(state, action) {
 
 export default function AdminUserEditScreen() {
   const [customer, setCustomer] = useState({});
-  const [user, setUser] = useState(null);
-  const { showStatusMessage } = useModalContext();
+  const { showStatusMessage, user, setUser } = useModalContext();
   const { query } = useRouter();
   const userId = query.id;
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {

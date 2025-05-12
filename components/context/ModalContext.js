@@ -8,6 +8,7 @@ import React, {
 import StatusMessage from "../main/StatusMessage";
 import CustomAlertModal from "../main/CustomAlertModal";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 
 const ModalContext = createContext();
 export const useModalContext = () => useContext(ModalContext);
@@ -22,13 +23,29 @@ export const ModalProvider = ({ children }) => {
   const [alertAction, setAlertAction] = useState(null);
   const [contact, setContact] = useState({});
   const [hasSeenModal, setHasSeenModal] = useState(false);
+  const [user, setUser] = useState({});
+  const [customer, setCustomer] = useState({});
 
   useEffect(() => {
-    if (session?.user) {
-      setContact(session.user);
-      setHasSeenModal(false); // Reset the state of the modal when the session changes
-    }
+    const loadUserData = async () => {
+      if (session?.user) {
+        setContact(session.user);
+        const { userData, customerData } = await fetchUserData();
+        setUser(userData);
+        setCustomer(customerData);
+        setHasSeenModal(false); // Reset the state of the modal when the session changes
+      }
+    };
+
+    loadUserData();
   }, [session]);
+
+  const fetchUserData = async () => {
+    const response = await axios.get(`/api/users/${session?.user?._id}`);
+    const userData = response.data.user;
+    const customerData = response.data.customer;
+    return { userData, customerData };
+  };
 
   const openAlertModal = (message, action) => {
     if (!hasSeenModal) {
@@ -56,7 +73,16 @@ export const ModalProvider = ({ children }) => {
 
   return (
     <ModalContext.Provider
-      value={{ showStatusMessage, openAlertModal, contact }}
+      value={{
+        showStatusMessage,
+        openAlertModal,
+        contact,
+        setCustomer,
+        customer,
+        user,
+        setUser,
+        fetchUserData,
+      }}
     >
       {children}
 

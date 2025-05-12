@@ -3,11 +3,9 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { BsCart2, BsChevronRight } from "react-icons/bs";
 import Image from "next/image";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Store } from "../../utils/Store";
+import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
@@ -16,7 +14,6 @@ export default function ProductScreen() {
   const router = useRouter();
   const { pId: pId } = router.query;
   const [product, setProduct] = useState({});
-  const { state, dispatch } = useContext(Store);
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
@@ -33,12 +30,18 @@ export default function ProductScreen() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const form = useRef();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const { showStatusMessage, setUser, fetchUserData, user } = useModalContext();
+  const [emailName, setEmailName] = useState("");
+  const [emailManufacturer, setEmailManufacturer] = useState("");
   const hasPrice = currentPrice !== null && currentPrice !== 0;
   const active =
     session?.user?.active &&
     session?.user?.approved &&
     status === "authenticated";
-  const [purchaseType, setPurchaseType] = useState(() => {
+  const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return "Box";
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
@@ -70,14 +73,14 @@ export default function ProductScreen() {
 
   useEffect(() => {
     if (product.countInStock || 0) {
-      setPurchaseType("Box");
+      setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
       setCurrentCountInStock(
         product.box?.quickBooksQuantityOnHandProduction ?? null
       );
     }
-  }, [purchaseType, product.box, product.countInStock]);
+  }, [typeOfPurchase, product.box, product.countInStock]);
 
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
@@ -90,99 +93,101 @@ export default function ProductScreen() {
   }, [product]);
 
   useEffect(() => {
-    if (purchaseType === "Each") {
+    if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(
         product.each?.quickBooksQuantityOnHandProduction ?? null
       );
     }
-  }, [purchaseType, product.each]);
+  }, [typeOfPurchase, product.each]);
 
   useEffect(() => {
-    if (purchaseType === "Each") {
+    if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(
         product.each?.quickBooksQuantityOnHandProduction ?? 0
       );
-    } else if (purchaseType === "Box") {
+    } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || "");
       setCurrentCountInStock(
         product.box?.quickBooksQuantityOnHandProduction ?? 0
       );
-    } else if (purchaseType === "Clearance") {
+    } else if (typeOfPurchase === "Clearance") {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
     }
-  }, [purchaseType, product]);
+  }, [typeOfPurchase, product]);
 
   const addToCartHandler = async () => {
-    const exisItem = state.cart.cartItems.find((x) => x._id === product._id);
+    const exisItem = user.cart?.find(
+      (x) => x._id === product._id && x.typeOfPurchase === typeOfPurchase
+    );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
+
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (
-      purchaseType === "Each" &&
+      typeOfPurchase === "Each" &&
       (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
       setIsOutOfStock(true);
       return;
     } else if (
-      purchaseType === "Box" &&
+      typeOfPurchase === "Box" &&
       (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
       setIsOutOfStockBox(true);
       return;
     } else if (
-      purchaseType === "Clearance" &&
-      (product.each?.clearanceCountInStock ?? 0) < quantity
+      typeOfPurchase === "Clearance" &&
+      (data.each?.clearanceCountInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
     }
-    if (data.countInStock < quantity) {
-      setShowModal(true);
-      return;
-    }
 
-    dispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...product,
-        quantity,
-        purchaseType,
-        price:
-          purchaseType === "Each"
-            ? product.each?.wpPrice
-            : purchaseType === "Box"
-            ? product.box?.wpPrice
-            : purchaseType === "Clearance"
-            ? product.clearance?.Price
-            : product.Price,
-        description:
-          purchaseType === "Each"
-            ? product.each?.description
-            : purchaseType === "Box"
-            ? product.box?.description
-            : purchaseType === "Clearance"
-            ? product.clearance?.description
-            : product.description,
-        countInStock:
-          purchaseType === "Each"
-            ? product.each?.quickBooksQuantityOnHandProduction
-            : purchaseType === "Box"
-            ? product.box?.quickBooksQuantityOnHandProduction
-            : purchaseType === "Clearance"
-            ? product.each?.clearanceCountInStock
-            : product.clearanceCountInStock,
-      },
+    await axios.post(`/api/users/${session.user._id}/cart`, {
+      productId: product._id,
+      quantity,
+      typeOfPurchase,
+      unitPrice:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
+      wpPrice:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
+      price:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
     });
+
     setQty(1);
-    toast.success("Item added to cart");
-    setShowPopup(true);
+    const updatedUser = await fetchUserData();
+    console.log("Updated cart:", updatedUser);
+    setUser((prev) => ({
+      ...prev,
+      cart: updatedUser.userData?.cart,
+    }));
+    showStatusMessage("success", "Item added to cart");
   };
 
   const continueShoppingHandler = () => {
@@ -196,13 +201,6 @@ export default function ProductScreen() {
   };
 
   //-----------------EmailJS-----------------//
-
-  const form = useRef();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const { showStatusMessage } = useModalContext();
-  const [emailName, setEmailName] = useState("");
-  const [emailManufacturer, setEmailManufacturer] = useState("");
 
   useEffect(() => {
     if (product) {
@@ -419,7 +417,7 @@ export default function ProductScreen() {
                 <div>
                   {product.each?.quickBooksQuantityOnHandProduction > 0 ||
                   product.box?.quickBooksQuantityOnHandProduction > 0 ? (
-                    purchaseType === "Each" || purchaseType === "Box" ? (
+                    typeOfPurchase === "Each" || typeOfPurchase === "Box" ? (
                       <div>
                         {active === "loading"
                           ? "Loading"
@@ -427,9 +425,9 @@ export default function ProductScreen() {
                               <div className='mb-2 flex justify-between'>
                                 <div className='font-bold'>U o M &nbsp;</div>
                                 <select
-                                  value={purchaseType}
+                                  value={typeOfPurchase}
                                   onChange={(e) => {
-                                    setPurchaseType(e.target.value);
+                                    setTypeOfPurchase(e.target.value);
                                     if (
                                       e.target.value === "Each" &&
                                       product.each
@@ -514,9 +512,9 @@ export default function ProductScreen() {
                       <div className='mb-2 flex justify-between'>
                         <div className='font-bold'>Status</div>
                         <div>
-                          {(purchaseType === "Each" && isOutOfStock) ||
-                          (purchaseType === "Box" && isOutOfStockBox) ||
-                          (purchaseType === "Clearance" &&
+                          {(typeOfPurchase === "Each" && isOutOfStock) ||
+                          (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                          (typeOfPurchase === "Clearance" &&
                             isOutOfStockClearance)
                             ? "Out of Stock"
                             : "In Stock"}
@@ -551,16 +549,19 @@ export default function ProductScreen() {
                                   type='button'
                                   onClick={addToCartHandler}
                                   disabled={
-                                    (purchaseType === "Each" && isOutOfStock) ||
-                                    (purchaseType === "Box" &&
+                                    (typeOfPurchase === "Each" &&
+                                      isOutOfStock) ||
+                                    (typeOfPurchase === "Box" &&
                                       isOutOfStockBox) ||
-                                    (purchaseType === "Clearance" &&
+                                    (typeOfPurchase === "Clearance" &&
                                       isOutOfStockClearance)
                                   }
                                 >
-                                  {(purchaseType === "Each" && isOutOfStock) ||
-                                  (purchaseType === "Box" && isOutOfStockBox) ||
-                                  (purchaseType === "Clearance" &&
+                                  {(typeOfPurchase === "Each" &&
+                                    isOutOfStock) ||
+                                  (typeOfPurchase === "Box" &&
+                                    isOutOfStockBox) ||
+                                  (typeOfPurchase === "Clearance" &&
                                     isOutOfStockClearance)
                                     ? "Out of Stock"
                                     : "Add to Cart"}
@@ -595,11 +596,11 @@ export default function ProductScreen() {
                   </div>
                 </div>
               )}
-              {((purchaseType === "Each" &&
+              {((typeOfPurchase === "Each" &&
                 (isOutOfStock || currentCountInStock <= 0)) ||
-                (purchaseType === "Box" &&
+                (typeOfPurchase === "Box" &&
                   (isOutOfStockBox || currentCountInStock <= 0)) ||
-                (purchaseType === "Clearance" && isOutOfStockClearance)) && (
+                (typeOfPurchase === "Clearance" && isOutOfStockClearance)) && (
                 <form
                   className='text-center p-2'
                   ref={form}

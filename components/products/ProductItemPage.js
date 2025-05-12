@@ -2,22 +2,23 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { Store } from "../../utils/Store";
-import { useContext } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
 export const ProductItemPage = ({ product }) => {
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
+  const form = useRef();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const { showStatusMessage, fetchUserData, setUser, user } = useModalContext();
+  const [emailName, setEmailName] = useState("");
+  const [emailManufacturer, setEmailManufacturer] = useState("");
   const [qty, setQty] = useState(1);
-  const [purchaseType, setPurchaseType] = useState(() => {
+  const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
       return "Box";
     } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
@@ -50,14 +51,14 @@ export const ProductItemPage = ({ product }) => {
 
   useEffect(() => {
     if (product.countInStock || 0) {
-      setPurchaseType("Box");
+      setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
       setCurrentCountInStock(
         product.box?.quickBooksQuantityOnHandProduction ?? null
       );
     }
-  }, [purchaseType, product.box, product.countInStock]);
+  }, [typeOfPurchase, product.box, product.countInStock]);
 
   useEffect(() => {
     const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
@@ -65,7 +66,7 @@ export const ProductItemPage = ({ product }) => {
     const clearanceStock = product.each?.clearanceCountInStock ?? 0;
 
     if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
-      setPurchaseType("Clearance");
+      setTypeOfPurchase("Clearance");
       setCurrentPrice(
         product.clearance?.price
           ? `$${product.clearance?.price}`
@@ -77,107 +78,100 @@ export const ProductItemPage = ({ product }) => {
   }, [product]);
 
   useEffect(() => {
-    if (purchaseType === "Each") {
+    if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(
         product.each?.quickBooksQuantityOnHandProduction ?? null
       );
     }
-  }, [purchaseType, product.each]);
+  }, [typeOfPurchase, product.each]);
 
   useEffect(() => {
-    if (purchaseType === "Each") {
+    if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(
         product.each?.quickBooksQuantityOnHandProduction ?? 0
       );
-    } else if (purchaseType === "Box") {
+    } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || "");
       setCurrentCountInStock(
         product.box?.quickBooksQuantityOnHandProduction ?? 0
       );
     }
-  }, [purchaseType, product]);
+  }, [typeOfPurchase, product]);
 
   const addToCartHandler = async () => {
-    const exisItem = cart.cartItems.find(
-      (x) => x._id === product._id && x.purchaseType === purchaseType
+    const exisItem = user.cart?.find(
+      (x) => x._id === product._id && x.typeOfPurchase === typeOfPurchase
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
+
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (
-      purchaseType === "Each" &&
+      typeOfPurchase === "Each" &&
       (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
       setIsOutOfStock(true);
       return;
     } else if (
-      purchaseType === "Box" &&
+      typeOfPurchase === "Box" &&
       (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
       setIsOutOfStockBox(true);
       return;
     } else if (
-      purchaseType === "Clearance" &&
+      typeOfPurchase === "Clearance" &&
       (data.each?.clearanceCountInStock ?? 0) < quantity
     ) {
       setIsOutOfStockClearance(true);
       return;
     }
-    dispatch({
-      type: "CART_ADD_ITEM",
-      payload: {
-        ...product,
-        quantity,
-        purchaseType,
-        sentOverNight: product.sentOverNight,
-        price:
-          purchaseType === "Each"
-            ? product.each?.wpPrice
-            : purchaseType === "Box"
-            ? product.box?.wpPrice
-            : purchaseType === "Clearance"
-            ? product.clearance?.Price
-            : product.Price,
-        description:
-          purchaseType === "Each"
-            ? product.each?.description
-            : purchaseType === "Box"
-            ? product.box?.description
-            : purchaseType === "Clearance"
-            ? product.clearance?.description
-            : product.description,
-        countInStock:
-          purchaseType === "Each"
-            ? product.each?.quickBooksQuantityOnHandProduction
-            : purchaseType === "Box"
-            ? product.box?.quickBooksQuantityOnHandProduction
-            : purchaseType === "Clearance"
-            ? product.each?.clearanceCountInStock
-            : product.clearanceCountInStock,
-      },
+
+    await axios.post(`/api/users/${session.user._id}/cart`, {
+      productId: product._id,
+      quantity,
+      typeOfPurchase,
+      unitPrice:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
+      wpPrice:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
+      price:
+        typeOfPurchase === "Each"
+          ? product.each?.wpPrice
+          : typeOfPurchase === "Box"
+          ? product.box?.wpPrice
+          : typeOfPurchase === "Clearance"
+          ? product.clearance?.price
+          : product.price,
     });
+
     setQty(1);
-    toast.success("Item added to cart", {
-      autoClose: 2,
-      closeOnClick: true,
-      hideProgressBar: true,
-      pauseOnHover: false,
-    });
+    const updatedUser = await fetchUserData();
+    console.log("Updated cart:", updatedUser);
+    setUser((prev) => ({
+      ...prev,
+      cart: updatedUser.userData?.cart,
+    }));
+    showStatusMessage("success", "Item added to cart");
   };
 
   //-----------------Email-----------------//
-
-  const form = useRef();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const { showStatusMessage } = useModalContext();
-  const [emailName, setEmailName] = useState("");
-  const [emailManufacturer, setEmailManufacturer] = useState("");
 
   // Prefill product data when available
   useEffect(() => {
@@ -314,11 +308,11 @@ export const ProductItemPage = ({ product }) => {
           )}
         </div>
       </div>
-      {((purchaseType === "Each" &&
+      {((typeOfPurchase === "Each" &&
         (isOutOfStock || currentCountInStock <= 0)) ||
-        (purchaseType === "Box" &&
+        (typeOfPurchase === "Box" &&
           (isOutOfStockBox || currentCountInStock <= 0)) ||
-        (purchaseType === "Clearance" && isOutOfStockClearance)) && (
+        (typeOfPurchase === "Clearance" && isOutOfStockClearance)) && (
         <form className='text-center p-2' ref={form} onSubmit={sendEmail}>
           <label className='mt-3 font-bold'>Join Our Wait List</label>
 
@@ -362,7 +356,7 @@ export const ProductItemPage = ({ product }) => {
         <div>
           {product.each?.quickBooksQuantityOnHandProduction > 0 ||
           product.box?.quickBooksQuantityOnHandProduction > 0 ? (
-            purchaseType === "Each" || purchaseType === "Box" ? (
+            typeOfPurchase === "Each" || typeOfPurchase === "Box" ? (
               <div className='flex justify-between items-center gap-2 mx-10 mt-5'>
                 {active === "loading"
                   ? "Loading"
@@ -370,9 +364,9 @@ export const ProductItemPage = ({ product }) => {
                       <div className='mb-2 justify-between'>
                         <div className='font-bold'>U o M &nbsp;</div>
                         <select
-                          value={purchaseType}
+                          value={typeOfPurchase}
                           onChange={(e) => {
-                            setPurchaseType(e.target.value);
+                            setTypeOfPurchase(e.target.value);
                             if (e.target.value === "Each" && product.each) {
                               setCurrentPrice(product.each?.wpPrice || 0);
                               setCurrentDescription(
@@ -456,9 +450,9 @@ export const ProductItemPage = ({ product }) => {
               <div className='flex-column'>
                 <div className='font-bold'>Status</div>
                 <div className=''>
-                  {(purchaseType === "Each" && isOutOfStock) ||
-                  (purchaseType === "Box" && isOutOfStockBox) ||
-                  (purchaseType === "Clearance" && isOutOfStockClearance)
+                  {(typeOfPurchase === "Each" && isOutOfStock) ||
+                  (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                  (typeOfPurchase === "Clearance" && isOutOfStockClearance)
                     ? "Out of Stock"
                     : "In Stock"}
                 </div>
@@ -479,15 +473,15 @@ export const ProductItemPage = ({ product }) => {
                           type='button'
                           onClick={addToCartHandler}
                           disabled={
-                            (purchaseType === "Each" && isOutOfStock) ||
-                            (purchaseType === "Box" && isOutOfStockBox) ||
-                            (purchaseType === "Clearance" &&
+                            (typeOfPurchase === "Each" && isOutOfStock) ||
+                            (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                            (typeOfPurchase === "Clearance" &&
                               isOutOfStockClearance)
                           }
                         >
-                          {(purchaseType === "Each" && isOutOfStock) ||
-                          (purchaseType === "Box" && isOutOfStockBox) ||
-                          (purchaseType === "Clearance" &&
+                          {(typeOfPurchase === "Each" && isOutOfStock) ||
+                          (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                          (typeOfPurchase === "Clearance" &&
                             isOutOfStockClearance)
                             ? "Out of Stock"
                             : "Add to Cart"}

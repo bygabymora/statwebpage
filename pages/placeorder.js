@@ -306,7 +306,9 @@ export default function PlaceOrderScreen() {
                             </span>
                           </Link>
                         </td>
-                        <td className='p-5 text-right'>{item.purchaseType}</td>
+                        <td className='p-5 text-right'>
+                          {item.typeOfPurchase}
+                        </td>
                         <td className='p-5 text-right'>{item.quantity}</td>
                         <td className='p-5 text-right'>
                           $

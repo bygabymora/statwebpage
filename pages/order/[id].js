@@ -648,7 +648,9 @@ function OrderScreen() {
                           )}
                         </td>
                         <td className='p-3 text-center'>{item.quantity}</td>
-                        <td className='p-3 text-center'>{item.purchaseType}</td>
+                        <td className='p-3 text-center'>
+                          {item.typeOfPurchase}
+                        </td>
                         <td className='p-3 text-right'>
                           {" "}
                           $
