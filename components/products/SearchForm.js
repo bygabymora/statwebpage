@@ -74,7 +74,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   //----------//
 
   return (
-    <div className='max-w-4xl mx-auto p-5'>
+    <div className='max-w-4xl mx-auto p-5 md:col-span-2 lg:col-span-3'>
       <>
         <div className='text-center'>
           <h2 className='section__subtitle'>No products found</h2>

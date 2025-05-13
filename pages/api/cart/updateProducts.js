@@ -38,6 +38,18 @@ export default async function handler(req, res) {
         manufacturer: product.manufacturer,
         image: product.image,
         slug: product.slug,
+        productSearchQuery: product.name,
+        sentOverNight: product.sentOverNight,
+        noExpirationDate: product.noExpirationDate,
+        quickBooksItemIdProduction:
+          updatedInfo?.quickBooksItemIdProduction ||
+          product.quickBooksItemIdProduction ||
+          item.quickBooksItemIdProduction,
+        minSalePrice:
+          updatedInfo?.minSalePrice ||
+          updatedInfo?.price ||
+          product.minSalePrice ||
+          item.minSalePrice,
         quickBooksQuantityOnHandProduction:
           updatedInfo?.quickBooksQuantityOnHandProduction,
         description:

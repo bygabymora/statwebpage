@@ -18,8 +18,10 @@ export default function CartScreen() {
   const fetchOrder = async () => {
     try {
       let finalOrder;
+      console.log("orderId in cart", orderId);
       if (orderId) {
         const { data } = await axios.get(`/api/orders/${orderId}`);
+        console.log("data in cart", data);
         finalOrder = data;
       }
       console.log("user In CartScreen", user);
@@ -37,10 +39,14 @@ export default function CartScreen() {
           (a, c) => a + c.quantity * c.price,
           0
         );
+        const finalItems = updatedCart.updatedCart.map((item) => ({
+          ...item,
+          totalPrice: item.quantity * item.price,
+        }));
 
         finalOrder = {
           ...finalOrder,
-          orderItems: updatedCart.updatedCart,
+          orderItems: finalItems,
           itemsPrice,
           totalPrice: itemsPrice,
         };

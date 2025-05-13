@@ -12,8 +12,8 @@ import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { getError } from "../../utils/error";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import states from "../../utils/states.json";
-import moment from "moment";
 import { useSession } from "next-auth/react";
+import Cookies from "js-cookie";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -31,8 +31,14 @@ export default function PlaceOrder({
     paymentMethod,
     shippingPreferences,
   } = order;
-  const { showStatusMessage, fetchUserData, setUser, setCustomer } =
-    useModalContext();
+  const {
+    showStatusMessage,
+    fetchUserData,
+    setUser,
+    setCustomer,
+    customer,
+    user,
+  } = useModalContext();
   const { data: session } = useSession();
   const [loading] = useState(false);
   const router = useRouter();
@@ -81,11 +87,6 @@ export default function PlaceOrder({
     setSpecialNotes(shippingAddress.notes);
   }, [paymentMethod, shippingAddress, totalPrice]);
 
-  const cartItemsWithPrice = orderItems.map((item) => ({
-    ...item,
-    wpPrice: item.wpPrice || item.price,
-  }));
-
   useEffect(() => {
     fetchOrder();
   }, []);
@@ -117,53 +118,118 @@ export default function PlaceOrder({
     handleSendEmails(emailMessage, contactToEmail);
   };
 
+  const baseAction = async (showStatusMessage, router) => {
+    try {
+      const updatedEstimateItems = orderItems.map((item) => ({
+        ...item,
+        typeOfPurchase: item.typeOfPurchase?.toLowerCase(),
+      }));
+
+      // Update estimate API call
+      await axios.post(`/api/estimates`, {
+        user: {
+          userId: customer.user?.userId,
+          name: customer.user?.name,
+          userQuickBooksId: customer.user?.userQuickBooksId,
+        },
+        warning: "Estimate created from WP",
+        estimateItems: updatedEstimateItems,
+        customer: {
+          defaultTerms: order?.defaultTerm,
+          _id: customer?._id,
+          searchQuery: customer?.companyName,
+          needFactCheck: customer?.needFactCheck,
+          arFactCheck: customer?.arFactCheck,
+          email: order.billingAddress?.contactInfo?.email,
+          quickBooksCustomerId: customer?.quickBooksCustomerId,
+          quickBooksProductionCustomerId:
+            customer?.quickBooksProductionCustomerId,
+          phone: customer?.phone,
+          EIN: customer?.EIN,
+          companyName: customer?.companyName,
+          user: customer?.user,
+          purchaseExecutive: customer?.purchaseExecutive,
+          fedexAccountNumber: customer?.fedexAccountNumber,
+          upsAccountNumber: customer?.upsAccountNumber,
+          buyer: {
+            name: user?.firstName,
+            email: user?.email,
+            lastName: user?.lastName,
+            role: "Buyer",
+          },
+          location: {
+            address: order.shippingAddress?.address,
+            suiteNumber: order.shippingAddress?.suiteNumber,
+            city: order.shippingAddress?.city,
+            country: "US",
+            state: order.shippingAddress?.state,
+            postalCode: order.shippingAddress?.postalCode,
+
+            attentionTo:
+              order.shippingAddress?.contactInfo?.firstName +
+              " " +
+              order.shippingAddress?.contactInfo?.lastName,
+          },
+          billAddr: {
+            address: order.billingAddress?.address,
+            suiteNumber: order.billingAddress?.suiteNumber,
+            city: order.billingAddress?.city,
+            state: order.billingAddress?.state,
+            country: "US",
+            postalCode: order.billingAddress?.postalCode,
+          },
+        },
+        shippingMethod: order.shippingPreferences?.shippingMethod,
+        shippingBilling:
+          order.shippingPreferences?.paymentMethod === "Bill Me"
+            ? "Bill Invoice"
+            : order.shippingPreferences?.paymentMethod === "Use My Account"
+            ? order.shippingPreferences?.carrier +
+              " " +
+              order.shippingPreferences?.account
+            : "Bill Invoice",
+        paymentTerms: order?.defaultTerm,
+        poNumber: order.poNumber,
+        subtotal: order.subtotal,
+        itemsPrice: order.itemsPrice,
+        itemsQuantity: order.itemsQuantity,
+        totalPrice: order.totalPrice,
+        amount: order.amount,
+        fileId: order.fileId,
+        fileName: order.fileName,
+        status: "On Hold",
+        timePeriod: 24,
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        showStatusMessage("error", "Invalid request");
+        console.error(error);
+        router.reload();
+      } else {
+        showStatusMessage("error", "An error occurred");
+        console.error(error);
+      }
+    }
+  };
+
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
       toast.error("Please fill all required fields.");
       return;
     }
-
-    if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
-      toast.error("Total price is invalid. Please review your cart.");
-      return;
-    }
-    const currentDate = moment().format("YYMMDD");
-    const randomNumber = Math.floor(Math.random() * 90) + 10;
-    const newDocNumber = currentDate + "-" + randomNumber;
-
-    const estimateToCreate = {
-      ...order,
-      warning: "Created from the Website",
-      estimateItems: orderItems,
-      customer: {
-        ...order.customer,
-        billAddr: order.billingAddress,
-        location: order.shippingAddress,
-      },
-      discount: discountAmount,
-      subtotal: itemsPrice,
-      active: true,
-      paymentTerms: order.defaultTerm,
-      docNumber: newDocNumber,
-    };
-
-    const currentCartItems = [...cartItemsWithPrice];
-    if (!currentCartItems.length) {
-      toast.error("Cart is empty.");
-      return;
-    }
-
-    sendEmail();
-
     try {
       // Create the order in your backend
       const { data } = await axios.post("/api/orders", {
         order,
-        estimateToCreate,
       });
+      await baseAction();
 
       await axios.patch(`/api/users/${session.user?._id}/cart`, {
         action: "clear",
+      });
+
+      await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
+        customer: customer,
       });
 
       const updatedUser = await fetchUserData();
@@ -179,6 +245,9 @@ export default function PlaceOrder({
         itemsPrice: 0,
         totalPrice: 0,
       }));
+
+      sendEmail();
+      Cookies.remove("orderId");
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
         const stripe = await stripePromise;
@@ -204,10 +273,14 @@ export default function PlaceOrder({
         }
       } else {
         // If not Stripe, redirect to normal order page
-        router.push(`/order/${data._id}`);
+        router.push(`/order/${order._id}`);
       }
     } catch (error) {
-      toast.error(String(getError(error)));
+      console.error("Error placing order:", error);
+      showStatusMessage(
+        "error",
+        getError(error) || "An error occurred while placing the order."
+      );
     }
   };
 

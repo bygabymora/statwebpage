@@ -82,10 +82,9 @@ export default function PaymentMethod({
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Upload failed");
-
+      Cookies.set("orderId", data.order._id);
       setOrder((cur) => ({
         ...cur,
-        ...data.order,
         fileId: data.order.fileId,
         fileName: data.order.fileName,
       }));
