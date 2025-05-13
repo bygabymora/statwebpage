@@ -83,7 +83,6 @@ function OrderScreen() {
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("");
 
   const [
     { loading, error, successPay, loadingPay, loadingDeliver, successDeliver },
@@ -381,21 +380,6 @@ function OrderScreen() {
     handlePayment();
   };
 
-  useEffect(() => {
-    if (order.paymentMethod === "PO Number") {
-      if (invoice && invoice.status) {
-        const finalStatus = invoice.status?.includes("Paid")
-          ? "Paid"
-          : "Unpaid";
-        setPaymentStatus(finalStatus);
-      } else {
-        setPaymentStatus("Unpaid");
-      }
-    } else {
-      setPaymentStatus(order.paymentStatus);
-    }
-  }, [invoice, order]);
-
   const dueDateHandler = (terms) => {
     const date = new Date(order.createdAt);
     const daysToAdd = parseInt(terms.split(" ")[1]);
@@ -409,6 +393,23 @@ function OrderScreen() {
       setDueDate(date);
     }
   }, [order.defaultTerm]);
+
+  const paymentAmountStatus = (invoice) => {
+    let status = "";
+    invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
+      ? (status = "Paid")
+      : invoice.balance === invoice?.totalPrice
+      ? (status = "Not Paid")
+      : invoice?.balance > 0 &&
+        invoice?.balance <
+          invoice.totalPrice -
+            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+      ? (status = "Partial Payment")
+      : invoice.balance < 0
+      ? (status = "Over Payment")
+      : (status = "Not Paid");
+    return status;
+  };
 
   return (
     <Layout
@@ -430,15 +431,15 @@ function OrderScreen() {
         </div>
       </div>
       <div className='mt-4 bg-white shadow-lg p-6 rounded-lg border'>
-        <div className='mt-3 flex-1 p-3 flex flex-col md:flex-row bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
-          <div className='flex-1'>
-            <div className='flex items-start'>
+        <div className='mt-3 flex-1 p-3 flex gap-2 flex-col md:flex-row bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
+          <div className='flex-1 flex gap-2 flex-col'>
+            <div className='items-start'>
               <div className='text-2xl font-bold text-[#144e8b]'>
                 Order #{order.docNumber}
               </div>
               {invoice && invoice.docNumber && (
-                <div className='mb-4 text-2xl font-bold text-[#144e8b]'>
-                  - Invoice #{invoice.docNumber}
+                <div className='text-2xl font-bold text-[#144e8b]'>
+                  Invoice #{invoice.docNumber}
                 </div>
               )}
             </div>
@@ -478,13 +479,30 @@ function OrderScreen() {
               </a>
             </div>
           </div>
+          <div className='flex-1 flex gap-2 flex-col '>
+            <h2 className='text-lg px-1 font-bold'>Payment Status</h2>
+            <div className='p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
+              <div className='flex-1'>
+                <span className='font-semibold'>Due Date: </span>
+                {formatDateForInput(dueDate)}
+              </div>
+              <div className='flex-1'>
+                {" "}
+                {order.isPaid
+                  ? "Paid"
+                  : invoice
+                  ? paymentAmountStatus(invoice)
+                  : "Not Paid"}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className='flex flex-col md:flex-row gap-4'>
           <div className='mt-3 flex-1 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
             <h2 className='text-lg font-bold'>Shipping Status</h2>
             {invoice && invoice.shippings?.length > 0 ? (
-              <div className='flex items-center gap-2'>
+              <div className='w-full mt-3'>
                 {invoice.shippings?.map((shipping) => (
                   <div key={shipping._id}>
                     <TrackerStepsBarForCustomer
@@ -501,16 +519,6 @@ function OrderScreen() {
                 Not shipped yet
               </div>
             )}
-          </div>
-          <div className='mt-3 flex-1 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
-            <h2 className='text-lg font-bold'>Payment Status</h2>
-            <div className='p-4 bg-white flex flex-col md:flex-row rounded-lg text-center text-[#144e8b] font-semibold'>
-              <div className='flex-1'>
-                <span className='font-semibold'>Due Date: </span>
-                {formatDateForInput(dueDate)}
-              </div>
-              <div className='flex-1'>{paymentStatus}</div>
-            </div>
           </div>
         </div>
       </div>
