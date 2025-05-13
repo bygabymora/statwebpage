@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import Stripe from "stripe";
+import Order from "../../models/Order";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
@@ -43,7 +44,11 @@ export default async function handler(req, res) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/${orderId}?paymentSuccess=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/order/${orderId}?paymentSuccess=false`,
     });
-
+    const order = await Order.findById(orderId);
+    if (order) {
+      order.paymentId = session.payment_intent;
+      await order.save();
+    }
     return res.status(200).json({ id: session.id });
   } catch (error) {
     console.error("Stripe Checkout Session Error:", error);
