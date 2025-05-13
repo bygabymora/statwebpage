@@ -88,7 +88,7 @@ const Header = () => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setSearchQuery(suggestion);
+    setSearchQuery(suggestion._id);
     setSuggestions([]); // clear suggestions once one is clicked
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
@@ -153,7 +153,7 @@ const Header = () => {
                 className='p-2 hover:bg-gray-100 cursor-pointer'
                 onMouseDown={() => handleSuggestionClick(product.name)}
               >
-                {product.name}
+                {product.name} / {product.manufacturer}
               </div>
             ))}
           </div>
@@ -198,14 +198,14 @@ const Header = () => {
             </button>
           </div>
           {suggestions.length > 0 && (
-            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999]'>
+            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999] max-h-[50vh] overflow-auto custom-scrollbar'>
               {suggestions.map((product, index) => (
                 <div
                   key={index}
                   className='p-2 hover:bg-gray-100 cursor-pointer'
                   onMouseDown={() => handleSuggestionClick(product.name)}
                 >
-                  {product.name}
+                  {product.name} / {product.manufacturer}
                 </div>
               ))}
             </div>

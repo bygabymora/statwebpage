@@ -1,5 +1,6 @@
 import db from "../../utils/db";
 import Product from "../../models/Product";
+import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -9,27 +10,47 @@ export default async function handler(req, res) {
   try {
     await db.connect();
 
-    const keyword = req.query.keyword
-      ? {
-          $or: [
-            { name: { $regex: req.query.keyword, $options: "i" } },
-            { manufacturer: { $regex: req.query.keyword, $options: "i" } },
-            { gtin: { $regex: req.query.keyword, $options: "i" } },
-            {
-              "each.description": { $regex: req.query.keyword, $options: "i" },
-            },
-            { "box.description": { $regex: req.query.keyword, $options: "i" } },
-          ],
+    const keywordRaw = req.query.keyword?.trim();
+    const limit = parseInt(req.query.limit) || 20;
+
+    let products = [];
+    // If keywordRaw is provided, check for an exact lookup by _id.
+    if (keywordRaw) {
+      if (mongoose.Types.ObjectId.isValid(keywordRaw)) {
+        const product = await Product.findById(keywordRaw);
+        if (product) {
+          const obj = product.toObject();
+          obj.collection = "products";
+          // Return immediately with this one product.
+          return res.status(200).json([obj]);
         }
-      : {};
+      }
+      // Otherwise, search using a regex.
+      const keyword = keywordRaw.replace(/\s+/g, " ").trim();
+      const regex = new RegExp(keyword.split(" ").join(".*"), "i");
 
-    // Fetch and lean for plain JS objects
-    let products = await Product.find({ ...keyword }).lean();
+      // Step 1: Exact match on the product name.
+      products = await Product.find({
+        name: { $regex: new RegExp(`^${keyword}$`, "i") },
+      }).limit(limit);
 
-    // Sort priority:
-    // 1) has any stock (each or box > 0)
-    // 2) within those, has any price (each.wpPrice or box.wpPrice > 0)
-    // 3) fallback to alphabetical by name
+      // Step 2: If no exact match, search in name, manufacturer, slug, or GTIN fields.
+      if (products.length === 0) {
+        products = await Product.find({
+          $or: [
+            { name: { $regex: regex } },
+            { manufacturer: { $regex: regex } },
+            { slug: { $regex: regex } },
+            { "each.gtin": { $regex: regex } },
+            { "box.gtin": { $regex: regex } },
+          ],
+          active: true,
+        }).limit(limit);
+      }
+    } else {
+      products = await Product.find({ active: true }).limit(limit);
+    }
+
     products.sort((a, b) => {
       const aInStock =
         (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
