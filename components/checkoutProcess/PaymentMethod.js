@@ -227,63 +227,74 @@ export default function PaymentMethod({
                   </label>
                 )}
 
-                {selectedMethod === "PO Number" && order.defaultTerm && (
-                  <>
-                    <div className='md:mb-4'>
-                      <label htmlFor='poNumber' className='block mb-2'>
-                        Purchase Order #:{" "}
+                <div className='card p-2 '>
+                  <div className='font-semibold my-2'>
+                    To prevent delays in processing your order, please fill the
+                    PO number and upload the PO document.
+                  </div>
+                  {order.paymentMethod === "PO Number" && (
+                    <div className='text-sm text-gray-500 mb-2'>
+                      <span className='text-red-500'>
+                        PO Number is required
+                      </span>
+                    </div>
+                  )}
+                  <div className='md:mb-4'>
+                    <label htmlFor='poNumber' className='block mb-2'>
+                      Purchase Order #:{" "}
+                      {order.paymentMethod === "PO Number" && (
                         <span className='text-xs italic'>
                           Your Terms {order.defaultTerm}
                         </span>
-                      </label>
-                      <input
-                        id='poNumber'
-                        type='text'
-                        className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
-                        value={order.poNumber || ""}
-                        onChange={(e) =>
-                          handleInputChange("poNumber", e.target.value)
-                        }
-                      />
-                    </div>
+                      )}
+                    </label>
+                    <input
+                      id='poNumber'
+                      type='text'
+                      className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                      value={order.poNumber || ""}
+                      onChange={(e) =>
+                        handleInputChange("poNumber", e.target.value)
+                      }
+                    />
+                  </div>
 
-                    <div className='md:mb-4'>
-                      <div className='flex justify-between mb-2'>
-                        <span>Upload P.O.:</span>
-                        {order.fileId && (
-                          <span className='text-xs text-gray-400 italic'>
-                            Doc: {order.fileName}
-                          </span>
-                        )}
-                      </div>
-                      <div className='flex gap-2 mt-2'>
-                        <input
-                          id='uploadDoc'
-                          type='file'
-                          className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
-                          onChange={handleFileChange}
-                        />
-                        {selectedFile ? (
-                          <button
-                            type='button'
-                            onClick={handleFileUpload}
-                            className='primary-button h-10'
-                          >
-                            {newFile ? "Upload" : "Uploading..."}
-                          </button>
-                        ) : order.fileId ? (
-                          <button
-                            type='button'
-                            onClick={handleFileDownload}
-                            className='primary-button h-10'
-                          >
-                            Download
-                          </button>
-                        ) : null}
-                      </div>
+                  <div className='md:mb-4'>
+                    <div className='flex justify-between mb-2'>
+                      <span>Upload P.O.:</span>
+                      {order.fileId && (
+                        <span className='text-xs text-gray-400 italic'>
+                          Doc: {order.fileName}
+                        </span>
+                      )}
                     </div>
-                  </>
-                )}
+                    <div className='flex gap-2 mt-2'>
+                      <input
+                        id='uploadDoc'
+                        type='file'
+                        className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                        onChange={handleFileChange}
+                      />
+                      {selectedFile ? (
+                        <button
+                          type='button'
+                          onClick={handleFileUpload}
+                          className='primary-button h-10'
+                        >
+                          {newFile ? "Upload" : "Uploading..."}
+                        </button>
+                      ) : order.fileId ? (
+                        <button
+                          type='button'
+                          onClick={handleFileDownload}
+                          className='primary-button h-10'
+                        >
+                          Download
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

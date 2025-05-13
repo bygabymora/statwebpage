@@ -185,7 +185,7 @@ export default function PlaceOrder({
     handleSendEmails(emailMessage, contactToEmail);
   };
 
-  const baseAction = async (showStatusMessage, router) => {
+  const baseAction = async () => {
     try {
       const updatedEstimateItems = orderItems.map((item) => ({
         ...item,
@@ -298,20 +298,22 @@ export default function PlaceOrder({
         ...order,
         status: "Completed",
       };
+      console.log("orderToPlace", orderToPlace);
       const { data } = await axios.post("/api/orders", {
         order: orderToPlace,
       });
-
+      console.log("Creating Estimate", data);
       await baseAction();
-
+      console.log("Clearing cart");
       await axios.patch(`/api/users/${session.user?._id}/cart`, {
         action: "clear",
       });
-
+      console.log("Updating customer addresses");
       await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
         customer: customer,
       });
 
+      console.log("Updating order");
       const updatedUser = await fetchUserData();
       setUser((prev) => ({
         ...prev,
@@ -328,8 +330,11 @@ export default function PlaceOrder({
 
       sendEmail();
       Cookies.remove("orderId");
+
+      console.log("Order placed successfully:", data);
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
+        console.log("Redirecting to Stripe checkout...");
         const stripe = await stripePromise;
 
         if (!stripe || typeof stripe.redirectToCheckout !== "function") {
@@ -339,7 +344,7 @@ export default function PlaceOrder({
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
           totalPrice: Number(totalPrice),
-          orderId: data._id,
+          orderId: order._id,
         });
 
         const result = await stripe.redirectToCheckout({
@@ -937,41 +942,23 @@ export default function PlaceOrder({
                   </li>
                   <li>
                     {paymentMethod === "Stripe" ? (
-                      <form onSubmit={placeOrderHandler} method='POST'>
-                        <section>
-                          <input
-                            autoComplete='off'
-                            hidden
-                            name='totalPrice'
-                            value={totalPrice}
-                            readOnly
-                          />
-                          <input
-                            autoComplete='off'
-                            hidden
-                            name='orderId'
-                            value={order._id}
-                            readOnly
-                          />
-                          <button
-                            type='submit'
-                            role='link'
-                            className='primary-button w-full'
-                          >
-                            <div className='flex flex-row align-middle justify-center items-center '>
-                              Secure Checkout &nbsp; <AiTwotoneLock />
-                            </div>
-                            <Image
-                              src={Stripe}
-                              alt='Checkout with Stripe'
-                              height={80}
-                              width={200}
-                              className='mt-2'
-                              loading='lazy'
-                            />
-                          </button>
-                        </section>
-                      </form>
+                      <button
+                        onClick={placeOrderHandler}
+                        type='button'
+                        className='primary-button w-full'
+                      >
+                        <div className='flex flex-row align-middle justify-center items-center '>
+                          Secure Checkout &nbsp; <AiTwotoneLock />
+                        </div>
+                        <Image
+                          src={Stripe}
+                          alt='Checkout with Stripe'
+                          height={80}
+                          width={200}
+                          className='mt-2'
+                          loading='lazy'
+                        />
+                      </button>
                     ) : paymentMethod === "Paypal" ? (
                       isPending ? (
                         <div>Loading...</div>

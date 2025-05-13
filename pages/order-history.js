@@ -35,6 +35,128 @@ function OrderHistoryScreen() {
     };
     fetchOrders();
   }, []);
+
+  const getShippingStatus = (shipping) => {
+    if (!shipping) {
+      console.error("Missing shipping data");
+      return "Error: No Shipping Provided";
+    }
+
+    const {
+      trackingNumber,
+      packingSlip,
+      isMaster,
+      sendingDate,
+      deliveryDate,
+      deliveryEstimatedDate,
+      finalFileId,
+      emailSent,
+    } = shipping;
+
+    const statuses = new Set(); // Use Set to prevent duplicate statuses
+
+    // Status: No Tracking Number
+    if (!trackingNumber) {
+      statuses.add("No Tracking Number");
+    }
+
+    // Status: No Packing Slip
+    if (
+      isMaster &&
+      (!packingSlip?.packingSlipItems?.length ||
+        packingSlip.packingSlipItems.every((item) => item.quantity === 0))
+    ) {
+      statuses.add("No Packing Slip");
+    }
+
+    // Status: Delivered (takes priority over Has Ship Date and Programmed)
+    if (deliveryDate) {
+      statuses.add("Has Ship Date | Delivered");
+    } else {
+      // Status: Has Ship Date (Only if not delivered)
+      if (sendingDate) {
+        statuses.add("Has Ship Date");
+      }
+
+      // Status: Programmed Delivery (Only if not delivered)
+      if (deliveryEstimatedDate) {
+        statuses.add("Programed");
+      }
+    }
+
+    // Default status if no other status was added
+    if (statuses.size === 0) {
+      statuses.add("Created");
+    }
+    if (finalFileId) {
+      statuses.add("Pack Created");
+    }
+    if (emailSent) {
+      statuses.add("Confirmation Sent");
+    }
+
+    return Array.from(statuses).join(" | ");
+  };
+
+  const shippingsShippmentStatus = (shippings) => {
+    if (!shippings || shippings?.length === 0) return "No Shipments Created";
+    const shippingStatuses =
+      shippings?.map((shipping) => getShippingStatus(shipping)) || [];
+
+    let allReadyToShip = true;
+    let allCreated = true;
+    let someHasShipDate = false;
+    let someCreated = false;
+
+    for (const status of shippingStatuses) {
+      if (!status) continue;
+
+      // Check for "Has Ship Date" or "Programed"
+      if (!status.includes("Has Ship Date") && !status.includes("Programed")) {
+        allReadyToShip = false;
+      }
+
+      if (status.includes("Has Ship Date")) {
+        someHasShipDate = true;
+      }
+
+      // Check for "Created"
+      if (!status.includes("Created")) {
+        allCreated = false;
+      }
+
+      if (status.includes("Created")) {
+        someCreated = true;
+      }
+    }
+
+    // Determine final status
+
+    if (allReadyToShip) return "All Shipments with Ship Date";
+    if (someHasShipDate) return "Some Shipments with Ship Date";
+    if (allCreated) return "All Shipments Created";
+    if (someCreated) return "Some Shipments Created";
+
+    return null;
+  };
+
+  const paymentAmountStatus = (invoice) => {
+    let status = "";
+    invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
+      ? (status = "Paid")
+      : invoice.balance === invoice?.totalPrice
+      ? (status = "Not Paid")
+      : invoice?.balance > 0 &&
+        invoice?.balance <
+          invoice.totalPrice -
+            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+      ? (status = "Partial Payment")
+      : invoice.balance < 0
+      ? (status = "Over Payment")
+      : (status = "Not Paid");
+    return status;
+  };
+
   return (
     <Layout title='Order History'>
       <h1 className='mb-4 text-xl'>Order History</h1>
@@ -44,63 +166,88 @@ function OrderHistoryScreen() {
         <div className='alert-error'>{error}</div>
       ) : (
         <div className='overflow-x-auto mb-4'>
-          <table className='table-auto min-w-full border-collapse border'>
-            <thead className='border'>
-              <tr>
-                <th className='px-5 border text-left'>ID</th>
-                <th className='p-5 border text-left'>DATE</th>
-                <th className='p-5 border text-left'>TOTAL</th>
-                <th className='p-5 border text-left'>PAID</th>
-                <th className='p-5 border text-left'>PROCESSED</th>
-                <th className='p-5 border text-left'>DELIVERED</th>
-                <th className='p-5 border text-left'>ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order._id} className='border'>
-                  <td className=' p-5 border'>
-                    {order._id.substring(20, 24).toUpperCase()}
-                  </td>
-                  <td className=' p-5 border'>
-                    {order.createdAt.substring(0, 10)}
-                  </td>
-                  <td className=' p-5 border'>
-                    $
-                    {new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }).format(order.totalPrice)}
-                  </td>
-                  <td className=' p-5 border'>
-                    {order.isPaid
-                      ? `${order.paidAt.substring(0, 10)}`
-                      : "Not Paid"}
-                  </td>
-                  <td className=' p-5 border'>
-                    {order.isDelivered
-                      ? `${order.deliveredAt.substring(0, 10)}`
-                      : "Not Processed"}
-                  </td>
-                  <td className=' p-5 border'>
-                    {order.isAtCostumers
-                      ? `${order.atCostumersDate.substring(0, 10)}`
-                      : "Not Delivered"}
-                  </td>
-                  <td className=' p-5 '>
-                    <Link
-                      className='font-bold underline'
-                      href={`/order/${order._id}`}
-                      style={{ color: "#144e8b" }}
-                      passHref
-                    >
-                      Details
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {console.log("orders", orders)}
+          <div className='space-y-4'>
+            {orders.map((order) => (
+              <div
+                key={order._id}
+                className='border rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200 bg-white'
+              >
+                {/* Universal Grid with Labels */}
+                <div className='grid grid-cols-2 md:grid-cols-6 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
+                  {/* ORDER # */}
+                  <div>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                      ORDER #
+                    </div>
+                    <div className='text-gray-800 font-semibold'>
+                      {order.docNumber}
+                    </div>
+                  </div>
+
+                  {/* DATE */}
+                  <div>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                      DATE
+                    </div>
+                    <div>{order.createdAt.substring(0, 10)}</div>
+                  </div>
+
+                  {/* TOTAL */}
+                  <div>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                      TOTAL
+                    </div>
+                    <div>
+                      $
+                      {new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(order.totalPrice)}
+                    </div>
+                  </div>
+
+                  {/* PAID */}
+                  <div>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                      PAYMENT STATUS
+                    </div>
+                    <div>
+                      {order.isPaid
+                        ? "Paid"
+                        : order.invoice
+                        ? paymentAmountStatus(order.invoice)
+                        : "Not Paid"}
+                    </div>
+                  </div>
+
+                  {/* PROCESSED */}
+                  <div className='col-span-2 md:col-span-1'>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1 '>
+                      SHIPMENT STATUS
+                    </div>
+                    <div>
+                      {order.invoice && order.invoice?.shippings?.length > 0
+                        ? shippingsShippmentStatus(order.invoice?.shippings)
+                        : "Shipment Not Processed Yet "}
+                    </div>
+                  </div>
+
+                  {/* ACTION */}
+                  <div className='flex flex-col justify-center  md:justify-center items-center text-center'>
+                    <div className='flex items-center text-center'>
+                      <Link
+                        href={`/order/${order._id}`}
+                        className='text-[#144e8b] font-semibold hover:underline ml-2 md:ml-0 items-center text-center block'
+                      >
+                        See Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </Layout>
