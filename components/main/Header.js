@@ -72,7 +72,9 @@ const Header = () => {
         name: "raw-search",
         email: "raw-search",
       });
-      router.push(`/search?query=${encodeURIComponent(searchWord)}`);
+      setSearchQuery("");
+      setSuggestions([]);
+      router.push(`/products?query=${encodeURIComponent(searchWord)}`);
     } catch (error) {
       console.error(
         "Error in the search:",

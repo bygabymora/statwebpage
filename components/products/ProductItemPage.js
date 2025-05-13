@@ -249,7 +249,8 @@ export const ProductItemPage = ({ product }) => {
               !isOutOfStockBox &&
               !isOutOfStockClearance &&
               active &&
-              currentCountInStock > 0 && (
+              currentCountInStock > 0 &&
+              hasPrice && (
                 <div className='mb-2 flex items-center justify-center lg:block'>
                   <div className='font-bold mt-4'>Quantity &nbsp;</div>
                   <div className='flex items-center flex-row'>

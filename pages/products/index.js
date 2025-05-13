@@ -7,16 +7,29 @@ import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import SearchForm from "../../components/products/SearchForm";
 
 export default function Products() {
   const router = useRouter();
-  const { manufacturer } = router.query;
+  const [name, setName] = useState("");
+  const [searchedWord, setSearchedWord] = useState("");
+  const { manufacturer, query } = router.query;
+
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
   const manufacturersMap = new Map();
   const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
+
+  const fetchSearchResults = async () => {
+    const { data } = await axios.get(`/api/search?keyword=${query}`);
+    setProducts(data);
+    if (data.length === 0) {
+      setName(query);
+      setSearchedWord(query);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -31,8 +44,14 @@ export default function Products() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!query) {
+      console.log("No query provided");
+      fetchData();
+    } else {
+      console.log("Query provided:", query);
+      fetchSearchResults();
+    }
+  }, [query]);
 
   // FIX: Every time you change manufacturers in the URL, it updates the selected manufacturer
   useEffect(() => {
@@ -172,13 +191,20 @@ export default function Products() {
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2'>
             {loading ? (
               <p>Loading products...</p>
-            ) : (
+            ) : products.length > 0 ? (
               filteredProducts.map((product, index) => (
                 <div key={index}>
                   <ProductItemPage product={product} />
                 </div>
               ))
-            )}
+            ) : products.length === 0 && searchedWord ? (
+              <SearchForm
+                searchedWord={searchedWord}
+                setSearchedWord={setSearchedWord}
+                name={name}
+                setName={setName}
+              />
+            ) : null}
           </div>
         </div>
       </div>
