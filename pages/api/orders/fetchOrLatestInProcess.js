@@ -1,6 +1,7 @@
 import db from "../../../utils/db";
 import Order from "../../../models/Order";
 import { getToken } from "next-auth/jwt";
+import mongoose from "mongoose";
 
 const handler = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ const handler = async (req, res) => {
 
     let order;
 
-    if (orderId) {
+    if (orderId && mongoose.Types.ObjectId.isValid(orderId)) {
       order = await Order.findById(orderId);
     } else {
       order = await Order.findOne({

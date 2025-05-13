@@ -778,16 +778,16 @@ export default function PlaceOrder({
 
                   <div className='flex flex-1 flex-col'>
                     <h3 className='font-bold'>Shipping Instructions</h3>
-                    {shippingPreferences.shippingMethod} -{" "}
-                    {shippingPreferences.carrier}
+                    {shippingPreferences?.shippingMethod} -{" "}
+                    {shippingPreferences?.carrier}
                     <br />
-                    {shippingPreferences.account && (
-                      <span> Account: {shippingPreferences.account}</span>
+                    {shippingPreferences?.account && (
+                      <span> Account: {shippingPreferences?.account}</span>
                     )}
-                    {shippingPreferences.paymentMethod && (
+                    {shippingPreferences?.paymentMethod && (
                       <span>
                         {" "}
-                        Payment Method: {shippingPreferences.paymentMethod}
+                        Payment Method: {shippingPreferences?.paymentMethod}
                       </span>
                     )}
                     <div>{shippingAddress.notes}</div>

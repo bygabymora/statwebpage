@@ -27,6 +27,7 @@ export default function CartScreen() {
       });
       if (data) {
         finalOrder = data;
+        Cookies.set("orderId", data._id);
       }
 
       if (user && user.cart?.length > 0) {
