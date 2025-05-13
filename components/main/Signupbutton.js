@@ -1,12 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BsPerson } from "react-icons/bs";
 import { signOut, useSession } from "next-auth/react";
 import Cookies from "js-cookie";
-import { Store } from "../../utils/Store";
 import Link from "next/link";
 const SignupButton = () => {
   const { status, data: session } = useSession();
-  const { dispatch } = useContext(Store);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const active =
@@ -34,7 +32,6 @@ const SignupButton = () => {
 
   const logoutClickHandler = () => {
     Cookies.remove("cart");
-    dispatch({ type: "CART_RESET" });
     signOut({ callbackUrl: "/Login" });
   };
 

@@ -1,20 +1,26 @@
 import React, { useEffect } from "react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BsCartX, BsTrash3 } from "react-icons/bs";
 import axios from "axios";
-import { Store } from "../../utils/Store";
+import { useSession } from "next-auth/react";
+import { useModalContext } from "../context/ModalContext";
 
 const Cart = ({ setActiveStep, order, setOrder }) => {
   const [stockAlert, setStockAlert] = useState(null);
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [productToRemove, setProductToRemove] = useState(null);
   useEffect(() => {
     setMounted(true);
   }, []);
+  const { setUser, fetchUserData, showStatusMessage } = useModalContext();
 
   useEffect(() => {
     if (!order.orderItems) return;
+
     const verifyStockOnCartLoad = async () => {
       for (const item of order.orderItems) {
         try {
@@ -28,11 +34,40 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             availableQuantity =
               data.box?.quickBooksQuantityOnHandProduction ?? 0;
           } else if (item.typeOfPurchase === "Clearance") {
-            availableQuantity = data.countInStockClearance ?? 0;
+            availableQuantity = data.each?.clearanceCountInStock ?? 0;
           }
 
           if (availableQuantity < item.quantity) {
-            dispatch({ type: "CART_REMOVE_ITEM", payload: item });
+            // ✅ Remove item from backend
+            await axios.delete(`/api/users/${session?.user?._id}/cart`, {
+              data: {
+                productId: item.productId,
+                typeOfPurchase: item.typeOfPurchase,
+              },
+            });
+
+            // ✅ Update frontend state
+            const updatedUser = await fetchUserData();
+            setUser((prev) => ({
+              ...prev,
+              cart: updatedUser.userData?.cart,
+            }));
+
+            // ✅ Update order state
+            const updatedOrderItems = updatedUser.userData?.cart || [];
+            const itemsPrice = updatedOrderItems.reduce(
+              (a, c) => a + c.quantity * c.price,
+              0
+            );
+
+            setOrder({
+              ...order,
+              orderItems: updatedOrderItems,
+              itemsPrice,
+              totalPrice: itemsPrice,
+            });
+
+            // ✅ Set stock alert
             setStockAlert({
               name: item.name,
               type: item.typeOfPurchase,
@@ -48,60 +83,103 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     verifyStockOnCartLoad();
   }, []);
 
-  const { dispatch } = useContext(Store);
-  const [showModal, setShowModal] = useState(false);
-  const [productToRemove, setProductToRemove] = useState(null);
-
   const removeItemHandler = (item) => {
     setProductToRemove(item);
     setShowModal(true);
   };
 
-  const confirmRemoveItem = () => {
+  const confirmRemoveItem = async () => {
     if (productToRemove) {
-      dispatch({ type: "CART_REMOVE_ITEM", payload: productToRemove });
+      try {
+        await axios.delete(`/api/users/${session.user?._id}/cart`, {
+          data: {
+            productId: productToRemove.productId,
+            typeOfPurchase: productToRemove.typeOfPurchase,
+          },
+        });
+
+        const updatedUser = await fetchUserData();
+        setUser((prev) => ({
+          ...prev,
+          cart: updatedUser.userData?.cart,
+        }));
+
+        // Optional: If you want to reflect the new cart in the order immediately
+        const updatedOrderItems = updatedUser.userData?.cart || [];
+        const itemsPrice = updatedOrderItems.reduce(
+          (a, c) => a + c.quantity * c.price,
+          0
+        );
+        setOrder((prev) => ({
+          ...prev,
+          orderItems: updatedOrderItems,
+          itemsPrice,
+          totalPrice: itemsPrice,
+        }));
+      } catch (error) {
+        console.error("Error removing item from cart:", error);
+        showStatusMessage("error", "Failed to remove item from cart");
+      }
     }
+
     setShowModal(false);
     setProductToRemove(null);
   };
 
   const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+    if (isNaN(quantity) || quantity <= 0) {
+      alert("Invalid quantity.");
+      return;
+    }
 
-    const { data } = await axios.get(`/api/products/${item.productId}`);
+    const { data: product } = await axios.get(
+      `/api/products/${item.productId}`
+    );
 
-    if (
-      data.typeOfPurchase === "Each" &&
-      item.each?.quickBooksQuantityOnHandProduction < quantity
-    ) {
+    const availableQty =
+      item.typeOfPurchase === "Each"
+        ? product.each?.quickBooksQuantityOnHandProduction ?? 0
+        : item.typeOfPurchase === "Box"
+        ? product.box?.quickBooksQuantityOnHandProduction ?? 0
+        : item.typeOfPurchase === "Clearance"
+        ? product.each?.clearanceCountInStock ?? 0
+        : 0;
+
+    if (quantity > availableQty) {
       alert("Sorry, we don't have enough of that item in stock.");
       return;
     }
-    if (
-      data.typeOfPurchase === "Box" &&
-      item.box?.quickBooksQuantityOnHandProduction < quantity
-    ) {
-      alert("Sorry, we don't have enough of that item in stock.");
-      return;
-    }
-    if (
-      data.typeOfPurchase === "Clearance" &&
-      item.countInStockClearance < quantity
-    ) {
-      alert("Sorry, we don't have enough of that item in stock.");
-      return;
-    }
-    dispatch({
-      type: "CART_UPDATE_ITEM", // Change to a new action type
-      payload: { ...item, quantity },
+
+    await axios.put(`/api/users/${session.user?._id}/cart`, {
+      productId: item.productId,
+      typeOfPurchase: item.typeOfPurchase,
+      quantity,
+      price: item.price,
+      wpPrice: item.wpPrice,
+      unitPrice: item.unitPrice,
     });
 
-    const itemsPrice = order.orderItems?.reduce(
+    // Refetch updated cart from backend
+    const updatedUser = await fetchUserData();
+    setUser((prev) => ({
+      ...prev,
+      cart: updatedUser.userData?.cart,
+    }));
+
+    // Update order totals
+    const updatedOrderItems = updatedUser.userData?.cart || [];
+    const itemsPrice = updatedOrderItems.reduce(
       (a, c) => a + c.quantity * c.price,
       0
     );
 
-    setOrder({ ...order, orderItems: order.orderItems, itemsPrice });
+    setOrder({
+      ...order,
+      orderItems: updatedOrderItems,
+      itemsPrice,
+      totalPrice: itemsPrice,
+    });
   };
 
   if (!mounted) return null;

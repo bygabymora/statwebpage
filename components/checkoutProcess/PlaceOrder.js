@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import Cookies from "js-cookie";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 import Link from "next/link";
@@ -11,10 +10,10 @@ import { useModalContext } from "../context/ModalContext";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { getError } from "../../utils/error";
-import { Store } from "../../utils/Store";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import states from "../../utils/states.json";
 import moment from "moment";
+import { useSession } from "next-auth/react";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -23,11 +22,8 @@ export default function PlaceOrder({
   setActiveStep,
   order,
   setOrder,
-  setCustomer,
   fetchOrder,
 }) {
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
   const {
     orderItems,
     shippingAddress,
@@ -35,7 +31,9 @@ export default function PlaceOrder({
     paymentMethod,
     shippingPreferences,
   } = order;
-  const { showStatusMessage } = useModalContext();
+  const { showStatusMessage, fetchUserData, setUser, setCustomer } =
+    useModalContext();
+  const { data: session } = useSession();
   const [loading] = useState(false);
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -164,12 +162,23 @@ export default function PlaceOrder({
         estimateToCreate,
       });
 
-      dispatch({ type: "CART_CLEAR_ITEMS" });
-      Cookies.set(
-        "cart",
-        JSON.stringify({ ...cart, cartItems: [], orderId: "" })
-      );
+      await axios.patch(`/api/users/${session.user?._id}/cart`, {
+        action: "clear",
+      });
 
+      const updatedUser = await fetchUserData();
+      setUser((prev) => ({
+        ...prev,
+        cart: updatedUser.userData?.cart,
+      }));
+
+      // Optional: clear local order object
+      setOrder((prev) => ({
+        ...prev,
+        orderItems: [],
+        itemsPrice: 0,
+        totalPrice: 0,
+      }));
       // If the payment method is Stripe, redirect to the Stripe checkout
       if (paymentMethod === "Stripe") {
         const stripe = await stripePromise;
