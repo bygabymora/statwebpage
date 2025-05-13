@@ -14,6 +14,10 @@ import formatPhoneNumber from "../../utils/functions/phoneModified";
 import states from "../../utils/states.json";
 import { useSession } from "next-auth/react";
 import Cookies from "js-cookie";
+import Stripe from "../../public/images/assets/PBS.png";
+import { AiTwotoneLock } from "react-icons/ai";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -23,6 +27,8 @@ export default function PlaceOrder({
   order,
   setOrder,
   fetchOrder,
+  paypalDispatch,
+  isPending,
 }) {
   const { orderItems, shippingAddress, paymentMethod, shippingPreferences } =
     order;
@@ -123,6 +129,22 @@ export default function PlaceOrder({
       return false;
     }
   };
+  useEffect(() => {
+    if (order._id && !order.isPaid && !window.paypal) {
+      const loadPaypalScript = async () => {
+        const { data: clientId } = await axios.get("/api/keys/paypal");
+        paypalDispatch({
+          type: "resetOptions",
+          value: {
+            "client-id": clientId,
+            currency: "USD",
+          },
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      };
+      loadPaypalScript();
+    }
+  }, [paypalDispatch, order._id, order.isPaid]);
 
   useEffect(() => {
     setEmail(shippingAddress.email);
@@ -375,6 +397,55 @@ export default function PlaceOrder({
       }));
     }
   };
+
+  const createOrder = (data, actions) => {
+    if (!actions || !actions.order) {
+      toast.error(
+        "PayPal SDK is not loaded properly. Please refresh the page."
+      );
+      return;
+    }
+
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: {
+              value: totalPrice,
+            },
+          },
+        ],
+      })
+      .then((orderID) => orderID);
+  };
+
+  function onApprove(data, actions) {
+    return actions.order.capture().then(async function (details) {
+      try {
+        const { data } = await axios.put(
+          `/api/orders/${order._id}/pay`,
+          details
+        );
+        showStatusMessage(
+          "success",
+          "Payment successful. Thank you for your order!"
+        );
+        sendEmail();
+
+        setOrder((prev) => ({
+          ...prev,
+          isPaid: true,
+          paidAt: data.paidAt,
+          paymentResult: data.paymentResult,
+        }));
+      } catch (error) {
+        showStatusMessage(
+          "error",
+          getError(error) || "An error occurred while processing the payment."
+        );
+      }
+    });
+  }
 
   return (
     <div>
@@ -865,14 +936,68 @@ export default function PlaceOrder({
                     </span>
                   </li>
                   <li>
-                    <button
-                      disabled={loading}
-                      onClick={placeOrderHandler}
-                      className='w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
-                    >
-                      {loading ? "Processing..." : "Confirm Order"}
-                    </button>
+                    {paymentMethod === "Stripe" ? (
+                      <form onSubmit={placeOrderHandler} method='POST'>
+                        <section>
+                          <input
+                            autoComplete='off'
+                            hidden
+                            name='totalPrice'
+                            value={totalPrice}
+                            readOnly
+                          />
+                          <input
+                            autoComplete='off'
+                            hidden
+                            name='orderId'
+                            value={order._id}
+                            readOnly
+                          />
+                          <button
+                            type='submit'
+                            role='link'
+                            className='primary-button w-full'
+                          >
+                            <div className='flex flex-row align-middle justify-center items-center '>
+                              Secure Checkout &nbsp; <AiTwotoneLock />
+                            </div>
+                            <Image
+                              src={Stripe}
+                              alt='Checkout with Stripe'
+                              height={80}
+                              width={200}
+                              className='mt-2'
+                              loading='lazy'
+                            />
+                          </button>
+                        </section>
+                      </form>
+                    ) : paymentMethod === "Paypal" ? (
+                      isPending ? (
+                        <div>Loading...</div>
+                      ) : (
+                        <PayPalButtons
+                          className='fit-content mt-3'
+                          createOrder={createOrder}
+                          onApprove={onApprove}
+                          onError={showStatusMessage(
+                            "error",
+                            "Payment failed."
+                          )}
+                          forceReRender={[totalPrice]}
+                        ></PayPalButtons>
+                      )
+                    ) : paymentMethod === "PO Number" ? (
+                      <button
+                        disabled={loading}
+                        onClick={placeOrderHandler}
+                        className='w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
+                      >
+                        {loading ? "Processing..." : "Confirm Order"}
+                      </button>
+                    ) : null}
                   </li>
+
                   <li className='mt-3 text-gray-600 text-sm'>
                     We will contact you for more information depending on your
                     shipping preference selection.

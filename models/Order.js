@@ -77,7 +77,11 @@ const orderSchema = new mongoose.Schema(
     fileId: { type: String, required: false },
     fileName: { type: String, required: false },
     defaultTerm: { type: String, required: false },
-    paymentResult: { id: String, status: String, email_address: String },
+    paymentResult: {
+      id: { type: String, required: false },
+      status: { type: String, required: false },
+      email_address: { type: String, required: false },
+    },
     itemsPrice: { type: Number, required: false },
     totalPrice: { type: Number, required: false },
     isPaid: { type: Boolean, required: false, default: false },

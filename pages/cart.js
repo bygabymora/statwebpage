@@ -8,9 +8,11 @@ import PaymentMethod from "../components/checkoutProcess/PaymentMethod";
 import PlaceOrder from "../components/checkoutProcess/PlaceOrder";
 import Cart from "../components/checkoutProcess/Cart";
 import { useModalContext } from "../components/context/ModalContext";
+import { usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
 export default function CartScreen() {
   const [activeStep, setActiveStep] = useState(0);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [order, setOrder] = useState({});
   const { user, setUser, customer, setCustomer } = useModalContext();
   const orderId = Cookies.get("orderId");
@@ -104,8 +106,11 @@ export default function CartScreen() {
           user={user}
           setActiveStep={setActiveStep}
           fetchOrder={fetchOrder}
+          paypalDispatch={paypalDispatch}
+          isPending={isPending}
         />
       ) : null}
     </Layout>
   );
 }
+CartScreen.usePayPal = true;
