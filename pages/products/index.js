@@ -162,12 +162,14 @@ export default function Products() {
                 <div
                   onClick={handleShowAll}
                   className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 sticky top-0 ${
-                    selectedManufacturer === null
+                    selectedManufacturer === null && !query
                       ? "primary-button"
                       : "secondary-button"
                   }`}
                 >
-                  ALL PRODUCTS
+                  {selectedManufacturer === null && !query
+                    ? "ALL PRODUCTS"
+                    : "SEE ALL PRODUCTS"}
                 </div>
                 {manufacturers
                   .slice()
@@ -176,7 +178,7 @@ export default function Products() {
                     <div
                       key={index}
                       onClick={() => handleManufacturerClick(manufacturer)}
-                      className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
+                      className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg py-2 ${
                         selectedManufacturer === manufacturer
                           ? "bg-slate-200"
                           : ""
