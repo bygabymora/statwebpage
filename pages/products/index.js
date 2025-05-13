@@ -21,9 +21,7 @@ export default function Products() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const sortDirection = 1;
-      const sortQuery = sortDirection === 1 ? "asc" : "desc";
-      const { data } = await axios.get(`/api/products?sort=${sortQuery}`);
+      const { data } = await axios.get(`/api/products`);
       setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -131,7 +129,7 @@ export default function Products() {
           <ul
             className={`${
               showManufacturers ? "block" : "hidden"
-            } md:block md:sticky md:top-[8rem]`}
+            } md:block md:sticky md:top-[16rem]`}
           >
             <div
               onClick={handleShowAll}
