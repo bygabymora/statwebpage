@@ -55,7 +55,7 @@ export default function Layout({
 
     if (approved === false) {
       setApprovalPending(true); // Mark as pending
-      showStatusMessage("error", approvalMessage.body);
+      showStatusMessage("error", approvalMessage.body, "warning");
       openAlertModal(approvalMessage);
     } else if (active === false) {
       showStatusMessage("error", disabledMessage.body);

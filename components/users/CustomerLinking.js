@@ -87,7 +87,7 @@ export default function CustomerLinking() {
       <h1 className='text-xl font-semibold mb-4 '>
         Link Customer - {user?.companyName} - {user?.companyEinCode}
       </h1>
-
+      {console.log("customer", customer)}
       {/* Search Input */}
       <div className='relative mb-6'>
         <label htmlFor='customer-search' className='block text-sm font-medium '>

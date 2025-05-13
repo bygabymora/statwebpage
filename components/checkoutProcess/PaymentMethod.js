@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useModalContext } from "../context/ModalContext";
 import axios from "axios";
@@ -16,6 +15,7 @@ export default function PaymentMethod({
   const [selectedMethod, setSelectedMethod] = useState(
     order.paymentMethod || null
   );
+  const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -61,10 +61,15 @@ export default function PaymentMethod({
   };
 
   const handleFileUpload = async (e) => {
+    setUploading(true);
     e.preventDefault();
     if (!selectedFile) return;
     setNewFile(false);
-
+    setOrder((cur) => ({
+      ...cur,
+      fileId: null,
+      fileName: null,
+    }));
     try {
       const ext = selectedFile.name.split(".").pop();
       const newFileName = `PO-${order.poNumber}-${customer.companyName}.${ext}`;
@@ -88,8 +93,8 @@ export default function PaymentMethod({
         fileId: data.order.fileId,
         fileName: data.order.fileName,
       }));
-      fetchOrder();
       setSelectedFile(null);
+      setUploading(false);
       showStatusMessage("success", "P.O. document uploaded");
     } catch (err) {
       console.error("Upload Error:", err);
@@ -102,7 +107,8 @@ export default function PaymentMethod({
     e.preventDefault();
 
     if (!order.paymentMethod) {
-      return toast.error("Please select a payment method");
+      showStatusMessage("error", "Please select a payment method");
+      return;
     }
 
     // 2) Persist (create/update) the order
@@ -290,13 +296,19 @@ export default function PaymentMethod({
             >
               Back
             </button>
-            <button
-              type='button'
-              onClick={(e) => handleSubmit(e)}
-              className='px-6 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition-all'
-            >
-              Next
-            </button>
+            {(order.paymentMethod && order.paymentMethod !== "PO Number") ||
+            (order.paymentMethod === "PO Number" &&
+              order.poNumber &&
+              !newFile &&
+              !uploading) ? (
+              <button
+                type='button'
+                onClick={(e) => handleSubmit(e)}
+                className='px-6 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition-all'
+              >
+                Next
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

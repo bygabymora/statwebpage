@@ -154,6 +154,7 @@ export default function Shipping({
             city: order.billingAddress?.city,
             postalCode: order.billingAddress?.postalCode,
           },
+          status: "In Process",
           purchaseExecutive: [
             ...customer.purchaseExecutive.map((executive) => {
               if (executive.email === user.email) {

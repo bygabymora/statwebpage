@@ -6,12 +6,6 @@ import axios from "axios";
 const menuItems = [
   {
     title: <Link href='/'>Home</Link>,
-    subcategories: [
-      {
-        title: "Home",
-        links: [{ name: "Home", href: "/" }],
-      },
-    ],
   },
   {
     title: "Manufacturers",
@@ -19,12 +13,6 @@ const menuItems = [
   },
   {
     title: <Link href='/products'>Products</Link>,
-    subcategories: [
-      {
-        title: "Categories",
-        links: [{ name: "Surgical Supplies", href: "/products" }],
-      },
-    ],
   },
   {
     title: <Link href='/about'>About Us</Link>,
@@ -56,12 +44,6 @@ const menuItems = [
   },
   {
     title: <Link href='/news'>News</Link>,
-    subcategories: [
-      {
-        title: "Latest News",
-        links: [{ name: "News", href: "/news" }],
-      },
-    ],
   },
 ];
 
@@ -169,7 +151,7 @@ const Menu = () => {
               {item.title}
             </span>
 
-            {item.subcategories.length > 0 && (
+            {item.subcategories && item.subcategories?.length > 0 && (
               <div
                 className={`custom-scrollbar absolute left-1/2 -translate-x-1/2 top-full w-80 max-h-80 overflow-y-auto 
                 bg-gray-100 shadow-2xl rounded-lg border border-gray-200 transition-all duration-200 z-50 ${

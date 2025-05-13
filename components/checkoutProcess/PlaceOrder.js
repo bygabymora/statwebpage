@@ -24,13 +24,8 @@ export default function PlaceOrder({
   setOrder,
   fetchOrder,
 }) {
-  const {
-    orderItems,
-    shippingAddress,
-    billingAddress,
-    paymentMethod,
-    shippingPreferences,
-  } = order;
+  const { orderItems, shippingAddress, paymentMethod, shippingPreferences } =
+    order;
   const {
     showStatusMessage,
     fetchUserData,
@@ -38,6 +33,7 @@ export default function PlaceOrder({
     setCustomer,
     customer,
     user,
+    openAlertModal,
   } = useModalContext();
   const { data: session } = useSession();
   const [loading] = useState(false);
@@ -47,6 +43,7 @@ export default function PlaceOrder({
   const [emailTotalOrder, setEmailTotalOrder] = useState("");
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
+  const [insufficientStockMessage, setInsufficientStockMessage] = useState([]);
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
@@ -67,16 +64,64 @@ export default function PlaceOrder({
     [itemsPrice, discountAmount]
   );
 
-  const validateOrder = () => {
-    if (
-      !shippingAddress ||
-      !billingAddress ||
-      !paymentMethod ||
-      orderItems.length === 0
-    ) {
+  const validateOrder = async () => {
+    try {
+      const { data: updatedCart } = await axios.post(
+        "/api/cart/updateProducts",
+        {
+          cartItems: order.orderItems,
+        }
+      );
+
+      const newInsufficientStockMessages = [];
+      const correctedOrderItems = order.orderItems.map((item) => {
+        const product = updatedCart.updatedCart.find(
+          (p) => p.productId === item.productId
+        );
+        if (!product) return item;
+
+        const available =
+          (product.quickBooksQuantityOnHandProduction ?? 0) -
+          (product.heldStock ?? 0);
+
+        if (item.quantity > available) {
+          newInsufficientStockMessages.push({
+            name: item.name,
+            previousQuantity: item.quantity,
+            availableQuantity: available,
+          });
+
+          return {
+            ...item,
+            quantity: available,
+          };
+        }
+
+        return item;
+      });
+
+      setInsufficientStockMessage(newInsufficientStockMessages);
+
+      const everyItemWithSufficientStock =
+        newInsufficientStockMessages.length === 0;
+      setOrder((prev) => ({
+        ...prev,
+        orderItems: correctedOrderItems,
+      }));
+
+      if (!everyItemWithSufficientStock) {
+        showStatusMessage(
+          "error",
+          "Some items were updated due to insufficient stock."
+        );
+      }
+
+      return everyItemWithSufficientStock;
+    } catch (error) {
+      console.error("Error validating order:", error);
+      showStatusMessage("error", "Error checking product availability.");
       return false;
     }
-    return true;
   };
 
   useEffect(() => {
@@ -123,7 +168,12 @@ export default function PlaceOrder({
       const updatedEstimateItems = orderItems.map((item) => ({
         ...item,
         typeOfPurchase: item.typeOfPurchase?.toLowerCase(),
+        approved: true,
       }));
+
+      const buyer = customer?.purchaseExecutive?.find(
+        (exec) => exec.wpId === user?._id
+      );
 
       // Update estimate API call
       await axios.post(`/api/estimates`, {
@@ -152,9 +202,10 @@ export default function PlaceOrder({
           fedexAccountNumber: customer?.fedexAccountNumber,
           upsAccountNumber: customer?.upsAccountNumber,
           buyer: {
-            name: user?.firstName,
-            email: user?.email,
-            lastName: user?.lastName,
+            name: buyer?.name,
+            email: buyer?.email,
+            lastName: buyer?.lastName,
+            _id: buyer?._id,
             role: "Buyer",
           },
           location: {
@@ -199,6 +250,7 @@ export default function PlaceOrder({
         fileName: order.fileName,
         status: "On Hold",
         timePeriod: 24,
+        linkedWpOrderId: order._id,
       });
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -214,14 +266,20 @@ export default function PlaceOrder({
 
   const placeOrderHandler = async () => {
     if (!validateOrder()) {
-      toast.error("Please fill all required fields.");
+      openAlertModal(
+        `Some items were updated due to insufficient stock. ${insufficientStockMessage.map()}`
+      );
       return;
     }
     try {
-      // Create the order in your backend
+      const orderToPlace = {
+        ...order,
+        status: "Completed",
+      };
       const { data } = await axios.post("/api/orders", {
-        order,
+        order: orderToPlace,
       });
+
       await baseAction();
 
       await axios.patch(`/api/users/${session.user?._id}/cart`, {

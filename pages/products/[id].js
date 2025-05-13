@@ -233,6 +233,16 @@ export default function ProductScreen() {
     { name: product.name },
   ];
 
+  useEffect(() => {
+    if (!active) {
+      if (product.each?.description) {
+        setCurrentDescription(product.each.description);
+      } else if (product.box?.description) {
+        setCurrentDescription(product.box.description);
+      }
+    }
+  }, [active, product]);
+
   return (
     <Layout title={product.name} product={product}>
       <nav className='text-sm text-gray-700'>
@@ -387,12 +397,13 @@ export default function ProductScreen() {
             {(isOutOfStock ||
               isOutOfStockBox ||
               isOutOfStockClearance ||
-              currentCountInStock <= 0) && (
-              <div className='mb-2 justify-center gap-10 text-center items-center mt-2'>
-                <div className='font-bold'>Status</div>
-                <div className=''>Out of Stock</div>
-              </div>
-            )}
+              currentCountInStock <= 0) &&
+              active && (
+                <div className='mb-2 justify-center gap-10 text-center items-center mt-2'>
+                  <div className='font-bold'>Status</div>
+                  <div className=''>Out of Stock</div>
+                </div>
+              )}
             {showModal && (
               <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
                 <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
@@ -508,70 +519,60 @@ export default function ProductScreen() {
                     )
                   )}
                   {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-                    product.box?.quickBooksQuantityOnHandProduction > 0) && (
-                    <div>
-                      <div className='mb-2 flex justify-between'>
-                        <div className='font-bold'>Status</div>
-                        <div>
-                          {(typeOfPurchase === "Each" && isOutOfStock) ||
-                          (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                          (typeOfPurchase === "Clearance" &&
-                            isOutOfStockClearance)
-                            ? "Out of Stock"
-                            : "In Stock"}
-                        </div>
-                      </div>
-                      {!session?.user?.active ||
-                      !session?.user?.approved ||
-                      status !== "authenticated" ? (
-                        <>
-                          <div className='border-t border-gray-300 my-2' />
-                          <div className='text-sm text-gray-500 mt-1'>
-                            {!session?.user?.active ||
-                            status !== "authenticated"
-                              ? "Sign in to purchase this product."
-                              : "You will be able to purchase this product when your account is Approved."}
+                    product.box?.quickBooksQuantityOnHandProduction > 0) &&
+                    active && (
+                      <div>
+                        {console.log("session", session)}
+                        <div className='mb-2 flex justify-between'>
+                          <div className='font-bold'>Status</div>
+                          <div>
+                            {(typeOfPurchase === "Each" && isOutOfStock) ||
+                            (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                            (typeOfPurchase === "Clearance" &&
+                              isOutOfStockClearance)
+                              ? "Out of Stock"
+                              : "In Stock"}
                           </div>
-                        </>
-                      ) : null}
-                      {active === "loading"
-                        ? "Loading"
-                        : active && (
-                            <>
-                              {!hasPrice || currentPrice === 0 ? (
-                                <Link href='/support'>
-                                  <button className='primary-button cart-button text-white'>
-                                    Call for Price
-                                  </button>
-                                </Link>
-                              ) : (
-                                <button
-                                  className='primary-button cart-button my-2'
-                                  type='button'
-                                  onClick={addToCartHandler}
-                                  disabled={
-                                    (typeOfPurchase === "Each" &&
+                        </div>
+
+                        {active === "loading"
+                          ? "Loading"
+                          : active && (
+                              <>
+                                {!hasPrice || currentPrice === 0 ? (
+                                  <Link href='/support'>
+                                    <button className='primary-button cart-button text-white'>
+                                      Call for Price
+                                    </button>
+                                  </Link>
+                                ) : (
+                                  <button
+                                    className='primary-button cart-button my-2'
+                                    type='button'
+                                    onClick={addToCartHandler}
+                                    disabled={
+                                      (typeOfPurchase === "Each" &&
+                                        isOutOfStock) ||
+                                      (typeOfPurchase === "Box" &&
+                                        isOutOfStockBox) ||
+                                      (typeOfPurchase === "Clearance" &&
+                                        isOutOfStockClearance)
+                                    }
+                                  >
+                                    {(typeOfPurchase === "Each" &&
                                       isOutOfStock) ||
                                     (typeOfPurchase === "Box" &&
                                       isOutOfStockBox) ||
                                     (typeOfPurchase === "Clearance" &&
                                       isOutOfStockClearance)
-                                  }
-                                >
-                                  {(typeOfPurchase === "Each" &&
-                                    isOutOfStock) ||
-                                  (typeOfPurchase === "Box" &&
-                                    isOutOfStockBox) ||
-                                  (typeOfPurchase === "Clearance" &&
-                                    isOutOfStockClearance)
-                                    ? "Out of Stock"
-                                    : "Add to Cart"}
-                                </button>
-                              )}
-                            </>
-                          )}
-                    </div>
-                  )}
+                                      ? "Out of Stock"
+                                      : "Add to Cart"}
+                                  </button>
+                                )}
+                              </>
+                            )}
+                      </div>
+                    )}
                 </div>
               )}
               {showPopup && (
@@ -601,49 +602,75 @@ export default function ProductScreen() {
                 (isOutOfStock || currentCountInStock <= 0)) ||
                 (typeOfPurchase === "Box" &&
                   (isOutOfStockBox || currentCountInStock <= 0)) ||
-                (typeOfPurchase === "Clearance" && isOutOfStockClearance)) && (
-                <form
-                  className='text-center p-2'
-                  ref={form}
-                  onSubmit={sendEmail}
-                >
-                  <label className='mt-3 font-bold'>Join Our Wait List</label>
-                  <input
-                    type='text'
-                    name='user_name'
-                    className='contact__form-input'
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    placeholder='Name'
-                    required
-                  />
-                  <input
-                    type='email'
-                    name='user_email'
-                    className='contact__form-input mt-2'
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    placeholder='Email'
-                    required
-                  />
-                  <input
-                    type='text'
-                    name='emailManufacturer'
-                    className='contact__form-input'
-                    onChange={(e) => setEmailManufacturer(e.target.value)}
-                    value={emailManufacturer}
-                    hidden
-                    required
-                  />
-                  <button
-                    className='primary-button mt-3'
-                    type='submit'
-                    onClick={sendEmail}
+                (typeOfPurchase === "Clearance" && isOutOfStockClearance)) &&
+                active && (
+                  <form
+                    className='text-center p-2'
+                    ref={form}
+                    onSubmit={sendEmail}
                   >
-                    Submit
-                  </button>
-                </form>
-              )}
+                    <label className='mt-3 font-bold'>Join Our Wait List</label>
+                    <input
+                      type='text'
+                      name='user_name'
+                      className='contact__form-input'
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      placeholder='Name'
+                      required
+                    />
+                    <input
+                      type='email'
+                      name='user_email'
+                      className='contact__form-input mt-2'
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
+                      placeholder='Email'
+                      required
+                    />
+                    <input
+                      type='text'
+                      name='emailManufacturer'
+                      className='contact__form-input'
+                      onChange={(e) => setEmailManufacturer(e.target.value)}
+                      value={emailManufacturer}
+                      hidden
+                      required
+                    />
+                    <button
+                      className='primary-button mt-3'
+                      type='submit'
+                      onClick={sendEmail}
+                    >
+                      Submit
+                    </button>
+                  </form>
+                )}
+              {session?.user && !active ? (
+                <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
+                  <div className='font-semibold'>
+                    You will be able to see this product info soon.
+                  </div>
+                </div>
+              ) : !session?.user ? (
+                <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
+                  <div className=''>
+                    Sign in to see availability and purchase this product.
+                  </div>
+                  <div className='flex gap-5'>
+                    <Link href='/Login'>
+                      <button className='primary-button align-middle text-white'>
+                        Login
+                      </button>
+                    </Link>
+                    <Link href='/Register'>
+                      <button className='primary-button align-middle text-white'>
+                        Register
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -656,7 +683,7 @@ export default function ProductScreen() {
               {active === "loading"
                 ? "Loading"
                 : active && <th className='py-2 px-4 border-b'>Price</th>}
-              <th className='py-2 px-4 border-b'>Stock Status</th>
+              {active && <th className='py-2 px-4 border-b'>Stock Status</th>}
               <th className='py-2 px-4 border-b'>Reference</th>
               <th className='py-2 px-4 border-b'>Manufacturer</th>
               <th className='py-2 px-4 border-b'>Shipping Info</th>
@@ -680,15 +707,19 @@ export default function ProductScreen() {
                       {hasPrice ? `$${currentPrice}` : "Call for Price"}
                     </td>
                   )}
-              <td className='py-2 px-4 border-b'>
-                {currentCountInStock > 0 ? (
-                  <span className='text-[#414b53] font-semibold'>In Stock</span>
-                ) : (
-                  <span className='text-[#414b53] font-semibold'>
-                    Out of Stock
-                  </span>
-                )}
-              </td>
+              {active && (
+                <td className='py-2 px-4 border-b'>
+                  {currentCountInStock > 0 ? (
+                    <span className='text-[#414b53] font-semibold'>
+                      In Stock
+                    </span>
+                  ) : (
+                    <span className='text-[#414b53] font-semibold'>
+                      Out of Stock
+                    </span>
+                  )}
+                </td>
+              )}
               <td className='py-2 px-4 border-b'>{product.name}</td>
               <td className='py-2 px-4 border-b'>{product.manufacturer}</td>
               <td className='py-2 px-4 border-b text-sm text-gray-600'>

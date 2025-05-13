@@ -14,10 +14,11 @@ import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 import { useModalContext } from "../context/ModalContext";
+import StatusMessage from "./StatusMessage";
 
 const Header = () => {
   const router = useRouter();
-  const { user } = useModalContext();
+  const { user, isVisible, statusMessage, messageType } = useModalContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
@@ -121,7 +122,7 @@ const Header = () => {
 
   return (
     <header
-      className={`header mx-auto transition-all  duration-300 ${
+      className={`header mx-auto transition-all z-40 duration-300 ${
         isScrolled ? "pt-1" : "pt-3"
       } sm:pt-${isScrolled ? "1" : "3"}`}
     >
@@ -227,7 +228,11 @@ const Header = () => {
           <Navbar />
         </div>
       </nav>
-
+      <StatusMessage
+        type={messageType}
+        message={statusMessage}
+        isVisible={isVisible}
+      />
       <Menu />
 
       <StaticHeader />

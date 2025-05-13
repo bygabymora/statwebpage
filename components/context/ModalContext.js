@@ -5,7 +5,6 @@ import React, {
   useState,
   useContext,
 } from "react";
-import StatusMessage from "../main/StatusMessage";
 import CustomAlertModal from "../main/CustomAlertModal";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -61,14 +60,16 @@ export const ModalProvider = ({ children }) => {
     if (alertAction) alertAction(); // Execute the action associated with the modal
   };
 
-  const showStatusMessage = useCallback((type, message) => {
+  const showStatusMessage = useCallback((type, message, mode) => {
     setStatusMessage(message);
     setMessageType(type);
     setIsVisible(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      setStatusMessage("");
-    }, 5000);
+    if (mode !== "warning" || !mode) {
+      setTimeout(() => {
+        setIsVisible(false);
+        setStatusMessage("");
+      }, 5000);
+    }
   }, []);
 
   return (
@@ -82,15 +83,12 @@ export const ModalProvider = ({ children }) => {
         user,
         setUser,
         fetchUserData,
+        isVisible,
+        statusMessage,
+        messageType,
       }}
     >
       {children}
-
-      <StatusMessage
-        type={messageType}
-        message={statusMessage}
-        isVisible={isVisible}
-      />
 
       <CustomAlertModal
         isOpen={isAlertVisible}

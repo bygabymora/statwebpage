@@ -1,7 +1,7 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
@@ -28,8 +28,8 @@ function reducer(state, action) {
 }
 
 export default function AdminUserEditScreen() {
-  const [customer, setCustomer] = useState({});
-  const { showStatusMessage, user, setUser } = useModalContext();
+  const { showStatusMessage, user, setUser, customer, setCustomer } =
+    useModalContext();
   const { query } = useRouter();
   const userId = query.id;
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {

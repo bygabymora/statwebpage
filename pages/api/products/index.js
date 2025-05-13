@@ -1,54 +1,100 @@
 import Product from "../../../models/Product";
+import WpUser from "../../../models/WpUser";
 import db from "../../../utils/db";
+import { getToken } from "next-auth/jwt";
 
 const handler = async (req, res) => {
+  // Only allow GET
+  if (req.method !== "GET") {
+    return res.status(400).json({ message: "Method not allowed" });
+  }
+
+  // Connect to MongoDB
   try {
     await db.connect();
-  } catch {
-    return res
-      .status(503)
-      .json({ message: "Service unavailable: Database connection failed" });
+  } catch (err) {
+    return res.status(503).json({
+      message: "Service unavailable: Database connection failed",
+      err,
+    });
   }
 
-  if (req.method === "GET") {
-    return getHandler(req, res);
-  } else {
-    return res.status(400).send({ message: "Method not allowed" });
+  // Retrieve WP user from token (if any)
+  const token = await getToken({ req });
+  let wpUser = null;
+  if (token?._id) {
+    wpUser = await WpUser.findById(token._id);
   }
-};
+  const loggedIn = Boolean(token);
+  const userApproved = Boolean(wpUser && wpUser.approved);
+  const userRestricted = Boolean(userApproved && wpUser.restricted);
 
-const getHandler = async (req, res) => {
   try {
-    let products = await Product.find({ approved: true, active: true }).lean();
+    // Fetch approved + active products
+    let products = await Product.find({ approved: true, active: true });
 
-    // Custom sort priority
+    // If not logged in or not approved: minimal info + sort by name A→Z
+    if (!loggedIn || !userApproved) {
+      products.sort((a, b) => a.name.localeCompare(b.name));
+
+      const minimal = products.map((p) => ({
+        name: p.name,
+        _id: p._id,
+        manufacturer: p.manufacturer,
+        image: p.image,
+        sentOvernigth: p.sentOvernigth,
+        each: {
+          description: p.each?.description || null,
+        },
+        box: {
+          description: p.box?.description || null,
+        },
+      }));
+
+      return res.status(200).json(minimal);
+    }
+
     products.sort((a, b) => {
       const aInStock =
         (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
         (a.box?.quickBooksQuantityOnHandProduction || 0) > 0;
-
       const bInStock =
         (b.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
         (b.box?.quickBooksQuantityOnHandProduction || 0) > 0;
-
-      const aHasPrice = (a.each?.wpPrice || 0) > 0 || (a.box?.wpPrice || 0) > 0;
-
-      const bHasPrice = (b.each?.wpPrice || 0) > 0 || (b.box?.wpPrice || 0) > 0;
-
-      // Priority by: stock first, then by price
       if (aInStock && !bInStock) return -1;
       if (!aInStock && bInStock) return 1;
 
+      const aHasPrice = (a.each?.wpPrice || 0) > 0 || (a.box?.wpPrice || 0) > 0;
+      const bHasPrice = (b.each?.wpPrice || 0) > 0 || (b.box?.wpPrice || 0) > 0;
       if (aHasPrice && !bHasPrice) return -1;
       if (!aHasPrice && bHasPrice) return 1;
 
-      return a.name.localeCompare(b.name); // fallback alphabetical
+      return a.name.localeCompare(b.name);
+    });
+    // Map full info, zeroing out on-hand counts for restricted users on protected products
+    const full = products.map((p) => {
+      if (userRestricted && p.protected) {
+        return {
+          ...p,
+          each: {
+            ...p.each,
+            quickBooksQuantityOnHandProduction: 0,
+          },
+          box: {
+            ...p.box,
+            quickBooksQuantityOnHandProduction: 0,
+          },
+        };
+      }
+      return p;
     });
 
-    res.send(products);
+    return res.status(200).json(full);
   } catch (error) {
     console.error("Product fetch error:", error);
-    res.status(500).send({ message: "Error fetching products" });
+    return res.status(500).json({ message: "Error fetching products" });
+  } finally {
+    await db.disconnect();
   }
 };
 

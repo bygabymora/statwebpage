@@ -19,12 +19,14 @@ export default function CartScreen() {
     try {
       let finalOrder;
       console.log("orderId in cart", orderId);
-      if (orderId) {
-        const { data } = await axios.get(`/api/orders/${orderId}`);
-        console.log("data in cart", data);
+
+      const { data } = await axios.get(`/api/orders/fetchOrLatestInProcess`, {
+        params: { orderId },
+      });
+      if (data) {
         finalOrder = data;
       }
-      console.log("user In CartScreen", user);
+
       if (user && user.cart?.length > 0) {
         const { data: updatedCart } = await axios.post(
           "/api/cart/updateProducts",

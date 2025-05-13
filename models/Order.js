@@ -88,6 +88,7 @@ const orderSchema = new mongoose.Schema(
     discountAmount: { type: Number, required: false, default: 0 },
     trackNumber: { type: String, required: false },
     trackUrl: { type: String, required: false },
+    status: { type: String, required: false },
     atCostumersDate: { type: Date, required: false },
   },
   {

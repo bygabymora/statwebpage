@@ -316,6 +316,11 @@ const estimateSchema = new mongoose.Schema(
     fileId: { type: String, required: false },
     fileName: { type: String, required: false },
     active: { type: Boolean, required: false, default: true },
+    linkedWpOrderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+      required: false,
+    },
   },
   {
     timestamps: true,

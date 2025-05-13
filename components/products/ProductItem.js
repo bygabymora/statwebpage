@@ -247,6 +247,16 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
     setEmailManufacturer("");
   };
 
+  useEffect(() => {
+    if (!active) {
+      if (product.each?.description) {
+        setCurrentDescription(product.each.description);
+      } else if (product.box?.description) {
+        setCurrentDescription(product.box.description);
+      }
+    }
+  }, [active, product]);
+
   return (
     <div
       className='block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 border
@@ -265,8 +275,8 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
         >
           <div className='p-2'>
             <Image
-              src={`${product.image}`}
-              alt={currentDescription}
+              src={product.image}
+              alt={product.name}
               className='rounded-lg shadow-lg'
               width={800}
               height={1000}
@@ -388,18 +398,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                                 product.box
                                   ?.quickBooksQuantityOnHandProduction || 0
                               );
-                            } else if (
-                              e.target.value === "Clearance" &&
-                              product.clearance
-                            ) {
-                              setCurrentPrice(product.clearance?.price || 0);
-                              setCurrentDescription(
-                                product.clearance?.description || ""
-                              );
-                              setCurrentCountInStock(
-                                product.each?.clearanceCountInStock > 0 ||
-                                  product.box?.clearanceCountInStock > 0
-                              );
                             }
                           }}
                         >
@@ -424,26 +422,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                     )}
               </div>
             ) : null
-          ) : (
-            // If you only have Clearance, show it once without an "Add to Cart" button
-            product.each?.clearanceCountInStock > 0 ||
-            (product.box?.clearanceCountInStock > 0 && (
-              <div className='my-5 text-center'>
-                <h1 className='text-red-500 font-bold text-lg'>Clearance</h1>
-                {active === "loading" ? (
-                  "Loading"
-                ) : active ? (
-                  <div className='mb-2 flex justify-center'>
-                    <div className='font-bold'>Price:</div>
-                    <div className='ml-2 text-[#788b9b]'>
-                      $ {product.clearance?.price || "Call for Price"}
-                    </div>
-                  </div>
-                ) : null}
-                <div className='text-[#414b53]'>{product.notes}</div>
-              </div>
-            ))
-          )}
+          ) : null}
           {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
             product.box?.quickBooksQuantityOnHandProduction > 0) && (
             <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
@@ -496,45 +475,70 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       {((typeOfPurchase === "Each" &&
         (isOutOfStock || currentCountInStock <= 0)) ||
         (typeOfPurchase === "Box" &&
-          (isOutOfStockBox || currentCountInStock <= 0)) ||
-        (typeOfPurchase === "Clearance" && isOutOfStockClearance)) && (
-        <form className='text-center p-2' ref={form} onSubmit={sendEmail}>
-          <label className='mt-3 font-bold'>Join Our Wait List</label>
-          <input
-            autoComplete='off'
-            type='text'
-            name='user_name'
-            className='contact__form-input'
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder='Name'
-            required
-          />
-          <input
-            autoComplete='off'
-            type='email'
-            name='user_email'
-            className='contact__form-input mt-2'
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            placeholder='Email'
-            required
-          />
-          <input
-            autoComplete='off'
-            type='text'
-            name='emailManufacturer'
-            className='contact__form-input'
-            onChange={(e) => setEmailManufacturer(e.target.value)}
-            value={emailManufacturer}
-            hidden
-            required
-          />
-          <button className='primary-button mt-3' type='submit'>
-            Submit
-          </button>
-        </form>
-      )}
+          (isOutOfStockBox || currentCountInStock <= 0))) &&
+        active && (
+          <form className='text-center p-2' ref={form} onSubmit={sendEmail}>
+            <label className='mt-3 font-bold'>Join Our Wait List</label>
+            <input
+              autoComplete='off'
+              type='text'
+              name='user_name'
+              className='contact__form-input'
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder='Name'
+              required
+            />
+            <input
+              autoComplete='off'
+              type='email'
+              name='user_email'
+              className='contact__form-input mt-2'
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              placeholder='Email'
+              required
+            />
+            <input
+              autoComplete='off'
+              type='text'
+              name='emailManufacturer'
+              className='contact__form-input'
+              onChange={(e) => setEmailManufacturer(e.target.value)}
+              value={emailManufacturer}
+              hidden
+              required
+            />
+            <button className='primary-button mt-3' type='submit'>
+              Submit
+            </button>
+          </form>
+        )}
+      {session?.user && !active ? (
+        <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
+          <div className='font-semibold'>
+            You will be able to see this product info soon.
+          </div>
+        </div>
+      ) : !session?.user ? (
+        <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
+          <div className=''>
+            Sign in to see availability and purchase this product.
+          </div>
+          <div className='flex gap-5'>
+            <Link href='/Login'>
+              <button className='primary-button align-middle text-white'>
+                Login
+              </button>
+            </Link>
+            <Link href='/Register'>
+              <button className='primary-button align-middle text-white'>
+                Register
+              </button>
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
