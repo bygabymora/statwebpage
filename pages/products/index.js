@@ -32,24 +32,24 @@ export default function Products() {
   };
 
   const fetchData = async () => {
+    const { data } = await axios.get(`/api/products`);
+    setProducts(data);
+  };
+
+  useEffect(() => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/api/products`);
-      setProducts(data);
+      if (!query) {
+        console.log("No query provided");
+        fetchData();
+      } else {
+        console.log("Query provided:", query);
+        fetchSearchResults();
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!query) {
-      console.log("No query provided");
-      fetchData();
-    } else {
-      console.log("Query provided:", query);
-      fetchSearchResults();
     }
   }, [query]);
 
@@ -143,44 +143,49 @@ export default function Products() {
           </div>
         </div>
       </nav>
-      <div className='grid grid-cols-1 md:grid-cols-4'>
+      <div className='mt-2 grid grid-cols-1 md:grid-cols-4'>
         <div className='md:col-span-1 p-4'>
           <ul
             className={`${
               showManufacturers ? "block" : "hidden"
             } md:block md:sticky md:top-[16rem]`}
           >
-            <div
-              onClick={handleShowAll}
-              className={`manufacturer-item cursor-pointer ${
-                selectedManufacturer === null ? "bg-slate-200" : ""
-              }`}
-            >
-              ALL PRODUCTS
-            </div>
             <h2
-              className='block justify-center items-center text-center my-3 text-xs lg:text-lg pb-3'
+              className='block justify-center items-center text-center my-3 text-xs lg:text-lg'
               id='manufacturers'
             >
-              Manufacturers
+              MANUFACTURERS
             </h2>
             <div className='max-h-[60vh] pt-2 overflow-y-auto custom-scrollbar'>
-              {manufacturers
-                .slice()
-                .sort((a, b) => a.localeCompare(b))
-                .map((manufacturer, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleManufacturerClick(manufacturer)}
-                    className={`manufacturer-item cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
-                      selectedManufacturer === manufacturer
-                        ? "bg-slate-200"
-                        : ""
-                    }`}
-                  >
-                    {manufacturer}
-                  </div>
-                ))}
+              <div>
+                {" "}
+                <div
+                  onClick={handleShowAll}
+                  className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 sticky top-0 ${
+                    selectedManufacturer === null
+                      ? "primary-button"
+                      : "secondary-button"
+                  }`}
+                >
+                  ALL PRODUCTS
+                </div>
+                {manufacturers
+                  .slice()
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((manufacturer, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleManufacturerClick(manufacturer)}
+                      className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 ${
+                        selectedManufacturer === manufacturer
+                          ? "bg-slate-200"
+                          : ""
+                      }`}
+                    >
+                      {manufacturer}
+                    </div>
+                  ))}
+              </div>
             </div>
           </ul>
         </div>
