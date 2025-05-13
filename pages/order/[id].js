@@ -431,7 +431,7 @@ function OrderScreen() {
         </div>
       </div>
       <div className='mt-4 bg-white shadow-lg p-6 rounded-lg border'>
-        <div className='mt-3 flex-1 p-3 flex gap-2 flex-col md:flex-row bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
+        <div className='mt-3 flex-1 p-3 flex gap-2 flex-col md:flex-row bg-gray-100 border-l-4 border-[#03793d] rounded-lg'>
           <div className='flex-1 flex gap-2 flex-col'>
             <div className='items-start'>
               <div className='text-2xl font-bold text-[#144e8b]'>
@@ -462,9 +462,10 @@ function OrderScreen() {
               )}
             </div>
           </div>
+
           <div className='flex-1 flex gap-2 flex-col'>
             <h2 className='text-lg px-1 font-bold'>Stat Rep:</h2>
-            <div className='p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
+            <div className='flex-1 p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
               {accountOwner?.name}
               <br />
               <a href={`mailto:${accountOwner?.email}`} className='underline'>
@@ -479,15 +480,15 @@ function OrderScreen() {
               </a>
             </div>
           </div>
-          <div className='flex-1 flex gap-2 flex-col '>
+
+          <div className='flex-1 flex gap-2 flex-col'>
             <h2 className='text-lg px-1 font-bold'>Payment Status</h2>
-            <div className='p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
-              <div className='flex-1'>
+            <div className='flex-1 p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
+              <div>
                 <span className='font-semibold'>Due Date: </span>
                 {formatDateForInput(dueDate)}
               </div>
-              <div className='flex-1'>
-                {" "}
+              <div>
                 {order.isPaid
                   ? "Paid"
                   : invoice
