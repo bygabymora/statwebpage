@@ -18,7 +18,6 @@ import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
-
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -73,7 +72,7 @@ function OrderScreen() {
   const [showShippingId, setShowShippingId] = useState(null);
   const [message] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const { showStatusMessage } = useModalContext();
+  const { showStatusMessage, startLoading, stopLoading } = useModalContext();
   const [email, setEmail] = useState("");
   const [emailName, setEmailName] = useState("");
   const [estimate, setEstimate] = useState({});
@@ -84,32 +83,33 @@ function OrderScreen() {
   const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
 
-  const [
-    { loading, error, successPay, loadingPay, loadingDeliver, successDeliver },
-    dispatch,
-  ] = useReducer(reducer, {
-    loading: true,
-    order: {},
-    error: "",
-    estimate,
-  });
+  const [{ loading, error, successPay, loadingPay, successDeliver }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      order: {},
+      error: "",
+      estimate,
+    });
+
+  const fetchOrder = async () => {
+    try {
+      startLoading();
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/orders/${orderId}`);
+      console.log("Order data:", data);
+      setOrder(data.order);
+      setEstimate(data.estimate);
+      setInvoice(data.invoice);
+      setAccountOwner(data.accountOwner);
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (error) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(error) });
+    } finally {
+      stopLoading();
+    }
+  };
 
   useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/orders/${orderId}`);
-        console.log("Order data:", data);
-        setOrder(data.order);
-        setEstimate(data.estimate);
-        setInvoice(data.invoice);
-        setAccountOwner(data.accountOwner);
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (error) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(error) });
-      }
-    };
-
     if (!order._id || successPay || successDeliver || order._id !== orderId) {
       fetchOrder();
     }
@@ -354,21 +354,6 @@ function OrderScreen() {
     toast.error(getError(error));
   }
 
-  async function atCostumersOrderHandler() {
-    try {
-      dispatch({ type: "AT_COSTUMERS_REQUEST" });
-      const { data } = await axios.put(
-        `/api/admin/orders/${order._id}/atcostumers`,
-        {}
-      );
-      dispatch({ type: "AT_COSTUMERS_SUCCESS", payload: data });
-      toast.success("Order is delivered");
-    } catch (error) {
-      dispatch({ type: "AT_COSTUMERS_FAIL", payload: getError(error) });
-      toast.error(getError(error));
-    }
-  }
-
   const handleCallButtonClick = (event) => {
     event.preventDefault();
     if (window.innerWidth >= 400) {
@@ -383,7 +368,9 @@ function OrderScreen() {
   };
 
   const dueDateHandler = (terms) => {
-    const date = new Date(order.createdAt);
+    const date = invoice
+      ? new Date(invoice.createdAt)
+      : new Date(order.createdAt);
     const daysToAdd = parseInt(terms.split(" ")[1]);
     console.log("daysToAdd", daysToAdd);
     date.setDate(date.getDate() + daysToAdd);
@@ -394,7 +381,9 @@ function OrderScreen() {
       const date = dueDateHandler(order.defaultTerm);
       setDueDate(date);
     } else {
-      const date = new Date(order.createdAt);
+      const date = invoice
+        ? new Date(invoice.createdAt)
+        : new Date(order.createdAt);
       setDueDate(date);
     }
   }, [order.defaultTerm, order.paymentMethod]);
@@ -418,6 +407,59 @@ function OrderScreen() {
         : (status = "Not Paid");
     }
     return status;
+  };
+
+  const stripeReadyToPay = () => {
+    let readyToPay = false;
+    const allShipmentsWithValue =
+      invoice && invoice?.shippings?.every((shipment) => shipment.price > 0);
+    if (allShipmentsWithValue) {
+      readyToPay = true;
+    }
+    return readyToPay;
+  };
+
+  const placeOrderHandler = async () => {
+    if (order?.paymentMethod === "Stripe") {
+      try {
+        startLoading();
+        console.log("Redirecting to Stripe checkout...");
+        const stripe = await stripePromise;
+
+        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+          toast.error("Stripe initialization failed.");
+          return;
+        }
+
+        const checkoutSession = await axios.post("/api/checkout_sessions", {
+          totalPrice: Number(totalPrice),
+          orderId: order._id,
+        });
+        setOrder((prev) => ({
+          ...prev,
+          orderItems: [],
+          itemsPrice: 0,
+          totalPrice: 0,
+        }));
+        const result = await stripe.redirectToCheckout({
+          sessionId: checkoutSession?.data?.id,
+        });
+
+        if (result.error) {
+          showStatusMessage(
+            "error",
+            result.error.message || "An error occurred with Stripe checkout."
+          );
+        }
+      } catch (error) {
+        console.error("Error placing order:", error);
+        showStatusMessage(
+          "error",
+          getError(error) || "An error occurred while placing the order."
+        );
+        stopLoading();
+      }
+    }
   };
 
   return (
@@ -504,12 +546,14 @@ function OrderScreen() {
                     : "bg-green-100"
                 } p-2 rounded-lg text-xl`}
               >
-                {console.log(
-                  "paymentAmountStatus(invoice)",
-                  paymentAmountStatus()
-                )}
                 {paymentAmountStatus()}
               </div>
+              {stripeReadyToPay() && (
+                <div className='text-sm text-gray-500'>
+                  Your order is ready to be shipped. It will be shipped as soon
+                  as the payment is received.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -763,10 +807,10 @@ function OrderScreen() {
             <div className='mt-4 sticky top-[13rem] bg-white shadow-lg p-6 rounded-lg border'>
               <h2 className='mb-2 text-lg font-semibold'>Order Summary</h2>
               <ul>
-                <li className='mb-2 flex justify-between'>
-                  <span>Items</span>
-                  <span>${itemsPrice.toFixed(2)}</span>
-                </li>
+                <div className='mb-2 px-3 flex justify-between'>
+                  <div>Items</div>
+                  <div>${itemsPrice.toFixed(2)}</div>
+                </div>
                 {paymentMethod === "Pay by Wire" ? (
                   <li>
                     <div className='mb-2 px-3 flex justify-between'>
@@ -775,6 +819,22 @@ function OrderScreen() {
                     </div>
                   </li>
                 ) : null}
+                {invoice &&
+                  invoice?.shippingCost > 0 &&
+                  invoice.shippingBilling === "Bill Invoice" && (
+                    <li>
+                      <div className='mb-2 px-3 flex justify-between'>
+                        <div>Shipping</div>
+                        <div>
+                          $
+                          {new Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(invoice?.shippingCost)}
+                        </div>
+                      </div>
+                    </li>
+                  )}
                 <li>
                   <div className='mb-2  px-3 flex justify-between'>
                     <div>Total</div>
@@ -789,42 +849,31 @@ function OrderScreen() {
                 </li>
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
-                    {paymentMethod === "Stripe" ? (
-                      <form action='/api/checkout_sessions' method='POST'>
-                        <section>
-                          <input
-                            autoComplete='off'
-                            hidden
-                            name='totalPrice'
-                            value={totalPrice}
-                            readOnly
+                    {(paymentMethod === "Stripe" &&
+                      shippingPreferences?.paymentMethod !== "Bill Me") ||
+                    (paymentMethod === "Stripe" &&
+                      shippingPreferences?.paymentMethod === "Bill Me" &&
+                      stripeReadyToPay()) ? (
+                      <div className='buttons-container text-center mx-auto'>
+                        <button
+                          onClick={placeOrderHandler}
+                          type='button'
+                          className='primary-button w-full'
+                        >
+                          <div className='flex flex-row align-middle justify-center items-center '>
+                            Secure Checkout &nbsp; <AiTwotoneLock />
+                          </div>
+
+                          <Image
+                            src={Stripe}
+                            alt='Checkout with Stripe'
+                            height={80}
+                            width={200}
+                            className='mt-2'
+                            loading='lazy'
                           />
-                          <input
-                            autoComplete='off'
-                            hidden
-                            name='orderId'
-                            value={orderId}
-                            readOnly
-                          />
-                          <button
-                            type='submit'
-                            role='link'
-                            className='primary-button w-full'
-                          >
-                            <div className='flex flex-row align-middle justify-center items-center '>
-                              Secure Checkout &nbsp; <AiTwotoneLock />
-                            </div>
-                            <Image
-                              src={Stripe}
-                              alt='Checkout with Stripe'
-                              height={80}
-                              width={200}
-                              className='mt-2'
-                              loading='lazy'
-                            />
-                          </button>
-                        </section>
-                      </form>
+                        </button>
+                      </div>
                     ) : paymentMethod === "Pay by Wire" ? (
                       <div>
                         {session.user.isAdmin && (
@@ -869,24 +918,24 @@ function OrderScreen() {
                       )
                     ) : null}
                     {loadingPay && <div>Loading...</div>}
+                    {paymentMethod === "Stripe" &&
+                      shippingPreferences?.paymentMethod === "Bill Me" &&
+                      stripeReadyToPay() === false && (
+                        <div>
+                          <div className='font-semibold my-2 text-lg items-center text-center'>
+                            You selected the &quot;Bill Me&quot; option for the
+                            Shipping Payment.
+                          </div>
+                          <div className='my-2 text-lg items-center text-center'>
+                            You will receive an email when your order is ready
+                            to ship, and the order with the shipment value
+                            included, so you can make the payment.
+                          </div>
+                        </div>
+                      )}
                   </li>
                 )}
 
-                {session.user.isAdmin &&
-                  order.isPaid &&
-                  order.isDelivered &&
-                  !order.isAtCostumers && (
-                    <li>
-                      {loadingDeliver && <div>Loading...</div>}
-                      <button
-                        className='primary-button w-full'
-                        onClick={atCostumersOrderHandler}
-                      >
-                        Order is at customers
-                      </button>
-                    </li>
-                  )}
-                <br />
                 <li>
                   <div className='flex-1'>
                     If you have any furter questions, you can contact us at{" "}

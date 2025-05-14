@@ -36,6 +36,9 @@ export default function PlaceOrder({
     customer,
     user,
     openAlertModal,
+    startLoading,
+    stopLoading,
+    openConfirmModal,
   } = useModalContext();
   const { data: session } = useSession();
   const [loading] = useState(false);
@@ -250,78 +253,114 @@ export default function PlaceOrder({
       );
       return;
     }
-    try {
-      const orderToPlace = {
-        ...order,
-        status: "Completed",
+
+    let message = {
+      title: "Are you sure?",
+      body: "You are about to place an order. Please confirm that all the information is correct.",
+    };
+
+    if (
+      order?.paymentMethod === "Stripe" &&
+      order?.shippingPreferences?.paymentMethod === "Bill Me"
+    ) {
+      message = {
+        title: "Are you sure?",
+        body: "You are about to place an order. Please confirm that all the information is correct.",
+        warning:
+          "⚠You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment.⚠",
       };
-      console.log("orderToPlace", orderToPlace);
-      const { data } = await axios.post("/api/orders", {
-        order: orderToPlace,
-      });
-      console.log("Creating Estimate", data);
-      await baseAction();
-      console.log("Clearing cart");
-      await axios.patch(`/api/users/${session.user?._id}/cart`, {
-        action: "clear",
-      });
-      console.log("Updating customer addresses");
-      await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
-        customer: customer,
-      });
-
-      console.log("Updating order");
-      const updatedUser = await fetchUserData();
-      setUser((prev) => ({
-        ...prev,
-        cart: updatedUser.userData?.cart,
-      }));
-
-      // Optional: clear local order object
-      setOrder((prev) => ({
-        ...prev,
-        orderItems: [],
-        itemsPrice: 0,
-        totalPrice: 0,
-      }));
-      Cookies.remove("orderId");
-
-      console.log("Order placed successfully:", data);
-      // If the payment method is Stripe, redirect to the Stripe checkout
-      if (order?.paymentMethod === "Stripe") {
-        console.log("Redirecting to Stripe checkout...");
-        const stripe = await stripePromise;
-
-        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-          toast.error("Stripe initialization failed.");
-          return;
-        }
-
-        const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: Number(totalPrice),
-          orderId: order._id,
-        });
-
-        const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession?.data?.id,
-        });
-
-        if (result.error) {
-          toast.error(
-            result.error.message || "An error occurred with Stripe checkout."
-          );
-        }
-      } else {
-        // If not Stripe, redirect to normal order page
-        router.push(`/order/${order._id}`);
-      }
-    } catch (error) {
-      console.error("Error placing order:", error);
-      showStatusMessage(
-        "error",
-        getError(error) || "An error occurred while placing the order."
-      );
     }
+    const action = async (confirmed) => {
+      if (confirmed) {
+        try {
+          startLoading();
+          const orderToPlace = {
+            ...order,
+            status: "Completed",
+          };
+          console.log("orderToPlace", orderToPlace);
+          await axios.post("/api/orders", {
+            order: orderToPlace,
+          });
+
+          await baseAction();
+
+          await axios.patch(`/api/users/${session.user?._id}/cart`, {
+            action: "clear",
+          });
+
+          await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
+            customer: customer,
+          });
+
+          const updatedUser = await fetchUserData();
+          setUser((prev) => ({
+            ...prev,
+            cart: updatedUser.userData?.cart,
+          }));
+
+          // Optional: clear local order object
+
+          // If the payment method is Stripe, redirect to the Stripe checkout
+          if (
+            order?.paymentMethod !== "Stripe" ||
+            (order?.paymentMethod === "Stripe" &&
+              order?.shippingPreferences?.paymentMethod === "Bill Me")
+          ) {
+            router.push(`/order/${order._id}`);
+            setOrder((prev) => ({
+              ...prev,
+              orderItems: [],
+              itemsPrice: 0,
+              totalPrice: 0,
+            }));
+            Cookies.remove("orderId");
+          } else if (
+            order?.paymentMethod === "Stripe" &&
+            order?.shippingPreferences?.paymentMethod !== "Bill Me"
+          ) {
+            console.log("Redirecting to Stripe checkout...");
+            const stripe = await stripePromise;
+
+            if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+              toast.error("Stripe initialization failed.");
+              return;
+            }
+
+            const checkoutSession = await axios.post("/api/checkout_sessions", {
+              totalPrice: Number(totalPrice),
+              orderId: order._id,
+            });
+            setOrder((prev) => ({
+              ...prev,
+              orderItems: [],
+              itemsPrice: 0,
+              totalPrice: 0,
+            }));
+            Cookies.remove("orderId");
+            const result = await stripe.redirectToCheckout({
+              sessionId: checkoutSession?.data?.id,
+            });
+
+            if (result.error) {
+              showStatusMessage(
+                "error",
+                result.error.message ||
+                  "An error occurred with Stripe checkout."
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Error placing order:", error);
+          showStatusMessage(
+            "error",
+            getError(error) || "An error occurred while placing the order."
+          );
+          stopLoading();
+        }
+      }
+    };
+    openConfirmModal(message, action);
   };
 
   const handleInputChange = (type, field, value, secondField) => {
@@ -910,7 +949,8 @@ export default function PlaceOrder({
                   </span>
                 </li>
                 <li>
-                  {order?.paymentMethod === "Stripe" ? (
+                  {order?.paymentMethod === "Stripe" &&
+                  order?.shippingPreferences?.paymentMethod !== "Bill Me" ? (
                     <div className='buttons-container text-center mx-auto'>
                       <button
                         onClick={placeOrderHandler}
@@ -943,7 +983,10 @@ export default function PlaceOrder({
                         forceReRender={[totalPrice]}
                       ></PayPalButtons>
                     )
-                  ) : order?.paymentMethod === "PO Number" ? (
+                  ) : order?.paymentMethod === "PO Number" ||
+                    (order?.paymentMethod === "Stripe" &&
+                      order?.shippingPreferences?.paymentMethod ===
+                        "Bill Me") ? (
                     <button
                       disabled={loading}
                       onClick={placeOrderHandler}
@@ -953,11 +996,25 @@ export default function PlaceOrder({
                     </button>
                   ) : null}
                 </li>
-
-                <li className='mt-3 text-gray-600 text-sm'>
-                  We will contact you for more information depending on your
-                  shipping preference selection.
-                </li>
+                {order?.paymentMethod === "Stripe" &&
+                order?.shippingPreferences?.paymentMethod === "Bill Me" ? (
+                  <li className='mt-3 '>
+                    <div className='font-semibold my-2 text-lg items-center text-center'>
+                      You selected the &quot;Bill Me&quot; option for the
+                      Shipping Payment.
+                    </div>
+                    <div className='my-2 text-lg items-center text-center'>
+                      You will receive an email when your order is ready to
+                      ship, and the order with the shipment value included, so
+                      you can make the payment.
+                    </div>
+                  </li>
+                ) : (
+                  <li className='mt-3 text-gray-600 text-sm'>
+                    We will contact you for more information depending on your
+                    shipping preference selection.
+                  </li>
+                )}
               </ul>
               <div className='mt-6 w-full flex justify-center gap-4'>
                 <button

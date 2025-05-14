@@ -16,14 +16,14 @@ export default function CartScreen() {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [order, setOrder] = useState({});
   const { data: session } = useSession();
-  const { user, setUser, customer, setCustomer } = useModalContext();
+  const { user, setUser, customer, setCustomer, startLoading, stopLoading } =
+    useModalContext();
   const orderId = Cookies.get("orderId");
 
   const fetchOrder = async () => {
     try {
+      startLoading();
       let finalOrder;
-      console.log("orderId in cart", orderId);
-
       const { data } = await axios.get(`/api/orders/fetchOrLatestInProcess`, {
         params: { orderId },
       });
@@ -65,6 +65,8 @@ export default function CartScreen() {
       setOrder(finalOrder);
     } catch (err) {
       console.error("Failed to load saved order:", err);
+    } finally {
+      stopLoading();
     }
   };
   // On mount, check for an existing orderId cookie and load it

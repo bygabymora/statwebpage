@@ -101,7 +101,7 @@ export default function Shipping({
             ? order.shippingPreferences?.paymentMethod
             : customerData.fedexAccountNumber || customerData.upsAccountNumber
             ? "Use My Account"
-            : "Bill me",
+            : "Bill Me",
           carrier: order.shippingPreferences?.carrier
             ? order.shippingPreferences?.carrier
             : customerData.fedexAccountNumber
@@ -603,7 +603,7 @@ export default function Shipping({
                         )
                       }
                     >
-                      <option value='Bill me'>Bill Me</option>
+                      <option value='Bill Me'>Bill Me</option>
                       <option value='Use My Account'>Use My account</option>
                     </select>
                     {order.shippingPreferences?.paymentMethod ===

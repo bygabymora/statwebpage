@@ -5,6 +5,7 @@ import db from "../../../../utils/db";
 import Estimate from "../../../../models/Estimate";
 import Invoice from "../../../../models/Invoice";
 import User from "../../../../models/User";
+import Product from "../../../../models/Product";
 
 const handler = async (req, res) => {
   const wpUsers = await getToken({ req });
@@ -37,7 +38,37 @@ const handler = async (req, res) => {
         }
       }
       if (estimate && estimate.invoice?.invoiceId) {
-        invoice = await Invoice.findById(estimate.invoice.invoiceId);
+        // 5. Load the invoice
+        invoice = await Invoice.findById(estimate.invoice?.invoiceId);
+        if (invoice) {
+          // 6. Update totalPrice
+          order.totalPrice = invoice.totalPrice;
+          order.itemsPrice = invoice.itemsPrice;
+          // 7. Rebuild orderItems by enriching each invoice item
+          order.orderItems = await Promise.all(
+            invoice.invoiceItems.map(async (item) => {
+              // fetch the product to get its image (etc.)
+              const prod = await Product.findById(item.productId);
+
+              return {
+                // core invoice fields
+                name: item.name,
+                productId: item.productId,
+                price: item.unitPrice,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                _id: item._id,
+                image: prod?.image || "",
+                typeOfPurchase: item.typeOfPurchase,
+                sentOverNight: item.sentOverNight,
+                quickBooksItemIdProduction: item.quickBooksItemIdProduction,
+              };
+            })
+          );
+
+          // 8. Save the updated order
+          await order.save();
+        }
       }
     }
     await db.disconnect();

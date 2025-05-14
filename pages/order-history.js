@@ -1,5 +1,4 @@
 import axios from "axios";
-import Link from "next/link";
 import React, { useEffect, useReducer } from "react";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
@@ -7,6 +6,8 @@ import formatDateWithMonthInLetters from "../utils/dateWithMonthInLetters";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useModalContext } from "../components/context/ModalContext";
+import { FaEye } from "react-icons/fa";
+import { BiSolidEdit } from "react-icons/bi";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -21,22 +22,31 @@ function reducer(state, action) {
   }
 }
 function OrderHistoryScreen() {
-  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+  const [{ orders }, dispatch] = useReducer(reducer, {
     loading: true,
     orders: [],
     error: "",
   });
-  const { showStatusMessage, setUser } = useModalContext();
+  const {
+    showStatusMessage,
+    setUser,
+    openConfirmModal,
+    startLoading,
+    stopLoading,
+  } = useModalContext();
   const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        startLoading();
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/orders/history`);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+      } finally {
+        stopLoading();
       }
     };
     fetchOrders();
@@ -182,149 +192,162 @@ function OrderHistoryScreen() {
   };
 
   const handleOpenOrder = async (orderId) => {
-    try {
-      const { user } = await axios.get(`/api/orders/${orderId}/open`);
-      if (user) {
-        setUser(user);
+    const message = {
+      title: "Are you sure?",
+      body: "This will open the order for you to edit, it will be removed from the order history, and you will be redirected to the cart.",
+      warning2: "⚠The available stock migth be affected by this action.⚠",
+    };
+
+    const action = async (confirmed) => {
+      if (confirmed) {
+        startLoading();
+        try {
+          const { user } = await axios.get(`/api/orders/${orderId}/open`);
+          if (user) {
+            setUser(user);
+          }
+          Cookies.set("orderId", orderId);
+
+          showStatusMessage("success", "You can now edit your order");
+          router.push("/cart");
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+          stopLoading();
+        }
       }
-      Cookies.set("orderId", orderId);
-      setTimeout(() => {
-        router.push("/cart");
-      }, 2000);
-      showStatusMessage("success", "You can now edit your order");
-    } catch (error) {
-      console.error("Error fetching order details:", error);
-    }
+    };
+    openConfirmModal(message, action);
   };
 
   return (
     <Layout title='Order History'>
       <h1 className='mb-4 text-xl'>Order History</h1>
-      {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div className='alert-error'>{error}</div>
-      ) : (
-        <div className='overflow-x-auto mb-4'>
-          {console.log("orders", orders)}
-          <div className='space-y-4'>
-            {orders.map((order) => (
-              <div
-                key={order._id}
-                className='border rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200 bg-white'
-              >
-                {/* Universal Grid with Labels */}
-                <div className='grid grid-cols-2 md:grid-cols-7 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
-                  {/* ORDER # */}
-                  <div>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      ORDER #
-                    </div>
-                    <div className='text-gray-800 font-semibold'>
-                      {order.docNumber}
-                    </div>
-                  </div>
 
-                  {/* DATE */}
-                  <div>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      CREATED ON
-                    </div>
-                    <div>{formatDateWithMonthInLetters(order.createdAt)}</div>
+      <div className='overflow-x-auto mb-4'>
+        {console.log("orders", orders)}
+        <div className='space-y-4'>
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className='border rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200 bg-white'
+            >
+              {/* Universal Grid with Labels */}
+              <div className='grid grid-cols-2 md:grid-cols-7 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
+                {/* ORDER # */}
+                <div>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                    ORDER #
                   </div>
-                  <div>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      DUE DATE
-                    </div>
-                    <div>
-                      {formatDateWithMonthInLetters(dueDateFinalHandler(order))}
-                    </div>
-                  </div>
-
-                  {/* PAID */}
-                  <div>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      PAYMENT STATUS
-                    </div>
-                    <div>
-                      {order.isPaid
-                        ? "Paid"
-                        : order.invoice
-                        ? paymentAmountStatus(order.invoice)
-                        : "Not Paid"}
-                    </div>
-                    <div>
-                      {" "}
-                      {order.paymentMethod === "Stripe" ? (
-                        <div>
-                          Credit Card <br />
-                          (Powered by Stripe)
-                        </div>
-                      ) : (
-                        <div>{order.paymentMethod}</div>
-                      )}
-                      {order.paymentMethod === "PO Number" &&
-                        order.defaultTerm && (
-                          <div>
-                            <span className='font-semibold'>Terms: </span>
-                            {order.defaultTerm}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-
-                  {/* PROCESSED */}
-                  <div className=''>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1 '>
-                      SHIPMENT STATUS
-                    </div>
-                    <div>
-                      {order.invoice && order.invoice?.shippings?.length > 0
-                        ? shippingsShippmentStatus(order.invoice?.shippings)
-                        : "Shipment Not Processed Yet "}
-                    </div>
-                  </div>
-
-                  {/* TOTAL */}
-                  <div>
-                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      TOTAL
-                    </div>
-                    <div>
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(order.totalPrice)}
-                    </div>
-                  </div>
-                  {/* ACTION */}
-                  <div className='flex flex-col justify-center  md:justify-center items-center text-center'>
-                    <div className='flex items-center text-center'>
-                      <Link
-                        href={`/order/${order._id}`}
-                        className='text-[#144e8b] font-semibold hover:underline ml-2 md:ml-0 items-center text-center block'
-                      >
-                        See Details
-                      </Link>
-                    </div>
-                    {!order.invoice && !order.isPaid && (
-                      <div className='flex items-center text-center'>
-                        <button
-                          onClick={() => handleOpenOrder(order._id)}
-                          className='text-[#144e8b] font-semibold hover:underline ml-2 md:ml-0 items-center text-center block'
-                        >
-                          Edit Order
-                        </button>
-                      </div>
-                    )}
+                  <div className='text-gray-800 font-semibold'>
+                    {order.docNumber}
                   </div>
                 </div>
+
+                {/* DATE */}
+                <div>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                    CREATED ON
+                  </div>
+                  <div>{formatDateWithMonthInLetters(order.createdAt)}</div>
+                </div>
+                <div>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                    DUE DATE
+                  </div>
+                  <div>
+                    {formatDateWithMonthInLetters(dueDateFinalHandler(order))}
+                  </div>
+                </div>
+
+                {/* PAID */}
+                <div>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                    PAYMENT STATUS
+                  </div>
+                  <div>
+                    {order.isPaid
+                      ? "Paid"
+                      : order.invoice
+                      ? paymentAmountStatus(order.invoice)
+                      : "Not Paid"}
+                  </div>
+                  <div>
+                    {" "}
+                    {order.paymentMethod === "Stripe" ? (
+                      <div>
+                        Credit Card <br />
+                        (Powered by Stripe)
+                      </div>
+                    ) : (
+                      <div>{order.paymentMethod}</div>
+                    )}
+                    {order.paymentMethod === "PO Number" &&
+                      order.defaultTerm && (
+                        <div>
+                          <span className='font-semibold'>Terms: </span>
+                          {order.defaultTerm}
+                        </div>
+                      )}
+                  </div>
+                </div>
+
+                {/* PROCESSED */}
+                <div className=''>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1 '>
+                    SHIPMENT STATUS
+                  </div>
+                  <div>
+                    {order.invoice && order.invoice?.shippings?.length > 0
+                      ? shippingsShippmentStatus(order.invoice?.shippings)
+                      : "Shipment Not Processed Yet "}
+                  </div>
+                </div>
+
+                {/* TOTAL */}
+                <div>
+                  <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                    TOTAL
+                  </div>
+                  <div>
+                    $
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(order.totalPrice)}
+                  </div>
+                </div>
+                {/* ACTION */}
+                <div className='flex gap-2 h-full justify-center items-center text-center'>
+                  <div className='relative group flex justify-center items-center'>
+                    <button
+                      onClick={() => router.push(`/order/${order._id}`)}
+                      className='primary-button'
+                    >
+                      <FaEye />
+                    </button>
+                    <span className='absolute bottom-full px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity'>
+                      Details
+                    </span>
+                  </div>
+                  {!order.invoice && !order.isPaid && (
+                    <div className='relative group flex justify-center items-center'>
+                      <button
+                        onClick={() => handleOpenOrder(order._id)}
+                        className='primary-button'
+                      >
+                        <BiSolidEdit />
+                      </button>
+                      <span className='absolute bottom-full  px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity'>
+                        Edit
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </Layout>
   );
 }

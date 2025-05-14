@@ -8,6 +8,8 @@ import React, {
 import CustomAlertModal from "../main/CustomAlertModal";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import CustomConfirmModal from "../main/CustomConfirmModal";
+import Loading from "../main/Loading";
 
 const ModalContext = createContext();
 export const useModalContext = () => useContext(ModalContext);
@@ -20,9 +22,15 @@ export const ModalProvider = ({ children }) => {
   const [alertMessage, setAlertMessage] = useState({});
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [alertAction, setAlertAction] = useState(null);
+  const [modalMessage, setModalMessage] = useState({});
   const [contact, setContact] = useState({});
+  const [confirmAction, setConfirmAction] = useState(null);
   const [hasSeenModal, setHasSeenModal] = useState(false);
   const [user, setUser] = useState({});
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [customer, setCustomer] = useState({});
 
   useEffect(() => {
@@ -71,11 +79,31 @@ export const ModalProvider = ({ children }) => {
     }
   }, []);
 
+  const openConfirmModal = (message, action) => {
+    setIsConfirmModalOpen(true);
+    setModalMessage(message);
+    setConfirmAction(() => action);
+  };
+
+  const handleConfirmationModalConfirm = () => {
+    setIsConfirmModalOpen(false);
+    confirmAction(true);
+    setConfirmAction(null);
+  };
+
+  const handleConfirmationModalCancel = () => {
+    setIsConfirmModalOpen(false);
+  };
+
+  const startLoading = () => setIsLoading(true);
+  const stopLoading = () => setIsLoading(false);
+
   return (
     <ModalContext.Provider
       value={{
         showStatusMessage,
         openAlertModal,
+        openConfirmModal,
         contact,
         setCustomer,
         customer,
@@ -85,14 +113,22 @@ export const ModalProvider = ({ children }) => {
         isVisible,
         statusMessage,
         messageType,
+        startLoading,
+        stopLoading,
       }}
     >
       {children}
-
+      {isLoading && <Loading />}
       <CustomAlertModal
         isOpen={isAlertVisible}
         message={alertMessage}
         onConfirm={handleAlertConfirm}
+      />
+      <CustomConfirmModal
+        isOpen={isConfirmModalOpen}
+        onConfirm={handleConfirmationModalConfirm}
+        onCancel={handleConfirmationModalCancel}
+        message={modalMessage}
       />
     </ModalContext.Provider>
   );
