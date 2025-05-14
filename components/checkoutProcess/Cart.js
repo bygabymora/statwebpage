@@ -152,7 +152,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
       return;
     }
 
-    await axios.put(`/api/users/${session.user?._id}/cart`, {
+    const { cart } = await axios.put(`/api/users/${session.user?._id}/cart`, {
       productId: item.productId,
       typeOfPurchase: item.typeOfPurchase,
       quantity,
@@ -161,15 +161,13 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
       unitPrice: item.unitPrice,
     });
 
-    // Refetch updated cart from backend
-    const updatedUser = await fetchUserData();
     setUser((prev) => ({
       ...prev,
-      cart: updatedUser.userData?.cart,
+      cart: cart,
     }));
 
     // Update order totals
-    const updatedOrderItems = updatedUser.userData?.cart || [];
+    const updatedOrderItems = cart || [];
     const itemsPrice = updatedOrderItems.reduce(
       (a, c) => a + c.quantity * c.price,
       0
@@ -177,7 +175,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
     setOrder({
       ...order,
-      orderItems: updatedOrderItems,
+      orderItems: order.orderItems.map((oItem) =>
+        oItem.productId === item.productId ? { ...oItem, quantity } : oItem
+      ),
       itemsPrice,
       totalPrice: itemsPrice,
     });

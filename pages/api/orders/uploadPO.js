@@ -105,6 +105,7 @@ const postHandler = async (req, res) => {
         fileId,
         fileName: originalname,
         docNumber: nextDocNumber,
+        status: "In Process",
       });
       await order.save();
     }

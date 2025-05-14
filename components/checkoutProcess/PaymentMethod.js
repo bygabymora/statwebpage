@@ -113,7 +113,11 @@ export default function PaymentMethod({
 
     // 2) Persist (create/update) the order
     try {
-      const { data } = await axios.post("/api/orders", { order });
+      const orderToSave = {
+        ...order,
+        status: "In Process",
+      };
+      const { data } = await axios.post("/api/orders", { order: orderToSave });
       const saved = data.order;
 
       // 3) Store only the order ID in a cookie

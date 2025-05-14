@@ -7,8 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { useModalContext } from "../context/ModalContext";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { getError } from "../../utils/error";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import states from "../../utils/states.json";
@@ -30,8 +28,6 @@ export default function PlaceOrder({
   paypalDispatch,
   isPending,
 }) {
-  const { orderItems, shippingAddress, paymentMethod, shippingPreferences } =
-    order;
   const {
     showStatusMessage,
     fetchUserData,
@@ -44,20 +40,16 @@ export default function PlaceOrder({
   const { data: session } = useSession();
   const [loading] = useState(false);
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [emailName, setEmailName] = useState("");
-  const [emailTotalOrder, setEmailTotalOrder] = useState("");
-  const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
   const [insufficientStockMessage, setInsufficientStockMessage] = useState([]);
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
   const itemsPrice = useMemo(
-    () => round2(orderItems.reduce((a, c) => a + c.quantity * c.price, 0)),
-    [orderItems]
+    () =>
+      round2(order?.orderItems.reduce((a, c) => a + c.quantity * c.price, 0)),
+    [order?.orderItems]
   );
-  const isPayByWire = paymentMethod === "Pay by Wire";
+  const isPayByWire = order?.paymentMethod === "Pay by Wire";
   const discountAmount = useMemo(
     () =>
       round2(
@@ -147,47 +139,12 @@ export default function PlaceOrder({
   }, [paypalDispatch, order._id, order.isPaid]);
 
   useEffect(() => {
-    setEmail(shippingAddress.email);
-    setEmailName(shippingAddress.fullName);
-    setEmailPaymentMethod(paymentMethod);
-    setEmailTotalOrder(totalPrice);
-    setSpecialNotes(shippingAddress.notes);
-  }, [paymentMethod, shippingAddress, totalPrice]);
-
-  useEffect(() => {
     fetchOrder();
   }, []);
 
-  const sendEmail = (e = { preventDefault: () => {} }) => {
-    e.preventDefault();
-
-    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
-      showStatusMessage(
-        "error",
-        "Please fill all the fields before sending the email."
-      );
-      return;
-    }
-
-    const contactToEmail = {
-      name: emailName,
-      email: email,
-      total: emailTotalOrder,
-      paymentMethod: emailPaymentMethod,
-      shippingPreference: specialNotes,
-    };
-
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Order Confirmation"
-    );
-
-    handleSendEmails(emailMessage, contactToEmail);
-  };
-
   const baseAction = async () => {
     try {
-      const updatedEstimateItems = orderItems.map((item) => ({
+      const updatedEstimateItems = order?.orderItems?.map((item) => ({
         ...item,
         typeOfPurchase: item.typeOfPurchase?.toLowerCase(),
         approved: true,
@@ -327,13 +284,11 @@ export default function PlaceOrder({
         itemsPrice: 0,
         totalPrice: 0,
       }));
-
-      sendEmail();
       Cookies.remove("orderId");
 
       console.log("Order placed successfully:", data);
       // If the payment method is Stripe, redirect to the Stripe checkout
-      if (paymentMethod === "Stripe") {
+      if (order?.paymentMethod === "Stripe") {
         console.log("Redirecting to Stripe checkout...");
         const stripe = await stripePromise;
 
@@ -443,8 +398,6 @@ export default function PlaceOrder({
           "success",
           "Payment successful. Thank you for your order!"
         );
-        sendEmail();
-
         setOrder((prev) => ({
           ...prev,
           isPaid: true,
@@ -470,7 +423,7 @@ export default function PlaceOrder({
       <h1 className='mb-6 text-2xl font-bold text-[#144e8b] text-center'>
         Confirm Your Order
       </h1>
-      {orderItems.length === 0 ? (
+      {order?.orderItems?.length === 0 ? (
         <div className='text-center text-gray-600 text-lg my-5'>
           Your cart is empty.{" "}
           <Link
@@ -493,13 +446,13 @@ export default function PlaceOrder({
                   <div className=' bg-white p-2 rounded-md gap-4 mb-2 '>
                     <span>
                       Method:{" "}
-                      {paymentMethod === "Stripe"
+                      {order?.paymentMethod === "Stripe"
                         ? "Credit Card (Powered by Stripe)"
-                        : paymentMethod}
+                        : order?.paymentMethod}
                     </span>
                     {order.poNumber && <span>{" - " + order.poNumber}</span>}{" "}
                     <br />
-                    {paymentMethod === "PO Number"
+                    {order?.paymentMethod === "PO Number"
                       ? "Terms: " + order.defaultTerm
                       : ""}
                     <br />
@@ -742,73 +695,81 @@ export default function PlaceOrder({
             </div>
 
             <div className='card bg-white shadow-lg p-6 rounded-lg border'>
-              {orderItems && orderItems.some((item) => item.sentOverNight) && (
-                <div className='alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg'>
-                  <p className='font-semibold'>Important Notice:</p>
-                  Some products require overnight shipping due to temperature
-                  sensitivity. It is recommended that some of the products on
-                  this order ship overnight. Stat Surgical Supply is not
-                  responsible for product damage or failure if you choose
-                  another shipping method.
-                  <div className='mt-3'>
-                    <button className='underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]'>
-                      Products For Overnight Delivery
-                    </button>
-                    <ul className='list-disc ml-6 text-sm text-gray-700 mt-2'>
-                      {orderItems
-                        .filter((item) => item.sentOverNight)
-                        .map((product, index) => (
-                          <li key={index}>{product.name}</li>
-                        ))}
-                    </ul>
+              {order?.orderItems &&
+                order?.orderItems?.some((item) => item.sentOverNight) && (
+                  <div className='alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg'>
+                    <p className='font-semibold'>Important Notice:</p>
+                    Some products require overnight shipping due to temperature
+                    sensitivity. It is recommended that some of the products on
+                    this order ship overnight. Stat Surgical Supply is not
+                    responsible for product damage or failure if you choose
+                    another shipping method.
+                    <div className='mt-3'>
+                      <button className='underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]'>
+                        Products For Overnight Delivery
+                      </button>
+                      <ul className='list-disc ml-6 text-sm text-gray-700 mt-2'>
+                        {order?.orderItems
+                          .filter((item) => item.sentOverNight)
+                          .map((product, index) => (
+                            <li key={index}>{product.name}</li>
+                          ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
                 Shipping Address
               </h2>
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                 <div className='flex flex-col md:flex-row md:justify-between bg-white p-2 rounded-md gap-4 '>
                   <div className='flex flex-1 flex-col'>
-                    {shippingAddress.companyName && (
+                    {order?.shippingAddress?.companyName && (
                       <h3 className='font-bold'>
-                        {shippingAddress.companyName},
+                        {order?.shippingAddress.companyName},
                       </h3>
                     )}
-                    {formatPhoneNumber(shippingAddress.phone)} <br />
-                    {shippingAddress.address}
-                    {shippingAddress.suiteNumber
-                      ? "," + shippingAddress.suiteNumber
+                    {formatPhoneNumber(order?.shippingAddress?.phone)} <br />
+                    {order?.shippingAddress?.address}
+                    {order?.shippingAddress?.suiteNumber
+                      ? "," + order?.shippingAddress.suiteNumber
                       : ""}{" "}
-                    <br /> {shippingAddress.state}, {shippingAddress.city},{" "}
-                    {shippingAddress.postalCode}
+                    <br /> {order?.shippingAddress?.state},{" "}
+                    {order?.shippingAddress?.city},{" "}
+                    {order?.shippingAddress?.postalCode}
                   </div>
                   <div className='flex flex-1 flex-col'>
                     <h3 className='font-bold'> Attn to: </h3>
-                    {shippingAddress.contactInfo?.firstName}{" "}
-                    {shippingAddress.contactInfo?.lastName}
+                    {order?.shippingAddress?.contactInfo?.firstName}{" "}
+                    {order?.shippingAddress?.contactInfo?.lastName}
                     <br />
-                    {shippingAddress.contactInfo?.email}
-                    {shippingAddress.contactInfo?.secondEmail && (
-                      <span>, {shippingAddress.contactInfo?.secondEmail}</span>
+                    {order?.shippingAddress?.contactInfo?.email}
+                    {order?.shippingAddress?.contactInfo?.secondEmail && (
+                      <span>
+                        , {order?.shippingAddress?.contactInfo?.secondEmail}
+                      </span>
                     )}
                   </div>
 
                   <div className='flex flex-1 flex-col'>
                     <h3 className='font-bold'>Shipping Instructions</h3>
-                    {shippingPreferences?.shippingMethod} -{" "}
-                    {shippingPreferences?.carrier}
+                    {order?.shippingPreferences?.shippingMethod} -{" "}
+                    {order?.shippingPreferences?.carrier}
                     <br />
-                    {shippingPreferences?.account && (
-                      <span> Account: {shippingPreferences?.account}</span>
-                    )}
-                    {shippingPreferences?.paymentMethod && (
+                    {order?.shippingPreferences?.account && (
                       <span>
                         {" "}
-                        Payment Method: {shippingPreferences?.paymentMethod}
+                        Account: {order?.shippingPreferences?.account}
                       </span>
                     )}
-                    <div>{shippingAddress.notes}</div>
+                    {order?.shippingPreferences?.paymentMethod && (
+                      <span>
+                        {" "}
+                        Payment Method:{" "}
+                        {order?.shippingPreferences?.paymentMethod}
+                      </span>
+                    )}
+                    <div>{order?.shippingAddress?.notes}</div>
                   </div>
                 </div>
               </div>
@@ -949,25 +910,28 @@ export default function PlaceOrder({
                   </span>
                 </li>
                 <li>
-                  {paymentMethod === "Stripe" ? (
-                    <button
-                      onClick={placeOrderHandler}
-                      type='button'
-                      className='primary-button w-full'
-                    >
-                      <div className='flex flex-row align-middle justify-center items-center '>
-                        Secure Checkout &nbsp; <AiTwotoneLock />
-                      </div>
-                      <Image
-                        src={Stripe}
-                        alt='Checkout with Stripe'
-                        height={80}
-                        width={200}
-                        className='mt-2'
-                        loading='lazy'
-                      />
-                    </button>
-                  ) : paymentMethod === "Paypal" ? (
+                  {order?.paymentMethod === "Stripe" ? (
+                    <div className='buttons-container text-center mx-auto'>
+                      <button
+                        onClick={placeOrderHandler}
+                        type='button'
+                        className='primary-button w-full'
+                      >
+                        <div className='flex flex-row align-middle justify-center items-center '>
+                          Secure Checkout &nbsp; <AiTwotoneLock />
+                        </div>
+
+                        <Image
+                          src={Stripe}
+                          alt='Checkout with Stripe'
+                          height={80}
+                          width={200}
+                          className='mt-2'
+                          loading='lazy'
+                        />
+                      </button>
+                    </div>
+                  ) : order?.paymentMethod === "Paypal" ? (
                     isPending ? (
                       <div>Loading...</div>
                     ) : (
@@ -979,7 +943,7 @@ export default function PlaceOrder({
                         forceReRender={[totalPrice]}
                       ></PayPalButtons>
                     )
-                  ) : paymentMethod === "PO Number" ? (
+                  ) : order?.paymentMethod === "PO Number" ? (
                     <button
                       disabled={loading}
                       onClick={placeOrderHandler}

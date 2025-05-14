@@ -9,11 +9,13 @@ import PlaceOrder from "../components/checkoutProcess/PlaceOrder";
 import Cart from "../components/checkoutProcess/Cart";
 import { useModalContext } from "../components/context/ModalContext";
 import { usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { useSession } from "next-auth/react";
 
 export default function CartScreen() {
   const [activeStep, setActiveStep] = useState(0);
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [order, setOrder] = useState({});
+  const { data: session } = useSession();
   const { user, setUser, customer, setCustomer } = useModalContext();
   const orderId = Cookies.get("orderId");
 
@@ -25,21 +27,20 @@ export default function CartScreen() {
       const { data } = await axios.get(`/api/orders/fetchOrLatestInProcess`, {
         params: { orderId },
       });
-      if (data) {
-        finalOrder = data;
+      if (data.order && data.order._id) {
+        setUser(data.wpUser);
+        finalOrder = data.order;
         Cookies.set("orderId", data._id);
       }
 
-      if (user && user.cart?.length > 0) {
+      if (data.wpUser && data.wpUser?.cart?.length > 0) {
+        console.log("user cart", data.wpUser?.cart);
         const { data: updatedCart } = await axios.post(
           "/api/cart/updateProducts",
           {
-            cartItems: user.cart,
+            cartItems: data.wpUser?.cart,
           }
         );
-
-        console.log("updatedCart", updatedCart);
-
         const itemsPrice = updatedCart.updatedCart.reduce(
           (a, c) => a + c.quantity * c.price,
           0
@@ -68,13 +69,16 @@ export default function CartScreen() {
   };
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    fetchOrder();
-  }, [user]);
+    if (session) {
+      fetchOrder();
+    }
+  }, [orderId, session, order.orderItems?.length]);
 
   return (
     <Layout title='Cart'>
       {console.log("order", order)}
       {console.log("customer", customer)}
+      {console.log("user", user)}
       <CheckoutWizard activeStep={activeStep} />
 
       {activeStep === 0 ? (

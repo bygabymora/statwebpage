@@ -2,6 +2,7 @@ import db from "../../../utils/db";
 import Order from "../../../models/Order";
 import { getToken } from "next-auth/jwt";
 import mongoose from "mongoose";
+import WpUser from "../../../models/WpUser";
 
 const handler = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ const handler = async (req, res) => {
     const { orderId } = req.query;
 
     let order;
-
+    let wpUser;
     if (orderId && mongoose.Types.ObjectId.isValid(orderId)) {
       order = await Order.findById(orderId);
     } else {
@@ -25,7 +26,13 @@ const handler = async (req, res) => {
         status: "In Process",
       }).sort({ updatedAt: -1 });
     }
-
+    wpUser = await WpUser.findById(token._id);
+    if (wpUser) {
+      if (wpUser.cart?.length === 0 && order?.orderItems?.length > 0) {
+        wpUser.cart = order.orderItems;
+        await wpUser.save();
+      }
+    }
     if (!order) {
       order = {
         orderItems: [],
@@ -37,9 +44,11 @@ const handler = async (req, res) => {
         totalPrice: 0,
       };
     }
-    console.log("order", order);
 
-    return res.status(200).json(order);
+    console.log("oser in api", order);
+    console.log("wpUser in api", wpUser);
+
+    return res.status(200).json({ order, wpUser });
   } catch (error) {
     console.error("Failed to fetch order:", error);
     return res.status(500).json({ message: "Internal Server Error" });

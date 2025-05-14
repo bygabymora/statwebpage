@@ -18,6 +18,7 @@ import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
+
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -398,20 +399,24 @@ function OrderScreen() {
     }
   }, [order.defaultTerm, order.paymentMethod]);
 
-  const paymentAmountStatus = (invoice) => {
+  const paymentAmountStatus = () => {
     let status = "";
-    invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
-      ? (status = "Paid")
-      : invoice.balance === invoice?.totalPrice
-      ? (status = "Not Paid")
-      : invoice?.balance > 0 &&
-        invoice?.balance <
-          invoice.totalPrice -
-            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-      ? (status = "Partial Payment")
-      : invoice.balance < 0
-      ? (status = "Over Payment")
-      : (status = "Not Paid");
+    if (!invoice && !order.isPaid) {
+      status = "Not Paid";
+    } else if (invoice && !order.isPaid) {
+      invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
+        ? (status = "Paid")
+        : invoice.balance === invoice?.totalPrice
+        ? (status = "Not Paid")
+        : invoice?.balance > 0 &&
+          invoice?.balance <
+            invoice.totalPrice -
+              (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+        ? (status = "Partial Payment")
+        : invoice.balance < 0
+        ? (status = "Over Payment")
+        : (status = "Not Paid");
+    }
     return status;
   };
 
@@ -492,12 +497,18 @@ function OrderScreen() {
                 <span className='font-semibold'>Due Date: </span>
                 {formatDateWithMonthLetters(dueDate)}
               </div>
-              <div>
-                {order.isPaid
-                  ? "Paid"
-                  : invoice
-                  ? paymentAmountStatus(invoice)
-                  : "Not Paid"}
+              <div
+                className={`${
+                  paymentAmountStatus() === "Not Paid"
+                    ? "bg-red-100"
+                    : "bg-green-100"
+                } p-2 rounded-lg text-xl`}
+              >
+                {console.log(
+                  "paymentAmountStatus(invoice)",
+                  paymentAmountStatus()
+                )}
+                {paymentAmountStatus()}
               </div>
             </div>
           </div>

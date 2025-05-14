@@ -35,7 +35,6 @@ export const ModalProvider = ({ children }) => {
         setHasSeenModal(false); // Reset the state of the modal when the session changes
       }
     };
-
     loadUserData();
   }, [session]);
 

@@ -14,7 +14,7 @@ export default function Shipping({
   setCustomer,
 }) {
   const { data: session } = useSession();
-  const { fetchUserData, user } = useModalContext();
+  const { fetchUserData, user, showStatusMessage } = useModalContext();
 
   const fetchOrderData = async () => {
     const { userData, customerData } = await fetchUserData();
@@ -154,7 +154,7 @@ export default function Shipping({
             city: order.billingAddress?.city,
             postalCode: order.billingAddress?.postalCode,
           },
-          status: "In Process",
+
           purchaseExecutive: [
             ...customer.purchaseExecutive.map((executive) => {
               if (executive.email === user.email) {
@@ -178,13 +178,12 @@ export default function Shipping({
       }
 
       if (!userData) {
-        toast.error("User not found, please try to login again");
+        showStatusMessage("error", "User not found, please try to login again");
         return;
       }
       if (!customerData) {
         console.log("Customer not found, No Customer Linked to User");
       }
-
       setActiveStep(2);
     } catch (error) {
       toast.error("An error occurred while fetching user data.");

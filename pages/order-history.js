@@ -4,6 +4,9 @@ import React, { useEffect, useReducer } from "react";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
 import formatDateWithMonthInLetters from "../utils/dateWithMonthInLetters";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { useModalContext } from "../components/context/ModalContext";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -23,6 +26,8 @@ function OrderHistoryScreen() {
     orders: [],
     error: "",
   });
+  const { showStatusMessage, setUser } = useModalContext();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -176,6 +181,22 @@ function OrderHistoryScreen() {
     }
   };
 
+  const handleOpenOrder = async (orderId) => {
+    try {
+      const { user } = await axios.get(`/api/orders/${orderId}/open`);
+      if (user) {
+        setUser(user);
+      }
+      Cookies.set("orderId", orderId);
+      setTimeout(() => {
+        router.push("/cart");
+      }, 2000);
+      showStatusMessage("success", "You can now edit your order");
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+    }
+  };
+
   return (
     <Layout title='Order History'>
       <h1 className='mb-4 text-xl'>Order History</h1>
@@ -287,6 +308,16 @@ function OrderHistoryScreen() {
                         See Details
                       </Link>
                     </div>
+                    {!order.invoice && !order.isPaid && (
+                      <div className='flex items-center text-center'>
+                        <button
+                          onClick={() => handleOpenOrder(order._id)}
+                          className='text-[#144e8b] font-semibold hover:underline ml-2 md:ml-0 items-center text-center block'
+                        >
+                          Edit Order
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
