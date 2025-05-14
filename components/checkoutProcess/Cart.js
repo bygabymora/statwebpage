@@ -16,7 +16,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   useEffect(() => {
     setMounted(true);
   }, []);
-  const { setUser, fetchUserData, showStatusMessage } = useModalContext();
+  const { setUser, fetchUserData, showStatusMessage, user } = useModalContext();
 
   useEffect(() => {
     if (!order.orderItems) return;
@@ -163,7 +163,12 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
     setUser((prev) => ({
       ...prev,
-      cart: cart,
+      cart: user?.cart?.map((cItem) =>
+        cItem.productId === item.productId &&
+        cItem.typeOfPurchase === item.typeOfPurchase
+          ? { ...cItem, quantity }
+          : cItem
+      ),
     }));
 
     // Update order totals
@@ -175,7 +180,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
     setOrder({
       ...order,
-      orderItems: order.orderItems.map((oItem) =>
+      orderItems: order?.orderItems?.map((oItem) =>
         oItem.productId === item.productId ? { ...oItem, quantity } : oItem
       ),
       itemsPrice,
