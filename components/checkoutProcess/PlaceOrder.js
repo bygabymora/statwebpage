@@ -403,9 +403,10 @@ export default function PlaceOrder({
     }
   };
 
-  const createOrder = (data, actions) => {
+  const createOrder = (actions) => {
     if (!actions || !actions.order) {
-      toast.error(
+      showStatusMessage(
+        "error",
         "PayPal SDK is not loaded properly. Please refresh the page."
       );
       return;
@@ -450,6 +451,11 @@ export default function PlaceOrder({
         );
       }
     });
+  }
+
+  function onError(error) {
+    console.error("PayPal error:", error);
+    showStatusMessage("error", getError(error));
   }
 
   return (
@@ -967,10 +973,7 @@ export default function PlaceOrder({
                           className='fit-content mt-3'
                           createOrder={createOrder}
                           onApprove={onApprove}
-                          onError={showStatusMessage(
-                            "error",
-                            "Payment failed."
-                          )}
+                          onError={onError}
                           forceReRender={[totalPrice]}
                         ></PayPalButtons>
                       )

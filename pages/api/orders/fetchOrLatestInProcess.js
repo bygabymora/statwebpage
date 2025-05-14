@@ -37,6 +37,7 @@ const handler = async (req, res) => {
         totalPrice: 0,
       };
     }
+    console.log("order", order);
 
     return res.status(200).json(order);
   } catch (error) {

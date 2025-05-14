@@ -2,7 +2,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { useSession } from "next-auth/react";
@@ -17,7 +17,7 @@ import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
-import formatDateForInput from "../../utils/dateUtils";
+import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
@@ -70,7 +70,6 @@ function OrderScreen() {
   const { query } = useRouter();
   const orderId = query.id;
   const [showShippingId, setShowShippingId] = useState(null);
-  const form = useRef();
   const [message] = useState("");
   const [dueDate, setDueDate] = useState("");
   const { showStatusMessage } = useModalContext();
@@ -235,9 +234,10 @@ function OrderScreen() {
     }
   };
 
-  const createOrder = (data, actions) => {
+  const createOrder = (actions) => {
     if (!actions || !actions.order) {
-      toast.error(
+      showStatusMessage(
+        "error",
         "PayPal SDK is not loaded properly. Please refresh the page."
       );
       return;
@@ -281,6 +281,7 @@ function OrderScreen() {
       }
     });
   }
+
   const handlePayment = async () => {
     try {
       dispatch({ type: "PAY_REQUEST" });
@@ -388,11 +389,14 @@ function OrderScreen() {
     return date;
   };
   useEffect(() => {
-    if (order.defaultTerm) {
+    if (order.defaultTerm && order.paymentMethod === "PO Number") {
       const date = dueDateHandler(order.defaultTerm);
       setDueDate(date);
+    } else {
+      const date = new Date(order.createdAt);
+      setDueDate(date);
     }
-  }, [order.defaultTerm]);
+  }, [order.defaultTerm, order.paymentMethod]);
 
   const paymentAmountStatus = (invoice) => {
     let status = "";
@@ -454,7 +458,7 @@ function OrderScreen() {
               ) : (
                 <div>{paymentMethod}</div>
               )}
-              {order.defaultTerm && (
+              {order.paymentMethod === "PO Number" && order.defaultTerm && (
                 <div>
                   <span className='font-semibold'>Terms: </span>
                   {order.defaultTerm}
@@ -486,7 +490,7 @@ function OrderScreen() {
             <div className='flex-1 p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
               <div>
                 <span className='font-semibold'>Due Date: </span>
-                {formatDateForInput(dueDate)}
+                {formatDateWithMonthLetters(dueDate)}
               </div>
               <div>
                 {order.isPaid
@@ -897,57 +901,6 @@ function OrderScreen() {
               </ul>
             </div>
           </div>
-          <form ref={form} hidden>
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='order_id'
-              value={orderId.substring(orderId.length - 8).toUpperCase()}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='user_name'
-              value={shippingAddress.fullName}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='user_phone'
-              value={shippingAddress.phone}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='user_email'
-              value={email}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='total_order'
-              value={totalPrice}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='payment_method'
-              value={paymentMethod}
-              readOnly
-            />
-            <input
-              autoComplete='off'
-              type='hidden'
-              name='shipping_preference'
-              value={shippingAddress.notes}
-              readOnly
-            />
-          </form>
         </div>
       )}
     </Layout>

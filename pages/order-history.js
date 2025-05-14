@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useReducer } from "react";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
+import formatDateWithMonthInLetters from "../utils/dateWithMonthInLetters";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -157,6 +158,24 @@ function OrderHistoryScreen() {
     return status;
   };
 
+  const dueDateHandler = (order) => {
+    const date = new Date(order.createdAt);
+    const daysToAdd = parseInt(order.defaultTerm.split(" ")[1]);
+    console.log("daysToAdd", daysToAdd);
+    date.setDate(date.getDate() + daysToAdd);
+    return date;
+  };
+
+  const dueDateFinalHandler = (order) => {
+    if (order.defaultTerm && order.paymentMethod === "PO Number") {
+      const date = dueDateHandler(order);
+      return date;
+    } else {
+      const date = new Date(order.createdAt);
+      return date;
+    }
+  };
+
   return (
     <Layout title='Order History'>
       <h1 className='mb-4 text-xl'>Order History</h1>
@@ -174,7 +193,7 @@ function OrderHistoryScreen() {
                 className='border rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200 bg-white'
               >
                 {/* Universal Grid with Labels */}
-                <div className='grid grid-cols-2 md:grid-cols-6 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
+                <div className='grid grid-cols-2 md:grid-cols-7 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
                   {/* ORDER # */}
                   <div>
                     <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
@@ -188,22 +207,16 @@ function OrderHistoryScreen() {
                   {/* DATE */}
                   <div>
                     <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      DATE
+                      CREATED ON
                     </div>
-                    <div>{order.createdAt.substring(0, 10)}</div>
+                    <div>{formatDateWithMonthInLetters(order.createdAt)}</div>
                   </div>
-
-                  {/* TOTAL */}
                   <div>
                     <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
-                      TOTAL
+                      DUE DATE
                     </div>
                     <div>
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(order.totalPrice)}
+                      {formatDateWithMonthInLetters(dueDateFinalHandler(order))}
                     </div>
                   </div>
 
@@ -219,10 +232,28 @@ function OrderHistoryScreen() {
                         ? paymentAmountStatus(order.invoice)
                         : "Not Paid"}
                     </div>
+                    <div>
+                      {" "}
+                      {order.paymentMethod === "Stripe" ? (
+                        <div>
+                          Credit Card <br />
+                          (Powered by Stripe)
+                        </div>
+                      ) : (
+                        <div>{order.paymentMethod}</div>
+                      )}
+                      {order.paymentMethod === "PO Number" &&
+                        order.defaultTerm && (
+                          <div>
+                            <span className='font-semibold'>Terms: </span>
+                            {order.defaultTerm}
+                          </div>
+                        )}
+                    </div>
                   </div>
 
                   {/* PROCESSED */}
-                  <div className='col-span-2 md:col-span-1'>
+                  <div className=''>
                     <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1 '>
                       SHIPMENT STATUS
                     </div>
@@ -233,6 +264,19 @@ function OrderHistoryScreen() {
                     </div>
                   </div>
 
+                  {/* TOTAL */}
+                  <div>
+                    <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
+                      TOTAL
+                    </div>
+                    <div>
+                      $
+                      {new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(order.totalPrice)}
+                    </div>
+                  </div>
                   {/* ACTION */}
                   <div className='flex flex-col justify-center  md:justify-center items-center text-center'>
                     <div className='flex items-center text-center'>

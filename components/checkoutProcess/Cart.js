@@ -65,6 +65,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
               orderItems: updatedOrderItems,
               itemsPrice,
               totalPrice: itemsPrice,
+              status: "In Process",
             });
 
             // ✅ Set stock alert
