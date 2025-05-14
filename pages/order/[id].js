@@ -743,7 +743,7 @@ function OrderScreen() {
                           />
                           <div>
                             <Link
-                              href={`/products/${item.manufacturer}-${item.name}-${item._id}`}
+                              href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
                               className='block font-medium text-gray-800'
                             >
                               {item.manufacturer}

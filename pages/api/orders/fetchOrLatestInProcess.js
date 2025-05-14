@@ -29,7 +29,7 @@ const handler = async (req, res) => {
     wpUser = await WpUser.findById(token._id);
     if (wpUser) {
       if (wpUser.cart?.length === 0 && order?.orderItems?.length > 0) {
-        wpUser.cart = order.orderItems;
+        wpUser.cart = order.orderItems || [];
         await wpUser.save();
       }
     }
