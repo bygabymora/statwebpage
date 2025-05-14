@@ -403,7 +403,8 @@ export default function PlaceOrder({
     }
   };
 
-  const createOrder = (actions) => {
+  // inside your PlaceOrder component
+  const createOrder = (data, actions) => {
     if (!actions || !actions.order) {
       showStatusMessage(
         "error",
@@ -412,17 +413,23 @@ export default function PlaceOrder({
       return;
     }
 
+    // actions.order.create returns a Promise<string> with the PayPal order ID
     return actions.order
       .create({
         purchase_units: [
           {
             amount: {
-              value: totalPrice,
+              value: totalPrice.toString(),
             },
+            // this will show up in your PayPal dashboard as "custom_id"
+            custom_id: order._id.toString(),
           },
         ],
       })
-      .then((orderID) => orderID);
+      .then((paypalOrderID) => {
+        // paypalOrderID is the PayPal-generated ID for this transaction
+        return paypalOrderID;
+      });
   };
 
   function onApprove(data, actions) {
@@ -474,7 +481,7 @@ export default function PlaceOrder({
           </Link>
         </div>
       ) : (
-        <div className='grid md:grid-cols-4 gap-6'>
+        <div className='grid md:grid-cols-4'>
           <div className='md:col-span-3'>
             <div className='card bg-white shadow-lg p-6 rounded-lg border mt-5'>
               <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
@@ -909,99 +916,93 @@ export default function PlaceOrder({
               </button>
             </div>
           </div>
-          <div className='md:col-span-1 h-screen overflow-y-auto self-start'>
-            <div className='sticky top-0 z-10 bg-white p-4'>
-              <div className='card bg-white shadow-lg p-3 rounded-lg border my-5'>
-                <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
-                  Order Summary
-                </h2>
-                <ul className='text-gray-700'>
-                  <li className='mb-2 flex justify-between text-lg'>
-                    <span>Items</span>
-                    <span>
-                      {" "}
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(itemsPrice)}
-                    </span>
+          <div>
+            <div className='mt-3 sticky top-[13rem] bg-white shadow-lg p-6 rounded-lg border'>
+              <h2 className='mb-2 text-lg font-semibold'>Order Summary</h2>
+              <ul className='text-gray-700'>
+                <li className='mb-2 flex justify-between text-lg'>
+                  <span>Items</span>
+                  <span>
+                    {" "}
+                    $
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(itemsPrice)}
+                  </span>
+                </li>
+                {isPayByWire && (
+                  <li className='mb-2 flex justify-between text-lg text-green-600'>
+                    <span>Discount ({WIRE_PAYMENT_DISCOUNT_PERCENTAGE}%)</span>
+                    <span>- ${discountAmount.toFixed(2)}</span>
                   </li>
-                  {isPayByWire && (
-                    <li className='mb-2 flex justify-between text-lg text-green-600'>
-                      <span>
-                        Discount ({WIRE_PAYMENT_DISCOUNT_PERCENTAGE}%)
-                      </span>
-                      <span>- ${discountAmount.toFixed(2)}</span>
-                    </li>
-                  )}
-                  <li className='mb-4 flex justify-between text-xl font-bold'>
-                    <span>Total</span>
-                    <span className='text-[#144e8b]'>
-                      {" "}
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(totalPrice)}
-                    </span>
-                  </li>
-                  <li>
-                    {paymentMethod === "Stripe" ? (
-                      <button
-                        onClick={placeOrderHandler}
-                        type='button'
-                        className='primary-button w-full'
-                      >
-                        <div className='flex flex-row align-middle justify-center items-center '>
-                          Secure Checkout &nbsp; <AiTwotoneLock />
-                        </div>
-                        <Image
-                          src={Stripe}
-                          alt='Checkout with Stripe'
-                          height={80}
-                          width={200}
-                          className='mt-2'
-                          loading='lazy'
-                        />
-                      </button>
-                    ) : paymentMethod === "Paypal" ? (
-                      isPending ? (
-                        <div>Loading...</div>
-                      ) : (
-                        <PayPalButtons
-                          className='fit-content mt-3'
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                          forceReRender={[totalPrice]}
-                        ></PayPalButtons>
-                      )
-                    ) : paymentMethod === "PO Number" ? (
-                      <button
-                        disabled={loading}
-                        onClick={placeOrderHandler}
-                        className='w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
-                      >
-                        {loading ? "Processing..." : "Confirm Order"}
-                      </button>
-                    ) : null}
-                  </li>
+                )}
+                <li className='mb-4 flex justify-between text-xl font-bold'>
+                  <span>Total</span>
+                  <span className='text-[#144e8b]'>
+                    {" "}
+                    $
+                    {new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(totalPrice)}
+                  </span>
+                </li>
+                <li>
+                  {paymentMethod === "Stripe" ? (
+                    <button
+                      onClick={placeOrderHandler}
+                      type='button'
+                      className='primary-button w-full'
+                    >
+                      <div className='flex flex-row align-middle justify-center items-center '>
+                        Secure Checkout &nbsp; <AiTwotoneLock />
+                      </div>
+                      <Image
+                        src={Stripe}
+                        alt='Checkout with Stripe'
+                        height={80}
+                        width={200}
+                        className='mt-2'
+                        loading='lazy'
+                      />
+                    </button>
+                  ) : paymentMethod === "Paypal" ? (
+                    isPending ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <PayPalButtons
+                        className='fit-content mt-3'
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                        forceReRender={[totalPrice]}
+                      ></PayPalButtons>
+                    )
+                  ) : paymentMethod === "PO Number" ? (
+                    <button
+                      disabled={loading}
+                      onClick={placeOrderHandler}
+                      className='w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
+                    >
+                      {loading ? "Processing..." : "Confirm Order"}
+                    </button>
+                  ) : null}
+                </li>
 
-                  <li className='mt-3 text-gray-600 text-sm'>
-                    We will contact you for more information depending on your
-                    shipping preference selection.
-                  </li>
-                </ul>
-                <div className='mt-6 w-full flex justify-center gap-4'>
-                  <button
-                    type='button'
-                    className='px-6 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-200 transition-all'
-                    onClick={() => setActiveStep(2)}
-                  >
-                    Back
-                  </button>
-                </div>
+                <li className='mt-3 text-gray-600 text-sm'>
+                  We will contact you for more information depending on your
+                  shipping preference selection.
+                </li>
+              </ul>
+              <div className='mt-6 w-full flex justify-center gap-4'>
+                <button
+                  type='button'
+                  className='px-6 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-200 transition-all'
+                  onClick={() => setActiveStep(2)}
+                >
+                  Back
+                </button>
               </div>
             </div>
           </div>
