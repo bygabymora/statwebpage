@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -69,9 +68,7 @@ export default function PlaceOrder({
     try {
       const { data: updatedCart } = await axios.post(
         "/api/cart/updateProducts",
-        {
-          cartItems: order.orderItems,
-        }
+        { cartItems: order.orderItems }
       );
 
       const newInsufficientStockMessages = [];
@@ -92,32 +89,22 @@ export default function PlaceOrder({
             availableQuantity: available,
           });
 
-          return {
-            ...item,
-            quantity: available,
-          };
+          return { ...item, quantity: available };
         }
-
         return item;
       });
 
       setInsufficientStockMessage(newInsufficientStockMessages);
+      setOrder((prev) => ({ ...prev, orderItems: correctedOrderItems }));
 
-      const everyItemWithSufficientStock =
-        newInsufficientStockMessages.length === 0;
-      setOrder((prev) => ({
-        ...prev,
-        orderItems: correctedOrderItems,
-      }));
-
-      if (!everyItemWithSufficientStock) {
+      const allGood = newInsufficientStockMessages.length === 0;
+      if (!allGood) {
         showStatusMessage(
           "error",
           "Some items were updated due to insufficient stock."
         );
       }
-
-      return everyItemWithSufficientStock;
+      return allGood;
     } catch (error) {
       console.error("Error validating order:", error);
       showStatusMessage("error", "Error checking product availability.");
@@ -247,132 +234,99 @@ export default function PlaceOrder({
   };
 
   const placeOrderHandler = async () => {
-    if (!validateOrder()) {
+    // ← await the boolean result
+    const isValid = await validateOrder();
+    if (!isValid) {
+      // build a little report for the user
+      const details = insufficientStockMessage
+        .map(
+          (m) =>
+            `${m.name}: wanted ${m.previousQuantity}, available ${m.availableQuantity}`
+        )
+        .join("\n");
       openAlertModal(
-        `Some items were updated due to insufficient stock. ${insufficientStockMessage.map()}`
+        `Some items were updated due to insufficient stock:\n${details}`
       );
-      return;
+      return; // stop here
     }
 
-    let message = {
+    // …and only if we got here do we show the confirm-modal and place the order
+    const confirmMessage = {
       title: "Are you sure?",
       body: "You are about to place an order. Please confirm that all the information is correct.",
       warning:
-        "⚠You will have 2 hours to make any changes, after that time, the order will be processed.⚠",
+        order?.paymentMethod === "Stripe"
+          ? order.shippingPreferences.paymentMethod === "Bill Me"
+            ? "⚠ You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment. ⚠"
+            : "⚠ After the payment, any change will need to be processed by your Stat Rep. ⚠"
+          : "⚠ You will have 2 hours to make any changes, after that time, the order will be processed. ⚠",
     };
 
-    if (
-      order?.paymentMethod === "Stripe" &&
-      order?.shippingPreferences?.paymentMethod === "Bill Me"
-    ) {
-      message = {
-        title: "Are you sure?",
-        body: "You are about to place an order. Please confirm that all the information is correct.",
-        warning:
-          "⚠You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment.⚠",
-      };
-    } else if (
-      order?.paymentMethod === "Stripe" &&
-      order?.shippingPreferences?.paymentMethod !== "Bill Me"
-    ) {
-      message = {
-        title: "Are you sure?",
-        body: "You are about to place an order. Please confirm that all the information is correct.",
-        warning:
-          "⚠ After the payment, any change will need to be processed by your Stat Rep.⚠",
-      };
-    }
     const action = async (confirmed) => {
-      if (confirmed) {
-        try {
-          startLoading();
-          const orderToPlace = {
-            ...order,
-            status: "Completed",
-          };
-          console.log("orderToPlace", orderToPlace);
-          await axios.post("/api/orders", {
-            order: orderToPlace,
-          });
+      if (!confirmed) return;
+      try {
+        startLoading();
+        const orderToPlace = { ...order, status: "Completed" };
+        await axios.post("/api/orders", { order: orderToPlace });
+        await baseAction();
+        await axios.patch(`/api/users/${session.user._id}/cart`, {
+          action: "clear",
+        });
+        await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
+          customer,
+        });
 
-          await baseAction();
+        const updatedUser = await fetchUserData();
+        setUser((u) => ({ ...u, cart: updatedUser.userData.cart }));
 
-          await axios.patch(`/api/users/${session.user?._id}/cart`, {
-            action: "clear",
-          });
-
-          await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
-            customer: customer,
-          });
-
-          const updatedUser = await fetchUserData();
-          setUser((prev) => ({
-            ...prev,
-            cart: updatedUser.userData?.cart,
+        // payment-method branch
+        if (
+          order.paymentMethod !== "Stripe" ||
+          order.shippingPreferences.paymentMethod === "Bill Me"
+        ) {
+          router.push(`/order/${order._id}`);
+          Cookies.remove("orderId");
+          setOrder((o) => ({
+            ...o,
+            orderItems: [],
+            itemsPrice: 0,
+            totalPrice: 0,
           }));
-
-          // Optional: clear local order object
-
-          // If the payment method is Stripe, redirect to the Stripe checkout
-          if (
-            order?.paymentMethod !== "Stripe" ||
-            (order?.paymentMethod === "Stripe" &&
-              order?.shippingPreferences?.paymentMethod === "Bill Me")
-          ) {
-            router.push(`/order/${order._id}`);
-            setOrder((prev) => ({
-              ...prev,
-              orderItems: [],
-              itemsPrice: 0,
-              totalPrice: 0,
-            }));
-            Cookies.remove("orderId");
-          } else if (
-            order?.paymentMethod === "Stripe" &&
-            order?.shippingPreferences?.paymentMethod !== "Bill Me"
-          ) {
-            console.log("Redirecting to Stripe checkout...");
-            const stripe = await stripePromise;
-
-            if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-              toast.error("Stripe initialization failed.");
-              return;
-            }
-
-            const checkoutSession = await axios.post("/api/checkout_sessions", {
-              totalPrice: Number(totalPrice),
-              orderId: order._id,
-            });
-            setOrder((prev) => ({
-              ...prev,
-              orderItems: [],
-              itemsPrice: 0,
-              totalPrice: 0,
-            }));
-            Cookies.remove("orderId");
-            const result = await stripe.redirectToCheckout({
-              sessionId: checkoutSession?.data?.id,
-            });
-
-            if (result.error) {
-              showStatusMessage(
-                "error",
-                result.error.message ||
-                  "An error occurred with Stripe checkout."
-              );
-            }
+        } else {
+          const stripe = await stripePromise;
+          if (!stripe || typeof stripe.redirectToCheckout !== "function") {
+            showStatusMessage("error", "Stripe initialization failed.");
+            return;
           }
-        } catch (error) {
-          console.error("Error placing order:", error);
-          showStatusMessage(
-            "error",
-            getError(error) || "An error occurred while placing the order."
-          );
-          stopLoading();
+          const {
+            data: { id: sessionId },
+          } = await axios.post("/api/checkout_sessions", {
+            totalPrice: Number(order.totalPrice),
+            orderId: order._id,
+          });
+          Cookies.remove("orderId");
+          setOrder((o) => ({
+            ...o,
+            orderItems: [],
+            itemsPrice: 0,
+            totalPrice: 0,
+          }));
+          const result = await stripe.redirectToCheckout({ sessionId });
+          if (result.error) {
+            showStatusMessage("error", result.error.message);
+          }
         }
+      } catch (err) {
+        console.error("Error placing order:", err);
+        showStatusMessage(
+          "error",
+          err.message || "An error occurred while placing the order."
+        );
+        stopLoading();
       }
     };
-    openConfirmModal(message, action);
+
+    openConfirmModal(confirmMessage, action);
   };
 
   const handleInputChange = (type, field, value, secondField) => {
