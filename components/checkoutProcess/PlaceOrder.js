@@ -257,6 +257,8 @@ export default function PlaceOrder({
     let message = {
       title: "Are you sure?",
       body: "You are about to place an order. Please confirm that all the information is correct.",
+      warning:
+        "⚠You will have 2 hours to make any changes, after that time, the order will be processed.⚠",
     };
 
     if (
@@ -268,6 +270,16 @@ export default function PlaceOrder({
         body: "You are about to place an order. Please confirm that all the information is correct.",
         warning:
           "⚠You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment.⚠",
+      };
+    } else if (
+      order?.paymentMethod === "Stripe" &&
+      order?.shippingPreferences?.paymentMethod !== "Bill Me"
+    ) {
+      message = {
+        title: "Are you sure?",
+        body: "You are about to place an order. Please confirm that all the information is correct.",
+        warning:
+          "⚠ After the payment, any change will need to be processed by your Stat Rep.⚠",
       };
     }
     const action = async (confirmed) => {
