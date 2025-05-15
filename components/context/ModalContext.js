@@ -65,6 +65,7 @@ export const ModalProvider = ({ children }) => {
   const handleAlertConfirm = () => {
     setIsAlertVisible(false);
     if (alertAction) alertAction(); // Execute the action associated with the modal
+    setHasSeenModal(false); // Reset the state of the modal
   };
 
   const showStatusMessage = useCallback((type, message, mode) => {

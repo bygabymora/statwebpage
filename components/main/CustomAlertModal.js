@@ -7,8 +7,8 @@ const CustomAlertModal = ({ isOpen, message, onConfirm }) => {
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999] p-5'>
       <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm w-full'>
         <h2 className='text-lg font-semibold mb-4'>{message.title}</h2>
-        <p className='mb-4'>{message.body}</p>
-        <p className='mb-4 font-bold'>{message.warning}</p>
+        <p className='mb-4 whitespace-pre-line'>{message.body}</p>
+        <p className='mb-4 font-bold whitespace-pre-line'>{message.warning}</p>
         <div className='flex justify-end'>
           <button
             data-ignore-context

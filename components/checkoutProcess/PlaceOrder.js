@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,7 +26,6 @@ export default function PlaceOrder({
   fetchOrder,
   paypalDispatch,
   isPending,
-  targetRef,
 }) {
   const {
     showStatusMessage,
@@ -44,6 +43,14 @@ export default function PlaceOrder({
   const router = useRouter();
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
+  const targetRef = useRef(null);
+
+  // 2. In your handler, scroll into view
+  const handleScroll = () => {
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
   const itemsPrice = useMemo(
     () =>
@@ -181,9 +188,7 @@ export default function PlaceOrder({
     }
   };
 
-  const placeOrderHandler = async () => {
-    const isValid = await fetchOrder(true);
-    if (!isValid) return;
+  const placeOrderAction = async () => {
     const confirmMessage = {
       title: "Are you sure?",
       body: "You are about to place an order. Please confirm that all the information is correct.",
@@ -260,6 +265,15 @@ export default function PlaceOrder({
     };
 
     openConfirmModal(confirmMessage, action);
+  };
+
+  const placeOrderHandler = async () => {
+    const isValid = await fetchOrder(placeOrderAction);
+    if (!isValid) {
+      handleScroll();
+      return;
+    }
+    await placeOrderAction();
   };
 
   const handleInputChange = (type, field, value, secondField) => {

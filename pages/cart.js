@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import Layout from "../components/main/Layout";
@@ -28,16 +28,7 @@ export default function CartScreen() {
   } = useModalContext();
   const orderId = Cookies.get("orderId");
 
-  const targetRef = useRef(null);
-
-  // 2. In your handler, scroll into view
-  const handleScroll = () => {
-    if (targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const fetchOrder = async (fromPlaceOrder) => {
+  const fetchOrder = async (extraAction) => {
     startLoading();
     try {
       // 1) wait for the API call
@@ -50,29 +41,31 @@ export default function CartScreen() {
       // 2) sync state
       setUser(wpUser);
       setOrder(freshOrder);
-
+      console.log("freshOrder", freshOrder);
+      console.log("wpUser", wpUser);
+      console.log("warnings", warnings);
       // 3) if there are warnings, show modal and bail out
       if (warnings.length) {
-        const details = warnings
-          .map((w) =>
-            w.availableQuantity === 0
-              ? `${w.name} was removed (out of stock)`
-              : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}`
-          )
-          .join("\n");
+        stopLoading();
+        const details =
+          warnings
+            .map((w) =>
+              w.availableQuantity === 0
+                ? `${w.name} was removed (out of stock)`
+                : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}.`
+            )
+            .join("\n") +
+          "\n\n" +
+          `Your new items total is $${freshOrder.totalPrice}`;
 
         openAlertModal(
           {
             title: "Your cart was updated",
-            body: `Some items were removed or adjusted due to stock changes, please check your cart. ${
-              fromPlaceOrder ? "and TRY AGAIN." : ""
-            }`,
+            body: `Some items were removed or adjusted due to stock changes, please check the changes in your cart. `,
             warning: details,
           },
           () => {
-            if (fromPlaceOrder) {
-              handleScroll();
-            }
+            extraAction && extraAction();
             setUser(wpUser);
             setOrder(freshOrder);
           }
@@ -138,7 +131,6 @@ export default function CartScreen() {
           fetchOrder={fetchOrder}
           paypalDispatch={paypalDispatch}
           isPending={isPending}
-          targetRef={targetRef}
         />
       ) : null}
     </Layout>
