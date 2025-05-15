@@ -29,15 +29,21 @@ export default async function handler(req, res) {
           }).sort({ updatedAt: -1 });
 
     if (!order) {
+      const [last] = await Order.aggregate([
+        { $project: { docNumber: 1, num: { $toInt: "$docNumber" } } },
+        { $sort: { num: -1 } },
+        { $limit: 1 },
+      ]);
+      const lastNumber = last?.num ?? 0;
+      const nextDocNumber = (lastNumber + 1).toString();
       order = new Order({
         wpUser: { userId, name: token.name, email: token.email },
         orderItems: [],
         shippingAddress: {},
         paymentMethod: "",
         itemsPrice: 0,
-        shippingPrice: 0,
-        taxPrice: 0,
         totalPrice: 0,
+        docNumber: nextDocNumber,
       });
       await order.save();
     }
@@ -76,7 +82,7 @@ export default async function handler(req, res) {
           ? prod.clearance
           : {};
 
-      const available = info.quickBooksQuantityOnHandProduction > 0 || 0;
+      const available = info.quickBooksQuantityOnHandProduction || 0;
 
       // sold out → skip & warn
       if (available === 0) {
@@ -102,6 +108,7 @@ export default async function handler(req, res) {
       // build enriched item
       updatedCart.push({
         ...item,
+        productId: prod._id,
         quantity: finalQty,
         name: prod.name,
         typeOfPurchase: item.typeOfPurchase,
@@ -125,10 +132,6 @@ export default async function handler(req, res) {
         updatedAt: prod.updatedAt,
       });
     }
-
-    // 7) Persist minimal fields back to DB
-
-    // 7a) Save enriched cart to WP user
     wpUser.cart = updatedCart;
     await wpUser.save();
 
@@ -144,26 +147,49 @@ export default async function handler(req, res) {
     }));
 
     // 7c) Recalc totals
-    order.itemsPrice =
-      order.orderItems.reduce((sum, i) => sum + i.totalPrice, 0) || 0;
+    order.itemsPrice = updatedCart.reduce((acc, item) => {
+      return acc + Number(item.price) * Number(item.quantity) || 0;
+    }, 0);
 
-    order.totalPrice = order.itemsPrice || 0;
+    order.totalPrice = updatedCart.reduce((acc, item) => {
+      return acc + Number(item.price) * Number(item.quantity) || 0;
+    }, 0);
 
     await order.save();
 
-    // 8) Build a plain-JS responseOrder with full enrichment
-    const responseOrder = order.toObject();
-    responseOrder.orderItems = updatedCart.map((it) => ({
-      ...it,
-      totalPrice: Number(it.quantity) * Number(it.price),
-    }));
+    const orderToSend = await Order.findById(order._id);
 
-    // 9) Return enriched response + warnings
-    return res.status(200).json({
-      order: responseOrder,
-      wpUser,
-      warnings,
-    });
+    const responseOrder = {
+      ...orderToSend._doc,
+      orderItems: updatedCart.map((it) => ({
+        productId: it.productId,
+        typeOfPurchase: it.typeOfPurchase,
+        quantity: it.quantity,
+        price: it.price,
+        unitPrice: it.unitPrice,
+        wpPrice: it.wpPrice,
+        totalPrice: Number(it.quantity) * Number(it.price),
+        name: it.name,
+        manufacturer: it.manufacturer,
+        image: it.image,
+        slug: it.slug,
+        approved: it.approved,
+        productSearchQuery: it.productSearchQuery,
+        sentOverNight: it.sentOverNight,
+        noExpirationDate: it.noExpirationDate,
+        heldStock: it.heldStock,
+        quickBooksItemIdProduction: it.quickBooksItemIdProduction,
+        minSalePrice: it.minSalePrice,
+        quickBooksQuantityOnHandProduction:
+          it.quickBooksQuantityOnHandProduction,
+        description: it.description,
+        countInStock: it.countInStock,
+        updatedAt: it.updatedAt,
+      })),
+    };
+
+    // And then:
+    return res.status(200).json({ order: responseOrder, wpUser, warnings });
   } catch (err) {
     console.error("❌ fetchOrLatestInProcess:", err);
     return res.status(500).json({ message: "Internal Server Error" });

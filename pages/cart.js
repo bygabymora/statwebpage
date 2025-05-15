@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import Layout from "../components/main/Layout";
@@ -24,45 +24,69 @@ export default function CartScreen() {
     startLoading,
     stopLoading,
     openAlertModal,
+    showStatusMessage,
   } = useModalContext();
   const orderId = Cookies.get("orderId");
 
-  const fetchOrder = async () => {
+  const targetRef = useRef(null);
+
+  // 2. In your handler, scroll into view
+  const handleScroll = () => {
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const fetchOrder = async (fromPlaceOrder) => {
     startLoading();
-
     try {
-      startLoading();
-      axios
-        .get("/api/orders/fetchOrLatestInProcess", {
-          params: { orderId: Cookies.get("orderId") },
-        })
-        .then(({ data: { order, wpUser, warnings } }) => {
-          setUser(wpUser);
-          setOrder(order);
+      // 1) wait for the API call
+      const {
+        data: { order: freshOrder, wpUser, warnings },
+      } = await axios.get("/api/orders/fetchOrLatestInProcess", {
+        params: { orderId: Cookies.get("orderId") },
+      });
 
-          if (warnings.length) {
-            const details = warnings
-              .map((w) =>
-                w.availableQuantity === 0
-                  ? `${w.name} was removed (out of stock)`
-                  : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}`
-              )
-              .join("\n");
-            const message = {
-              title: "Your cart was updated",
-              body: `Some items were removed or adjusted due to stock changes:`,
-              warning: details,
-            };
-            const action = () => {
-              setUser(wpUser);
-              setOrder(order);
-            };
+      // 2) sync state
+      setUser(wpUser);
+      setOrder(freshOrder);
 
-            openAlertModal(message, action);
+      // 3) if there are warnings, show modal and bail out
+      if (warnings.length) {
+        const details = warnings
+          .map((w) =>
+            w.availableQuantity === 0
+              ? `${w.name} was removed (out of stock)`
+              : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}`
+          )
+          .join("\n");
+
+        openAlertModal(
+          {
+            title: "Your cart was updated",
+            body: `Some items were removed or adjusted due to stock changes, please check your cart. ${
+              fromPlaceOrder ? "and TRY AGAIN." : ""
+            }`,
+            warning: details,
+          },
+          () => {
+            if (fromPlaceOrder) {
+              handleScroll();
+            }
+            setUser(wpUser);
+            setOrder(freshOrder);
           }
-        });
+        );
+
+        return false;
+      }
+
+      // 4) no warnings → all good
+      return true;
     } catch (err) {
       console.error("❌ fetchOrder() failed:", err);
+      showStatusMessage("error", "Failed to verify stock. Please try again.");
+      return false;
     } finally {
       stopLoading();
     }
@@ -114,6 +138,7 @@ export default function CartScreen() {
           fetchOrder={fetchOrder}
           paypalDispatch={paypalDispatch}
           isPending={isPending}
+          targetRef={targetRef}
         />
       ) : null}
     </Layout>

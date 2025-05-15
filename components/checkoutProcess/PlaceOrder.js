@@ -26,7 +26,7 @@ export default function PlaceOrder({
   fetchOrder,
   paypalDispatch,
   isPending,
-  validateOrder,
+  targetRef,
 }) {
   const {
     showStatusMessage,
@@ -79,10 +79,6 @@ export default function PlaceOrder({
       loadPaypalScript();
     }
   }, [paypalDispatch, order._id, order.isPaid]);
-
-  useEffect(() => {
-    fetchOrder();
-  }, []);
 
   const baseAction = async () => {
     try {
@@ -186,11 +182,8 @@ export default function PlaceOrder({
   };
 
   const placeOrderHandler = async () => {
-    // ← await the boolean result
-    const isValid = await validateOrder();
+    const isValid = await fetchOrder(true);
     if (!isValid) return;
-
-    // …and only if we got here do we show the confirm-modal and place the order
     const confirmMessage = {
       title: "Are you sure?",
       body: "You are about to place an order. Please confirm that all the information is correct.",
@@ -729,7 +722,10 @@ export default function PlaceOrder({
               </button>
             </div>
 
-            <div className='card bg-white shadow-lg p-6 rounded-lg border mt-5 my-5'>
+            <div
+              ref={targetRef}
+              className='card bg-white shadow-lg p-6 rounded-lg border mt-5 my-5'
+            >
               <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
                 Order Items
               </h2>

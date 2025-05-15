@@ -42,12 +42,11 @@ export default async function handler(req, res) {
 
       // 4. Update existing order if _id provided
       if (orderData._id) {
-        const existing = await Order.findById(orderData._id);
-        if (existing) {
-          // Merge only the incoming fields onto the Mongoose doc
-          existing.set(orderData);
-          order = await existing.save();
-        }
+        // ===== replaced find+set+save with atomic findByIdAndUpdate =====
+        order = await Order.findByIdAndUpdate(orderData._id, orderData, {
+          new: true, // return the updated doc
+          runValidators: true, // enforce your schema rules
+        });
       }
 
       // 5. Create new order if no update happened
