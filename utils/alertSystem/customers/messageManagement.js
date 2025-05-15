@@ -50,12 +50,12 @@ export const messageManagement = (
     case "Product Request":
       emailMessage = {
         ...emailMessage,
-        subject: `Product Request from ${contact.name}`,
-        p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">A customer has requested a product:</div>`,
+        subject: `${contact.name} Thank you for your product request!`,
+        p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">Your Request is:</div>`,
         p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">Product: ${item.searchedWord} <br> Manufacturer: ${item.manufacturer} <br> Quantity: ${item.quantity}</div>`,
         p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Additional Message: ${message}
               <br>
-             <strong> Stat Surgical Supply </strong>
+             <strong> We will try our best to find it! </strong>
              </div>`,
       };
       break;
