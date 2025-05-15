@@ -21,7 +21,8 @@ const handleSendEmails = async (message, contact, accountOwner) => {
         [headersToSend]: true,
       },
     };
-    if (accountOwner !== null) {
+    if (accountOwner) {
+      console.log("Account Owner in sendEmail", accountOwner);
       const signature = SignatureTemplate({ userInfo: accountOwner });
       const finalHtml = ContactTemplate({
         message: templateHtml,

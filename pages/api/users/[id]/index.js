@@ -43,8 +43,6 @@ const handler = async (req, res) => {
       if (customer?.user?.userId) {
         // 5. Make sure 'charge' is included even if schema has select:false
         const ownerUser = await User.findById(customer.user.userId).lean();
-
-        console.log("ownerUser", ownerUser);
         if (ownerUser) {
           accountOwner = {
             name: ownerUser.name,

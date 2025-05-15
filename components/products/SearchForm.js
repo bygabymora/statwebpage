@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { BiMessageAdd } from "react-icons/bi";
-import { toast } from "react-toastify";
 import { useModalContext } from "../context/ModalContext";
 import { getError } from "../../utils/error";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
@@ -14,7 +13,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const [quantity, setQuantity] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [phone, setPhone] = useState("");
-  const { contact, showStatusMessage } = useModalContext();
+  const { contact, showStatusMessage, accountOwner } = useModalContext();
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -32,9 +31,8 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       });
       sendEmail(e);
       form.current.reset();
-      toast.success("Message sent successfully");
     } catch (err) {
-      toast.error(getError(err));
+      showStatusMessage("error", getError(err) || "Something went wrong");
     }
   };
 
@@ -56,17 +54,26 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       quantity,
       searchedWord,
     };
+
+    const item = {
+      searchedWord,
+      quantity,
+      manufacturer,
+    };
     const emailMessage = messageManagement(
       contactToEmail,
       "Product Request",
-      message
+      message,
+      null,
+      item
     );
-    handleSendEmails(emailMessage, contactToEmail);
+    handleSendEmails(emailMessage, contactToEmail, accountOwner);
+    showStatusMessage("success", "Request sent successfully");
   };
 
   useEffect(() => {
     if (contact) {
-      setName(contact.name);
+      setName(contact.firstName + " " + contact.lastName);
       setEmail(contact.email);
     }
   }, [contact]);
@@ -106,10 +113,10 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               autoComplete='off'
               type='text'
               placeholder='Please enter the product reference'
-              name='name'
+              name='searchedWord'
               className='contact__form-input'
-              onChange={(e) => setName(e.target.value)}
-              value={name}
+              onChange={(e) => setSearchedWord(e.target.value)}
+              value={searchedWord}
               required
             />
           </div>

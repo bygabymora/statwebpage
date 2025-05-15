@@ -26,7 +26,6 @@ export default function Products() {
     const { data } = await axios.get(`/api/search?keyword=${query}`);
     setProducts(data);
     if (data.length === 0) {
-      setName(query);
       setSearchedWord(query);
     }
   };
@@ -51,7 +50,7 @@ export default function Products() {
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [router, query, router.query]);
 
   // FIX: Every time you change manufacturers in the URL, it updates the selected manufacturer
   useEffect(() => {
