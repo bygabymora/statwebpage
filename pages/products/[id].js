@@ -9,6 +9,7 @@ import axios from "axios";
 import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import moment from "moment-timezone";
 
 export default function ProductScreen() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function ProductScreen() {
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || ""
   );
+  const [nowLocal, setNowLocal] = useState(moment());
+  const [nowTampa, setNowTampa] = useState(moment.tz("America/New_York"));
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.each?.countInStock || null
   );
@@ -253,6 +256,20 @@ export default function ProductScreen() {
     }
     return 0;
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNowLocal(moment()); // your browser’s clock
+      setNowTampa(moment.tz("America/New_York")); // Tampa/Eastern
+    }, 60_000); // tick every minute
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // compute Tampa cutoff (today at 15:30 Tampa time)
+  const cutoff = nowTampa.clone().hour(15).minute(30).second(0);
+  // compute your local midnight (start of next day)
+  const midnight = nowLocal.clone().add(1, "day").startOf("day");
 
   return (
     <Layout title={product.name} product={product}>
@@ -744,10 +761,26 @@ export default function ProductScreen() {
               )}
               <td className='py-2 px-4 border-b'>{product.name}</td>
               <td className='py-2 px-4 border-b'>{product.manufacturer}</td>
-              <td className='py-2 px-4 border-b text-sm text-gray-600'>
-                Want it by tomorrow? Place your order within the next 1 hour and
-                22 minutes and select overnight shipping at checkout.
-              </td>
+              {nowTampa.isBefore(cutoff) ? (
+                (() => {
+                  const diff = moment.duration(cutoff.diff(nowTampa));
+                  const hours = Math.floor(diff.asHours());
+                  const minutes = diff.minutes();
+                  return (
+                    <td className='py-2 px-4 border-b text-sm text-gray-600'>
+                      Want it by tomorrow? Place your order within the next{" "}
+                      {hours} hour{hours !== 1 && "s"} and {minutes} minute
+                      {minutes !== 1 && "s"} and select overnight shipping at
+                      checkout.
+                    </td>
+                  );
+                })()
+              ) : nowLocal.isBefore(midnight) ? (
+                <td className='py-2 px-4 border-b text-sm text-gray-600'>
+                  The cutoff for next-day shipping has passed. Orders placed now
+                  will arrive in two days.
+                </td>
+              ) : null}
             </tr>
           </tbody>
         </table>
@@ -790,10 +823,26 @@ export default function ProductScreen() {
             </div>
             <div className='rounded-lg'>
               <h3 className='font-bold'>Shipping Info</h3>
-              <p className='text-sm text-gray-600'>
-                Want it by tomorrow? Place your order within the next 1 hour and
-                22 minutes and select overnight shipping at checkout.
-              </p>
+              {nowTampa.isBefore(cutoff) ? (
+                (() => {
+                  const diff = moment.duration(cutoff.diff(nowTampa));
+                  const hours = Math.floor(diff.asHours());
+                  const minutes = diff.minutes();
+                  return (
+                    <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                      Want it by tomorrow? Place your order within the next{" "}
+                      {hours} hour{hours !== 1 && "s"} and {minutes} minute
+                      {minutes !== 1 && "s"} and select overnight shipping at
+                      checkout.
+                    </div>
+                  );
+                })()
+              ) : nowLocal.isBefore(midnight) ? (
+                <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                  The cutoff for next-day shipping has passed. Orders placed now
+                  will arrive in two days.
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
