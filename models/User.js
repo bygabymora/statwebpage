@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: false, unique: true, index: true },
     userQuickBooksId: { type: String, required: false },
     phone: { type: String, required: false },
+    charge: { type: String, required: false },
   },
   {
     timestamps: true,

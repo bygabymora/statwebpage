@@ -41,8 +41,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const { showStatusMessage, fetchUserData, setUser, user } = useModalContext();
-  const [emailName, setEmailName] = useState("");
-  const [emailManufacturer, setEmailManufacturer] = useState("");
 
   const active =
     session?.user?.active &&
@@ -223,31 +221,27 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   };
   //-----------------Email-----------------//
 
-  // Prefill product data when available
-  useEffect(() => {
-    if (product) {
-      setEmailName(product.name || "");
-      setEmailManufacturer(product.manufacturer || "");
-    }
-  }, [product]);
-
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email, emailName, emailManufacturer };
+    const contactToEmail = { name, email };
 
-    if (!name || !email || !emailName || !emailManufacturer) {
+    if (!name || !email) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
 
-    const emailMessage = messageManagement(contactToEmail, "Product Wait List");
+    const emailMessage = messageManagement(
+      contactToEmail,
+      "Product Wait List",
+      null,
+      null,
+      product
+    );
     handleSendEmails(emailMessage, contactToEmail);
 
     // Clear form fields after submission
     setName("");
     setEmail("");
-    setEmailName("");
-    setEmailManufacturer("");
   };
 
   useEffect(() => {
@@ -521,19 +515,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               placeholder='Email'
               required
             />
-            <input
-              autoComplete='off'
-              type='text'
-              name='emailManufacturer'
-              className='contact__form-input'
-              onChange={(e) => setEmailManufacturer(e.target.value)}
-              value={emailManufacturer}
-              hidden
-              required
-            />
-            <button className='primary-button mt-3' type='submit'>
-              Submit
-            </button>
           </form>
         )}
       {session?.user && !active ? (

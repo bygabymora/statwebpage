@@ -14,9 +14,9 @@ export const ProductItemPage = ({ product }) => {
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const { showStatusMessage, fetchUserData, setUser, user } = useModalContext();
-  const [emailName, setEmailName] = useState("");
-  const [emailManufacturer, setEmailManufacturer] = useState("");
+  const { showStatusMessage, fetchUserData, setUser, user, accountOwner } =
+    useModalContext();
+
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
@@ -176,31 +176,28 @@ export const ProductItemPage = ({ product }) => {
 
   //-----------------Email-----------------//
 
-  // Prefill product data when available
-  useEffect(() => {
-    if (product) {
-      setEmailName(product.name || "");
-      setEmailManufacturer(product.manufacturer || "");
-    }
-  }, [product]);
-
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email, emailName, emailManufacturer };
+    const contactToEmail = { name, email };
 
-    if (!name || !email || !emailName || !emailManufacturer) {
+    if (!name || !email) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
 
-    const emailMessage = messageManagement(contactToEmail, "Product Wait List");
-    handleSendEmails(emailMessage, contactToEmail);
+    const emailMessage = messageManagement(
+      contactToEmail,
+      "Product Wait List",
+      null,
+      null,
+      product
+    );
+    handleSendEmails(emailMessage, contactToEmail, accountOwner);
 
     // Clear form fields after submission
     setName("");
     setEmail("");
-    setEmailName("");
-    setEmailManufacturer("");
+    showStatusMessage("success", "Request sent successfully");
   };
 
   useEffect(() => {
@@ -370,16 +367,6 @@ export const ProductItemPage = ({ product }) => {
               value={email}
               placeholder='Email'
               required
-            />
-
-            <input
-              autoComplete='off'
-              type='text'
-              name='emailManufacturer'
-              className='contact__form-input'
-              value={emailManufacturer}
-              disabled
-              hidden
             />
             <button className='primary-button mt-3' type='submit'>
               Submit

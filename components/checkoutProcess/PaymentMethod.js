@@ -152,7 +152,7 @@ export default function PaymentMethod({
 
               {/* use handleSubmit on the form */}
               <div className='space-y-4  md:col-span-2'>
-                {["Stripe", "Paypal", "Pay by Wire"].map((method) => (
+                {["Stripe", "PayPal", "Pay By Wire"].map((method) => (
                   <label
                     key={method}
                     htmlFor={method}

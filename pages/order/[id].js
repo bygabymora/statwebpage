@@ -811,7 +811,7 @@ function OrderScreen() {
                   <div>Items</div>
                   <div>${itemsPrice.toFixed(2)}</div>
                 </div>
-                {paymentMethod === "Pay by Wire" ? (
+                {paymentMethod === "Pay By Wire" ? (
                   <li>
                     <div className='mb-2 px-3 flex justify-between'>
                       <div>Discount</div>
@@ -874,7 +874,7 @@ function OrderScreen() {
                           />
                         </button>
                       </div>
-                    ) : paymentMethod === "Pay by Wire" ? (
+                    ) : paymentMethod === "Pay By Wire" ? (
                       <div>
                         {session.user.isAdmin && (
                           <button
@@ -888,7 +888,7 @@ function OrderScreen() {
                           <div>
                             <button
                               onClick={
-                                paymentMethod !== "Pay by Wire" &&
+                                paymentMethod !== "Pay By Wire" &&
                                 handleCheckout
                               }
                               hidden
@@ -896,7 +896,7 @@ function OrderScreen() {
                               ...
                             </button>
                             <div className='font-bold'>
-                              Thank you for taking advantage of our Pay by Wire
+                              Thank you for taking advantage of our Pay By Wire
                               discount. We will contact you via email with our
                               account information so you can initiate the
                               transfer.
@@ -904,7 +904,7 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    ) : paymentMethod === "Paypal" ? (
+                    ) : paymentMethod === "PayPal" ? (
                       isPending ? (
                         <div>Loading...</div>
                       ) : (

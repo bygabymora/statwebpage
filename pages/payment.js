@@ -52,7 +52,7 @@ export default function PaymentScreen() {
         </p>
 
         <form className='space-y-4' onSubmit={submitHandler}>
-          {["Stripe", "Paypal", "Pay by Wire"].map((method) => (
+          {["Stripe", "PayPal", "Pay By Wire"].map((method) => (
             <label
               key={method}
               htmlFor={method}

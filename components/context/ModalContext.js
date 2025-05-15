@@ -27,7 +27,7 @@ export const ModalProvider = ({ children }) => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [hasSeenModal, setHasSeenModal] = useState(false);
   const [user, setUser] = useState({});
-
+  const [accountOwner, setAccountOwner] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -37,10 +37,12 @@ export const ModalProvider = ({ children }) => {
     const loadUserData = async () => {
       if (session?.user) {
         setContact(session.user);
-        const { userData, customerData } = await fetchUserData();
+        const { userData, customerData, accountOwner } = await fetchUserData();
         setUser(userData);
         setCustomer(customerData);
+        setAccountOwner(accountOwner || null);
         setHasSeenModal(false); // Reset the state of the modal when the session changes
+        console.log("accountOwner", accountOwner);
       }
     };
     loadUserData();
@@ -50,7 +52,8 @@ export const ModalProvider = ({ children }) => {
     const response = await axios.get(`/api/users/${session?.user?._id}`);
     const userData = response.data.user;
     const customerData = response.data.customer;
-    return { userData, customerData };
+    const accountOwner = response.data.accountOwner;
+    return { userData, customerData, accountOwner };
   };
 
   const openAlertModal = (message, action) => {
@@ -110,6 +113,8 @@ export const ModalProvider = ({ children }) => {
         customer,
         user,
         setUser,
+        accountOwner,
+        setAccountOwner,
         fetchUserData,
         isVisible,
         statusMessage,

@@ -48,7 +48,11 @@ export default function PlaceOrder({
   // 2. In your handler, scroll into view
   const handleScroll = () => {
     if (targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      targetRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
     }
   };
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
@@ -57,7 +61,7 @@ export default function PlaceOrder({
       round2(order?.orderItems.reduce((a, c) => a + c.quantity * c.price, 0)),
     [order?.orderItems]
   );
-  const isPayByWire = order?.paymentMethod === "Pay by Wire";
+  const isPayByWire = order?.paymentMethod === "Pay By Wire";
   const discountAmount = useMemo(
     () =>
       round2(
@@ -191,7 +195,11 @@ export default function PlaceOrder({
   const placeOrderAction = async () => {
     const confirmMessage = {
       title: "Are you sure?",
-      body: "You are about to place an order. Please confirm that all the information is correct.",
+      body:
+        order?.paymentMethod === "Stripe" &&
+        order.shippingPreferences.paymentMethod === "Bill Me"
+          ? `You selected the "Bill Me" option for the Shipping Payment. You are about to place an order. Please confirm that all the information is correct.`
+          : "You are about to place an order. Please confirm that all the information is correct.",
       warning:
         order?.paymentMethod === "Stripe"
           ? order.shippingPreferences.paymentMethod === "Bill Me"
@@ -887,7 +895,7 @@ export default function PlaceOrder({
                         />
                       </button>
                     </div>
-                  ) : order?.paymentMethod === "Paypal" ? (
+                  ) : order?.paymentMethod === "PayPal" ? (
                     isPending ? (
                       <div>Loading...</div>
                     ) : (
@@ -900,6 +908,7 @@ export default function PlaceOrder({
                       ></PayPalButtons>
                     )
                   ) : order?.paymentMethod === "PO Number" ||
+                    order?.paymentMethod === "Pay By Wire" ||
                     (order?.paymentMethod === "Stripe" &&
                       order?.shippingPreferences?.paymentMethod ===
                         "Bill Me") ? (
