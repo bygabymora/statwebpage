@@ -16,65 +16,64 @@ export default function CartScreen() {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [order, setOrder] = useState({});
   const { data: session } = useSession();
-  const { user, setUser, customer, setCustomer, startLoading, stopLoading } =
-    useModalContext();
+  const {
+    user,
+    setUser,
+    customer,
+    setCustomer,
+    startLoading,
+    stopLoading,
+    openAlertModal,
+  } = useModalContext();
   const orderId = Cookies.get("orderId");
 
   const fetchOrder = async () => {
+    startLoading();
+
     try {
       startLoading();
-      let finalOrder;
-      const { data } = await axios.get(`/api/orders/fetchOrLatestInProcess`, {
-        params: { orderId },
-      });
-      if (data.order && data.order._id) {
-        setUser(data.wpUser);
-        finalOrder = data.order;
-        Cookies.set("orderId", data._id);
-      }
+      axios
+        .get("/api/orders/fetchOrLatestInProcess", {
+          params: { orderId: Cookies.get("orderId") },
+        })
+        .then(({ data: { order, wpUser, warnings } }) => {
+          setUser(wpUser);
+          setOrder(order);
 
-      if (data.wpUser && data.wpUser?.cart?.length > 0) {
-        console.log("user cart", data.wpUser?.cart);
-        const { data: updatedCart } = await axios.post(
-          "/api/cart/updateProducts",
-          {
-            cartItems: data.wpUser?.cart,
+          if (warnings.length) {
+            const details = warnings
+              .map((w) =>
+                w.availableQuantity === 0
+                  ? `${w.name} was removed (out of stock)`
+                  : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}`
+              )
+              .join("\n");
+            const message = {
+              title: "Your cart was updated",
+              body: `Some items were removed or adjusted due to stock changes:`,
+              warning: details,
+            };
+            const action = () => {
+              setUser(wpUser);
+              setOrder(order);
+            };
+
+            openAlertModal(message, action);
           }
-        );
-        const itemsPrice = updatedCart.updatedCart.reduce(
-          (a, c) => a + c.quantity * c.price,
-          0
-        );
-        const finalItems = updatedCart.updatedCart.map((item) => ({
-          ...item,
-          totalPrice: item.quantity * item.price,
-        }));
-
-        finalOrder = {
-          ...finalOrder,
-          orderItems: finalItems,
-          itemsPrice,
-          totalPrice: itemsPrice,
-        };
-      } else {
-        finalOrder = {
-          ...finalOrder,
-          orderItems: [],
-        };
-      }
-      setOrder(finalOrder);
+        });
     } catch (err) {
-      console.error("Failed to load saved order:", err);
+      console.error("❌ fetchOrder() failed:", err);
     } finally {
       stopLoading();
     }
   };
+
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    if (session) {
+    if (session && (activeStep === 0 || activeStep === 3)) {
       fetchOrder();
     }
-  }, [orderId, session, order.orderItems?.length]);
+  }, [orderId, session, activeStep]);
 
   return (
     <Layout title='Cart'>

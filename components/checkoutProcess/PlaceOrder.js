@@ -26,6 +26,7 @@ export default function PlaceOrder({
   fetchOrder,
   paypalDispatch,
   isPending,
+  validateOrder,
 }) {
   const {
     showStatusMessage,
@@ -34,7 +35,6 @@ export default function PlaceOrder({
     setCustomer,
     customer,
     user,
-    openAlertModal,
     startLoading,
     stopLoading,
     openConfirmModal,
@@ -42,7 +42,6 @@ export default function PlaceOrder({
   const { data: session } = useSession();
   const [loading] = useState(false);
   const router = useRouter();
-  const [insufficientStockMessage, setInsufficientStockMessage] = useState([]);
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
   const WIRE_PAYMENT_DISCOUNT_PERCENTAGE = 1.5;
@@ -64,53 +63,6 @@ export default function PlaceOrder({
     [itemsPrice, discountAmount]
   );
 
-  const validateOrder = async () => {
-    try {
-      const { data: updatedCart } = await axios.post(
-        "/api/cart/updateProducts",
-        { cartItems: order.orderItems }
-      );
-
-      const newInsufficientStockMessages = [];
-      const correctedOrderItems = order.orderItems.map((item) => {
-        const product = updatedCart.updatedCart.find(
-          (p) => p.productId === item.productId
-        );
-        if (!product) return item;
-
-        const available =
-          (product.quickBooksQuantityOnHandProduction ?? 0) -
-          (product.heldStock ?? 0);
-
-        if (item.quantity > available) {
-          newInsufficientStockMessages.push({
-            name: item.name,
-            previousQuantity: item.quantity,
-            availableQuantity: available,
-          });
-
-          return { ...item, quantity: available };
-        }
-        return item;
-      });
-
-      setInsufficientStockMessage(newInsufficientStockMessages);
-      setOrder((prev) => ({ ...prev, orderItems: correctedOrderItems }));
-
-      const allGood = newInsufficientStockMessages.length === 0;
-      if (!allGood) {
-        showStatusMessage(
-          "error",
-          "Some items were updated due to insufficient stock."
-        );
-      }
-      return allGood;
-    } catch (error) {
-      console.error("Error validating order:", error);
-      showStatusMessage("error", "Error checking product availability.");
-      return false;
-    }
-  };
   useEffect(() => {
     if (order._id && !order.isPaid && !window.paypal) {
       const loadPaypalScript = async () => {
@@ -236,19 +188,7 @@ export default function PlaceOrder({
   const placeOrderHandler = async () => {
     // ← await the boolean result
     const isValid = await validateOrder();
-    if (!isValid) {
-      // build a little report for the user
-      const details = insufficientStockMessage
-        .map(
-          (m) =>
-            `${m.name}: wanted ${m.previousQuantity}, available ${m.availableQuantity}`
-        )
-        .join("\n");
-      openAlertModal(
-        `Some items were updated due to insufficient stock:\n${details}`
-      );
-      return; // stop here
-    }
+    if (!isValid) return;
 
     // …and only if we got here do we show the confirm-modal and place the order
     const confirmMessage = {
