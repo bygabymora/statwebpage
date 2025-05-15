@@ -124,7 +124,7 @@ export default function ProductScreen() {
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
-      (x) => x._id === product._id && x.typeOfPurchase === typeOfPurchase
+      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
 
@@ -134,18 +134,21 @@ export default function ProductScreen() {
       typeOfPurchase === "Each" &&
       (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
+      setShowModal(true);
       setIsOutOfStock(true);
       return;
     } else if (
       typeOfPurchase === "Box" &&
       (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity
     ) {
+      setShowModal(true);
       setIsOutOfStockBox(true);
       return;
     } else if (
       typeOfPurchase === "Clearance" &&
       (data.each?.clearanceCountInStock ?? 0) < quantity
     ) {
+      setShowModal(true);
       setIsOutOfStockClearance(true);
       return;
     }
@@ -242,6 +245,14 @@ export default function ProductScreen() {
       }
     }
   }, [active, product]);
+
+  const handleMatchProduct = (productId) => {
+    const matchProduct = user?.cart?.find((x) => x.productId === productId);
+    if (matchProduct) {
+      return matchProduct.quantity;
+    }
+    return 0;
+  };
 
   return (
     <Layout title={product.name} product={product}>
@@ -407,16 +418,27 @@ export default function ProductScreen() {
             {showModal && (
               <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
                 <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
-                  <h2 className='font-bold'>🚫 Out of Stock 🚫</h2>
+                  <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
+                  <span className='font-bold text-[#144e8b]'>
+                    {product.manufacturer} - {product.name} - {typeOfPurchase}
+                  </span>{" "}
+                  {user?.cart?.length > 0 &&
+                    handleMatchProduct(product._id) > 0 && (
+                      <p className='mt-2 font-semibold'>
+                        You have{" "}
+                        {handleMatchProduct(product._id) > 1
+                          ? handleMatchProduct(product._id) +
+                            "units of this item in your cart, that are available for purchase"
+                          : "1 unit of this item in your cart, that is available for purchase"}
+                        .
+                      </p>
+                    )}
                   <p className='text-[#788b9b]'>
-                    Sorry, we do not have any additional units of{" "}
-                    <span className='font-bold text-[#144e8b]'>
-                      {product.manufacturer} - {product.name}
-                    </span>{" "}
-                    At this moment. Please contact us for more information.
+                    We do not have any additional units at this moment. Please
+                    contact us for more information.
                   </p>
                   <button
-                    className='mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#03793d] transition'
+                    className='mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition'
                     onClick={() => setShowModal(false)}
                   >
                     Close
