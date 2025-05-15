@@ -14,6 +14,8 @@ import Cookies from "js-cookie";
 import Stripe from "../../public/images/assets/PBS.png";
 import { AiTwotoneLock } from "react-icons/ai";
 import { PayPalButtons } from "@paypal/react-paypal-js";
+import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -37,6 +39,7 @@ export default function PlaceOrder({
     startLoading,
     stopLoading,
     openConfirmModal,
+    accountOwner,
   } = useModalContext();
   const { data: session } = useSession();
   const [loading] = useState(false);
@@ -238,6 +241,7 @@ export default function PlaceOrder({
             itemsPrice: 0,
             totalPrice: 0,
           }));
+          sendConfirmationEmail();
         } else {
           const stripe = await stripePromise;
           if (!stripe || typeof stripe.redirectToCheckout !== "function") {
@@ -257,6 +261,7 @@ export default function PlaceOrder({
             itemsPrice: 0,
             totalPrice: 0,
           }));
+          sendConfirmationEmail();
           const result = await stripe.redirectToCheckout({ sessionId });
           if (result.error) {
             showStatusMessage("error", result.error.message);
@@ -377,7 +382,30 @@ export default function PlaceOrder({
     console.error("PayPal error:", error);
     showStatusMessage("error", getError(error));
   }
+  const sendConfirmationEmail = async () => {
+    try {
+      const contactToEmail = {
+        name: user.firstName,
+        email: user.email,
+      };
+      const emailmessage = messageManagement(
+        contactToEmail,
+        "Order Confirmation",
+        null,
+        order,
+        null,
+        accountOwner
+      );
 
+      handleSendEmails(emailmessage, contactToEmail, accountOwner);
+    } catch (error) {
+      console.error("Error sending approval email:", error);
+      showStatusMessage(
+        "error",
+        "Error sending approval email. Please try again."
+      );
+    }
+  };
   return (
     <div>
       <h1 className='mb-6 text-2xl font-bold text-[#144e8b] text-center'>

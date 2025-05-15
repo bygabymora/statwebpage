@@ -50,7 +50,7 @@ export const ModalProvider = ({ children }) => {
 
   const fetchUserData = async () => {
     const response = await axios.get(`/api/users/${session?.user?._id}`);
-    const userData = response.data.user;
+    const userData = response.data.wpUser;
     const customerData = response.data.customer;
     const accountOwner = response.data.accountOwner;
     return { userData, customerData, accountOwner };

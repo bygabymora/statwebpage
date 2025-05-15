@@ -134,7 +134,7 @@ export default function Shipping({
   const submitHandler = async () => {
     try {
       const response = await axios.get(`api/users/${session.user._id}`);
-      const userData = response.data.user;
+      const userData = response.data.wpUser;
       const customerData = response.data.customer;
       if (!customerData.location?.address) {
         const customerToSave = {

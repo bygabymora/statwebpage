@@ -1,12 +1,13 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useReducer } from "react";
-import { toast } from "react-toastify";
+import React, { useEffect, useReducer, useState } from "react";
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
 import CustomerLinking from "../../../components/users/CustomerLinking";
 import { useModalContext } from "../../../components/context/ModalContext";
+import { messageManagement } from "../../../utils/alertSystem/customers/messageManagement";
+import handleSendEmails from "../../../utils/alertSystem/documentRelatedEmail";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -28,9 +29,11 @@ function reducer(state, action) {
 }
 
 export default function AdminUserEditScreen() {
-  const { showStatusMessage, user, setUser, customer, setCustomer } =
-    useModalContext();
+  const { showStatusMessage } = useModalContext();
   const { query } = useRouter();
+  const [wpUser, setWpUser] = useState();
+  const [wpCustomer, setWpCustomer] = useState();
+  const [wpAccountOwner, setWpAccountOwner] = useState();
   const userId = query.id;
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -41,11 +44,13 @@ export default function AdminUserEditScreen() {
     try {
       dispatch({ type: "FETCH_REQUEST" });
       const response = await axios.get(`/api/admin/users/${userId}`);
-      const userInDB = response.data.user;
+      const userInDB = response.data.wpUser;
       const customerInDB = response.data.customer;
+      const accountOwnerInDB = response.data.accountOwner;
       dispatch({ type: "FETCH_SUCCESS" });
-      setUser(userInDB);
-      setCustomer(customerInDB);
+      setWpUser(userInDB);
+      setWpCustomer(customerInDB);
+      setWpAccountOwner(accountOwnerInDB);
     } catch (error) {
       dispatch({ type: "FETCH_FAIL", payload: getError(error) });
     }
@@ -61,13 +66,16 @@ export default function AdminUserEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      await axios.put(`/api/admin/users/${userId}`, { user, customer });
+      await axios.put(`/api/admin/users/${userId}`, {
+        user: wpUser,
+        customer: wpCustomer,
+      });
 
       dispatch({ type: "UPDATE_SUCCESS" });
       showStatusMessage("success", "User updated successfully");
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: getError(error) });
-      toast.error(getError(error));
+      showStatusMessage("error", getError(error) || "Error updating user");
     }
   };
 
@@ -80,11 +88,48 @@ export default function AdminUserEditScreen() {
   ];
 
   const handleInputChange = (field, value) => {
-    setUser({ ...user, [field]: value });
+    setWpUser({ ...wpUser, [field]: value });
+  };
+
+  const sendApprovalEmail = async () => {
+    console.log("Account Owner in sendEmail Front", wpAccountOwner);
+    try {
+      const contactToEmail = {
+        name: wpUser.firstName,
+        email: wpUser.email,
+      };
+      const emailmessage = messageManagement(
+        contactToEmail,
+        "Registration approved",
+        null,
+        null,
+        null,
+        wpAccountOwner
+      );
+
+      handleSendEmails(emailmessage, contactToEmail, wpAccountOwner);
+      const updatedWpUser = {
+        ...wpUser,
+        approvalEmailSent: true,
+      };
+      await axios.put(`/api/admin/users/${userId}`, {
+        user: updatedWpUser,
+        customer: wpCustomer,
+      });
+    } catch (error) {
+      console.error("Error sending approval email:", error);
+      showStatusMessage(
+        "error",
+        "Error sending approval email. Please try again."
+      );
+    }
   };
 
   return (
     <Layout title={`Edit User${userId}`}>
+      {console.log("wpUser", wpUser)}
+      {console.log("wpCustomer", wpCustomer)}
+      {console.log("wpAccountOwner", wpAccountOwner)}
       <div className='grid md:grid-cols-4 md:gap-5'>
         <div className='flex justify-center'>
           <ul className='flex flex-col space-y-4 my-3 lg:text-lg w-full'>
@@ -105,7 +150,7 @@ export default function AdminUserEditScreen() {
 
         <div className='md:col-span-3 p-6'>
           <div className='flex justify-between items-center mb-4 sticky top-[8rem] bg-white z-10'>
-            <h1 className='text-xl'>{`Edit User ${user?.firstName} ${user?.lastName}`}</h1>
+            <h1 className='text-xl'>{`Edit User ${wpUser?.firstName} ${wpUser?.lastName}`}</h1>
             <div className='flex flex-row my-5'>
               <button
                 disabled={loadingUpdate}
@@ -115,10 +160,22 @@ export default function AdminUserEditScreen() {
                 {loadingUpdate ? "Loading" : "Update"}
               </button>
               <button
-                onClick={() => router.push(`/`)}
+                onClick={() => router.push(`/admin/users`)}
                 className='primary-button'
               >
                 Back
+              </button>
+            </div>
+            <div className='flex flex-row my-5'>
+              <button
+                type='button'
+                onClick={(e) => {
+                  e.preventDefault;
+                  sendApprovalEmail();
+                }}
+                className='primary-button mr-2'
+              >
+                Send Approval Email
               </button>
             </div>
           </div>
@@ -127,7 +184,7 @@ export default function AdminUserEditScreen() {
               <label>
                 <input
                   autoComplete='off'
-                  checked={user?.active || false}
+                  checked={wpUser?.active || false}
                   type='checkbox'
                   onChange={(e) =>
                     handleInputChange("active", e.target.checked)
@@ -138,7 +195,7 @@ export default function AdminUserEditScreen() {
               <label>
                 <input
                   autoComplete='off'
-                  checked={user?.approved || false}
+                  checked={wpUser?.approved || false}
                   type='checkbox'
                   onChange={(e) =>
                     handleInputChange("approved", e.target.checked)
@@ -150,7 +207,7 @@ export default function AdminUserEditScreen() {
                 <input
                   autoComplete='off'
                   type='checkbox'
-                  checked={user?.isAdmin || false}
+                  checked={wpUser?.isAdmin || false}
                   onChange={(e) =>
                     handleInputChange("isAdmin", e.target.checked)
                   }
@@ -161,7 +218,7 @@ export default function AdminUserEditScreen() {
                 <input
                   autoComplete='off'
                   type='checkbox'
-                  checked={user?.restricted || false}
+                  checked={wpUser?.restricted || false}
                   onChange={(e) =>
                     handleInputChange("restricted", e.target.checked)
                   }
@@ -175,7 +232,7 @@ export default function AdminUserEditScreen() {
                 <input
                   autoComplete='off'
                   type='text'
-                  value={user?.firstName || ""}
+                  value={wpUser?.firstName || ""}
                   onChange={(e) =>
                     handleInputChange("firstName", e.target.value)
                   }
@@ -187,7 +244,7 @@ export default function AdminUserEditScreen() {
                 <input
                   autoComplete='off'
                   type='text'
-                  value={user?.lastName || ""}
+                  value={wpUser?.lastName || ""}
                   onChange={(e) =>
                     handleInputChange("lastName", e.target.value)
                   }
@@ -199,7 +256,7 @@ export default function AdminUserEditScreen() {
                 <input
                   autoComplete='off'
                   type='email'
-                  value={user?.email || ""}
+                  value={wpUser?.email || ""}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className='w-full px-3 py-2 border rounded'
                 />
@@ -207,10 +264,11 @@ export default function AdminUserEditScreen() {
             </div>
           </div>
           <CustomerLinking
-            user={user}
-            setUser={setUser}
-            customer={customer}
-            setCustomer={setCustomer}
+            wpUser={wpUser}
+            setWpUser={setWpUser}
+            wpCustomer={wpCustomer}
+            setWpCustomer={setWpCustomer}
+            fetchData={fetchData}
           />
         </div>
       </div>

@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useModalContext } from "../context/ModalContext";
 
-export default function CustomerLinking() {
+export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   const [keyword, setKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { user, setUser, customer, setCustomer } = useModalContext();
 
   useEffect(() => {
-    if (customer) {
-      setKeyword(customer.companyName);
+    if (wpCustomer) {
+      setKeyword(wpCustomer.companyName);
       setSuggestions([]);
     }
-  }, [customer]);
+  }, [wpCustomer]);
 
   // Fetch suggestions on keyword change with debounce
   useEffect(() => {
@@ -39,11 +37,11 @@ export default function CustomerLinking() {
     }
   };
 
-  const handleSelect = (customer) => {
+  const handleSelect = async (customer) => {
     setKeyword(customer.companyName);
     const executiveMatch = customer.purchaseExecutive
       .map((exec) => exec.email)
-      .includes(user.email);
+      .includes(wpUser.email);
 
     let updatedCustomer = customer;
     if (!executiveMatch) {
@@ -56,12 +54,12 @@ export default function CustomerLinking() {
         purchaseExecutive: [
           ...(customer.purchaseExecutive || []),
           {
-            name: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
+            name: wpUser.firstName,
+            lastName: wpUser.lastName,
+            email: wpUser.email,
             role: "Buyer",
             principalPurchaseExecutive: !hasPrincipal,
-            wpId: user._id,
+            wpId: wpUser._id,
           },
         ],
       };
@@ -69,25 +67,34 @@ export default function CustomerLinking() {
       updatedCustomer = {
         ...customer,
         purchaseExecutive: updatedCustomer.purchaseExecutive.map((exec) => {
-          if (exec.email === user.email) {
-            return { ...exec, wpId: user._id };
+          if (exec.email === wpUser.email) {
+            return { ...exec, wpId: wpUser._id };
           }
           return exec;
         }),
       };
     }
-    setCustomer(updatedCustomer);
-    setUser({ ...user, customerId: customer._id, customerData: customer });
+    const updatedWpUser = {
+      ...wpUser,
+      customerId: customer._id,
+      customerData: updatedCustomer,
+    };
 
+    await axios.put(`/api/admin/users/${wpUser._id}`, {
+      user: updatedWpUser,
+      customer: updatedCustomer,
+    });
+
+    await fetchData();
     setSuggestions([]);
   };
 
   return (
     <div className='bg-white w-full mx-auto'>
       <h1 className='text-xl font-semibold mb-4 '>
-        Link Customer - {user?.companyName} - {user?.companyEinCode}
+        Link Customer - {wpUser?.companyName} - {wpUser?.companyEinCode}
       </h1>
-      {console.log("customer", customer)}
+      {console.log("customer", wpCustomer)}
       {/* Search Input */}
       <div className='relative mb-6'>
         <label htmlFor='customer-search' className='block text-sm font-medium '>
@@ -125,21 +132,21 @@ export default function CustomerLinking() {
       </div>
 
       {/* Selected Customer Editable Form */}
-      {customer && (
+      {wpCustomer && (
         <div>
           <h3 className='text-lg font-medium  mb-3'>Customer Info</h3>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='mb-4'>
               <label className='block font-medium '>Company Name</label>
-              <div>{customer.companyName}</div>
+              <div>{wpCustomer.companyName}</div>
             </div>
             <div className='mb-4'>
               <label className='block font-medium '>Account Owner</label>
-              <div>{customer.user?.name}</div>
+              <div>{wpCustomer.user?.name}</div>
             </div>
             <div className='mb-4'>
               <label className='block  font-medium '>Account Owner Email</label>
-              <div>{customer.user?.email}</div>
+              <div>{wpCustomer.user?.email}</div>
             </div>
           </div>
         </div>

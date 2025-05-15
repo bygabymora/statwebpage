@@ -2,6 +2,7 @@ import WpUser from "../../../../models/WpUser";
 import Customer from "../../../../models/Customer";
 import db from "../../../../utils/db";
 import { getToken } from "next-auth/jwt";
+import User from "../../../../models/User";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
@@ -27,15 +28,37 @@ const handler = async (req, res) => {
 const getHandler = async (req, res) => {
   await db.connect();
   try {
-    const user = await WpUser.findById(req.query.id);
-    if (!user) {
-      return res.status(404).json({ type: "error", message: "User not found" });
+    const wpUser = await WpUser.findById(req.query.id);
+    if (!wpUser) {
+      await db.disconnect();
+      return res.status(404).json({ message: "User not found" });
     }
+
     let customer = null;
-    if (user.customerId) {
-      customer = await Customer.findById(user.customerId);
+    let accountOwner = null;
+
+    // 4. If this WpUser links to a Customer → find the actual User
+    if (wpUser.customerId) {
+      customer = await Customer.findById(wpUser.customerId);
+
+      if (customer?.user?.userId) {
+        // 5. Make sure 'charge' is included even if schema has select:false
+        const ownerUser = await User.findById(customer.user.userId).lean();
+        if (ownerUser) {
+          accountOwner = {
+            name: ownerUser.name,
+            userQuickBooksId: ownerUser.userQuickBooksId,
+            email: ownerUser.email,
+            phone: ownerUser.phone,
+            // JSON.stringify will drop undefined, so we coalesce to null
+            charge: ownerUser.charge ?? null,
+          };
+        }
+      }
     }
-    return res.json({ type: "success", user, customer });
+
+    await db.disconnect();
+    return res.status(200).json({ wpUser, customer, accountOwner });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res
@@ -65,6 +88,8 @@ const putHandler = async (req, res) => {
       customerInDB.purchaseExecutive = customer.purchaseExecutive;
       await customerInDB.save();
     }
+    userInDB.approvalEmailSent =
+      user.approvalEmailSent ?? user.approvalEmailSent;
     userInDB.name = user.name ?? user.name;
     userInDB.firstName = user.firstName ?? user.firstName;
     userInDB.lastName = user.lastName ?? user.lastName;

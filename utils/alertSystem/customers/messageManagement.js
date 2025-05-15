@@ -3,9 +3,12 @@ export const messageManagement = (
   actionName,
   message,
   order,
-  item
+  item,
+  accountOwner
 ) => {
   let emailMessage = {};
+
+  console.log("Account Owner in messageManagement", accountOwner);
 
   switch (actionName) {
     case "Register":
@@ -151,7 +154,7 @@ export const messageManagement = (
                     <tr>
                       <th align="left" style="padding: 6px 0; font-weight: 600;">Qty</th>
                       <th align="left" style="padding: 6px 0; font-weight: 600;">Product</th>
-                      <th align="right" style="padding: 6px 0; font-weight: 600;">Price</th>
+                      <th align="right" style="padding: 6px 0; font-weight: 600;">Total Price</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -161,7 +164,7 @@ export const messageManagement = (
                       <tr style="border-top: 1px solid #eee;">
                         <td style="padding: 6px 0;">${item.quantity}</td>
                         <td style="padding: 6px 0;">${item.name}</td>
-                        <td style="padding: 6px 0; text-align: right;">$${item.unitPrice}</td>
+                        <td style="padding: 6px 0; text-align: right;">$${item.totalPrice}</td>
                       </tr>
                     `
                       )
@@ -183,36 +186,41 @@ export const messageManagement = (
               We're processing your order now and will let you know as soon as it ships.
               If you have any questions, feel free to contact me.
             </div>
+          <div style="font-weight: light; font-size: 15px; color: #333333; margin-bottom: 20px; margin-top: 20px;">
+          You can see your order status and details in the next link or in your account under <strong>Order History</strong>.
+          </div>
+           <div style="font-weight: light; font-size: 15px; color: #333333; margin-bottom: 20px; margin-top: 20px;">
+            <a href=${
+              "https://statsurgicalsupply.com/order/" + order._id
+            } target="_blank" 
+                    style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                  Check It Now
+                 </a><br><br>
+                 
+                 </div>
           `,
       };
       break;
-
-    case "Order Shipped":
+    case "Registration approved":
       emailMessage = {
-        subject: `Order Confirmation for - ${contact.name}`,
-        p1: `<div style="font-size: 20px; color: #333333;">
-              Thank you for your order, ${contact.name}! Your order details are as follows:
-             </div>`,
-        p2: `<div style="font-size: 18px; color: #333333;">
-               <strong>Total:</strong> $${contact.total} <br>
-               <strong>Payment Method:</strong> ${contact.paymentMethod} <br>
-               <strong>Shipping Notes:</strong> ${
-                 contact.shippingPreference || "N/A"
-               }
-             </div>`,
-        p3: `<div style="font-size: 18px; color: #333333;">
-               <strong>Items Ordered:</strong>
-               <ul>
-                   ${contact.items
-                     .map(
-                       (item) =>
-                         `<li>${item.quantity}x ${item.name} - $${item.price}</li>`
-                     )
-                     .join("")}
-                </ul>
-                <br>
-                <strong> Stat Surgical Supply </strong>
-              </div>`,
+        ...emailMessage,
+        subject: `Your Registration Has Been Approved`,
+        p1: `<div style="font-weight: light; font-size: 17px; color: #333333;">
+                 Your registration has been approved! You can now access your account, view our available stock, and start purchasing products directly from our platform.
+               </div>`,
+        p2: `<div style="font-weight: light; font-size: 18px; color: #333333;">
+                 <strong>Email:</strong> ${contact.email}
+               </div>`,
+        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">
+                 I'm <strong>${accountOwner.name}</strong> and I’ll be the one in charge of any request or support you may need. <br>
+                 Please feel free to reach out at any time. <br><br>
+                 <a href="https://statsurgicalsupply.com/" target="_blank" 
+                    style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   Start Shopping Now
+                 </a><br><br>
+                 Thank you for choosing us! <br>
+                 <strong>Stat Surgical Supply</strong>
+               </div>`,
       };
       break;
 
