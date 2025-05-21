@@ -6,7 +6,6 @@ import axios from "axios";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import SearchForm from "../../components/products/SearchForm";
 
 export default function Products() {
@@ -20,7 +19,6 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const manufacturersMap = new Map();
   const [loading, setLoading] = useState(true);
-  const { data: session, status } = useSession();
 
   const fetchSearchResults = async () => {
     const { data } = await axios.get(`/api/search?keyword=${query}`);
@@ -72,27 +70,12 @@ export default function Products() {
 
   const filteredProducts = selectedManufacturer
     ? products.filter((product) => {
-        const isProtectedUser =
-          session?.user?.restricted === true && status === "authenticated";
-        const isProtectedProduct = product?.protected === true;
-
-        // If the user is protected and the product too, we exclude it
-        if (isProtectedUser && isProtectedProduct) return false;
-
         return (
-          product.manufacturer.trim().toLowerCase() ===
-          selectedManufacturer.trim().toLowerCase()
+          product.manufacturer?.trim().toLowerCase() ===
+          selectedManufacturer?.trim().toLowerCase()
         );
       })
-    : products.filter((product) => {
-        const isProtectedUser =
-          session?.user?.restricted === true && status === "authenticated";
-        const isProtectedProduct = product?.protected === true;
-
-        if (isProtectedUser && isProtectedProduct) return false;
-
-        return true;
-      });
+    : products;
 
   const handleManufacturerClick = (manufacturer) => {
     router.push(

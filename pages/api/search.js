@@ -1,56 +1,71 @@
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import mongoose from "mongoose";
+import { getToken } from "next-auth/jwt";
+import WpUser from "../../models/WpUser";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
+  // 1. Authenticate WP user
+  const wpUser = await getToken({ req });
+  let wpUserInDB = null;
+  if (wpUser) {
+    wpUserInDB = await WpUser.findById(wpUser._id).lean();
+  }
+
   try {
     await db.connect();
 
     const keywordRaw = req.query.keyword?.trim();
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit, 10) || 20;
 
     let products = [];
-    // If keywordRaw is provided, check for an exact lookup by _id.
+
     if (keywordRaw) {
+      // 2. Exact ID lookup
       if (mongoose.Types.ObjectId.isValid(keywordRaw)) {
-        const product = await Product.findById(keywordRaw);
+        const product = await Product.findById(keywordRaw).lean();
         if (product) {
-          const obj = product.toObject();
-          obj.collection = "products";
-          // Return immediately with this one product.
-          return res.status(200).json([obj]);
+          product.collection = "products";
+          await db.disconnect();
+          return res.status(200).json([product]);
         }
       }
-      // Otherwise, search using a regex.
+
+      // 3. Regex name search
       const keyword = keywordRaw.replace(/\s+/g, " ").trim();
-      const regex = new RegExp(keyword.split(" ").join(".*"), "i");
-
-      // Step 1: Exact match on the product name.
-      products = await Product.find({
+      const exactNameMatch = await Product.find({
         name: { $regex: new RegExp(`^${keyword}$`, "i") },
-      }).limit(limit);
+      })
+        .limit(limit)
+        .lean();
 
-      // Step 2: If no exact match, search in name, manufacturer, slug, or GTIN fields.
-      if (products.length === 0) {
+      if (exactNameMatch.length) {
+        products = exactNameMatch;
+      } else {
+        const regex = new RegExp(keyword.split(" ").join(".*"), "i");
         products = await Product.find({
-          $or: [
-            { name: { $regex: regex } },
-            { manufacturer: { $regex: regex } },
-            { slug: { $regex: regex } },
-            { "each.gtin": { $regex: regex } },
-            { "box.gtin": { $regex: regex } },
-          ],
           active: true,
-        }).limit(limit);
+          $or: [
+            { name: regex },
+            { manufacturer: regex },
+            { slug: regex },
+            { "each.gtin": regex },
+            { "box.gtin": regex },
+          ],
+        })
+          .limit(limit)
+          .lean();
       }
     } else {
-      products = await Product.find({ active: true }).limit(limit);
+      // 4. No keyword → grab all active
+      products = await Product.find({ active: true }).limit(limit).lean();
     }
 
+    // 5. Sort in‐stock / priced / name
     products.sort((a, b) => {
       const aInStock =
         (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
@@ -58,22 +73,45 @@ export default async function handler(req, res) {
       const bInStock =
         (b.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
         (b.box?.quickBooksQuantityOnHandProduction || 0) > 0;
-      if (aInStock && !bInStock) return -1;
-      if (!aInStock && bInStock) return 1;
+      if (aInStock !== bInStock) return aInStock ? -1 : 1;
 
       const aHasPrice = (a.each?.wpPrice || 0) > 0 || (a.box?.wpPrice || 0) > 0;
       const bHasPrice = (b.each?.wpPrice || 0) > 0 || (b.box?.wpPrice || 0) > 0;
-      if (aHasPrice && !bHasPrice) return -1;
-      if (!aHasPrice && bHasPrice) return 1;
+      if (aHasPrice !== bHasPrice) return aHasPrice ? -1 : 1;
 
       return a.name.localeCompare(b.name);
     });
 
+    // 6. If restricted, zero‐out quantities on *protected* products only
+    let updatedProducts = products;
+    if (wpUserInDB?.restricted) {
+      updatedProducts = products.map((product) => {
+        if (!product.protected) {
+          return product; // leave unprotected items unchanged
+        }
+        return {
+          ...product,
+          each: product.each
+            ? {
+                ...product.each,
+                quickBooksQuantityOnHandProduction: 0,
+              }
+            : undefined,
+          box: product.box
+            ? {
+                ...product.box,
+                quickBooksQuantityOnHandProduction: 0,
+              }
+            : undefined,
+        };
+      });
+    }
+
     await db.disconnect();
-    res.status(200).json(products);
+    return res.status(200).json(updatedProducts);
   } catch (error) {
     await db.disconnect();
-    res
+    return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
   }
