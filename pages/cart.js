@@ -83,11 +83,7 @@ export default function CartScreen() {
 
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    if (
-      session &&
-      (activeStep === 0 || activeStep === 3) &&
-      user.cart?.length > 0
-    ) {
+    if (session) {
       fetchOrder();
     } else {
       setOrder({

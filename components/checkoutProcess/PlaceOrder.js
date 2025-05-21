@@ -99,6 +99,7 @@ export default function PlaceOrder({
       const updatedEstimateItems = order?.orderItems?.map((item) => ({
         ...item,
         typeOfPurchase: item.typeOfPurchase?.toLowerCase(),
+        unitPrice: item.price,
         approved: true,
       }));
 

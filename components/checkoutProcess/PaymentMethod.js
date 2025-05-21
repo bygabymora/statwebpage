@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { useModalContext } from "../context/ModalContext";
 import axios from "axios";
@@ -11,19 +11,12 @@ export default function PaymentMethod({
   fetchOrder,
 }) {
   const { showStatusMessage } = useModalContext();
-
   const [selectedMethod, setSelectedMethod] = useState(
     order.paymentMethod || null
   );
   const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-
-  useEffect(() => {
-    if (!order.shippingAddress?.address) {
-      setActiveStep(1);
-    }
-  }, [order.shippingAddress?.address, setActiveStep]);
 
   const handleInputChange = (field, value) => {
     if (field === "paymentMethod") {
@@ -193,7 +186,7 @@ export default function PaymentMethod({
                   </label>
                 ))}
 
-                {order.defaultTerm && (
+                {customer.defaultTerm && (
                   <label
                     htmlFor='PO Number'
                     className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
