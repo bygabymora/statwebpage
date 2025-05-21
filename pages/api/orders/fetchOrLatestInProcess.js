@@ -44,6 +44,7 @@ export default async function handler(req, res) {
         itemsPrice: 0,
         totalPrice: 0,
         docNumber: nextDocNumber,
+        status: "In Process",
       });
       await order.save();
     }
@@ -155,6 +156,8 @@ export default async function handler(req, res) {
       return acc + Number(item.price) * Number(item.quantity) || 0;
     }, 0);
 
+    order.status = "In Process";
+
     await order.save();
 
     const orderToSend = await Order.findById(order._id);
@@ -185,6 +188,7 @@ export default async function handler(req, res) {
         description: it.description,
         countInStock: it.countInStock,
         updatedAt: it.updatedAt,
+        status: "In Process",
       })),
     };
 
