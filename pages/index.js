@@ -1,176 +1,91 @@
-import Layout from "./../components/main/Layout";
+// pages/index.js
+import React, { useState, useEffect } from "react";
+import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
-import React from "react";
 import Banner from "../components/Banner";
-import Contact from "../components/contact/Contact";
 import StaticBanner from "../components/StaticBanner";
-import db from "../utils/db";
-import Product from "../models/Product";
+import Contact from "../components/contact/Contact";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Benefits from "./slider";
 
-export async function getServerSideProps() {
-  try {
-    await db.connect();
-    const products = await Product.find({}).lean();
-
-    const serializeObjectIds = (obj) => {
-      if (Array.isArray(obj)) {
-        return obj.map(serializeObjectIds);
-      } else if (obj && typeof obj === "object") {
-        return Object.keys(obj).reduce((acc, key) => {
-          acc[key] =
-            obj[key] && obj[key]._id
-              ? obj[key]._id.toString()
-              : serializeObjectIds(obj[key]);
-          return acc;
-        }, {});
-      }
-      return obj;
-    };
-
-    const serializedProducts = products.map((product) => {
-      return serializeObjectIds({
-        ...product,
-        _id: product._id.toString(),
-        createdAt: product.createdAt ? product.createdAt.toISOString() : null,
-        updatedAt: product.updatedAt ? product.updatedAt.toISOString() : null,
-      });
-    });
-
-    return {
-      props: {
-        products: serializedProducts,
-      },
-    };
-  } catch (error) {
-    console.error("Error loading products:", error.message);
-    return {
-      props: {
-        products: [],
-        error: error.message,
-      },
-    };
-  }
-}
-
 function Carousel({ products }) {
-  const [currentSlide, setCurrentSlide] = React.useState(0);
-  const [visibleItems, setVisibleItems] = React.useState(3);
-  const [totalSlides, setTotalSlides] = React.useState(7); // default to a larger screen size
-  const [touchStartX, setTouchStartX] = React.useState(0);
-  const [touchEndX, setTouchEndX] = React.useState(0);
-  const [isInteracting, setIsInteracting] = React.useState(false);
-  const [mouseStartX, setMouseStartX] = React.useState(0);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [visibleItems, setVisibleItems] = useState(3);
+  const [totalSlides, setTotalSlides] = useState(7);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [mouseStartX, setMouseStartX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // adapt slide count by width
+  useEffect(() => {
+    const updateTotals = () => {
+      if (window.innerWidth < 768) {
+        setVisibleItems(1);
+        setTotalSlides(9);
+      } else {
+        setVisibleItems(3);
+        setTotalSlides(7);
+      }
+    };
+    updateTotals();
+    window.addEventListener("resize", updateTotals);
+    return () => window.removeEventListener("resize", updateTotals);
+  }, []);
+
+  // auto-advance
+  useEffect(() => {
+    if (isInteracting) return;
+    const iv = setInterval(
+      () => setCurrentSlide((s) => (s + 1) % totalSlides),
+      3000
+    );
+    return () => clearInterval(iv);
+  }, [isInteracting, totalSlides]);
+
+  let interactionEndTimer;
+  const handleInteractionStart = () => {
+    clearTimeout(interactionEndTimer);
+    setIsInteracting(true);
+  };
+  const handleInteractionEnd = () => {
+    interactionEndTimer = setTimeout(() => setIsInteracting(false), 3000);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((s) => Math.max(s - 1, 0));
+  };
+  const nextSlide = () => {
+    setCurrentSlide((s) => (s + 1 < totalSlides ? s + 1 : 0));
+  };
 
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
-    handleInteractionStart(); // Added this line
+    handleInteractionStart();
   };
-
-  const handleTouchMove = (e) => {
-    setTouchEndX(e.touches[0].clientX);
-  };
-
+  const handleTouchMove = (e) => setTouchEndX(e.touches[0].clientX);
   const handleTouchEnd = () => {
-    if (touchStartX - touchEndX > 75) {
-      nextSlide();
-    } else if (touchEndX - touchStartX > 75) {
-      prevSlide();
-    }
-    handleInteractionEnd(); // Added this line
+    if (touchStartX - touchEndX > 75) nextSlide();
+    else if (touchEndX - touchStartX > 75) prevSlide();
+    handleInteractionEnd();
   };
-
-  let interactionEndTimer = null; // Declare at the top of the Carousel component
-
-  const handleInteractionStart = () => {
-    // Clear any existing timer when a new interaction starts
-    if (interactionEndTimer) {
-      clearTimeout(interactionEndTimer);
-    }
-    setIsInteracting(true);
-  };
-
-  const handleInteractionEnd = () => {
-    // Set a timer to stop the interaction state after a delay
-    interactionEndTimer = setTimeout(() => {
-      setIsInteracting(false);
-    }, 3000);
-  };
-
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) {
-        setTotalSlides(9);
-      } else {
-        setTotalSlides(7);
-      }
-    }
-  }, []);
-
-  const prevSlide = () => {
-    setCurrentSlide((oldSlide) => Math.max(oldSlide - 1, 0));
-  };
-
-  const nextSlide = React.useCallback(() => {
-    setCurrentSlide((oldSlide) => {
-      if (oldSlide + 1 < totalSlides) {
-        return oldSlide + 1;
-      } else {
-        return 0;
-      }
-    });
-  }, [totalSlides]);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setVisibleItems(1);
-      } else {
-        setVisibleItems(3);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (isInteracting) return;
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [nextSlide, isInteracting]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
     setMouseStartX(e.clientX);
     setIsDragging(true);
-    handleInteractionStart(); // Added this line
+    handleInteractionStart();
   };
-
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    const dragDelta = mouseStartX - e.clientX;
-    if (dragDelta > 75) {
-      nextSlide();
-    } else if (dragDelta < -75) {
-      prevSlide();
-    }
+    const delta = mouseStartX - e.clientX;
+    if (delta > 75) nextSlide();
+    else if (delta < -75) prevSlide();
   };
-
   const handleMouseUp = () => {
     setIsDragging(false);
-    handleInteractionEnd(); // Added this line
-  };
-
-  const handleOnMouseLeave = () => {
     handleInteractionEnd();
-    handleMouseUp();
   };
 
   return (
@@ -178,13 +93,13 @@ function Carousel({ products }) {
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
-        className='w-full mt-3 flex flex-row items-center justify-center text-[#144e8b]'
+        className='w-full mt-3 flex items-center justify-center text-[#144e8b]'
       >
-        <BiSkipPreviousCircle className='text-lg' />
-        &nbsp;Prev
+        <BiSkipPreviousCircle className='text-lg' /> Prev
       </button>
+
       <div
-        className='carousel-items'
+        className='carousel-items flex transition-transform duration-300'
         style={{
           transform: `translateX(-${currentSlide * (100 / visibleItems)}%)`,
         }}
@@ -195,33 +110,52 @@ function Carousel({ products }) {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseEnter={handleInteractionStart}
-        onMouseLeave={handleOnMouseLeave} // using combined function here
+        onMouseLeave={handleMouseUp}
       >
-        {products?.map((product) => (
-          <div className='carousel-item px-3 lg:px-0' key={product._id}>
-            <ProductItem product={product} />
+        {products.map((p) => (
+          <div className='carousel-item px-3 lg:px-0' key={p._id}>
+            <ProductItem product={p} />
           </div>
         ))}
       </div>
+
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
-        className='w-full mt-3 flex flex-row items-center justify-center text-[#144e8b] card'
+        className='w-full mt-3 flex items-center justify-center text-[#144e8b]'
       >
-        Next &nbsp; <BiSkipNextCircle className='text-lg' />
+        Next <BiSkipNextCircle className='text-lg' />
       </button>
     </div>
   );
 }
 
-export default function Home({ products }) {
-  const filteredProducts = products
-    ?.filter(
-      (product) =>
-        product.each?.wpPrice > 0 && // Valid price greater than 0
-        product.each?.description &&
-        product.each?.quickBooksQuantityOnHandProduction > 0 && // Valid quantity greater than 0
-        product.each?.description.trim() !== "" // Non-empty description
+export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filtered = products
+    .filter(
+      (p) =>
+        p.each?.wpPrice > 0 &&
+        p.each?.description?.trim() !== "" &&
+        p.each?.quickBooksQuantityOnHandProduction > 0
     )
     .slice(0, 9);
 
@@ -230,10 +164,19 @@ export default function Home({ products }) {
       <Banner />
       <StaticBanner />
       <Benefits className='mt-2' />
+
       <h2 className='section__title' id='products'>
         Featured Products
       </h2>
-      <Carousel products={filteredProducts} loading={"lazy"} />
+
+      {loading ? (
+        <p className='text-center mt-10'>Loading products…</p>
+      ) : filtered.length > 0 ? (
+        <Carousel products={filtered} />
+      ) : (
+        <p className='text-center mt-10'>No products available.</p>
+      )}
+
       <Contact className='mt-2' />
     </Layout>
   );
