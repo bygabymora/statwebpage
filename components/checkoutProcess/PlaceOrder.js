@@ -103,7 +103,9 @@ export default function PlaceOrder({
       }));
 
       const buyer = customer?.purchaseExecutive?.find(
-        (exec) => exec.wpId === user?._id
+        (exec) =>
+          exec.name?.trim().toLowerCase() ===
+          user?.firstName.trim().toLowerCase()
       );
 
       // Update estimate API call
@@ -133,11 +135,13 @@ export default function PlaceOrder({
           fedexAccountNumber: customer?.fedexAccountNumber,
           upsAccountNumber: customer?.upsAccountNumber,
           buyer: {
-            name: buyer?.name,
-            email: buyer?.email,
-            lastName: buyer?.lastName,
+            name: buyer?.name || user?.firstName,
+            email: buyer?.email || user?.email,
+            lastName: buyer?.lastName || user?.lastName,
             _id: buyer?._id,
             role: "Buyer",
+            title: "Buyer",
+            phone: buyer?.phone || user?.phone,
           },
           location: {
             address: order.shippingAddress?.address,
