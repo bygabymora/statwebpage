@@ -31,7 +31,6 @@ export default function CartScreen() {
   const fetchOrder = async (extraAction) => {
     startLoading();
     try {
-      // 1) wait for the API call
       const {
         data: { order: freshOrder, wpUser, warnings },
       } = await axios.get("/api/orders/fetchOrLatestInProcess", {
@@ -41,9 +40,6 @@ export default function CartScreen() {
       // 2) sync state
       setUser(wpUser);
       setOrder(freshOrder);
-      console.log("freshOrder", freshOrder);
-      console.log("wpUser", wpUser);
-      console.log("warnings", warnings);
       // 3) if there are warnings, show modal and bail out
       if (warnings.length) {
         stopLoading();
@@ -87,8 +83,16 @@ export default function CartScreen() {
 
   // On mount, check for an existing orderId cookie and load it
   useEffect(() => {
-    if (session && (activeStep === 0 || activeStep === 3)) {
+    if (
+      session &&
+      (activeStep === 0 || activeStep === 3) &&
+      user.cart?.length > 0
+    ) {
       fetchOrder();
+    } else {
+      setOrder({
+        orderItems: [],
+      });
     }
   }, [orderId, session, activeStep]);
 
