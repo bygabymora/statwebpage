@@ -23,15 +23,15 @@ const handler = async (req, res) => {
   const token = await getToken({ req });
   let wpUser = null;
   if (token?._id) {
-    wpUser = await WpUser.findById(token._id);
+    wpUser = await WpUser.findById(token._id).lean();
   }
   const loggedIn = Boolean(token);
   const userApproved = Boolean(wpUser && wpUser.approved);
   const userRestricted = Boolean(userApproved && wpUser.restricted);
 
   try {
-    // Fetch approved + active products
-    let products = await Product.find({ approved: true, active: true });
+    // Fetch approved + active products as plain objects
+    let products = await Product.find({ approved: true, active: true }).lean();
 
     // If not logged in or not approved: minimal info + sort by name A→Z
     if (!loggedIn || !userApproved) {
@@ -54,6 +54,7 @@ const handler = async (req, res) => {
       return res.status(200).json(minimal);
     }
 
+    // Logged in & approved → full info sorted by stock, price, name
     products.sort((a, b) => {
       const aInStock =
         (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
@@ -71,19 +72,18 @@ const handler = async (req, res) => {
 
       return a.name.localeCompare(b.name);
     });
+
     // Map full info, zeroing out on-hand counts for restricted users on protected products
     const full = products.map((p) => {
       if (userRestricted && p.protected) {
         return {
           ...p,
-          each: {
-            ...p.each,
-            quickBooksQuantityOnHandProduction: 0,
-          },
-          box: {
-            ...p.box,
-            quickBooksQuantityOnHandProduction: 0,
-          },
+          each: p.each
+            ? { ...p.each, quickBooksQuantityOnHandProduction: 0 }
+            : p.each,
+          box: p.box
+            ? { ...p.box, quickBooksQuantityOnHandProduction: 0 }
+            : p.box,
         };
       }
       return p;

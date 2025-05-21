@@ -13,7 +13,6 @@ export default function Products() {
   const [name, setName] = useState("");
   const [searchedWord, setSearchedWord] = useState("");
   const { manufacturer, query } = router.query;
-
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [products, setProducts] = useState([]);
