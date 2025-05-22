@@ -148,13 +148,52 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
             </ul>
           )}
         </div>
-        <button
-          disabled={!updatedCustomer}
-          onClick={handleLinkCustomer}
-          className='primary-button'
-        >
-          Link Customer
-        </button>
+        {updatedCustomer && (
+          <div className='mb-4'>
+            <h3 className='text-lg font-medium mb-3'>Selected Customer</h3>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              <div className='mb-4'>
+                <label className='block font-medium '>Company Name</label>
+                <div>{updatedCustomer.companyName}</div>
+              </div>
+              <div className='mb-4'>
+                <label className='block font-medium '>Lead Stage</label>
+                <div>{updatedCustomer.leadStage}</div>
+              </div>
+              <div className='mb-4'>
+                <label className='block font-medium '>Account Owner</label>
+                <div>{updatedCustomer.user?.name}</div>
+              </div>
+              <div className='mb-4'>
+                <label className='block font-medium '>
+                  Account Owner Email
+                </label>
+                <div>{updatedCustomer.user?.email}</div>
+              </div>
+            </div>
+            {updatedCustomer?.purchaseExecutive?.length > 0 && (
+              <div className='mb-4'>
+                <label className='block font-medium '>Purchase Executive</label>
+                <div>
+                  {updatedCustomer.purchaseExecutive.map((exec) => (
+                    <div key={exec.email}>
+                      {exec.name} {exec.lastName} ({exec.email})
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        <div>
+          <button
+            disabled={!updatedCustomer}
+            onClick={handleLinkCustomer}
+            className='primary-button'
+          >
+            Link Customer
+          </button>
+        </div>
       </div>
 
       {/* Selected Customer Editable Form */}

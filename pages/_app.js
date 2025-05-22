@@ -9,6 +9,7 @@ import Script from "next/script";
 import { reportWebVitals } from "../utils/reportWebVitals";
 import { ModalProvider } from "../components/context/ModalContext";
 import { loadStripe } from "@stripe/stripe-js";
+import { Analytics } from "@vercel/analytics/react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -53,7 +54,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
       <ModalProvider>
         <StoreProvider>
           <CookieAcceptancePopup />
-
+          <Analytics />
           {isProd && (
             <>
               <Script
