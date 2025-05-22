@@ -5,6 +5,8 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   const [keyword, setKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [updatedCustomer, setUpdatedCustomer] = useState(null);
+  const [updatedWpUser, setUpdatedWpUser] = useState(null);
 
   useEffect(() => {
     if (wpCustomer) {
@@ -43,16 +45,17 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
       .map((exec) => exec.email)
       .includes(wpUser.email);
 
-    let updatedCustomer = customer;
+    let newUpdatedCustomer = customer;
+
     if (!executiveMatch) {
-      const hasPrincipal = customer.purchaseExecutive.some((exec) => {
+      const hasPrincipal = customer?.purchaseExecutive?.some((exec) => {
         return exec.principalPurchaseExecutive;
       });
 
-      updatedCustomer = {
+      newUpdatedCustomer = {
         ...customer,
         purchaseExecutive: [
-          ...(customer.purchaseExecutive || []),
+          ...customer.purchaseExecutive,
           {
             name: wpUser.firstName,
             lastName: wpUser.lastName,
@@ -63,30 +66,39 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
           },
         ],
       };
+      setUpdatedCustomer(newUpdatedCustomer);
     } else {
-      updatedCustomer = {
+      newUpdatedCustomer = {
         ...customer,
-        purchaseExecutive: updatedCustomer.purchaseExecutive.map((exec) => {
-          if (exec.email === wpUser.email) {
-            return { ...exec, wpId: wpUser._id };
+        purchaseExecutive: newUpdatedCustomer?.purchaseExecutive?.map(
+          (exec) => {
+            if (exec.email === wpUser.email) {
+              return { ...exec, wpId: wpUser._id };
+            }
+            return exec;
           }
-          return exec;
-        }),
+        ),
       };
+      setUpdatedCustomer(newUpdatedCustomer);
     }
-    const updatedWpUser = {
+    const newUpdatedWpUser = {
       ...wpUser,
       customerId: customer._id,
-      customerData: updatedCustomer,
+      customerData: newUpdatedCustomer,
     };
 
+    setUpdatedWpUser(newUpdatedWpUser);
+
+    setSuggestions([]);
+  };
+
+  const handleLinkCustomer = async () => {
     await axios.put(`/api/admin/users/${wpUser._id}`, {
       user: updatedWpUser,
       customer: updatedCustomer,
     });
 
     await fetchData();
-    setSuggestions([]);
   };
 
   return (
@@ -95,40 +107,54 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
         Link Customer - {wpUser?.companyName} - {wpUser?.companyEinCode}
       </h1>
       {console.log("customer", wpCustomer)}
+      {console.log("updatedCustomer", updatedCustomer)}
+      {console.log("updatedWpUser", updatedWpUser)}
       {/* Search Input */}
-      <div className='relative mb-6'>
-        <label htmlFor='customer-search' className='block text-sm font-medium '>
-          Search Customer
-        </label>
-        <input
-          autoComplete='off'
-          id='customer-search'
-          type='text'
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder='Type name or ID...'
-          className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500'
-        />
+      <div>
+        <div className='relative mb-6'>
+          <label
+            htmlFor='customer-search'
+            className='block text-sm font-medium '
+          >
+            Search Customer
+          </label>
+          <input
+            autoComplete='off'
+            id='customer-search'
+            type='text'
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder='Type name or ID...'
+            className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+          />
 
-        {loading && (
-          <div className='absolute top-full mt-1 left-0 text-sm text-gray-500'>
-            Loading...
-          </div>
-        )}
+          {loading && (
+            <div className='absolute top-full mt-1 left-0 text-sm text-gray-500'>
+              Loading...
+            </div>
+          )}
 
-        {suggestions.length > 0 && (
-          <ul className='absolute z-10 top-full mt-1 w-full bg-white border border-gray-300 rounded max-h-60 overflow-y-auto shadow-lg'>
-            {suggestions.map((c) => (
-              <li
-                key={c._id}
-                onClick={() => handleSelect(c)}
-                className='px-3 py-2 hover:bg-blue-100 cursor-pointer'
-              >
-                {c.companyName} {c.aka && `(${c.aka})`}
-              </li>
-            ))}
-          </ul>
-        )}
+          {suggestions.length > 0 && (
+            <ul className='absolute z-10 top-full mt-1 w-full bg-white border border-gray-300 rounded max-h-60 overflow-y-auto shadow-lg'>
+              {suggestions.map((c) => (
+                <li
+                  key={c._id}
+                  onClick={() => handleSelect(c)}
+                  className='px-3 py-2 hover:bg-blue-100 cursor-pointer'
+                >
+                  {c.companyName} {c.aka && `(${c.aka})`}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <button
+          disabled={!updatedCustomer}
+          onClick={handleLinkCustomer}
+          className='primary-button'
+        >
+          Link Customer
+        </button>
       </div>
 
       {/* Selected Customer Editable Form */}
