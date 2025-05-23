@@ -98,7 +98,7 @@ export const messageManagement = (
                       margin-bottom: 20px;
                       font-size: 14px;
                     ">
-                      You selected the “Bill Me” option for Shipping Payment. You will receive an email when your order is ready to ship, including the shipment cost so you can complete payment, so we can ship it.
+                      You selected the “Bill Me” option for Shipping Payment. You will receive an email when your order is ready to ship, including the shipment cost so you can complete payment, and we can ship it.
                     </div>`
                   : ""
               }
