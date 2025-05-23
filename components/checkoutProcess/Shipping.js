@@ -174,16 +174,24 @@ export default function Shipping({
             customer: customerToSave,
           }
         );
-        console.log("Customer updated successfully", updatedCustomer.data);
+
+        setCustomer(updatedCustomer.data.customer);
       }
 
+      const orderToSave = {
+        ...order,
+        status: "In Process",
+      };
+      const { data } = await axios.post("/api/orders", {
+        order: orderToSave,
+      });
+
+      setOrder(data.order);
       if (!userData) {
         showStatusMessage("error", "User not found, please try to login again");
         return;
       }
-      if (!customerData) {
-        console.log("Customer not found, No Customer Linked to User");
-      }
+
       setActiveStep(2);
     } catch (error) {
       toast.error("An error occurred while fetching user data.");
