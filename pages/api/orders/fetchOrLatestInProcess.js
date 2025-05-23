@@ -1,10 +1,9 @@
-// pages/api/orders/fetchOrLatestInProcess.js
+import { getToken } from "next-auth/jwt";
+import mongoose from "mongoose";
 import db from "../../../utils/db";
 import Order from "../../../models/Order";
 import WpUser from "../../../models/WpUser";
 import Product from "../../../models/Product";
-import { getToken } from "next-auth/jwt";
-import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
