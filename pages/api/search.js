@@ -48,7 +48,6 @@ export default async function handler(req, res) {
       } else {
         const regex = new RegExp(keyword.split(" ").join(".*"), "i");
         products = await Product.find({
-          active: true,
           $or: [
             { name: regex },
             { manufacturer: regex },
@@ -61,8 +60,8 @@ export default async function handler(req, res) {
           .lean();
       }
     } else {
-      // 4. No keyword → grab all active
-      products = await Product.find({ active: true }).limit(limit).lean();
+      // 4. No keyword → grab all
+      products = await Product.find({}).limit(limit).lean();
     }
 
     // 5. Sort in‐stock / priced / name

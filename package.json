@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "browserslist": [
     "defaults and supports es6-module",
@@ -59,16 +60,20 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.25.9",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.26.0",
     "@types/estree": "^1.0.6",
+    "@types/jest": "^29.5.14",
     "@types/json-schema": "^7.0.15",
     "@types/react": "^19.0.2",
     "@types/whatwg-url": "^13.0.0",
     "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
     "globals": "^16.1.0",
+    "jest": "^29.7.0",
+    "node-mocks-http": "^1.17.2",
     "postcss": "^8.4.49",
     "raw-loader": "^4.0.2",
     "tailwindcss": "^3.4.17",
