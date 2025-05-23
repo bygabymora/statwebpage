@@ -22,12 +22,12 @@ async function handler(req, res) {
     return;
   }
 
-  await db.connect();
+  await db.connect(true);
 
   const existingUser = await WpUser.findOne({ email: email });
   if (existingUser) {
     res.status(422).json({ message: "User exists already!" });
-    await db.disconnect();
+
     return;
   }
 
@@ -45,7 +45,7 @@ async function handler(req, res) {
   });
 
   const user = await newUser.save();
-  await db.disconnect();
+
   res.status(201).send({
     message: "Created user!",
     _id: user._id,

@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   try {
     // 1) Connect & authenticate
-    await db.connect();
+    await db.connect(true);
     const token = await getToken({ req });
     if (!token) return res.status(401).json({ message: "Signin required" });
     const userId = token._id;
@@ -197,7 +197,5 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("❌ fetchOrLatestInProcess:", err);
     return res.status(500).json({ message: "Internal Server Error" });
-  } finally {
-    await db.disconnect();
   }
 }

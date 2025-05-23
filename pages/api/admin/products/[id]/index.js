@@ -1,31 +1,31 @@
-import { getToken } from 'next-auth/jwt';
-import Product from '../../../../../models/Product';
-import db from '../../../../../utils/db';
+import { getToken } from "next-auth/jwt";
+import Product from "../../../../../models/Product";
+import db from "../../../../../utils/db";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || (user && !user.isAdmin)) {
-    return res.status(401).send('signin required');
+    return res.status(401).send("signin required");
   }
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     return getHandler(req, res, user);
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     return putHandler(req, res, user);
-  } else if (req.method === 'DELETE') {
+  } else if (req.method === "DELETE") {
     return deleteHandler(req, res, user);
   } else {
-    return res.status(400).send({ message: 'Method not allowed' });
+    return res.status(400).send({ message: "Method not allowed" });
   }
 };
 const getHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const product = await Product.findById(req.query.id);
-  await db.disconnect();
+
   res.send(product);
 };
 const putHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const product = await Product.findById(req.query.id);
   if (product) {
     product.name = req.body.name;
@@ -51,24 +51,20 @@ const putHandler = async (req, res) => {
     product.notes = req.body.notes;
     product.includes = req.body.includes;
     await product.save();
-    await db.disconnect();
-    res.send({ message: 'Product updated successfully' });
+
+    res.send({ message: "Product updated successfully" });
   } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'Product not found' });
+    res.status(404).send({ message: "Product not found" });
   }
 };
 const deleteHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const product = await Product.findById(req.query.id);
 
   if (product) {
     await Product.findByIdAndDelete(req.query.id);
-    await db.disconnect();
-    res.send({ message: 'Product deleted successfully' });
   } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'Product not found' });
+    res.status(404).send({ message: "Product not found" });
   }
 };
 

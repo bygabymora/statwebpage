@@ -1,19 +1,20 @@
-import { getToken } from 'next-auth/jwt';
-import Order from '../../../../models/Order';
-import db from '../../../../utils/db';
+import { getToken } from "next-auth/jwt";
+import Order from "../../../../models/Order";
+import db from "../../../../utils/db";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || (user && !user.isAdmin)) {
-    return res.status(401).send('signin required');
+    return res.status(401).send("signin required");
   }
-  if (req.method === 'GET') {
-    await db.connect();
-    const orders = await Order.find({}).populate('WpUser', 'name email').sort({ createdAt: -1 });
-    await db.disconnect();
+  if (req.method === "GET") {
+    await db.connect(true);
+    const orders = await Order.find({})
+      .populate("WpUser", "name email")
+      .sort({ createdAt: -1 });
     res.send(orders);
   } else {
-    return res.status(400).send({ message: 'Method not allowed' });
+    return res.status(400).send({ message: "Method not allowed" });
   }
 };
 

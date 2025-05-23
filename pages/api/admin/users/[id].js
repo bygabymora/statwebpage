@@ -26,11 +26,10 @@ const handler = async (req, res) => {
 };
 
 const getHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   try {
     const wpUser = await WpUser.findById(req.query.id);
     if (!wpUser) {
-      await db.disconnect();
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -57,20 +56,17 @@ const getHandler = async (req, res) => {
       }
     }
 
-    await db.disconnect();
     return res.status(200).json({ wpUser, customer, accountOwner });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res
       .status(500)
       .json({ type: "error", message: "Error fetching user" });
-  } finally {
-    await db.disconnect();
   }
 };
 
 const putHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   try {
     const userInDB = await WpUser.findById(req.query.id);
     if (!userInDB) {
@@ -112,13 +108,11 @@ const putHandler = async (req, res) => {
     return res
       .status(500)
       .json({ type: "error", message: "Error updating user" });
-  } finally {
-    await db.disconnect();
   }
 };
 
 const deleteHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   try {
     const user = await WpUser.findById(req.query.id);
     if (!user) {
@@ -138,8 +132,6 @@ const deleteHandler = async (req, res) => {
     return res
       .status(500)
       .json({ type: "error", message: "Error deleting user" });
-  } finally {
-    await db.disconnect();
   }
 };
 

@@ -14,7 +14,7 @@ const handler = async (req, res) => {
     return res.status(401).send("Signin required");
   }
 
-  await db.connect();
+  await db.connect(true);
 
   try {
     const currentDate = moment().format("YYMMDD");

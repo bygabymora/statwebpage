@@ -18,7 +18,7 @@ const handler = async (req, res) => {
   }
 
   try {
-    await db.connect();
+    await db.connect(true);
 
     const { id } = req.query;
     if (!id) {
@@ -29,7 +29,6 @@ const handler = async (req, res) => {
     // 3. Fetch the WpUser record
     const wpUser = await WpUser.findById(id);
     if (!wpUser) {
-      await db.disconnect();
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -56,11 +55,10 @@ const handler = async (req, res) => {
       }
     }
 
-    await db.disconnect();
     return res.status(200).json({ wpUser, customer, accountOwner });
   } catch (error) {
     console.error(error);
-    await db.disconnect();
+
     return res.status(500).json({ message: "Internal server error" });
   }
 };

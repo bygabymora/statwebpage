@@ -18,18 +18,16 @@ const handler = async (req, res) => {
     return res.status(401).send("Error: signin required");
   }
 
-  await db.connect();
+  await db.connect(true);
 
   try {
     const order = await Order.findById(orderId);
 
     if (!order) {
-      await db.disconnect();
       return res.status(404).send({ message: "Error: order not found" });
     }
 
     if (order.isPaid) {
-      await db.disconnect();
       return res.status(400).send({ message: "Error: order is already paid" });
     }
 
@@ -50,18 +48,16 @@ const handler = async (req, res) => {
     };
     const paidOrder = await order.save();
 
-    await db.disconnect();
     res.send({ message: "order paid successfully", order: paidOrder });
   } catch (error) {
     // Check if the error is a CastError and respond accordingly
     if (error.name === "CastError") {
-      await db.disconnect();
       return res
         .status(400)
         .json({ message: "Validating the payment, please wait..." });
     }
     // Handle any other errors here
-    await db.disconnect();
+
     res
       .status(500)
       .send({ message: "Error while processing the order", error });

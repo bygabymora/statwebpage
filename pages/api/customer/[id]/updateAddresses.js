@@ -16,7 +16,7 @@ const handler = async (req, res) => {
 };
 
 const putHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const customerInDB = await Customer.findById(req.query.id);
   const { customer } = req.body;
   if (customerInDB) {
@@ -30,10 +30,9 @@ const putHandler = async (req, res) => {
     customerInDB.fedexAccountNumber = customer.fedexAccountNumber;
     customerInDB.upsAccountNumber = customer.upsAccountNumber;
     await customerInDB.save();
-    await db.disconnect();
+
     res.send({ message: "News updated successfully" });
   } else {
-    await db.disconnect();
     res.status(404).send({ message: "News not found" });
   }
 };

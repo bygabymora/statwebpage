@@ -7,11 +7,10 @@ const handler = async (req, res) => {
   if (!WpUser) {
     return res.status(401).send({ message: "signin required" });
   }
-  await db.connect();
+  await db.connect(true);
   const lastOrder = await Order.findOne({ WpUser: WpUser._id }).sort({
     createdAt: -1,
   });
-  await db.disconnect();
 
   if (lastOrder) {
     res.send(lastOrder);

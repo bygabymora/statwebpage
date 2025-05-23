@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await db.connect();
+    await db.connect(true);
 
     const keywordRaw = req.query.keyword?.trim();
     const limit = parseInt(req.query.limit, 10) || 20;
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         const product = await Product.findById(keywordRaw).lean();
         if (product) {
           product.collection = "products";
-          await db.disconnect();
+
           return res.status(200).json([product]);
         }
       }
@@ -106,10 +106,8 @@ export default async function handler(req, res) {
       });
     }
 
-    await db.disconnect();
     return res.status(200).json(updatedProducts);
   } catch (error) {
-    await db.disconnect();
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });

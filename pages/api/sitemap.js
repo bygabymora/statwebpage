@@ -1,20 +1,17 @@
-import db from '../../utils/db';
-import News from '../../models/News';
-import Product from '../../models/Product';
+import db from "../../utils/db";
+import News from "../../models/News";
+import Product from "../../models/Product";
 
-const BASE_URL = 'https://www.statsurgicalsupply.com';
+const BASE_URL = "https://www.statsurgicalsupply.com";
 
 export default async function sitemap(req, res) {
-  await db.connect();
+  await db.connect(true);
 
   // Fetch news article slugs
-  const newsArticles = await News.find({}).select('slug');
+  const newsArticles = await News.find({}).select("slug");
 
   // Fetch product slugs
-  const products = await Product.find({}).select('slug');
-
-  await db.disconnect();
-
+  const products = await Product.find({}).select("slug");
   // Create the XML sitemap format
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -29,7 +26,7 @@ export default async function sitemap(req, res) {
           </url>
         `
         )
-        .join('')}
+        .join("")}
       ${products
         .map(
           (product) => `
@@ -41,11 +38,11 @@ export default async function sitemap(req, res) {
           </url>
         `
         )
-        .join('')}
+        .join("")}
     </urlset>
   `;
 
-  res.setHeader('Content-Type', 'text/xml');
+  res.setHeader("Content-Type", "text/xml");
   res.write(sitemap);
   res.end();
 }

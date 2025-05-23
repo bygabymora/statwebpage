@@ -7,7 +7,7 @@ const handler = async (req, res) => {
   if (!user || (user && !user.isAdmin)) {
     return res.status(401).send("Error: signin required");
   }
-  await db.connect();
+  await db.connect(true);
 
   const order = await Order.findById(req.query.id);
 
@@ -15,13 +15,12 @@ const handler = async (req, res) => {
     order.isAtCostumers = true;
     order.atCostumersDate = Date.now();
     const atCostumersOrder = await order.save();
-    await db.disconnect();
+
     res.send({
       message: "Order is registered as at customers",
       order: atCostumersOrder,
     });
   } else {
-    await db.disconnect();
     res.status(404).send({ message: "Error: order not found" });
   }
 };

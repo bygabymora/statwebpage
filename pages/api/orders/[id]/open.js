@@ -12,7 +12,7 @@ const handler = async (req, res) => {
   }
 
   const { id } = req.query;
-  await db.connect();
+  await db.connect(true);
 
   try {
     const openedOrders = await Order.find({
@@ -28,7 +28,6 @@ const handler = async (req, res) => {
     const order = await Order.findById(id);
     let estimate = null;
     if (!order) {
-      await db.disconnect();
       return res.status(404).send("Order not found");
     }
     console.log("wpUser", wpUser);
@@ -58,12 +57,9 @@ const handler = async (req, res) => {
       }
     }
 
-    await db.disconnect();
     return res.status(200).send({ order, user });
   } catch (error) {
     console.error("Error in /api/orders/[id]:", error);
-    await db.disconnect();
-    return res.status(500).send("Internal Server Error");
   }
 };
 

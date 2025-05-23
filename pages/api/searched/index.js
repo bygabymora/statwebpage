@@ -4,7 +4,7 @@ import db from "../../../utils/db";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      await db.connect();
+      await db.connect(true);
       const searched = new Searched({
         searchedWord: req.body.searchedWord,
         name: req.body.name,
@@ -15,12 +15,11 @@ export default async function handler(req, res) {
         message: req.body.message,
       });
       const createdSearched = await searched.save();
-      await db.disconnect();
+
       res
         .status(201)
         .send({ message: "Searched created", searched: createdSearched });
     } catch (error) {
-      await db.disconnect();
       res.status(500).send({ message: "Error in creating searched", error });
     }
   } else {

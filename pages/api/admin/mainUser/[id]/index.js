@@ -16,16 +16,14 @@ const handler = async (req, res) => {
 };
 
 const getHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
 
   const { id } = req.query;
   if (!id) {
-    await db.disconnect();
     return res.status(400).json({ message: "Missing user ID" });
   }
 
   const user = await User.findById(id);
-  await db.disconnect();
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });

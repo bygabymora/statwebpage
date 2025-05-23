@@ -28,7 +28,7 @@ async function handler(req, res) {
     return;
   }
 
-  await db.connect();
+  await db.connect(true);
   const toUpdateUser = await WpUser.findById(user._id);
   toUpdateUser.firstName = firstName;
   toUpdateUser.lastName = lastName;
@@ -39,7 +39,7 @@ async function handler(req, res) {
   }
 
   await toUpdateUser.save();
-  await db.disconnect();
+
   res.send({
     message: "User updated",
   });

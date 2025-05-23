@@ -15,7 +15,7 @@ const handler = async (req, res) => {
 
   const { id } = req.query;
 
-  await db.connect();
+  await db.connect(true);
 
   try {
     const order = await Order.findById(id);
@@ -71,11 +71,11 @@ const handler = async (req, res) => {
         }
       }
     }
-    await db.disconnect();
+
     res.status(200).send({ order, estimate, invoice, accountOwner });
   } catch (error) {
     console.error("Error in /api/orders/[id]:", error);
-    await db.disconnect();
+
     res.status(500).send("Internal Server Error");
   }
 };

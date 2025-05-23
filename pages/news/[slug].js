@@ -142,7 +142,7 @@ export async function getServerSideProps(context) {
   const { params } = context;
   const { slug } = params;
 
-  await db.connect();
+  await db.connect(true);
 
   const news = await News.findOne({ slug }).lean();
 
@@ -167,7 +167,6 @@ export async function getServerSideProps(context) {
       updatedAt: news.updatedAt.toISOString(),
       sources: formattedSources,
     };
-    await db.disconnect();
 
     return {
       props: {
@@ -176,7 +175,6 @@ export async function getServerSideProps(context) {
     };
   } catch (error) {
     console.error("Error formatting news:", error);
-    await db.disconnect();
 
     return {
       notFound: true,

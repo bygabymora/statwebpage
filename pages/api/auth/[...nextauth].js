@@ -25,11 +25,10 @@ export default NextAuth({
         token.restricted = user.restricted;
       } else if (token._id) {
         // Check the database if the user is still active
-        await db.connect();
+        await db.connect(true);
         const dbUser = await WpUser.findById(token._id).select(
           "firstName lastName email active approved restricted"
         );
-        await db.disconnect();
 
         if (dbUser) {
           token.lastName = dbUser.lastName;
@@ -66,9 +65,8 @@ export default NextAuth({
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        await db.connect();
+        await db.connect(true);
         const user = await WpUser.findOne({ email: credentials.email });
-        await db.disconnect();
 
         if (!user) {
           throw new Error("Invalid email or password");

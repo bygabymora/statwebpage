@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await db.connect();
+    await db.connect(true);
 
     // fetch all products in one go
     const productIds = cartItems.map((i) => i.productId);

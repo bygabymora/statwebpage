@@ -13,7 +13,7 @@ const handler = async (req, res) => {
   }
 
   try {
-    await db.connect();
+    await db.connect(true);
 
     const orders = await Order.find({
       "wpUser.userId": token._id,
@@ -55,12 +55,9 @@ const handler = async (req, res) => {
       })
     );
 
-    await db.disconnect();
     res.send(updatedOrders);
   } catch (error) {
-    await db.disconnect();
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
+    res.status(500).send({ message: "Internal Server Error", error });
   }
 };
 

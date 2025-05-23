@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   // 2. Connect to MongoDB
   try {
-    await db.connect();
+    await db.connect(true);
   } catch (error) {
     return res.status(503).json({
       message: "Service unavailable: Database connection failed",
@@ -77,6 +77,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Internal server error" });
   } finally {
     // 7. Always disconnect
-    await db.disconnect();
   }
 }

@@ -4,7 +4,7 @@ import { generateProductJSONLD } from "../../utils/seo";
 
 const handleRequest = async (req, res) => {
   try {
-    await db.connect();
+    await db.connect(true);
     const products = await Product.find().lean();
 
     const jsonldData = products.map((product) =>

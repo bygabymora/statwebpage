@@ -11,7 +11,7 @@ const handler = async (req, res) => {
 
   // Connect to MongoDB
   try {
-    await db.connect();
+    await db.connect(true);
   } catch (err) {
     return res.status(503).json({
       message: "Service unavailable: Database connection failed",
@@ -93,8 +93,6 @@ const handler = async (req, res) => {
   } catch (error) {
     console.error("Product fetch error:", error);
     return res.status(500).json({ message: "Error fetching products" });
-  } finally {
-    await db.disconnect();
   }
 };
 

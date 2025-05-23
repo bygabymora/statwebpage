@@ -1,33 +1,33 @@
-import { getToken } from 'next-auth/jwt';
-import News from '../../../../../models/News';
-import db from '../../../../../utils/db';
+import { getToken } from "next-auth/jwt";
+import News from "../../../../../models/News";
+import db from "../../../../../utils/db";
 
 const handler = async (req, res) => {
   const user = await getToken({ req });
   if (!user || (user && !user.isAdmin)) {
-    return res.status(401).send('signin required');
+    return res.status(401).send("signin required");
   }
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     return getHandler(req, res);
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     return putHandler(req, res);
-  } else if (req.method === 'DELETE') {
+  } else if (req.method === "DELETE") {
     return deleteHandler(req, res);
   } else {
-    return res.status(400).send({ message: 'Method not allowed' });
+    return res.status(400).send({ message: "Method not allowed" });
   }
 };
 
 const getHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const news = await News.findById(req.query.id);
-  await db.disconnect();
+
   res.send(news);
 };
 
 const putHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const news = await News.findById(req.query.id);
   if (news) {
     // Update news properties here
@@ -44,24 +44,22 @@ const putHandler = async (req, res) => {
     }));
 
     await news.save();
-    await db.disconnect();
-    res.send({ message: 'News updated successfully' });
+
+    res.send({ message: "News updated successfully" });
   } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'News not found' });
+    res.status(404).send({ message: "News not found" });
   }
 };
 
 const deleteHandler = async (req, res) => {
-  await db.connect();
+  await db.connect(true);
   const news = await News.findById(req.query.id);
   if (news) {
     await News.findByIdAndDelete(req.query.id);
-    await db.disconnect();
-    res.send({ message: 'News deleted successfully' });
+
+    res.send({ message: "News deleted successfully" });
   } else {
-    await db.disconnect();
-    res.status(404).send({ message: 'News not found' });
+    res.status(404).send({ message: "News not found" });
   }
 };
 
