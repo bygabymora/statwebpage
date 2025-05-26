@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/main/Layout";
 import Link from "next/link";
 import { BsBackspace } from "react-icons/bs";
+import { FaFacebookF, FaLinkedinIn } from "react-icons/fa";
 import db from "../../utils/db";
 import News from "../../models/News";
 import Image from "next/image";
@@ -11,173 +12,208 @@ function replaceSlashNWithBreak(content) {
 }
 
 function parseContentWithImages(content) {
-  // Use a regular expression to find image tags in the content
   const imageTagRegex = /\[([^\]]+)\]/g;
   const matches = content?.match(imageTagRegex);
-
-  // Replace /n with <br/>
   content = replaceSlashNWithBreak(content);
-
-  if (!matches) {
-    return content;
-  }
-
-  // Replace image tags with actual image elements
-  let parsedContent = content;
+  if (!matches) return content;
+  let parsed = content;
   matches.forEach((match) => {
-    const imageUrl = match.slice(1, -1); // Remove brackets [ and ]
-    const altText = `Image: ${imageUrl}`; // Set alt text based on image URL
-    const imgElement = `<Image src="${imageUrl}" alt="${altText}" width={300} height={200} class="mx-auto my-auto rounded-lg"/>`;
-    parsedContent = parsedContent.replace(match, imgElement);
+    const url = match.slice(1, -1);
+    const imgEl = `<Image src="${url}" alt="Image: ${url}" class="float-left w-72 h-auto mr-8 mb-4 rounded-lg items-center"`;
+    parsed = parsed.replace(match, imgEl);
   });
-
-  return parsedContent;
+  return parsed;
 }
 
-function formatContentWithParagraphTitles(content) {
-  // Replace /n with <br/>
+function formatWithParagraphs(content) {
   content = replaceSlashNWithBreak(content);
-
-  // Split the content into paragraphs
-  const paragraphs = content.split("\n");
-
-  // Process each paragraph
-  const formattedContent = paragraphs
-    .map((paragraph) => {
-      if (paragraph.startsWith("#")) {
-        return `<p><strong>${paragraph.substring(1)}</strong></p>`;
-      } else {
-        // Otherwise, keep the paragraph as is
-        return `<p>${paragraph}</p>`;
-      }
-    })
+  return content
+    .split("\n")
+    .map((para) =>
+      para.startsWith("#")
+        ? `<h3 class="mt-8 mb-4 text-2xl font-bold text-[#144e8b]">${para.substring(
+            1
+          )}</h3>`
+        : `<p class="mb-6 leading-relaxed text-gray-700">${para}</p>`
+    )
     .join("");
-
-  return formattedContent;
 }
 
-export default function Newscreen(props) {
-  const { news } = props;
-  if (!news) {
-    return <p>News not found</p>;
-  }
+export default function Newscreen({ news }) {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [expanded, setExpanded] = useState(false);
 
-  // Parse news.content to display embedded images
-  const parsedContentWithImages = parseContentWithImages(news.content);
+  // Update scroll progress bar
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollY = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+      setScrollProgress(Math.min((scrollY / docHeight) * 100, 100));
+    };
+    window.addEventListener("scroll", updateProgress);
+    return () => window.removeEventListener("scroll", updateProgress);
+  }, []);
 
-  // Format content with paragraph titles in bold
-  const formattedContent = formatContentWithParagraphTitles(
-    parsedContentWithImages
-  );
+  if (!news) return <p className='p-8 text-center'>News not found</p>;
+
+  // Prepare full formatted HTML
+  const fullParsed = parseContentWithImages(news.content);
+  const fullFormatted = formatWithParagraphs(fullParsed);
+
+  // Prepare excerpt (first 500 chars of raw content)
+  const RAW = news.content;
+  const EXCERPT_LENGTH = 500;
+  const rawExcerpt =
+    RAW.length > EXCERPT_LENGTH ? RAW.slice(0, EXCERPT_LENGTH) + "..." : RAW;
+  const excerptParsed = parseContentWithImages(rawExcerpt);
+  const excerptFormatted = formatWithParagraphs(excerptParsed);
+
+  const shouldShowButton = RAW.length > EXCERPT_LENGTH;
 
   return (
     <Layout title={news.slug} news={news}>
-      <div className='px-4 sm:px-8 md:px-12 lg:px-32 bg-white text-gray-800'>
-        <div className='mb-8'>
-          <Link
-            href='/news'
-            className='flex items-center text-sm gap-2 text-gray-500 hover:text-[#144e8b] transition'
-          >
-            <BsBackspace className='text-base' />
-            <span className='underline'>Back to News</span>
-          </Link>
-        </div>
-        <article className='max-w-4xl mx-auto'>
-          <h1 className='text-4xl md:text-5xl font-extrabold text-[#144e8b] leading-tight mb-4'>
-            {news.title}
-          </h1>
+      <div className='mb-8'>
+        <Link
+          href='/news'
+          className='inline-flex items-center text-[#144e8b] hover:text-[#0e3260] text-sm font-medium transition'
+        >
+          <BsBackspace className='mr-2' /> Back to News
+        </Link>
+      </div>
 
-          <div className='flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-10'>
+      {/* Progress bar */}
+      <div
+        className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#144e8b] to-[#67b7dc] z-50'
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      {/* Hero */}
+      <div className='relative h-96 overflow-hidden'>
+        <Image
+          src={news.imageUrl}
+          alt={news.title}
+          layout='fill'
+          objectFit='cover'
+          className='filter brightness-75'
+          priority
+        />
+        <div className='absolute inset-0 bg-gradient-to-b from-transparent via-white/40 to-black/40' />
+        <div className='absolute bottom-8 left-6 text-white max-w-3xl'>
+          <div className='p-4'>
+            <h1 className='text-5xl font-extrabold leading-tight drop-shadow-lg'>
+              {news.title}
+            </h1>
+          </div>
+          <div className='mt-2 flex gap-3 text-sm opacity-90'>
             <span className='italic'>By {news.author}</span>
-            <span className='w-1 h-1 bg-gray-400 rounded-full'></span>
-            <span className='uppercase tracking-wide'>News</span>
-            <span className='w-1 h-1 bg-gray-400 rounded-full'></span>
+            <span className='w-1 h-1 bg-white rounded-full' />
             <span>{new Date(news.createdAt).toLocaleDateString()}</span>
           </div>
-
-          <div className='mb-10'>
-            <Image
-              src={news.imageUrl}
-              alt={news.slug}
-              width={900}
-              height={500}
-              className='rounded-2xl w-full object-cover shadow-md border'
-              loading='lazy'
-            />
+          <div className='mt-4 flex gap-4'>
+            <div className='mt-4 flex gap-4'>
+              <a
+                href='https://www.facebook.com/statsurgicalsupply'
+                target='_blank'
+                rel='noreferrer'
+                className='p-2 bg-white/20 rounded-full hover:bg-white/40 transition'
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href='https://www.linkedin.com/company/statsurgicalsupply/'
+                target='_blank'
+                rel='noreferrer'
+                className='p-2 bg-white/20 rounded-full hover:bg-white/40 transition'
+              >
+                <FaLinkedinIn />
+              </a>
+            </div>
           </div>
+        </div>
+      </div>
 
+      {/* Main content */}
+      <div className='px-4 sm:px-8 lg:px-32 bg-white text-gray-800 -mt-20 pt-20'>
+        <article className='prose prose-lg lg:prose-xl max-w-none'>
           <div
-            className='prose prose-lg lg:prose-xl max-w-none prose-headings:text-[#144e8b] prose-img:rounded-xl prose-img:shadow-md prose-a:text-blue-600 prose-a:hover:text-blue-800 prose-p:leading-relaxed'
-            dangerouslySetInnerHTML={{ __html: formattedContent }}
-          ></div>
-
-          {news.sources?.length > 0 && (
-            <section className='mt-16 pt-10 border-t border-gray-200 my-9'>
-              <h2 className='text-2xl font-semibold text-[#144e8b] mb-4'>
-                Sources
-              </h2>
-              <ul className='space-y-2 list-disc list-inside text-gray-700'>
-                {news.sources.map((source, index) => (
-                  <li key={index}>
-                    <a
-                      href={source.url}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='underline hover:text-blue-700 transition-colors'
-                    >
-                      {source.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            dangerouslySetInnerHTML={{
+              __html: expanded ? fullFormatted : excerptFormatted,
+            }}
+          />
         </article>
+
+        {shouldShowButton && (
+          <div className='text-center mt-6'>
+            <button
+              onClick={() => setExpanded((prev) => !prev)}
+              className='px-6 py-2 bg-[#144e8b] text-white font-semibold rounded-full shadow hover:bg-[#0e3260] transition'
+            >
+              {expanded ? "Show Less" : "Read More"}
+            </button>
+          </div>
+        )}
+
+        {/* Sources */}
+        {news.sources?.length > 0 && (
+          <section className='mt-16 pt-10 border-t border-gray-200'>
+            <h2 className='text-2xl font-semibold text-[#144e8b] mb-4'>
+              Sources
+            </h2>
+            <ul className='space-y-2 list-disc list-inside text-gray-700'>
+              {news.sources.map((src, i) => (
+                <li key={i}>
+                  <a
+                    href={src.url}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='underline hover:text-[#0e3260] transition'
+                  >
+                    {src.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* CTA */}
+        <div className='mt-16 text-center my-5'>
+          <Link
+            href='/news'
+            className='inline-block px-6 py-3 bg-gradient-to-r bg-[#144e8b] text-white font-semibold rounded-full shadow hover:bg-[#0e3260] transition'
+          >
+            Explore More Stories
+          </Link>
+        </div>
       </div>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context) {
-  const { params } = context;
-  const { slug } = params;
-
+  const { slug } = context.params;
   await db.connect(true);
 
-  const news = await News.findOne({ slug }).lean();
+  const doc = await News.findOne({ slug }).lean();
+  if (!doc) return { notFound: true };
 
-  if (!news) {
-    return {
-      notFound: true,
-    };
-  }
+  const formattedSources = (doc.sources || []).map((s) => ({
+    ...s,
+    _id: s._id.toString(),
+  }));
 
-  try {
-    // Convert _id field within sources array to strings
-    const formattedSources = news.sources.map((source) => ({
-      ...source,
-      _id: source._id.toString(),
-    }));
-
-    const formattedNews = {
-      ...news,
-      _id: news._id.toString(),
-      imageUrl: news.imageUrl || "",
-      createdAt: news.createdAt.toISOString(),
-      updatedAt: news.updatedAt.toISOString(),
-      sources: formattedSources,
-    };
-
-    return {
-      props: {
-        news: formattedNews,
+  return {
+    props: {
+      news: {
+        ...doc,
+        _id: doc._id.toString(),
+        imageUrl: doc.imageUrl || "",
+        createdAt: doc.createdAt.toISOString(),
+        updatedAt: doc.updatedAt.toISOString(),
+        sources: formattedSources,
       },
-    };
-  } catch (error) {
-    console.error("Error formatting news:", error);
-
-    return {
-      notFound: true,
-    };
-  }
+    },
+  };
 }
