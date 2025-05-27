@@ -144,13 +144,13 @@ export default function Newscreen({ news }) {
           />
         </article>
 
-        {shouldShowButton && (
+        {shouldShowButton && !expanded && (
           <div className='text-center mt-6'>
             <button
-              onClick={() => setExpanded((prev) => !prev)}
+              onClick={() => setExpanded(true)}
               className='px-6 py-2 bg-[#144e8b] text-white font-semibold rounded-full shadow hover:bg-[#0e3260] transition'
             >
-              {expanded ? "Show Less" : "Read More"}
+              Read More
             </button>
           </div>
         )}
@@ -184,7 +184,7 @@ export default function Newscreen({ news }) {
             href='/news'
             className='inline-block px-6 py-3 bg-gradient-to-r bg-[#144e8b] text-white font-semibold rounded-full shadow hover:bg-[#0e3260] transition'
           >
-            Explore More Stories
+            Explore More News
           </Link>
         </div>
       </div>
