@@ -73,12 +73,15 @@ export default function Support() {
             </div>
           </div>
 
-          <div className='mt-12 overflow-hidden shadow-lg rounded-xl'>
+          <div className='mt-12 max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-4 border-[#07783e]'>
             <iframe
-              className='w-full h-72 rounded-lg shadow-lg'
-              src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3520.452662320981!2d-82.45997262365074!3d27.944638676091582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2c48c390490ab%3A0x202198cbac670f1a!2s100%20Ashley%20Dr%20S%20%23600%2C%20Tampa%2C%20FL%2033602%2C%20EE.%20UU.!5e0!3m2!1ses-419!2sco!4v1711570310453!5m2!1ses-419!2sco'
-              allowFullScreen
+              src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d881.1556225029047!2d-82.45766380676294!3d27.944216161107967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2c59877a39355%3A0xd495507c20fbd5f0!2sStat%20Surgical%20Supply!5e0!3m2!1sen!2sco!4v1748536969142!5m2!1sen!2sco'
+              width='600'
+              height='450'
+              className='w-full h-96'
+              allowfullscreen
               loading='lazy'
+              referrerpolicy='no-referrer-when-downgrade'
             ></iframe>
           </div>
 
