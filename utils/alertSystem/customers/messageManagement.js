@@ -29,7 +29,8 @@ export const messageManagement = (
         ...emailMessage,
         subject: `${contact.name}, Thank You for Contacting Us!`,
         p1: `<div style="font-weight: light; font-size: 17px; color: #333333; ">We have received your message and appreciate you reaching out to us.</div>`,
-        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">The message you sent us: ${message}</div>`,
+        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">The message you sent was: ${message}</div>
+        <div style="font-weight: light; font-size: 20px; color: #333333; ">We will contact you at ${contact.email} as soon as possible.</div>`,
         p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">Our team will review your request and get back to you within 24 hours!
              <br>
             <strong> Stat Surgical Supply </strong>       
