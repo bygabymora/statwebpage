@@ -28,26 +28,12 @@ export const messageManagement = (
       emailMessage = {
         ...emailMessage,
         subject: `${contact.name}, Thank You for Contacting Us!`,
-        p1: `
-                <div style="font-weight: 300; font-size: 17px; color: #333333;">
-                  We have received your message and appreciate you reaching out to us.
-                </div>
-                <div style="font-weight: 300; font-size: 17px; color: #333333; margin-top: 8px;">
-                  <strong>Your email:</strong> ${contact.email}
-                </div>
-              `,
-        p2: `
-                <div style="font-weight: 300; font-size: 20px; color: #333333; margin-top: 16px;">
-                  <strong>The message you sent us:</strong><br>${message}
-                </div>
-              `,
-        p3: `
-                <div style="font-weight: 300; font-size: 15px; color: #333333; margin-top: 16px;">
-                  Our team will review your request and get back to you within 24 hours.
-                  <br><br>
-                  <strong>Stat Surgical Supply</strong>
-                </div>
-              `,
+        p1: `<div style="font-weight: light; font-size: 17px; color: #333333; ">We have received your message and appreciate you reaching out to us.</div>`,
+        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">The message you sent us: ${message}</div>`,
+        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">Our team will review your request and get back to you within 24 hours!
+               <br>
+              <strong> Stat Surgical Supply </strong>       
+              </div>`,
       };
       break;
     case "Product Wait List":
