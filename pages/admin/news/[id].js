@@ -1,9 +1,9 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useReducer } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useReducer, useState, useCallback } from "react";
 import { toast } from "react-toastify";
+
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
 
@@ -15,25 +15,18 @@ function reducer(state, action) {
       return { ...state, loading: false, error: "" };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-
     case "UPDATE_REQUEST":
       return { ...state, loadingUpdate: true, errorUpdate: "" };
     case "UPDATE_SUCCESS":
       return { ...state, loadingUpdate: false, errorUpdate: "" };
     case "UPDATE_FAIL":
       return { ...state, loadingUpdate: false, errorUpdate: action.payload };
-
     case "UPLOAD_REQUEST":
       return { ...state, loadingUpload: true, errorUpload: "" };
     case "UPLOAD_SUCCESS":
-      return {
-        ...state,
-        loadingUpload: false,
-        errorUpload: "",
-      };
+      return { ...state, loadingUpload: false, errorUpload: "" };
     case "UPLOAD_FAIL":
       return { ...state, loadingUpload: false, errorUpload: action.payload };
-
     default:
       return state;
   }
@@ -42,62 +35,91 @@ function reducer(state, action) {
 export default function AdminNewsEditScreen() {
   const { query } = useRouter();
   const newsId = query.id;
+  const router = useRouter();
+
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
+      loadingUpdate: false,
+      errorUpdate: "",
+      loadingUpload: false,
+      errorUpload: "",
     });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm();
+  const [newsData, setNewsData] = useState({
+    title: "",
+    slug: "",
+    content: "",
+    category: "",
+    tags: "",
+    imageUrl: "",
+    embeddedImageUrl: "",
+    author: "",
+  });
+  const [links, setLinks] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  const [links, setLinks] = React.useState([]);
+  const fetchData = useCallback(async () => {
+    if (!newsId) return;
+    dispatch({ type: "FETCH_REQUEST" });
+    try {
+      const { data } = await axios.get(`/api/admin/news/${newsId}`);
+      dispatch({ type: "FETCH_SUCCESS" });
+      setNewsData({
+        title: data.title || "",
+        slug: data.slug || "",
+        content: data.content || "",
+        category: data.category || "",
+        tags: (data.tags || []).join(", "),
+        imageUrl: data.imageUrl || "",
+        embeddedImageUrl: data.embeddedImageUrl || "",
+        author: data.author || "",
+      });
+      setLinks(data.sources || []);
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+    }
+  }, [newsId]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/admin/news/${newsId}`);
-        dispatch({ type: "FETCH_SUCCESS" });
-        setValue("title", data.title);
-        setValue("slug", data.slug);
-        setValue("content", data.content);
-        setValue("category", data.category);
-        setValue("tags", data.tags);
-        setValue("imageUrl", data.imageUrl);
-        setValue("author", data.author);
-        setLinks(data.sources || []);
-      } catch (err) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-      }
-    };
-
     fetchData();
-  }, [newsId, setValue]);
+  }, [fetchData]);
 
-  const router = useRouter();
+  function validate(fields) {
+    const errs = {};
+    if (!fields.title.trim()) errs.title = "Title is required";
+    if (!fields.slug.trim()) errs.slug = "Reference is required";
+    if (!fields.content.trim()) errs.content = "Content is required";
+    if (!fields.category.trim()) errs.category = "Category is required";
+    if (!fields.tags.trim()) errs.tags = "Tags are required";
+    if (!fields.imageUrl.trim()) errs.imageUrl = "Image URL is required";
+    if (!fields.author.trim()) errs.author = "Author is required";
+    return errs;
+  }
 
-  const uploadHandler = async (e, imageField = "imageUrl") => {
-    const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setNewsData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const uploadHandler = async (e, field = "imageUrl") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    dispatch({ type: "UPLOAD_REQUEST" });
     try {
-      dispatch({ type: "UPLOAD_REQUEST" });
       const {
         data: { signature, timestamp },
       } = await axios("/api/admin/cloudinary-sign");
-
-      const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
       formData.append("signature", signature);
       formData.append("timestamp", timestamp);
       formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
-      const { data } = await axios.post(url, formData);
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+      const { data } = await axios.post(uploadUrl, formData);
       dispatch({ type: "UPLOAD_SUCCESS" });
-      setValue(imageField, data.secure_url);
+      setNewsData((prev) => ({ ...prev, [field]: data.secure_url }));
       toast.success("File uploaded successfully");
     } catch (err) {
       dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
@@ -105,61 +127,24 @@ export default function AdminNewsEditScreen() {
     }
   };
 
-  const embeddedUploadHandler = async (
-    e,
-    embeddedImageFile = "embeddedImageUrl"
-  ) => {
-    const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
-    try {
-      dispatch({ type: "UPLOAD_REQUEST" });
-      const {
-        data: { signature, timestamp },
-      } = await axios("/api/admin/cloudinary-sign");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = validate(newsData);
+    setFieldErrors(errs);
+    if (Object.keys(errs).length) return;
 
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("signature", signature);
-      formData.append("timestamp", timestamp);
-      formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
-      const { data } = await axios.post(url, formData);
-      dispatch({ type: "UPLOAD_SUCCESS" });
-      setValue(embeddedImageFile, data.secure_url);
-      toast.success("File uploaded successfully");
-    } catch (err) {
-      dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
-      toast.error(getError(err));
-    }
-  };
-  const submitHandler = async ({
-    title,
-    slug,
-    content,
-    category,
-    tags,
-    imageUrl,
-    author,
-  }) => {
-    // Extract the links from the 'links' state
     const sources = links.map((link) => ({
       title: link.title,
       url: link.url,
     }));
 
+    dispatch({ type: "UPDATE_REQUEST" });
     try {
-      dispatch({ type: "UPDATE_REQUEST" });
-
       await axios.put(`/api/admin/news/${newsId}`, {
-        title,
-        slug,
-        content,
-        category,
-        tags,
-        imageUrl,
-        author,
-        sources, // Include the 'sources' field in the request body
+        ...newsData,
+        tags: newsData.tags.split(",").map((t) => t.trim()),
+        sources,
       });
-
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("News updated successfully");
       router.push("/admin/news");
@@ -169,23 +154,16 @@ export default function AdminNewsEditScreen() {
     }
   };
 
-  const addLink = () => {
-    setLinks([...links, { title: "", url: "" }]);
-  };
-  const updateLink = (index, field, value) => {
-    const newLinks = [...links];
-    newLinks[index] = {
-      ...newLinks[index],
-      [field]: value,
-    };
-    setLinks(newLinks);
-  };
+  const addLink = () => setLinks((prev) => [...prev, { title: "", url: "" }]);
+  const updateLink = (i, field, value) =>
+    setLinks((prev) =>
+      prev.map((ln, idx) => (idx === i ? { ...ln, [field]: value } : ln))
+    );
 
   return (
-    <Layout
-      title={`Edit Entry ${newsId.substring(newsId.length - 8).toUpperCase()}`}
-    >
+    <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
       <div className='grid md:grid-cols-4 md:gap-5'>
+        {/* Sidebar */}
         <div>
           <ul>
             <li>
@@ -207,229 +185,196 @@ export default function AdminNewsEditScreen() {
             </li>
           </ul>
         </div>
+
+        {/* Content */}
         <div className='md:col-span-3'>
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
             <div className='alert-error'>{error}</div>
           ) : (
-            <form
-              className='mx-auto max-w-screen-md'
-              onSubmit={handleSubmit(submitHandler)}
-            >
-              <h1 className='mb-4 text-xl'>{`Edit Entry ${newsId
-                .substring(newsId.length - 8)
-                .toUpperCase()}`}</h1>
+            <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
+              <h1 className='mb-4 text-xl'>
+                Edit Entry {newsId?.slice(-8).toUpperCase()}
+              </h1>
+
+              {/* Title */}
               <div className='mb-4'>
                 <label htmlFor='title'>Title</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='name'
-                  autoFocus
-                  {...register("title", {
-                    required: "Please enter Title",
-                  })}
+                  id='title'
+                  value={newsData.title}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.title && (
-                  <div className='text-red-500'>{errors.title.message}</div>
+                {fieldErrors.title && (
+                  <p className='text-red-500'>{fieldErrors.title}</p>
                 )}
               </div>
+
+              {/* Reference */}
               <div className='mb-4'>
                 <label htmlFor='slug'>Reference</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='slug'
-                  {...register("slug", {
-                    required: "Please enter reference",
-                  })}
+                  value={newsData.slug}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.slug && (
-                  <div className='text-red-500'>{errors.slug.message}</div>
+                {fieldErrors.slug && (
+                  <p className='text-red-500'>{fieldErrors.slug}</p>
                 )}
               </div>
+
+              {/* Content */}
               <div className='mb-4'>
                 <label htmlFor='content'>Content</label>
                 <textarea
-                  type='text'
-                  className='w-full contact__form-input contact__message'
                   id='content'
-                  {...register("content", {
-                    required: "Please enter content",
-                  })}
+                  value={newsData.content}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded h-40'
                 />
-                {errors.content && (
-                  <div className='text-red-500'>{errors.content.message}</div>
+                {fieldErrors.content && (
+                  <p className='text-red-500'>{fieldErrors.content}</p>
                 )}
               </div>
+
+              {/* Main Image URL */}
               <div className='mb-4'>
-                <label htmlFor='imageUrl'>Image</label>
+                <label htmlFor='imageUrl'>Image URL</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='imageUrl'
-                  {...register("imageUrl", {
-                    required: "Please enter image",
-                  })}
+                  value={newsData.imageUrl}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.imageUrl && (
-                  <div className='text-red-500'>{errors.imageUrl.message}</div>
+                {fieldErrors.imageUrl && (
+                  <p className='text-red-500'>{fieldErrors.imageUrl}</p>
                 )}
               </div>
 
+              {/* Upload Main Image */}
               <div className='mb-4'>
-                <label htmlFor='imageFile'>Upload image</label>
+                <label htmlFor='imageFile'>Upload Image</label>
                 <input
-                  autoComplete='off'
-                  type='file'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='imageFile'
-                  onChange={uploadHandler}
-                />
-
-                {loadingUpload && <div>Uploading....</div>}
-              </div>
-              <div className='mb-4'>
-                <label
-                  htmlFor='embeddedImageUrl'
-                  className=' font-bold text-red-500'
-                >
-                  Embedded Image
-                </label>
-                <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='embeddedImageUrl'
-                  {...register("embeddedImageUrl")}
-                />
-                {errors.embeddedImageUrl && (
-                  <div className='text-red-500'>
-                    {errors.embeddedImageUrl.message}
-                  </div>
-                )}
-              </div>
-              <div className='mb-4'>
-                <label htmlFor='embeddedImageFile' className='text-red-300'>
-                  <div className='font-bold text-red-400'>
-                    Upload Embeded Image:
-                  </div>{" "}
-                  (please copy the link above and add it to the
-                  <span className='font-bold text-red-400'>
-                    &quot;Content&quot;
-                  </span>{" "}
-                  field inside <br />{" "}
-                  <span className='font-bold text-red-400'>
-                    Squared brackets [ ]{" "}
-                  </span>
-                  , after you update the article the URL will be lost in this
-                  field){" "}
-                </label>
-                <input
-                  autoComplete='off'
                   type='file'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='embeddedImageFile'
-                  onChange={embeddedUploadHandler}
+                  onChange={(e) => uploadHandler(e, "imageUrl")}
+                  className='w-full'
                 />
-
-                {loadingUpload && <div>Uploading....</div>}
+                {loadingUpload && <p>Uploading…</p>}
               </div>
 
+              {/* Embedded Image URL */}
+              <div className='mb-4'>
+                <label htmlFor='embeddedImageUrl'>Embedded Image URL</label>
+                <input
+                  id='embeddedImageUrl'
+                  value={newsData.embeddedImageUrl}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
+                />
+              </div>
+
+              {/* Upload Embedded Image */}
+              <div className='mb-4'>
+                <label htmlFor='embeddedImageFile'>Upload Embedded Image</label>
+                <input
+                  id='embeddedImageFile'
+                  type='file'
+                  onChange={(e) => uploadHandler(e, "embeddedImageUrl")}
+                  className='w-full'
+                />
+                {loadingUpload && <p>Uploading…</p>}
+              </div>
+
+              {/* Category */}
               <div className='mb-4'>
                 <label htmlFor='category'>Category</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='category'
-                  {...register("category", {
-                    required: "Please enter Category",
-                  })}
+                  value={newsData.category}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.category && (
-                  <div className='text-red-500'>{errors.category.message}</div>
+                {fieldErrors.category && (
+                  <p className='text-red-500'>{fieldErrors.category}</p>
                 )}
               </div>
+
+              {/* Tags */}
               <div className='mb-4'>
-                <label htmlFor='tags'>Tags (separated by commas) </label>
+                <label htmlFor='tags'>Tags (comma-separated)</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='tags'
-                  {...register("tags", {
-                    required: "Please enter tags separated by commas",
-                  })}
+                  value={newsData.tags}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.tags && (
-                  <div className='text-red-500'>{errors.tags.message}</div>
+                {fieldErrors.tags && (
+                  <p className='text-red-500'>{fieldErrors.tags}</p>
                 )}
               </div>
+
+              {/* Author */}
               <div className='mb-4'>
                 <label htmlFor='author'>Author</label>
                 <input
-                  autoComplete='off'
-                  type='text'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='author'
-                  {...register("author", {
-                    required: "Please enter author",
-                  })}
+                  value={newsData.author}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border rounded'
                 />
-                {errors.author && (
-                  <div className='text-red-500'>{errors.author.message}</div>
+                {fieldErrors.author && (
+                  <p className='text-red-500'>{fieldErrors.author}</p>
                 )}
               </div>
+
+              {/* Sources */}
               <div className='mb-4'>
                 <label>Sources</label>
-                {links.map((link, index) => (
-                  <div key={index} className='flex flex-row space-x-4'>
+                {links.map((link, idx) => (
+                  <div key={idx} className='flex space-x-2 mb-2'>
                     <input
-                      autoComplete='off'
-                      type='text'
                       placeholder='Title'
                       value={link.title}
-                      onChange={(e) =>
-                        updateLink(index, "title", e.target.value)
-                      }
+                      onChange={(e) => updateLink(idx, "title", e.target.value)}
+                      className='flex-1 px-2 py-1 border rounded'
                     />
                     <input
-                      autoComplete='off'
-                      type='text'
                       placeholder='URL'
                       value={link.url}
-                      onChange={(e) => updateLink(index, "url", e.target.value)}
-                      // Use 'url' as the field name
+                      onChange={(e) => updateLink(idx, "url", e.target.value)}
+                      className='flex-1 px-2 py-1 border rounded'
                     />
                   </div>
                 ))}
-                <button type='button' onClick={addLink}>
-                  Add another link
+                <button
+                  type='button'
+                  onClick={addLink}
+                  className='text-blue-600'
+                >
+                  + Add source
                 </button>
               </div>
 
-              <div className='flex flex-row'>
-                <div className='mb-4'>
-                  <button
-                    disabled={loadingUpdate}
-                    className='primary-button mr-2'
-                  >
-                    {loadingUpdate ? "Loading" : "Update"}
-                  </button>
-                </div>
-                <div className='mb-4'>
-                  <button
-                    onClick={() => router.push(`/`)}
-                    className='primary-button'
-                  >
-                    Back
-                  </button>
-                </div>
+              {/* Actions */}
+              <div className='flex space-x-2 my-5'>
+                <button
+                  type='submit'
+                  disabled={loadingUpdate}
+                  className='px-4 py-2 bg-blue-600 text-white rounded'
+                >
+                  {loadingUpdate ? "Saving…" : "Update"}
+                </button>
+                <button
+                  type='button'
+                  onClick={() => router.push("/admin/news")}
+                  className='px-4 py-2 bg-gray-300 rounded'
+                >
+                  Back
+                </button>
               </div>
             </form>
           )}
