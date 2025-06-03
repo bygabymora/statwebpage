@@ -64,7 +64,7 @@ export default function AdminNewsEditScreen() {
     if (!newsId) return;
     dispatch({ type: "FETCH_REQUEST" });
     try {
-      const { data } = await axios.get(`/api/admin/news/[id]/index.js`);
+      const { data } = await axios.get(`/api/admin/news/${newsId}`);
       dispatch({ type: "FETCH_SUCCESS" });
       setNewsData({
         title: data.title || "",
