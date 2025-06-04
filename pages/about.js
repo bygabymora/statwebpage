@@ -46,7 +46,7 @@ export default function AboutScreen() {
           ))}
         </ul>
       </nav>
-      <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto items-center lg:h-screen lg:items-center lg:justify-center my-5'>
+      <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto items-center lg:h-screen lg:items-center lg:justify-center my-20'>
         <animated.div className='image-container' style={imageAnimation}>
           <Image src={image} alt='About Us' className='about-image' />
         </animated.div>{" "}

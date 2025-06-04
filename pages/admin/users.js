@@ -141,7 +141,9 @@ function AdminUsersScreen() {
                     <td className='border border-collapse p-4'>
                       {user._id.substring(20, 24)}
                     </td>
-                    <td className='border border-collapse p-4'>{user.name}</td>
+                    <td className='border border-collapse p-4'>
+                      {user.firstName} {user.lastName}
+                    </td>
                     <td className='border border-collapse p-4'>{user.email}</td>
                     <td className='border border-collapse p-4'>
                       {user.companyName || "—"}
