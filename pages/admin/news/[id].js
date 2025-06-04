@@ -1,5 +1,4 @@
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState, useCallback } from "react";
 import { toast } from "react-toastify";
@@ -162,30 +161,7 @@ export default function AdminNewsEditScreen() {
 
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
-      <div className='grid md:grid-cols-4 md:gap-5'>
-        <div>
-          <ul>
-            <li>
-              <Link href='/admin/dashboard'>Dashboard</Link>
-            </li>
-            <li>
-              <Link href='/admin/orders'>Orders</Link>
-            </li>
-            <li>
-              <Link href='/admin/products'>Products</Link>
-            </li>
-            <li>
-              <Link href='/admin/users'>Users</Link>
-            </li>
-            <li>
-              <Link href='/admin/news' className='font-bold'>
-                News
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Content */}
+      <div className='grid md:grid-cols-3 md:gap-5'>
         <div className='md:col-span-3'>
           {loading ? (
             <div>Loading...</div>
@@ -193,9 +169,7 @@ export default function AdminNewsEditScreen() {
             <div className='alert-error'>{error}</div>
           ) : (
             <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
-              <h1 className='mb-4 text-xl'>
-                Edit Entry {newsId?.slice(-8).toUpperCase()}
-              </h1>
+              <h1 className='mb-4 text-xl'>Edit Entry - {newsData.title}</h1>
 
               {/* Title */}
               <div className='mb-4'>
