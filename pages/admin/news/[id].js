@@ -2,7 +2,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
 
