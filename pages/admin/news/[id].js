@@ -163,7 +163,6 @@ export default function AdminNewsEditScreen() {
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
       <div className='grid md:grid-cols-4 md:gap-5'>
-        {/* Sidebar */}
         <div>
           <ul>
             <li>
