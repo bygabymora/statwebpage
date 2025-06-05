@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       to: [
         { email: toEmail, type: "to" },
         { email: "gaby@statsurgicalsupply.com", type: "bcc" },
-        { email: "sgommezmm@gmail.com", type: "bcc" },
+        { email: "sofi@statsurgicalsupply.com", type: "bcc" },
       ],
     };
 
