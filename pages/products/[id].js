@@ -364,11 +364,13 @@ export default function ProductScreen() {
               </h1>
             </li>
             <li>
-              <div className='text-xl font-bold text-[#144e8bee]'>
+              <h1 className='text-xl font-bold text-[#144e8bee]'>
                 {currentDescription}
-              </div>
+              </h1>
             </li>
-
+            <li className='text-sm text-[#788b9b]'>
+              <h1 className='text-[#2c3339]'>{product.information}</h1>
+            </li>
             {product.sentOverNight && (
               <li className='space-y-2'>
                 <br />
