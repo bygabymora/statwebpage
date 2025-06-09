@@ -10,6 +10,7 @@ import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import moment from "moment-timezone";
+import { generateProductJSONLD } from "../../utils/seo";
 
 export default function ProductScreen() {
   const router = useRouter();
@@ -277,7 +278,11 @@ export default function ProductScreen() {
   }
   const pageTitle = `${product._id} | ${product.manufacturer} ${product.name}`;
   return (
-    <Layout title={pageTitle} product={product}>
+    <Layout
+      title={pageTitle}
+      product={product}
+      schema={generateProductJSONLD(product)}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (

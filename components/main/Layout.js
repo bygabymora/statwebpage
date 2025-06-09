@@ -10,7 +10,7 @@ import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 
-export default function Layout({ children, title, product, news }) {
+export default function Layout({ children, title, product, news, schema }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
@@ -153,7 +153,7 @@ export default function Layout({ children, title, product, news }) {
           <script
             type='application/ld+json'
             dangerouslySetInnerHTML={{
-              __html: JSON.stringify(generateProductJSONLD(product)),
+              __html: JSON.stringify(schema || generateProductJSONLD(product)),
             }}
           />
         )}
