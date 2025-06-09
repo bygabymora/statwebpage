@@ -45,9 +45,11 @@ const handler = async (req, res) => {
         sentOvernigth: p.sentOvernigth,
         each: {
           description: p.each?.description || null,
+          minSalePrice: p.each?.minSalePrice || null,
         },
         box: {
           description: p.box?.description || null,
+          minSalePrice: p.box?.minSalePrice || null,
         },
       }));
 
