@@ -10,14 +10,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 
-export default function Layout({
-  children,
-  title,
-  product,
-  news,
-  canonical,
-  description,
-}) {
+export default function Layout({ children, title, product, news }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
@@ -96,9 +89,7 @@ export default function Layout({
         <meta
           name='description'
           content={
-            description
-              ? description
-              : product
+            product
               ? product.description?.slice(0, 160)
               : "Buy surgical supplies online at affordable prices. Quality medical products for your needs."
           }
@@ -107,9 +98,7 @@ export default function Layout({
         <link
           rel='canonical'
           href={
-            canonical
-              ? canonical
-              : product
+            product
               ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
               : "https://www.statsurgicalsupply.com/"
           }
@@ -134,7 +123,11 @@ export default function Layout({
         <meta property='og:image' content={product?.image || Logo} />
         <meta
           property='og:url'
-          content={canonical || "https://www.statsurgicalsupply.com/"}
+          content={
+            product
+              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
+              : "https://www.statsurgicalsupply.com/"
+          }
         />
         <meta name='twitter:card' content='summary_large_image' />
         <meta
@@ -163,6 +156,7 @@ export default function Layout({
             }}
           />
         )}
+
         {news && (
           <>
             <meta name='description' content={news.content.slice(0, 160)} />
