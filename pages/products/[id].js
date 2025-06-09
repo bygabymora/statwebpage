@@ -276,10 +276,10 @@ export default function ProductScreen() {
     // in case getServerSideProps returned no product
     return <div>Product not found</div>;
   }
-  const pageTitle = `${product._id} | ${product.manufacturer} ${product.name}`;
+
   return (
     <Layout
-      title={pageTitle}
+      title={product.name}
       product={product}
       schema={generateProductJSONLD(product)}
     >
