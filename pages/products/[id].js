@@ -271,8 +271,13 @@ export default function ProductScreen() {
   // compute your local midnight (start of next day)
   const midnight = nowLocal.clone().add(1, "day").startOf("day");
 
+  if (!product) {
+    // in case getServerSideProps returned no product
+    return <div>Product not found</div>;
+  }
+  const pageTitle = `${product._id} | ${product.manufacturer} ${product.name}`;
   return (
-    <Layout title={product.name} product={product}>
+    <Layout title={pageTitle} product={product}>
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
@@ -852,27 +857,26 @@ export default function ProductScreen() {
 }
 
 export async function getServerSideProps(context) {
-  // Extract the real Mongo _id from the query string (pId), not the URL slug
+  // 1️⃣ Extract pId from the query string, not from params.id
   const { pId } = context.query;
   if (!pId) {
     return { notFound: true };
   }
 
-  // Determine the hostname and protocol for your fetch
+  // 2️⃣ Build your absolute URL for the fetch
   const host = context.req.headers.host;
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const apiUrl = `${protocol}://${host}/api/products/${pId}`;
 
-  // Fetch the product by its Mongo ObjectId
-  const res = await fetch(`${protocol}://${host}/api/products/${pId}`);
+  // 3️⃣ Fetch the product by its Mongo ObjectId
+  const res = await fetch(apiUrl);
   if (!res.ok) {
     return { notFound: true };
   }
-
   const product = await res.json();
 
+  // 4️⃣ Return it as a prop so it's inlined into the initial HTML
   return {
-    props: {
-      product,
-    },
+    props: { product },
   };
 }
