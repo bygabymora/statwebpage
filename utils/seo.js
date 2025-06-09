@@ -39,7 +39,7 @@ function generateProductJSONLD(product) {
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
-    name: `Stat Surgical Supply ${product.name}`,
+    name: `${product.name} - ${product.manufacturer}`,
     image: [product.image],
     brand: {
       "@type": "Brand",
