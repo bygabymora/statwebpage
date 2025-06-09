@@ -30,6 +30,7 @@ function generateJSONLD(news) {
 function generateProductJSONLD(product) {
   const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`;
   const price = (product.each?.wpPrice || product.box?.wpPrice || 0).toFixed(2);
+  console.log("Generating JSON-LD for product:", product.image);
 
   return {
     "@context": "https://schema.org/",
