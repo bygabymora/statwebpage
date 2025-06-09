@@ -850,12 +850,3 @@ export default function ProductScreen() {
     </Layout>
   );
 }
-
-export async function getServerSideProps({ params, req }) {
-  const { id } = params;
-  const host = req.headers.host;
-  const res = await fetch(`https://${host}/api/products/${id}`);
-  if (!res.ok) return { notFound: true };
-  const product = await res.json();
-  return { props: { product } };
-}
