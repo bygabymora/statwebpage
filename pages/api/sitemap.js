@@ -11,7 +11,7 @@ export default async function sitemap(req, res) {
   const newsArticles = await News.find({}).select("slug");
 
   // Fetch product slugs
-  const products = await Product.find({}).select("slug");
+  const products = await Product.find({});
   // Create the XML sitemap format
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -31,7 +31,7 @@ export default async function sitemap(req, res) {
         .map(
           (product) => `
           <url>
-            <loc>${BASE_URL}/products/${product.slug}</loc>
+            <loc>${BASE_URL}/products/${product.manufacturer}-${product.name}?pId=${product._id}</loc>
             <changefreq>hourly</changefreq>
             <priority>0.9</priority>
             
