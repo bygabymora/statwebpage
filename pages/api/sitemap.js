@@ -1,7 +1,6 @@
-// pages/sitemap.xml.js
-import db from "../utils/db";
-import News from "../models/News";
-import Product from "../models/Product";
+import Product from "../../models/Product";
+import db from "../../utils/db";
+import News from "../news";
 
 const BASE_URL = "https://www.statsurgicalsupply.com";
 
