@@ -90,13 +90,13 @@ export default function Layout({ children, title, product, news }) {
     return {
       "@context": "https://schema.org/",
       "@type": "Product",
-      name: `Stat Surgical Supply ${product.name}`,
+      name: `${product.name}`,
       image: [product.image],
       brand: {
         "@type": "Brand",
         name: product.manufacturer,
       },
-      description: product.description || "",
+      description: product.each.description || "",
       sku: product._id,
       mpn: product._id,
       offers: {
