@@ -8,6 +8,7 @@ import Logo from "../../public/images/assets/logo2.png";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
+import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 
 export default function Layout({ children, title, product, news }) {
   const { data: session } = useSession();
@@ -79,96 +80,6 @@ export default function Layout({ children, title, product, news }) {
       showStatusMessage("success", "Your account has been approved.");
     }
   }, [session?.user?.approved]);
-
-  function generateProductJSONLD(product) {
-    const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`;
-    const price = (product.each?.wpPrice || product.box?.wpPrice || 0).toFixed(
-      2
-    );
-    console.log("Generating JSON-LD for product:", product.image);
-
-    return {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      name: `${product.name}`,
-      image: [product.image],
-      brand: {
-        "@type": "Brand",
-        name: product.manufacturer,
-      },
-      description: product.each.description || "",
-      sku: product._id,
-      mpn: product._id,
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "USD",
-        price: price,
-        itemCondition: "https://schema.org/NewCondition",
-        availability: "https://schema.org/InStock",
-        url: canonicalUrl,
-        seller: {
-          "@type": "Organization",
-          name: "STAT Surgical Supply",
-        },
-        hasMerchantReturnPolicy: {
-          "@type": "MerchantReturnPolicy",
-          returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-          applicableCountry: {
-            "@type": "Country",
-            name: "US",
-          },
-        },
-        shippingDetails: {
-          "@type": "OfferShippingDetails",
-          shippingRate: {
-            "@type": "MonetaryAmount",
-            currency: "USD",
-            value: "0.00",
-          },
-          deliveryTime: {
-            "@type": "ShippingDeliveryTime",
-            businessDays: "https://schema.org/BusinessDay",
-            cutoffTime: "12:00",
-            transitTime: "https://schema.org/1BusinessDay",
-            handlingTime: "https://schema.org/1BusinessDay",
-          },
-          shippingDestination: {
-            "@type": "DefinedRegion",
-            addressCountry: "US",
-          },
-        },
-      },
-      applicableCountry: "US",
-    };
-  }
-
-  function generateJSONLD(news) {
-    return {
-      "@context": "https://schema.org",
-      "@type": "NewsArticle",
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
-      },
-      headline: news.title,
-      image: [news.imageUrl],
-      datePublished: news.createdAt,
-      dateModified: news.updatedAt,
-      author: {
-        "@type": "Person",
-        name: news.author,
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "STAT Surgical Supply",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
-        },
-      },
-      description: news.content.substring(0, 160),
-    };
-  }
 
   return (
     <div className='w-full' lang='en-US'>
