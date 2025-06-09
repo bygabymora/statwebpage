@@ -850,3 +850,29 @@ export default function ProductScreen() {
     </Layout>
   );
 }
+
+export async function getServerSideProps(context) {
+  // Extract the real Mongo _id from the query string (pId), not the URL slug
+  const { pId } = context.query;
+  if (!pId) {
+    return { notFound: true };
+  }
+
+  // Determine the hostname and protocol for your fetch
+  const host = context.req.headers.host;
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+  // Fetch the product by its Mongo ObjectId
+  const res = await fetch(`${protocol}://${host}/api/products/${pId}`);
+  if (!res.ok) {
+    return { notFound: true };
+  }
+
+  const product = await res.json();
+
+  return {
+    props: {
+      product,
+    },
+  };
+}
