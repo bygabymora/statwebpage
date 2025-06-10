@@ -86,6 +86,18 @@ export default function CartScreen() {
 
   return (
     <Layout title='Cart'>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+     gtag('event', 'ads_conversion_Inicio_de_confirmaci_n__1', {
+        value: ${order.totalPrice || 0},
+        userName: '${user?.name || ""}',
+        userEmail: '${user?.email || ""}',
+      });
+    `,
+        }}
+      />
+
       <CheckoutWizard activeStep={activeStep} />
       {activeStep === 0 ? (
         <Cart setActiveStep={setActiveStep} order={order} setOrder={setOrder} />

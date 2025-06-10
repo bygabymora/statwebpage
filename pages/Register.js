@@ -91,6 +91,17 @@ export default function LoginScreen() {
 
   return (
     <Layout title='Create Account'>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+    gtag('event', 'ads_conversion_Sign_Up_1', {
+    register attempt: 'true',
+    userName: '${getValues("firstName") || ""}',
+      });
+    `,
+        }}
+      />
+
       <form
         className='mx-auto max-w-screen-md md:text-lg'
         onSubmit={handleSubmit(submitHandler)}

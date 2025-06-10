@@ -413,6 +413,17 @@ export default function PlaceOrder({
   };
   return (
     <div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+      gtag('event', 'ads_conversion_Carrito_de_la_compra_1', {
+        value: ${order.totalPrice || 0},
+        userName: '${user?.name || ""}',
+        userEmail: '${user?.email || ""}',
+      });
+    `,
+        }}
+      />
       <h1 className='mb-6 text-2xl font-bold text-[#144e8b] text-center'>
         Confirm Your Order
       </h1>
