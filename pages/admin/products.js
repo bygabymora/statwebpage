@@ -156,7 +156,7 @@ export default function AdminProductsScreen() {
               ))}
             </div>
 
-            <div className='hidden sm:block max-h-[200vh] overflow-auto'>
+            <div className='hidden sm:block max-h-[200vh] overflow-auto custom-scrollbar'>
               <table className='min-w-full bg-white shadow-md rounded-lg overflow-hidden'>
                 <thead className='bg-gray-100 sticky top-0 z-10'>
                   <tr>
@@ -175,7 +175,6 @@ export default function AdminProductsScreen() {
                     <th className='p-2 text-left w-1/6'>PRICE BOX</th>
                     <th className='p-2 text-left w-1/6'>STOCK (BOX)</th>
                     <th className='p-2 text-left min-w-[150px]'>DESCRIPTION</th>
-                    <th className='p-2 text-center'>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -222,14 +221,6 @@ export default function AdminProductsScreen() {
                         <div className='line-clamp-3 break-words'>
                           {product.information || "No description available"}
                         </div>
-                      </td>
-                      <td className='p-2 border text-center'>
-                        <Link
-                          href={`/admin/product/${product._id}`}
-                          className='inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition'
-                        >
-                          Edit Info
-                        </Link>
                       </td>
                     </tr>
                   ))}
