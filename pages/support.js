@@ -18,26 +18,13 @@ export default function Support() {
       answer: "We usually respond within 24 hours.",
     },
     {
-      question: "What are your support hours?",
-      answer: "Our support team is available Monday to Friday, 9 AM to 5 PM.",
-    },
-    {
-      question: "Can I get support in Spanish?",
-      answer: "Yes, we offer support in both English and Spanish.",
-    },
-    {
-      question: "Where can I find product manuals?",
+      question: "Are your surgical instruments sterile upon delivery?",
       answer:
-        "You can find product manuals on our website under the 'Resources' section.",
-    },
-    {
-      question: "Do you offer technical support?",
-      answer:
-        "Yes, we provide technical support for all our products. Please contact us for assistance.",
+        "Yes, all our surgical instruments are sterilized according to FDA and ISO 13485 standards and arrive sealed in sterile packaging.",
     },
   ];
 
-  // The JSON-LD Schema
+  // JSON-LD Schema
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -114,7 +101,7 @@ export default function Support() {
               <h4 className='font-bold text-[#144e8b] mt-3'>Email</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
-                href='mailto:support@example.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
+                href='mailto:sales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
               >
                 sales@statsurgicalsupply.com
               </a>
@@ -128,21 +115,23 @@ export default function Support() {
               allowFullScreen
               loading='lazy'
               referrerPolicy='no-referrer-when-downgrade'
-            ></iframe>
+            />
           </div>
 
           <div className='mt-10 text-left'>
             <h3 className='text-2xl font-bold text-[#144e8b]'>
               Frequently Asked Questions
             </h3>
-            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' />{" "}
-                {faqData[(0, 1)].question}
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
-                {faqData[(0, 1)].answer}
-              </p>
+            <div className='mt-4 space-y-6'>
+              {faqData.slice(0, 2).map((item, idx) => (
+                <div key={idx} className='bg-gray-100 p-4 rounded-lg shadow-md'>
+                  <p className='flex items-center text-[#414b53]'>
+                    <FaQuestionCircle className='text-[#03793d] mr-2' />
+                    {item.question}
+                  </p>
+                  <p className='mt-2 text-sm text-gray-600'>{item.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

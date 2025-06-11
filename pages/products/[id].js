@@ -207,7 +207,7 @@ export default function ProductScreen() {
     router.push("/cart");
   };
 
-  //-----------------EmailJS-----------------//
+  //-----------------Email-----------------//
 
   useEffect(() => {
     if (product) {
