@@ -103,11 +103,13 @@ export default function AdminOrderScreen() {
                       {order?._id ? order._id.substring(20, 24) : "No ID"}
                     </td>
                     <td className='border border-collapse p-5'>
-                      {order?.WpUser?.name ? order.WpUser.name : "DELETED USER"}
+                      {order?.wpUser?.firstName
+                        ? order?.wpUser?.firstName
+                        : "DELETED USER"}
                     </td>
                     <td className='border border-collapse p-5'>
                       {order?.createdAt
-                        ? order.createdAt.substring(0, 10)
+                        ? order?.createdAt?.substring(0, 10)
                         : "No Date"}
                     </td>
                     <td className='border border-collapse p-5'>
@@ -115,17 +117,17 @@ export default function AdminOrderScreen() {
                     </td>
                     <td className='border border-collapse p-5'>
                       {order.isPaid
-                        ? `${order.paidAt.substring(0, 10)}`
+                        ? `${order?.paidAt?.substring(0, 10)}`
                         : "Not Paid"}
                     </td>
                     <td className='border border-collapse p-5'>
                       {order.isDelivered
-                        ? `${order.deliveredAt.substring(0, 10)}`
+                        ? `${order?.deliveredAt?.substring(0, 10)}`
                         : "Not Processed"}
                     </td>
                     <td className='border border-collapse p-5'>
                       {order.isAtCostumers
-                        ? `${order.atCostumersDate.substring(0, 10)}`
+                        ? `${order?.atCostumersDate?.substring(0, 10)}`
                         : "not delivered"}
                     </td>
                     <td className='border border-collapse p-5'>

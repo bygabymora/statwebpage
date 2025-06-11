@@ -207,7 +207,7 @@ export default function ProductScreen() {
     router.push("/cart");
   };
 
-  //-----------------EmailJS-----------------//
+  //-----------------Email-----------------//
 
   useEffect(() => {
     if (product) {
@@ -364,21 +364,23 @@ export default function ProductScreen() {
         <div className='w-full max-w-lg flex flex-col items-center lg:items-start'>
           <ul className='space-y-2'>
             <li>
-              <div className='text-xl font-bold text-[#144e8b]'>
+              <h1 className='text-xl font-bold text-[#144e8b]'>
                 {product.name}
-              </div>
+              </h1>
             </li>
             <li>
-              <div className='text-xl font-bold text-[#144e8b]'>
+              <h1 className='text-xl font-bold text-[#144e8b]'>
                 {product.manufacturer}
-              </div>
+              </h1>
             </li>
             <li>
-              <div className='text-xl font-bold text-[#144e8bee]'>
+              <h1 className='text-xl font-bold text-[#144e8bee]'>
                 {currentDescription}
-              </div>
+              </h1>
             </li>
-
+            <li className='text-sm text-[#788b9b]'>
+              <h1 className='text-[#2c3339]'>{product.information}</h1>
+            </li>
             {product.sentOverNight && (
               <li className='space-y-2'>
                 <br />
