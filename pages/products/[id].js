@@ -10,6 +10,7 @@ import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import moment from "moment-timezone";
+import { generateProductJSONLD } from "../../utils/seo";
 
 export default function ProductScreen() {
   const router = useRouter();
@@ -271,8 +272,17 @@ export default function ProductScreen() {
   // compute your local midnight (start of next day)
   const midnight = nowLocal.clone().add(1, "day").startOf("day");
 
+  if (!product) {
+    // in case getServerSideProps returned no product
+    return <div>Product not found</div>;
+  }
+
   return (
-    <Layout title={product.name} product={product}>
+    <Layout
+      title={product.name}
+      product={product}
+      schema={generateProductJSONLD(product)}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
@@ -851,4 +861,29 @@ export default function ProductScreen() {
       </div>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  // 1️⃣ Extract pId from the query string, not from params.id
+  const { pId } = context.query;
+  if (!pId) {
+    return { notFound: true };
+  }
+
+  // 2️⃣ Build your absolute URL for the fetch
+  const host = context.req.headers.host;
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const apiUrl = `${protocol}://${host}/api/products/${pId}`;
+
+  // 3️⃣ Fetch the product by its Mongo ObjectId
+  const res = await fetch(apiUrl);
+  if (!res.ok) {
+    return { notFound: true };
+  }
+  const product = await res.json();
+
+  // 4️⃣ Return it as a prop so it's inlined into the initial HTML
+  return {
+    props: { product },
+  };
 }

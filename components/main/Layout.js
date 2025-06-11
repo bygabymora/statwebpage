@@ -4,24 +4,18 @@ import Header from "./Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./Footer";
-import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Logo from "../../public/images/assets/logo2.png";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
-
-export default function Layout({
-  children,
-  title,
-  product,
-  news,
-  canonical,
-  description,
-}) {
+import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
+import Script from "next/script";
+export default function Layout({ children, title, product, news, schema }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
+  console.log("product In Layout", product);
 
   const approvalMessage = useMemo(
     () => ({
@@ -96,9 +90,7 @@ export default function Layout({
         <meta
           name='description'
           content={
-            description
-              ? description
-              : product
+            product
               ? product.description?.slice(0, 160)
               : "Buy surgical supplies online at affordable prices. Quality medical products for your needs."
           }
@@ -107,9 +99,7 @@ export default function Layout({
         <link
           rel='canonical'
           href={
-            canonical
-              ? canonical
-              : product
+            product
               ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
               : "https://www.statsurgicalsupply.com/"
           }
@@ -134,7 +124,11 @@ export default function Layout({
         <meta property='og:image' content={product?.image || Logo} />
         <meta
           property='og:url'
-          content={canonical || "https://www.statsurgicalsupply.com/"}
+          content={
+            product
+              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
+              : "https://www.statsurgicalsupply.com/"
+          }
         />
         <meta name='twitter:card' content='summary_large_image' />
         <meta
@@ -159,10 +153,21 @@ export default function Layout({
           <script
             type='application/ld+json'
             dangerouslySetInnerHTML={{
-              __html: JSON.stringify(generateProductJSONLD(product)),
+              __html: JSON.stringify(schema || generateProductJSONLD(product)),
             }}
           />
         )}
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-11333627655');
+            `,
+          }}
+        ></script>
         {news && (
           <>
             <meta name='description' content={news.content.slice(0, 160)} />
@@ -191,6 +196,10 @@ export default function Layout({
           </>
         )}
       </Head>
+      <Script
+        async
+        src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
+      ></Script>
       <ToastContainer position='bottom-center' limit={1} />
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
