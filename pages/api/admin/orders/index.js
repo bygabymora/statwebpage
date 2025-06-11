@@ -10,7 +10,7 @@ const handler = async (req, res) => {
   if (req.method === "GET") {
     await db.connect(true);
     const orders = await Order.find({})
-      .populate("WpUser", "name email")
+      .populate("wpUser", "name email")
       .sort({ createdAt: -1 });
     res.send(orders);
   } else {
