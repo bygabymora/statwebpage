@@ -102,19 +102,20 @@ function Auth({ children, adminOnly }) {
   const { status, data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/unauthorized?message=Login required");
+      // send to our custom login page, preserve where they were going
+      router.push(`/Login?redirect=${encodeURIComponent(router.asPath)}`);
     },
   });
 
   if (status === "loading") return <div>Loading...</div>;
 
   if (adminOnly && !session.user?.isAdmin) {
-    router.push("/unauthorized?message=Admin login required to access page");
-    return <div>Redirecting...</div>;
+    // similarly, non-admins go to login (or you could send to /unauthorized if you prefer)
+    router.push(`/Login?redirect=${encodeURIComponent(router.asPath)}`);
+    return <div>Redirecting…</div>;
   }
 
   return children;
 }
-
 export default MyApp;
 export { reportWebVitals };
