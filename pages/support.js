@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 import {
   FaEnvelope,
   FaPhone,
@@ -11,8 +12,42 @@ import Link from "next/link";
 
 export default function Support() {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "Support" }];
+  const faqData = [
+    {
+      question: "How long does support take to respond?",
+      answer: "We usually respond within 24 hours.",
+    },
+    {
+      question: "Are your surgical instruments sterile upon delivery?",
+      answer:
+        "Yes, all our surgical instruments are sterilized according to FDA and ISO 13485 standards and arrive sealed in sterile packaging.",
+    },
+  ];
+
+  // JSON-LD Schema
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqData.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
-    <Layout title={"Support"}>
+    <Layout title='Support'>
+      <Head>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema, null, 2),
+          }}
+        />
+      </Head>
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
@@ -57,7 +92,7 @@ export default function Support() {
                 className='text-[#414b53] text-sm mt-1'
                 href='tel:+18132520727'
               >
-                +1 813-252-0727{" "}
+                +1 813-252-0727
               </a>
             </div>
 
@@ -66,9 +101,9 @@ export default function Support() {
               <h4 className='font-bold text-[#144e8b] mt-3'>Email</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
-                href='mailto:support@example.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
+                href='mailto:sales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
               >
-                sales@statsurgicalsupply.com{" "}
+                sales@statsurgicalsupply.com
               </a>
             </div>
           </div>
@@ -76,27 +111,27 @@ export default function Support() {
           <div className='mt-12 max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-4 border-[#07783e]'>
             <iframe
               src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d881.1556225029047!2d-82.45766380676294!3d27.944216161107967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2c59877a39355%3A0xd495507c20fbd5f0!2sStat%20Surgical%20Supply!5e0!3m2!1sen!2sco!4v1748536969142!5m2!1sen!2sco'
-              width='600'
-              height='450'
               className='w-full h-96'
-              allowfullscreen
+              allowFullScreen
               loading='lazy'
-              referrerpolicy='no-referrer-when-downgrade'
-            ></iframe>
+              referrerPolicy='no-referrer-when-downgrade'
+            />
           </div>
 
           <div className='mt-10 text-left'>
             <h3 className='text-2xl font-bold text-[#144e8b]'>
               Frequently Asked Questions
             </h3>
-            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> How long
-                does support take to respond?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
-                We usually respond within 24 hours.
-              </p>
+            <div className='mt-4 space-y-6'>
+              {faqData.slice(0, 2).map((item, idx) => (
+                <div key={idx} className='bg-gray-100 p-4 rounded-lg shadow-md'>
+                  <p className='flex items-center text-[#414b53]'>
+                    <FaQuestionCircle className='text-[#03793d] mr-2' />
+                    {item.question}
+                  </p>
+                  <p className='mt-2 text-sm text-gray-600'>{item.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
