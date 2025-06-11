@@ -48,10 +48,12 @@ export default async function handler(req, res) {
         each: {
           description: p.each?.description || null,
           minSalePrice: p.each?.minSalePrice || null,
+          wpPrice: p.each?.wpPrice || null,
         },
         box: {
           description: p.box?.description || null,
           minSalePrice: p.box?.minSalePrice || null,
+          wpPrice: p.box?.wpPrice || null,
         },
       };
       return res.status(200).json(minimal);
