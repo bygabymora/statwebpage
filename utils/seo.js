@@ -61,11 +61,11 @@ function generateProductJSONLD(product) {
       },
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
         returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-        applicableCountry: {
-          "@type": "Country",
-          name: "US",
-        },
+        returnPolicyCountry: "US",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
