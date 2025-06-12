@@ -65,7 +65,17 @@ function generateProductJSONLD(product) {
           "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 30,
         returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-        returnPolicyCountry: "US",
+        applicableCountry: {
+          "@type": "Country",
+          name: "US",
+        },
+        refundType: "https://schema.org/RefundTypeFull",
+        returnMethod: "https://schema.org/ReturnAtSeller",
+        returnFees: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: "0.00",
+        },
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
