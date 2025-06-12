@@ -153,9 +153,7 @@ export default function Home() {
   const filtered = products
     .filter(
       (p) =>
-        p.each?.wpPrice > 0 &&
-        p.each?.description?.trim() !== "" &&
-        p.each?.quickBooksQuantityOnHandProduction > 0
+        p.each?.wpPrice > 0 && p.each?.quickBooksQuantityOnHandProduction > 0
     )
     .slice(0, 9);
 
