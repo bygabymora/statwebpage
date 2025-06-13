@@ -32,6 +32,10 @@ function generateProductJSONLD(product) {
   const price = (
     product.each?.minSalePrice ||
     product.box?.minSalePrice ||
+    product.each?.wprice ||
+    product.box?.wprice ||
+    product.each?.customerPrice ||
+    product.box?.customerPrice ||
     0
   ).toFixed(2);
   console.log("Generating JSON-LD for product:", product.image);
