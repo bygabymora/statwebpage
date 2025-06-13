@@ -23,10 +23,6 @@ export default async function handler(req, res) {
       return `<url><loc>${loc}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`;
     });
 
-    // build THREE <url> entries per product:
-    //  1) /products/manufacturer-name?pId=id
-    //  2) /products/manufacturer-name
-    //  3) /products/name
     const productUrls = products.flatMap(({ manufacturer, name, _id }) => {
       const slug = `${manufacturer}-${name}`;
       const encSlug = encodeURIComponent(slug);

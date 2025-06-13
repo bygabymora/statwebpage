@@ -28,7 +28,7 @@ function generateJSONLD(news) {
 }
 
 function generateProductJSONLD(product) {
-  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`;
+  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.name}`;
   const price = (
     product.each?.minSalePrice ||
     product.box?.minSalePrice ||
