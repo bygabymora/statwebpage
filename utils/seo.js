@@ -39,7 +39,7 @@ function generateProductJSONLD(product) {
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
-    name: `${product.name} - ${product.manufacturer}`,
+    name: `${product.name}`,
     image: [product.image],
     brand: {
       "@type": "Brand",
