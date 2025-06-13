@@ -1,5 +1,4 @@
 import React from "react";
-import Head from "next/head";
 import {
   FaEnvelope,
   FaPhone,
@@ -12,42 +11,8 @@ import Link from "next/link";
 
 export default function Support() {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "Support" }];
-  const faqData = [
-    {
-      question: "How long does support take to respond?",
-      answer: "We usually respond within 24 hours.",
-    },
-    {
-      question: "Are your surgical instruments sterile upon delivery?",
-      answer:
-        "Yes, all our surgical instruments are sterilized according to FDA and ISO 13485 standards and arrive sealed in sterile packaging.",
-    },
-  ];
-
-  // JSON-LD Schema
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqData.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-
   return (
     <Layout title='Support'>
-      <Head>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqSchema, null, 2),
-          }}
-        />
-      </Head>
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
@@ -101,9 +66,9 @@ export default function Support() {
               <h4 className='font-bold text-[#144e8b] mt-3'>Email</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
-                href='mailto:sales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
+                href='mailto:centralsales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
               >
-                sales@statsurgicalsupply.com
+                centralsales@statsurgicalsupply.com
               </a>
             </div>
           </div>
@@ -122,16 +87,77 @@ export default function Support() {
             <h3 className='text-2xl font-bold text-[#144e8b]'>
               Frequently Asked Questions
             </h3>
-            <div className='mt-4 space-y-6'>
-              {faqData.slice(0, 2).map((item, idx) => (
-                <div key={idx} className='bg-gray-100 p-4 rounded-lg shadow-md'>
-                  <p className='flex items-center text-[#414b53]'>
-                    <FaQuestionCircle className='text-[#03793d] mr-2' />
-                    {item.question}
-                  </p>
-                  <p className='mt-2 text-sm text-gray-600'>{item.answer}</p>
-                </div>
-              ))}
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> How long
+                does support take to respond?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                We usually respond within 24 hours.
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> How do you
+                acquire your products?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                Stat Surgical acquires products from domestic hospitals, surgery
+                centers, and trusted suppliers.
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> What is the
+                expiration dating of your products?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                Stat Surgical strives to provide long-dated products. Typically
+                products have 1-3+ years until expiration. We never send
+                short-dated products unless approved by the customer.
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> Are your
+                products in original packaging?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                All products arrive in original manufacturer packaging, exactly
+                as if shipped directly from the source.
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> Are your
+                prices negotiable?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                Stat Surgical has the best prices in the business. We will never
+                let pricing get in the way of our “strong” relationships with
+                our customers. If pricing is an issue, we will make it work!
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> What
+                payment methods do you accept?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                We accept purchase orders from domestic hospitals and surgery
+                centers. Other approved customers can pay via ACH, wire
+                transfer, domestic credit card, or domestic PayPal.
+              </p>
+            </div>
+            <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
+              <p className='flex items-center text-[#414b53]'>
+                <FaQuestionCircle className='text-[#03793d] mr-2' /> Can I buy
+                items individually or do I have to buy a full box?
+              </p>
+              <p className='mt-2 text-sm text-gray-600'>
+                Unlike manufacturer minimums, you can purchase single items or
+                full boxes. Cost savings are always our priority!
+              </p>
             </div>
           </div>
         </div>
