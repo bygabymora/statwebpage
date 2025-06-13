@@ -2,74 +2,94 @@ import Product from "../../../../models/Product";
 import WpUser from "../../../../models/WpUser";
 import db from "../../../../utils/db";
 import { getToken } from "next-auth/jwt";
+import { Types } from "mongoose";
 
-// API route: GET /api/products/[id]
 export default async function handler(req, res) {
-  // Allow only GET
   if (req.method !== "GET") {
-    return res.status(400).json({ message: "Method not allowed" });
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
-  // Connect to MongoDB
   try {
     await db.connect(true);
   } catch (err) {
     return res.status(503).json({
       message: "Service unavailable: Database connection failed",
-      error: err,
+      error: err.message,
     });
   }
 
-  // Retrieve WP user from token (if any)
+  // ── Auth check ───────────────────────────────────────────────
   const token = await getToken({ req });
-  let wpUser = null;
-  if (token?._id) {
-    wpUser = await WpUser.findById(token._id).lean();
-  }
+  const wpUser = token?._id ? await WpUser.findById(token._id).lean() : null;
   const loggedIn = Boolean(token);
   const userApproved = Boolean(wpUser && wpUser.approved);
   const userRestricted = Boolean(userApproved && wpUser.restricted);
 
   try {
-    // Fetch the product by ID
-    const p = await Product.findById(req.query.id).lean();
-    if (!p) {
+    // ── Determine “rawId” from the URL ───────────────────────────
+    const rawId = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
+
+    let product = null;
+
+    // 1) If it's a valid ObjectId
+    if (Types.ObjectId.isValid(rawId)) {
+      product = await Product.findById(rawId).lean();
+    }
+
+    // 2) If not found, and contains a hyphen, split into [manufacturer, name…]
+    if (!product && rawId.includes("-")) {
+      const [manufacturer, ...rest] = rawId.split("-");
+      const name = rest.join("-");
+      product = await Product.findOne({
+        manufacturer: { $regex: `^${manufacturer}$`, $options: "i" },
+        name: { $regex: `^${name}$`, $options: "i" },
+      }).lean();
+    }
+
+    // 3) Finally, try matching just “name”
+    if (!product) {
+      product = await Product.findOne({
+        name: { $regex: `^${rawId}$`, $options: "i" },
+      }).lean();
+    }
+
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // If not logged in or not approved: return minimal info
+    // ── Minimal vs Full Response ────────────────────────────────
     if (!loggedIn || !userApproved) {
       const minimal = {
-        name: p.name,
-        _id: p._id,
-        manufacturer: p.manufacturer,
-        image: p.image,
-        sentOvernight: p.sentOvernight,
+        name: product.name,
+        _id: product._id,
+        manufacturer: product.manufacturer,
+        image: product.image,
+        sentOvernight: product.sentOvernight,
         each: {
-          description: p.each?.description || null,
-          minSalePrice: p.each?.minSalePrice || null,
-          wpPrice: p.each?.wpPrice || null,
+          description: product.each?.description || null,
+          minSalePrice: product.each?.minSalePrice || null,
+          wpPrice: product.each?.wpPrice || null,
         },
         box: {
-          description: p.box?.description || null,
-          minSalePrice: p.box?.minSalePrice || null,
-          wpPrice: p.box?.wpPrice || null,
+          description: product.box?.description || null,
+          minSalePrice: product.box?.minSalePrice || null,
+          wpPrice: product.box?.wpPrice || null,
         },
       };
       return res.status(200).json(minimal);
     }
 
-    // Logged in & approved: full info with stock/price restrictions if needed
-    let result = p;
-    if (userRestricted && p.protected) {
+    // Logged in & approved → full info, with “protected” fields zeroed if restricted
+    let result = product;
+    if (userRestricted && product.protected) {
       result = {
-        ...p,
-        each: p.each
-          ? { ...p.each, quickBooksQuantityOnHandProduction: 0 }
-          : p.each,
-        box: p.box
-          ? { ...p.box, quickBooksQuantityOnHandProduction: 0 }
-          : p.box,
+        ...product,
+        each: product.each
+          ? { ...product.each, quickBooksQuantityOnHandProduction: 0 }
+          : product.each,
+        box: product.box
+          ? { ...product.box, quickBooksQuantityOnHandProduction: 0 }
+          : product.box,
       };
     }
 

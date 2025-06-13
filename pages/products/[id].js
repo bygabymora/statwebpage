@@ -12,10 +12,8 @@ import { messageManagement } from "../../utils/alertSystem/customers/messageMana
 import moment from "moment-timezone";
 import { generateProductJSONLD } from "../../utils/seo";
 
-export default function ProductScreen() {
+export default function ProductScreen({ product }) {
   const router = useRouter();
-  const { pId: pId } = router.query;
-  const [product, setProduct] = useState({});
   const [showPopup, setShowPopup] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
@@ -53,27 +51,6 @@ export default function ProductScreen() {
     }
     return "Each";
   });
-
-  const fetchData = async () => {
-    try {
-      const data = await axios.get(`/api/products/${pId}`);
-      if (!data) {
-        showStatusMessage("error", "Product not found");
-        return;
-      }
-
-      setProduct(data.data);
-    } catch (error) {
-      console.error("Error fetching product data:", error);
-      showStatusMessage("error", "Failed to fetch product data");
-    }
-  };
-
-  useEffect(() => {
-    if (pId) {
-      fetchData();
-    }
-  }, [pId]);
 
   useEffect(() => {
     if (product.countInStock || 0) {
@@ -880,25 +857,30 @@ export default function ProductScreen() {
 }
 
 export async function getServerSideProps(context) {
-  // 1️⃣ Extract pId from the query string, not from params.id
-  const { pId } = context.query;
-  if (!pId) {
+  const { id, pId } = context.query;
+  const lookup = pId || id;
+  if (!lookup) {
     return { notFound: true };
   }
 
-  // 2️⃣ Build your absolute URL for the fetch
   const host = context.req.headers.host;
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const apiUrl = `${protocol}://${host}/api/products/${pId}`;
 
-  // 3️⃣ Fetch the product by its Mongo ObjectId
-  const res = await fetch(apiUrl);
+  // forward cookies so `/api/products/[lookup]` sees your session
+  const cookie = context.req.headers.cookie || "";
+
+  const res = await fetch(
+    `${protocol}://${host}/api/products/${encodeURIComponent(lookup)}`,
+    {
+      headers: { cookie },
+    }
+  );
+
   if (!res.ok) {
     return { notFound: true };
   }
-  const product = await res.json();
 
-  // 4️⃣ Return it as a prop so it's inlined into the initial HTML
+  const product = await res.json();
   return {
     props: { product },
   };
