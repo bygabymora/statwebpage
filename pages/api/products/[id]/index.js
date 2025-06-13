@@ -65,15 +65,18 @@ export default async function handler(req, res) {
         manufacturer: product.manufacturer,
         image: product.image,
         sentOvernight: product.sentOvernight,
+        keywords: product.keywords || [],
         each: {
           description: product.each?.description || null,
           minSalePrice: product.each?.minSalePrice || null,
           wpPrice: product.each?.wpPrice || null,
+          customerPrice: product.each?.customerPrice || null,
         },
         box: {
           description: product.box?.description || null,
           minSalePrice: product.box?.minSalePrice || null,
           wpPrice: product.box?.wpPrice || null,
+          customerPrice: product.box?.customerPrice || null,
         },
       };
       return res.status(200).json(minimal);
