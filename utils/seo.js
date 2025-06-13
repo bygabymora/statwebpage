@@ -40,16 +40,21 @@ function generateProductJSONLD(product) {
   ).toFixed(2);
   console.log("Generating JSON-LD for product:", product.image);
 
+  const keywords = Array.isArray(product.keywords)
+    ? product.keywords.join(", ")
+    : undefined;
+
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
+    ...(keywords ? { keywords } : {}),
     name: `${product.name}`,
     image: [product.image],
     brand: {
       "@type": "Brand",
       name: product.manufacturer,
     },
-    description: product.description || "",
+    description: product.each.description || product.box.description || "",
     sku: product._id,
     mpn: product._id,
     offers: {
