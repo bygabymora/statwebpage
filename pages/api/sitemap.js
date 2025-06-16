@@ -9,36 +9,47 @@ export default async function handler(req, res) {
   try {
     await db.connect(true);
 
-    // Fetch only the fields we need, and use .lean()
+    // only slugs for news
     const newsArticles = await News.find().select("slug").lean();
+
+    // manufacturer, name and _id for products
     const products = await Product.find()
       .select("manufacturer name _id")
       .lean();
 
-    // Build each <url> element, ensuring no leading/trailing whitespace
-    const urls = [
-      ...newsArticles.map(({ slug }) => {
-        const loc = `${BASE_URL}/news/${encodeURIComponent(slug)}`;
-        return `<url><loc>${loc}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`;
-      }),
-      ...products.map(({ manufacturer, name, _id }) => {
-        const loc = `${BASE_URL}/products/${encodeURIComponent(
-          manufacturer
-        )}-${encodeURIComponent(name)}?pId=${_id}`;
-        return `<url><loc>${loc}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`;
-      }),
-    ].join("");
+    // build <url> entries for news
+    const newsUrls = newsArticles.map(({ slug }) => {
+      const loc = `${BASE_URL}/news/${encodeURIComponent(slug)}`;
+      return `<url><loc>${loc}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`;
+    });
 
-    // Emit a single, compact XML document
-    const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+    const productUrls = products.flatMap(({ manufacturer, name, _id }) => {
+      const slug = `${manufacturer}-${name}`;
+      const encSlug = encodeURIComponent(slug);
+      const encName = encodeURIComponent(name);
+
+      return [
+        `<url><loc>${BASE_URL}/products/${encSlug}?pId=${_id}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
+        `<url><loc>${BASE_URL}/products/${encSlug}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
+        `<url><loc>${BASE_URL}/products/${encName}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
+      ];
+    });
+
+    const allUrls = [...newsUrls, ...productUrls].join("");
+
+    const xml =
+      `<?xml version="1.0" encoding="UTF-8"?>` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
+      allUrls +
+      `</urlset>`;
 
     res.setHeader("Content-Type", "application/xml");
     return res.status(200).send(xml);
   } catch (err) {
     console.error("Error generating sitemap:", err);
-    // Return a 200 with minimal valid XML so that Google won’t block the whole thing,
-    // or return 500 if you prefer to force a retry.
-    const empty = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`;
+    const empty =
+      `<?xml version="1.0" encoding="UTF-8"?>` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`;
     res.setHeader("Content-Type", "application/xml");
     return res.status(200).send(empty);
   }

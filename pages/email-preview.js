@@ -13,6 +13,7 @@ const cases = [
   "Order Shipped",
   "Product Manufacturer",
   "Newsletter Subscription",
+  "Forgot Password",
 ];
 
 // Single contact and order for all cases
@@ -127,6 +128,7 @@ const sampleMessages = {
   "Order Shipped": "",
   "Product Manufacturer": "",
   "Newsletter Subscription": "",
+  "Forgot Password": "AVDSfsdcxhojk",
 };
 
 export default function EmailPreview() {
@@ -137,7 +139,8 @@ export default function EmailPreview() {
     action,
     message,
     sampleOrder,
-    sampleItem
+    sampleItem,
+    sampleStatRep
   );
   const html = DocumentComponent({
     message: emailMessage,

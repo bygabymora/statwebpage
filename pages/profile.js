@@ -6,6 +6,7 @@ import { getError } from "../utils/error";
 import axios from "axios";
 import Layout from "../components/main/Layout";
 import Link from "next/link";
+import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 
 export default function ProfileScreen() {
   const { data: session, status } = useSession();
@@ -32,7 +33,10 @@ export default function ProfileScreen() {
   }, [session.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
   const toggleModifyForm = () => {
     setShowModifyForm((prevShowModifyForm) => !prevShowModifyForm);
   };
@@ -59,6 +63,7 @@ export default function ProfileScreen() {
       } else {
         toast.error(result.error);
       }
+      setShowModifyForm(false);
     } catch (error) {
       toast.error(
         "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
@@ -190,19 +195,37 @@ export default function ProfileScreen() {
               >
                 New Password *
               </label>
-              <input
-                autoComplete='off'
-                type='password'
-                id='password'
-                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("password", {
-                  required: "Please enter new password",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-              />
+              <div className='relative'>
+                <input
+                  autoComplete='off'
+                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                  autoFocus
+                  id='password'
+                  type={showPassword ? "text" : "password"}
+                  {...register("password", {
+                    required: "Please enter a password",
+                    minLength: {
+                      value: 8,
+                      message: "Password must have at least 8 characters",
+                    },
+                    validate: (value) =>
+                      /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(
+                        value
+                      ) ||
+                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                  })}
+                  placeholder='Password'
+                />{" "}
+                <button
+                  type='button'
+                  onClick={(e) => {
+                    e.preventDefault(), togglePasswordVisibility();
+                  }}
+                  className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
+                >
+                  {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                </button>
+              </div>
               {errors.password && (
                 <p className='text-red-500 text-sm'>
                   {errors.password.message}
@@ -217,20 +240,32 @@ export default function ProfileScreen() {
               >
                 Confirm New Password *
               </label>
-              <input
-                autoComplete='off'
-                type='password'
-                id='confirmPassword'
-                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("confirmPassword", {
-                  required: "Please confirm new password",
-                  validate: (value) => value === getValues("password"),
-                  minLength: {
-                    value: 6,
-                    message: "Confirm password must be at least 6 characters",
-                  },
-                })}
-              />
+              <div className='relative'>
+                <input
+                  autoComplete='off'
+                  type={showPassword ? "text" : "password"}
+                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                  id='confirmPassword'
+                  placeholder='Confirm Password'
+                  {...register("confirmPassword", {
+                    required: "Please enter confirm password",
+                    validate: (value) => value === getValues("password"),
+                    minLength: {
+                      value: 8,
+                      message: "Confirm password must be at least 8 characters",
+                    },
+                  })}
+                />
+                <button
+                  type='button'
+                  onClick={(e) => {
+                    e.preventDefault(), togglePasswordVisibility();
+                  }}
+                  className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
+                >
+                  {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className='text-red-500 text-sm'>
                   {errors.confirmPassword.message}
@@ -259,7 +294,7 @@ export default function ProfileScreen() {
             onClick={toggleModifyForm}
             className='bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition'
           >
-            Modify Profile
+            Update Profile or Change Password
           </button>
         </div>
       )}

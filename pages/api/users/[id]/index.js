@@ -32,6 +32,8 @@ const handler = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("Found WpUser:", wpUser);
+
     let customer = null;
     let accountOwner = null;
 

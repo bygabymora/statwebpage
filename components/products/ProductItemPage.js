@@ -520,9 +520,24 @@ export const ProductItemPage = ({ product }) => {
             </div>
           ) : !session?.user ? (
             <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
-              <div className=''>
-                Sign in to see availability and purchase this product.
-              </div>
+              {(product.each?.wpPrice &&
+                product.each?.wpPrice !== "Call for price") ||
+              (product.box?.wpPrice &&
+                product.box?.wpPrice !== "Call for price") ? (
+                <div className=''>
+                  <span className='font-semibold'>
+                    Web price: ${product.each?.wpPrice || product.box?.wpPrice}{" "}
+                    per {product.each?.wpPrice ? "Unit" : "Box"}.
+                  </span>{" "}
+                  <br />
+                  Contact us or register for custom pricing.
+                </div>
+              ) : (
+                <div className=''>
+                  Sign in to see availability and purchase this product at a
+                  custom price.
+                </div>
+              )}
               <div className='flex gap-5'>
                 <Link href='/Login'>
                   <button className='primary-button align-middle text-white'>

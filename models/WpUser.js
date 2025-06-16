@@ -14,6 +14,10 @@ const wpUserSchema = new mongoose.Schema(
     restricted: { type: Boolean, required: true, default: false },
     customerId: { type: String, required: false },
     approvalEmailSent: { type: Boolean, required: false, default: false },
+    resetCode: {
+      code: { type: String, required: false },
+      expireDate: { type: Date, required: false },
+    },
     cart: [
       {
         productId: { type: String, required: false },

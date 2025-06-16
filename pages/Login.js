@@ -1,3 +1,5 @@
+// pages/login.js
+
 import React, { useEffect, useState } from "react";
 import Layout from "../components/main/Layout";
 import Link from "next/link";
@@ -12,6 +14,9 @@ import CustomAlertModal from "../components/main/CustomAlertModal";
 
 export default function Login() {
   const { data: session } = useSession();
+  const router = useRouter();
+  const { redirect } = router.query;
+
   const [showPassword, setShowPassword] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState({
@@ -20,24 +25,25 @@ export default function Login() {
     warning: "",
   });
 
-  const router = useRouter();
-  const { redirect } = router.query;
+  // react-hook-form setup
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const emailValue = watch("email", ""); // <-- grab email from the form
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+    setShowPassword((prev) => !prev);
   };
 
   useEffect(() => {
     if (session?.user) {
       router.push(redirect || "/");
     }
-  }, [router, session, redirect]);
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
+  }, [session, redirect, router]);
 
   const submitHandler = async ({ email, password }) => {
     try {
@@ -69,19 +75,20 @@ export default function Login() {
     <Layout title='Login'>
       <form className='mx-2 pr-5' onSubmit={handleSubmit(submitHandler)}>
         <h1 className='mb-1 text-xl font-bold'>Login</h1>
+
+        {/* Email */}
         <div className='mb-4'>
           <label
-            className='block mb-2 text-sm font-bold text-gray-700'
             htmlFor='email'
+            className='block mb-2 text-sm font-bold text-gray-700'
           >
             Email
           </label>
           <input
-            autoComplete='off'
-            className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-            autoFocus
             id='email'
             type='email'
+            autoComplete='off'
+            placeholder='Email'
             {...register("email", {
               required: "Please enter email",
               pattern: {
@@ -89,42 +96,46 @@ export default function Login() {
                 message: "Invalid email",
               },
             })}
-            placeholder='Email'
-          ></input>
+            className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+          />
           {errors.email && (
-            <div className='text-blue-950'>{errors.email.message}</div>
+            <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>
           )}
         </div>
+
+        {/* Password */}
         <div className='mb-4'>
           <label
-            className='block mb-2 text-sm font-bold text-gray-700'
             htmlFor='password'
+            className='block mb-2 text-sm font-bold text-gray-700'
           >
             Password
           </label>
           <div className='relative'>
             <input
-              autoComplete='off'
-              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-              autoFocus
               id='password'
               type={showPassword ? "text" : "password"}
+              placeholder='Password'
+              autoComplete='off'
               {...register("password", {
                 required: "Please enter a password",
                 minLength: {
                   value: 8,
                   message: "Password must have at least 8 characters",
                 },
-                validate: (value) =>
-                  /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(value) ||
-                  "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
+                  message:
+                    "Must include uppercase, lowercase, number & special char",
+                },
               })}
-              placeholder='Password'
+              className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
             />
             <button
               type='button'
               onClick={(e) => {
-                e.preventDefault(), togglePasswordVisibility();
+                e.preventDefault();
+                togglePasswordVisibility();
               }}
               className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
             >
@@ -132,24 +143,41 @@ export default function Login() {
             </button>
           </div>
           {errors.password && (
-            <div className='text-blue-950'>{errors.password.message}</div>
+            <p className='text-red-500 text-sm mt-1'>
+              {errors.password.message}
+            </p>
           )}
         </div>
+
+        {/* Submit */}
         <div className='mb-4'>
-          <button className='primary-button' type='submit'>
+          <button className='primary-button w-full' type='submit'>
             Login
           </button>
         </div>
+
+        {/* Register Link */}
         <div className='mb-4'>
-          Don&apos;t have an account? &nbsp;
+          Don&apos;t have an account?{" "}
           <Link
-            href='/Register'
+            href='/register'
             className='font-bold underline active:text-[#144e8b]'
           >
             Register
           </Link>
         </div>
+
+        {/* Forgot Password Link */}
+        <div className='mb-4'>
+          <Link
+            href={`/recoverAccess?email=${encodeURIComponent(emailValue)}`}
+            className='font-bold underline active:text-[#144e8b]'
+          >
+            Forgot Password?
+          </Link>
+        </div>
       </form>
+
       <CustomAlertModal
         isOpen={isAlertOpen}
         message={alertMessage}

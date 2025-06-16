@@ -28,24 +28,33 @@ function generateJSONLD(news) {
 }
 
 function generateProductJSONLD(product) {
-  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`;
+  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.name}`;
   const price = (
     product.each?.minSalePrice ||
     product.box?.minSalePrice ||
+    product.each?.wprice ||
+    product.box?.wprice ||
+    product.each?.customerPrice ||
+    product.box?.customerPrice ||
     0
   ).toFixed(2);
   console.log("Generating JSON-LD for product:", product.image);
 
+  const keywords = Array.isArray(product.keywords)
+    ? product.keywords.join(", ")
+    : undefined;
+
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
-    name: `${product.name} - ${product.manufacturer}`,
+    ...(keywords ? { keywords } : {}),
+    name: `${product.name}`,
     image: [product.image],
     brand: {
       "@type": "Brand",
       name: product.manufacturer,
     },
-    description: product.description || "",
+    description: product.each.description || product.box.description || "",
     sku: product._id,
     mpn: product._id,
     offers: {
@@ -61,10 +70,20 @@ function generateProductJSONLD(product) {
       },
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
         returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
         applicableCountry: {
           "@type": "Country",
           name: "US",
+        },
+        refundType: "https://schema.org/RefundTypeFull",
+        returnMethod: "https://schema.org/ReturnAtSeller",
+        returnFees: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: "0.00",
         },
       },
       shippingDetails: {
