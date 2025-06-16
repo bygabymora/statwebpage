@@ -127,9 +127,6 @@ export default function AdminUserEditScreen() {
 
   return (
     <Layout title={`Edit User${userId}`}>
-      {console.log("wpUser", wpUser)}
-      {console.log("wpCustomer", wpCustomer)}
-      {console.log("wpAccountOwner", wpAccountOwner)}
       <div className='grid md:grid-cols-4 md:gap-5'>
         <div className='flex justify-center'>
           <ul className='flex flex-col space-y-4 my-3 lg:text-lg w-full'>

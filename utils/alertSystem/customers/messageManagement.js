@@ -260,6 +260,39 @@ export const messageManagement = (
                  </div>`,
       };
       break;
+    case "Forgot Password":
+      emailMessage = {
+        ...emailMessage,
+        subject: `${contact.name}, Your Password Reset Code`,
+        p1: `<div style="font-size: 17px; color: #333333;">
+                 We received a request to reset your password.:
+               </div>`,
+        p3: `
+        <div style="font-weight: bold; font-size: 15px; color: #333333;">
+         This is your password reset code. You don't need to copy it. It's only for informative purposes. <br>
+         </div>
+        <div style="font-weight: bold; font-size: 24px; margin: 12px 0; color: #144e8b;">
+                 ${message}
+               </div>
+               <div style="font-size: 15px; color: #333333;">
+              
+                 This code will expire in 10 minutes. <br>
+                 If you did not request a password reset, please ignore this email or contact support.<br><br>
+                 Thank you for choosing us! <br>
+               <strong>Stat Surgical Supply</strong>
+               </div>
+               `,
+        p2: `<div style="font-weight: light; font-size: 15px; color: #333333; ">
+               I'm <strong>${accountOwner.name}</strong> and I'll be the one in charge of any request or support you may need. <br>
+               Please feel free to reach out at any time. <br><br>
+               <a href="https://statsurgicalsupply.com/authenticateCode?email=${contact.email}&code=${message}" target="_blank" 
+                  style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                 Follow the link to reset your password
+               </a><br><br>
+              
+             </div>`,
+      };
+      break;
 
     default:
       emailMessage = {
