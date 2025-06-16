@@ -85,16 +85,27 @@ export default function Layout({ children, title, product, news, schema }) {
     <div className='w-full' lang='en-US'>
       <Head>
         <title>
-          {title ? `${title} | Stat Surgical Supply` : "Stat Surgical Supply"}
+          {title
+            ? `${title} | Stat Surgical Supply`
+            : "Stat Surgical Supply - Quality Surgical Supplies"}
         </title>
         <meta
           name='description'
           content={
             product
-              ? product.description?.slice(0, 160)
-              : "Buy surgical supplies online at affordable prices. Quality medical products for your needs."
+              ? product.each?.description?.slice(0, 160)
+              : "Buy surgical supplies online at affordable prices. Fast shipping, secure checkout, and excellent customer support. Perfect for clinics, hospitals, and outpatient centers."
           }
         />
+        <meta
+          name='keywords'
+          content={
+            product
+              ? product.keywords?.join(", ")
+              : "surgical supplies, medical products, healthcare, Stat Surgical Supply"
+          }
+        />
+        <meta name='robots' content='index, follow' />
         <link rel='icon' href='/favicon.ico' />
         <link
           rel='canonical'
@@ -114,11 +125,11 @@ export default function Layout({ children, title, product, news, schema }) {
           }
         />
         <meta
-          property='og:description'
+          name='description'
           content={
             product
-              ? product.description?.slice(0, 200)
-              : "Buy surgical supplies online at affordable prices."
+              ? product.each?.description?.slice(0, 200)
+              : "Buy surgical supplies online at affordable prices. Fast shipping, secure checkout, and excellent customer support. Perfect for clinics, hospitals, and outpatient centers."
           }
         />
         <meta property='og:image' content={product?.image || Logo} />
