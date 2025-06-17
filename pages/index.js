@@ -150,14 +150,7 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const filtered = products
-    .filter(
-      (p) =>
-        p.each?.wpPrice > 0 &&
-        p.each?.description?.trim() !== "" &&
-        p.each?.quickBooksQuantityOnHandProduction > 0
-    )
-    .slice(0, 9);
+  const filtered = products.slice(0, 9);
 
   return (
     <Layout>
