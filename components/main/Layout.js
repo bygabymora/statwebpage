@@ -100,9 +100,9 @@ export default function Layout({ children, title, product, news, schema }) {
         <meta
           name='keywords'
           content={
-            product
-              ? product.keywords?.join(", ")
-              : "surgical supplies, medical products, healthcare, Stat Surgical Supply"
+            product?.keywords && Array.isArray(product.keywords)
+              ? product.keywords.join(", ")
+              : ""
           }
         />
         <meta name='robots' content='index, follow' />
