@@ -1,4 +1,3 @@
-// pages/index.js
 import React, { useState, useEffect } from "react";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
