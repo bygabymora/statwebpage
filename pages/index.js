@@ -1,4 +1,3 @@
-// pages/index.js
 import React, { useState, useEffect } from "react";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
@@ -133,6 +132,7 @@ function Carousel({ products }) {
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [maxItems, setMaxItems] = useState(9);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -150,13 +150,21 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const onResize = () => {
+      setMaxItems(window.innerWidth < 768 ? 5 : 9);
+    };
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const filtered = products
     .filter(
       (p) =>
         p.each?.wpPrice > 0 && p.each?.quickBooksQuantityOnHandProduction > 0
     )
-    .slice(0, 9);
-
+    .slice(0, maxItems);
   return (
     <Layout>
       <Banner />
