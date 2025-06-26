@@ -47,11 +47,15 @@ const handler = async (req, res) => {
           description: p.each?.description || null,
           minSalePrice: p.each?.minSalePrice || null,
           wpPrice: p.each?.wpPrice || null,
+          quickBooksQuantityOnHandProduction:
+            p.each?.quickBooksQuantityOnHandProduction || 0,
         },
         box: {
           description: p.box?.description || null,
           minSalePrice: p.box?.minSalePrice || null,
           wpPrice: p.box?.wpPrice || null,
+          quickBooksQuantityOnHandProduction:
+            p.box?.quickBooksQuantityOnHandProduction || 0,
         },
       }));
 
