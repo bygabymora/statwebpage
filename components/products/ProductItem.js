@@ -289,7 +289,12 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
               quality={5}
-              priority={index === 0}
+              loading='lazy'
+              priority={
+                index === 0 &&
+                typeof window !== "undefined" &&
+                window.innerWidth >= 768
+              }
             />
           </div>
         </Link>

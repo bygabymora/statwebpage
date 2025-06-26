@@ -131,6 +131,7 @@ function Carousel({ products }) {
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [maxItems, setMaxItems] = useState(9);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -149,7 +150,21 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const filtered = products.slice(0, 9);
+  useEffect(() => {
+    const onResize = () => {
+      setMaxItems(window.innerWidth < 768 ? 5 : 9);
+    };
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const filtered = products
+    .filter(
+      (p) =>
+        p.each?.wpPrice > 0 && p.each?.quickBooksQuantityOnHandProduction > 0
+    )
+    .slice(0, maxItems);
 
   return (
     <Layout>
