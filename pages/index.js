@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../components/main/Layout";
-import { ProductItem } from "../components/products/ProductItem";
-import Banner from "../components/Banner";
-import StaticBanner from "../components/StaticBanner";
-import Contact from "../components/contact/Contact";
+import dynamic from "next/dynamic";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
-import Benefits from "./slider";
+import Layout from "../components/main/Layout"; // we keep it SSR
+import { ProductItem } from "../components/products/ProductItem";
+
+// We dynamically load “large” components
+const Banner = dynamic(() => import("../components/Banner"), { ssr: false });
+const StaticBanner = dynamic(() => import("../components/StaticBanner"), {
+  ssr: false,
+});
+const Benefits = dynamic(() => import("./slider"), { ssr: false });
+const Contact = dynamic(() => import("../components/contact/Contact"), {
+  ssr: false,
+});
 
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -52,12 +59,9 @@ function Carousel({ products }) {
     interactionEndTimer = setTimeout(() => setIsInteracting(false), 3000);
   };
 
-  const prevSlide = () => {
-    setCurrentSlide((s) => Math.max(s - 1, 0));
-  };
-  const nextSlide = () => {
+  const prevSlide = () => setCurrentSlide((s) => Math.max(s - 1, 0));
+  const nextSlide = () =>
     setCurrentSlide((s) => (s + 1 < totalSlides ? s + 1 : 0));
-  };
 
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX);
@@ -134,6 +138,7 @@ export default function Home() {
   const [maxItems, setMaxItems] = useState(9);
   const [loading, setLoading] = useState(true);
 
+  // fetch data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -150,6 +155,7 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  // adjust amount on mobile vs desktop
   useEffect(() => {
     const onResize = () => {
       setMaxItems(window.innerWidth < 768 ? 5 : 9);

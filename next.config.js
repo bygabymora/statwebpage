@@ -2,9 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
+  swcMinify: true,
   experimental: {
-    // remove unused CSS rules from final bundle
     optimizeCss: true,
+    esmExternals: true,
   },
   webpack(config) {
     config.resolve.fallback = {
