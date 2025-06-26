@@ -238,6 +238,7 @@ export const ProductItemPage = ({ product }) => {
               <Image
                 src={product.image}
                 alt={currentDescription}
+                title={currentDescription}
                 className='rounded-lg shadow-lg'
                 width={800}
                 height={1000}

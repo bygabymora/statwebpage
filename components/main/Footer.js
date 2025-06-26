@@ -100,6 +100,7 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Logo'
+          title='STAT Surgical Supply Logo'
           loading='lazy'
           width={300}
           height={100}
@@ -150,6 +151,7 @@ export default function Footer() {
           className='footer-logo self-end sm:mr-3 sm:mb-3'
           src={Payment}
           alt='Payment Methods'
+          title='Payment Methods'
           width={300}
           height={"auto"}
           loading='lazy'
@@ -163,6 +165,7 @@ export default function Footer() {
               className='footer-logo lg:block'
               src={linkedIn}
               alt='Linkedin Logo'
+              title='Linkedin Logo'
               width={50}
               height={50}
               loading='lazy'
@@ -176,6 +179,7 @@ export default function Footer() {
               className='footer-logo lg:block'
               src={facebook}
               alt='Facebook Logo'
+              title='Facebook Logo'
               width={50}
               height={50}
               loading='lazy'
@@ -189,6 +193,7 @@ export default function Footer() {
               className='footer-logo lg:block'
               src={Google}
               alt='Google Logo'
+              title='Google Logo'
               width={50}
               height={50}
               loading='lazy'

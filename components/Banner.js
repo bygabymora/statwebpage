@@ -72,6 +72,7 @@ const Banner = () => {
               <Image
                 src={banner}
                 alt='Surgical Supplies'
+                title='Surgical Supplies'
                 fill
                 priority={index === 0}
                 className='rounded-lg object-cover'

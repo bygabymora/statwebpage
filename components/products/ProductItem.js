@@ -282,6 +282,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             <Image
               src={product.image}
               alt={product.name}
+              title={product.name}
               className='rounded-lg shadow-lg'
               width={800}
               height={1000}
