@@ -61,9 +61,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             <>
               <Script
                 src='https://www.googletagmanager.com/gtag/js?id=G-3JJZVPL0B5'
-                strategy='afterInteractive'
+                strategy='lazyOnload'
               />
-              <Script id='gtag-init' strategy='afterInteractive'>
+              <Script id='gtag-init' strategy='lazyOnload'>
                 {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
