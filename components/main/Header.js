@@ -172,6 +172,7 @@ const Header = () => {
               <Image
                 src={Logo2}
                 alt='logo'
+                title='STAT Surgical Supply Logo'
                 width={isMobile ? 50 : 100}
                 height={isMobile ? 50 : 100}
               />

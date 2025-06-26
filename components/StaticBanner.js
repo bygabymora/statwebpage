@@ -17,6 +17,7 @@ const StaticBanner = () => {
           <Image
             width={500}
             height={500}
+            title='Static Banner'
             src='/images/assets/StaticBanner.png'
             alt='Banner'
             loading={"lazy"}
