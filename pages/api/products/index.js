@@ -77,8 +77,9 @@ const handler = async (req, res) => {
       const bHasPrice = (b.each?.wpPrice || 0) > 0 || (b.box?.wpPrice || 0) > 0;
       if (aHasPrice && !bHasPrice) return -1;
       if (!aHasPrice && bHasPrice) return 1;
-
-      return a.name.localeCompare(b.name);
+      const nameA = a.name || "";
+      const nameB = b.name || "";
+      return nameA.localeCompare(nameB);
     });
 
     // Map full info, zeroing out on-hand counts for restricted users on protected products
