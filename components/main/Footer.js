@@ -100,10 +100,9 @@ export default function Footer() {
           src={Logo}
           alt='STAT Logo'
           title='STAT Surgical Supply Logo'
-          loading='lazy'
           width={300}
           height={100}
-          className='footer-logo hidden lg:block'
+          className='footer-logo invisible lg:visible object-contain'
         />
         <div className='flex flex-col items-center w-full max-w-lg px-4 text-center'>
           <h4 className='text-xl font-semibold text-[#144e8b]'>
