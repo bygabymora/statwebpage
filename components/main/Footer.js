@@ -153,8 +153,9 @@ export default function Footer() {
           title='Payment Methods'
           width={300}
           height={113}
-          priority
-          className='footer-logo self-end sm:mr-3 sm:mb-3'
+          loading='lazy'
+          placeholder='blur'
+          className='footer-logo self-end sm:mr-3 sm:mb-3 object-contain'
         />
         <div className='flex space-x-4 mt-4 sm:mt-0'>
           <Link
