@@ -4,6 +4,8 @@ export default function Document() {
   return (
     <Html lang='en-US'>
       <Head>
+        <link rel='preconnect' href='https://js.stripe.com' crossOrigin='' />
+        <link rel='dns-prefetch' href='https://js.stripe.com' />
         {/* Preload all fonts */}
         <link
           rel='preload'
