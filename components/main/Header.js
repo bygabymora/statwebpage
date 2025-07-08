@@ -1,6 +1,6 @@
 "use client";
 import Signupbutton from "./Signupbutton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
 import Image from "next/image";
@@ -22,12 +22,6 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    isMobileHandler();
-    window.addEventListener("resize", isMobileHandler);
-  }, []);
 
   const active =
     session?.user?.active &&
@@ -91,18 +85,8 @@ const Header = () => {
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
 
-  const isMobileHandler = () => {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-  };
-
   return (
-    <header className='header mx-auto transition-all z-40 duration-300'>
+    <header className='header'>
       <MiniHeader />
       <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
         <div className='flex items-center w-[90%] justify-between border rounded-full px-3 bg-gray-100 my-2'>
@@ -140,17 +124,16 @@ const Header = () => {
       <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
         <div className='flex items-center'>
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              handleHomeClick();
-            }}
+            onClick={handleHomeClick}
+            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32'
           >
             <Image
               src={Logo2}
-              alt='logo'
+              alt='STAT Surgical Supply Logo'
               title='STAT Surgical Supply Logo'
-              width={isMobile ? 50 : 100}
-              height={isMobile ? 50 : 100}
+              fill
+              priority
+              className='object-contain'
             />
           </button>
         </div>

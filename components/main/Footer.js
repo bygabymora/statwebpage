@@ -152,7 +152,7 @@ export default function Footer() {
           alt='Payment Methods'
           title='Payment Methods'
           width={300}
-          height={300}
+          height={113}
           priority
           className='footer-logo self-end sm:mr-3 sm:mb-3'
         />
