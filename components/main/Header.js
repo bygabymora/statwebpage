@@ -23,14 +23,6 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    isMobileHandler();
-    window.addEventListener("resize", isMobileHandler);
-  }, []);
 
   const active =
     session?.user?.active &&
@@ -110,16 +102,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
-  const isMobileHandler = () => {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-  };
-
   return (
     <header
       className={`header mx-auto transition-all z-40 duration-300 ${
@@ -168,15 +150,16 @@ const Header = () => {
               handleHomeClick();
             }}
           >
-            {isClient && (
-              <Image
-                src={Logo2}
-                alt='logo'
-                title='STAT Surgical Supply Logo'
-                width={isMobile ? 50 : 100}
-                height={isMobile ? 50 : 100}
-              />
-            )}
+            <Image
+              src={Logo2}
+              alt='logo'
+              title='STAT Surgical Supply Logo'
+              width={60}
+              height={60}
+              priority
+              className='object-contain'
+              sizes='(max-width: 768px) 64px, 96px'
+            />
           </button>
         </div>
 

@@ -65,7 +65,6 @@ export default async function handler(req, res) {
         manufacturer: product.manufacturer,
         image: product.image,
         sentOvernight: product.sentOvernight,
-        information: product.information || null,
         keywords: product.keywords || product.name || [],
         each: {
           description: product.each?.description || null,

@@ -19,7 +19,6 @@ const productSchema = new mongoose.Schema(
     quickBooksManufacturerIdProduction: { type: String, required: false },
     quickBooksManufacturerId: { type: String, required: false },
     callForPrice: { type: Boolean, default: false, required: false },
-    information: { type: String, required: false },
     keywords: {
       type: [String],
       default: [],
