@@ -46,7 +46,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className='flex h-30 justify-center shadow-inner items-center footer flex-col relative'>
+    <footer className='relative flex flex-col items-center shadow-inner min-h-[20rem] justify-center footer'>
       <div className='footer-container'>
         <section className='footer-links'>
           <div className='footer-linkGroup flex flex-col m-5'>
@@ -97,13 +97,13 @@ export default function Footer() {
       <br />
       <div className='flex flex-col lg:flex-row items-center justify-between w-full max-w-5xl'>
         <Image
-          className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Logo'
           title='STAT Surgical Supply Logo'
           loading='lazy'
           width={300}
           height={100}
+          className='footer-logo hidden lg:block'
         />
         <div className='flex flex-col items-center w-full max-w-lg px-4 text-center'>
           <h4 className='text-xl font-semibold text-[#144e8b]'>
@@ -148,13 +148,13 @@ export default function Footer() {
         </div>
         <br />
         <Image
-          className='footer-logo self-end sm:mr-3 sm:mb-3'
           src={Payment}
           alt='Payment Methods'
           title='Payment Methods'
           width={300}
           height={300}
-          loading='lazy'
+          priority
+          className='footer-logo self-end sm:mr-3 sm:mb-3'
         />
         <div className='flex space-x-4 mt-4 sm:mt-0'>
           <Link
@@ -162,13 +162,13 @@ export default function Footer() {
             href='https://www.linkedin.com/company/statsurgicalsupply'
           >
             <Image
-              className='footer-logo lg:block'
               src={linkedIn}
               alt='Linkedin Logo'
               title='Linkedin Logo'
               width={50}
               height={50}
               loading='lazy'
+              className='footer-logo lg:block'
             />
           </Link>
           <Link
@@ -176,13 +176,13 @@ export default function Footer() {
             target='_blank'
           >
             <Image
-              className='footer-logo lg:block'
               src={facebook}
               alt='Facebook Logo'
               title='Facebook Logo'
               width={50}
               height={50}
               loading='lazy'
+              className='footer-logo lg:block'
             />
           </Link>
           <Link
@@ -190,13 +190,13 @@ export default function Footer() {
             href='https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=576236845&hl=es-US&cs=0&sxsrf=AM9HkKl1tpL3nUX-DjSFoU6UOamEFuZhXg:1698186565938&q=Stat+Surgical+Supply&ludocid=15318238201630152176&ibp=gwp;0,7&lsig=AB86z5Vgj89yReXI6YGJA4xeQsis&kgs=731d10de23055d4c&shndl=-1&shem=lbsc,lsp&source=sh/x/loc/act/m1/4'
           >
             <Image
-              className='footer-logo lg:block'
               src={Google}
               alt='Google Logo'
               title='Google Logo'
               width={50}
               height={50}
               loading='lazy'
+              className='footer-logo lg:block'
             />
           </Link>
         </div>

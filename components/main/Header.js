@@ -22,7 +22,6 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -92,22 +91,6 @@ const Header = () => {
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-
-      // Only updates if there is really a necessary state change
-      if (scrollY > 60 && !isScrolled) {
-        setIsScrolled(true);
-      } else if (scrollY <= 40 && isScrolled) {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isScrolled]);
-
   const isMobileHandler = () => {
     if (typeof window !== "undefined") {
       if (window.innerWidth < 768) {
@@ -119,14 +102,10 @@ const Header = () => {
   };
 
   return (
-    <header
-      className={`header mx-auto transition-all z-40 duration-300 ${
-        isScrolled ? "pt-1" : "pt-3"
-      } sm:pt-${isScrolled ? "1" : "3"}`}
-    >
-      {!isScrolled && <MiniHeader />}
+    <header className='header mx-auto transition-all z-40 duration-300'>
+      <MiniHeader />
       <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
-        <div className='flex items-center w-[90%] justify-between border rounded-full px-3  bg-gray-100'>
+        <div className='flex items-center w-[90%] justify-between border rounded-full px-3 bg-gray-100 my-2'>
           <input
             autoComplete='off'
             type='text'
