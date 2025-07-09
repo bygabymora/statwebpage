@@ -151,6 +151,7 @@ main {
 .section__title {
   font-size: var(--h1-font-size);
   color: var(--title-color);
+  min-height: 2.75rem;
 }
 
 .section__subtitle {

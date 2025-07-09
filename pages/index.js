@@ -11,7 +11,7 @@ const StaticBanner = dynamic(() => import("../components/StaticBanner"), {
 });
 const Benefits = dynamic(() => import("./slider"), { ssr: false });
 const Contact = dynamic(() => import("../components/contact/Contact"), {
-  ssr: false,
+  ssr: true,
 });
 
 function Carousel({ products }) {
