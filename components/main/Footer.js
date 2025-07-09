@@ -106,7 +106,7 @@ export default function Footer() {
             title='STAT Surgical Supply Logo'
             fill
             sizes='(min-width:1024px) 300px, 0'
-            className='object-contain'
+            className='footer-logo invisible lg:visible'
             priority
           />
         </div>
