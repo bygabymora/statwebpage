@@ -47,7 +47,7 @@ export default function Footer() {
 
   return (
     <footer
-      className='relative flex flex-col items-center shadow-inner min-h-[25rem] justify-center footer'
+      className='relative flex flex-col items-center shadow-inner min-h-[400px] justify-center footer'
       style={{ height: "auto", minHeight: "400px" }}
     >
       <div className='footer-container'>
@@ -152,16 +152,18 @@ export default function Footer() {
           <p className='text-[#144e8b]'>Phone: (813) 252-0727</p>
         </div>
         <br />
-        <Image
-          src={Payment}
-          alt='Payment Methods'
-          title='Payment Methods'
-          width={300}
-          height={113}
-          loading='lazy'
-          placeholder='blur'
-          className='footer-logo self-end sm:mr-3 sm:mb-3'
-        />
+        <div className='relative w-[300px] h-[113px] self-end sm:mr-3 sm:mb-3'>
+          <Image
+            src={Payment}
+            alt='Payment Methods'
+            title='Payment Methods'
+            fill
+            sizes='300px'
+            className='object-contain'
+            loading='lazy'
+            placeholder='blur'
+          />
+        </div>
         <div className='flex space-x-4 mt-4 sm:mt-0'>
           <div className='relative w-[50px] h-[50px] '>
             <Link
