@@ -15,13 +15,14 @@ const StaticBanner = () => {
       <div className='banner-content text-center md:text-left md:flex md:items-center md:justify-between gap-10'>
         <div className='hidden md:block md:w-1/3'>
           <Image
-            width={500}
-            height={500}
-            title='Static Banner'
             src='/images/assets/StaticBanner.png'
             alt='Banner'
-            loading={"lazy"}
-            className='rounded-lg shadow-lg'
+            width={500}
+            height={500}
+            priority
+            fetchPriority='high'
+            sizes='(min-width: 768px) 33vw, 0'
+            className='rounded-lg shadow-lg object-cover'
           />
         </div>
 
