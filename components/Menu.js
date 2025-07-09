@@ -52,18 +52,7 @@ const Menu = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const [manufacturers, setManufacturers] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const fetchManufacturers = async () => {
     try {
@@ -89,8 +78,6 @@ const Menu = () => {
   useEffect(() => {
     fetchManufacturers();
   }, []);
-
-  if (isSmallScreen) return null;
 
   const handleManufacturerClick = (manufacturer) => {
     setSelectedManufacturer(manufacturer);
@@ -139,7 +126,7 @@ const Menu = () => {
   });
 
   return (
-    <nav className='bg-gray-100 shadow w-full'>
+    <nav className='bg-gray-100 shadow w-full hidden md:block'>
       <ul className='flex justify-center space-x-6 py-1 text-[#144e8b] font-medium text-sm lg:text-base'>
         {updatedMenuItems.map((item, index) => (
           <li
