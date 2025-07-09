@@ -4,8 +4,16 @@ export default function Document() {
   return (
     <Html lang='en-US'>
       <Head>
-        <link rel='preconnect' href='https://js.stripe.com' crossOrigin='' />
-        <link rel='dns-prefetch' href='https://js.stripe.com' />
+        <link
+          rel='preconnect'
+          href='https://www.googletagmanager.com'
+          crossOrigin='anonymous'
+        />
+        <link
+          rel='preconnect'
+          href='https://js.stripe.com'
+          crossOrigin='anonymous'
+        />
         {/* Preload all fonts */}
         <link
           rel='preload'
