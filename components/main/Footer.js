@@ -99,14 +99,17 @@ export default function Footer() {
       </Link>
       <br />
       <div className='flex flex-col lg:flex-row items-center justify-between w-full max-w-5xl'>
-        <Image
-          src={Logo}
-          alt='STAT Logo'
-          title='STAT Surgical Supply Logo'
-          width={300}
-          height={100}
-          className='footer-logo invisible lg:visible object-contain'
-        />
+        <div className='relative w-[300px] h-[100px] invisible lg:visible'>
+          <Image
+            src={Logo}
+            alt='STAT Logo'
+            title='STAT Surgical Supply Logo'
+            fill
+            sizes='(min-width:1024px) 300px, 0'
+            className='object-contain'
+            priority
+          />
+        </div>
         <div className='flex flex-col items-center w-full max-w-lg px-4 text-center'>
           <h4 className='text-xl font-semibold text-[#144e8b]'>
             Subscribe to our Newsletter
@@ -160,48 +163,54 @@ export default function Footer() {
           className='footer-logo self-end sm:mr-3 sm:mb-3'
         />
         <div className='flex space-x-4 mt-4 sm:mt-0'>
-          <Link
-            target='_blank'
-            href='https://www.linkedin.com/company/statsurgicalsupply'
-          >
-            <Image
-              src={linkedIn}
-              alt='Linkedin Logo'
-              title='Linkedin Logo'
-              width={50}
-              height={50}
-              loading='lazy'
-              className='footer-logo lg:block'
-            />
-          </Link>
-          <Link
-            href='https://www.facebook.com/statsurgicalsupply'
-            target='_blank'
-          >
-            <Image
-              src={facebook}
-              alt='Facebook Logo'
-              title='Facebook Logo'
-              width={50}
-              height={50}
-              loading='lazy'
-              className='footer-logo lg:block'
-            />
-          </Link>
-          <Link
-            target='_blank'
-            href='https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=576236845&hl=es-US&cs=0&sxsrf=AM9HkKl1tpL3nUX-DjSFoU6UOamEFuZhXg:1698186565938&q=Stat+Surgical+Supply&ludocid=15318238201630152176&ibp=gwp;0,7&lsig=AB86z5Vgj89yReXI6YGJA4xeQsis&kgs=731d10de23055d4c&shndl=-1&shem=lbsc,lsp&source=sh/x/loc/act/m1/4'
-          >
-            <Image
-              src={Google}
-              alt='Google Logo'
-              title='Google Logo'
-              width={50}
-              height={50}
-              loading='lazy'
-              className='footer-logo lg:block'
-            />
-          </Link>
+          <div className='relative w-[50px] h-[50px] '>
+            <Link
+              target='_blank'
+              href='https://www.linkedin.com/company/statsurgicalsupply'
+            >
+              <Image
+                src={linkedIn}
+                alt='Linkedin Logo'
+                title='Linkedin Logo'
+                fill
+                sizes='50px'
+                loading='lazy'
+                className='footer-logo lg:block'
+              />
+            </Link>
+          </div>
+          <div className='relative w-[50px] h-[50px]'>
+            <Link
+              href='https://www.facebook.com/statsurgicalsupply'
+              target='_blank'
+            >
+              <Image
+                src={facebook}
+                alt='Facebook Logo'
+                title='Facebook Logo'
+                fill
+                sizes='50px'
+                loading='lazy'
+                className='footer-logo lg:block'
+              />
+            </Link>
+          </div>
+          <div className='relative w-[50px] h-[50px]'>
+            <Link
+              target='_blank'
+              href='https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=576236845&hl=es-US&cs=0&sxsrf=AM9HkKl1tpL3nUX-DjSFoU6UOamEFuZhXg:1698186565938&q=Stat+Surgical+Supply&ludocid=15318238201630152176&ibp=gwp;0,7&lsig=AB86z5Vgj89yReXI6YGJA4xeQsis&kgs=731d10de23055d4c&shndl=-1&shem=lbsc,lsp&source=sh/x/loc/act/m1/4'
+            >
+              <Image
+                src={Google}
+                alt='Google Logo'
+                title='Google Logo'
+                fill
+                sizes='50px'
+                loading='lazy'
+                className='footer-logo lg:block'
+              />
+            </Link>
+          </div>
         </div>
       </div>
       <div className='w-full'>

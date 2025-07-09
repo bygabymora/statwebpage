@@ -133,6 +133,7 @@ const Header = () => {
               title='STAT Surgical Supply Logo'
               fill
               priority
+              sizes='(max-width:768px) 56px, (max-width:1024px) 96px, 128px'
               className='object-contain'
             />
           </button>
@@ -193,7 +194,6 @@ const Header = () => {
         isVisible={isVisible}
       />
       <Menu />
-
       <StaticHeader />
     </header>
   );
