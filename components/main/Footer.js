@@ -46,7 +46,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className='relative flex flex-col items-center shadow-inner min-h-[20rem] justify-center footer'>
+    <footer
+      className='relative flex flex-col items-center shadow-inner min-h-[25rem] justify-center footer'
+      style={{ height: "auto", minHeight: "400px" }}
+    >
       <div className='footer-container'>
         <section className='footer-links'>
           <div className='footer-linkGroup flex flex-col m-5'>
