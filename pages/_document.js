@@ -7,9 +7,13 @@ export default function Document() {
         <link
           rel='preconnect'
           href='https://www.googletagmanager.com'
-          crossOrigin
+          crossOrigin='anonymous'
         />
-        <link rel='preconnect' href='https://js.stripe.com' crossOrigin />
+        <link
+          rel='preconnect'
+          href='https://js.stripe.com'
+          crossOrigin='anonymous'
+        />
 
         {/* Preload all fonts */}
         <link
@@ -33,13 +37,13 @@ export default function Document() {
           href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap'
           rel='stylesheet'
           media='print'
-          onLoad={(e) => (e.currentTarget.media = "all")}
+          onLoad="this.media='all'"
         />
         <link
           href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap'
           rel='stylesheet'
           media='print'
-          onLoad={(e) => (e.currentTarget.media = "all")}
+          onLoad="this.media='all'"
         />
         <link
           href='https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600&display=swap'
