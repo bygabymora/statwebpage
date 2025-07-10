@@ -241,7 +241,7 @@ export const ProductItemPage = ({ product }) => {
                 title={currentDescription}
                 fill
                 className='rounded-lg shadow-lg object-contain'
-                sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                sizes='(max-width: 768px) 100vw, (max-width: 1000px) 50vw, 25vw'
                 quality={5}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
