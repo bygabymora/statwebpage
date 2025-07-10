@@ -121,6 +121,7 @@ export default function Products() {
             <button
               className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}
+              aria-label='Toggle Manufacturers List'
             >
               <AiOutlineMenuFold color='white' />
             </button>
