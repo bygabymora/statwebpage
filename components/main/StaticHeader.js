@@ -11,7 +11,7 @@ const messages = [
     ),
   },
   {
-    text: "We work with top manufacturers to bring you the best products!",
+    text: "We focus on top manufacturers to bring you the best products!",
     icon: <FaBoxOpen className='text-xl text-[#144e8b] animate-bounce mr-2' />,
   },
 ];

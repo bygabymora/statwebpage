@@ -234,17 +234,17 @@ export const ProductItemPage = ({ product }) => {
             href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
             className='justify-center items-center text-center flex-1'
           >
-            <div className='p-2'>
+            <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
               <Image
                 src={product.image}
                 alt={currentDescription}
                 title={currentDescription}
-                className='rounded-lg shadow-lg'
-                width={800}
-                height={1000}
+                fill
+                className='rounded-lg shadow-lg object-contain'
+                sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                quality={5}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
-                quality={5}
               />
             </div>
           </Link>
