@@ -189,8 +189,9 @@ export default function Home() {
       ) : (
         <p className='text-center mt-10'>No products available.</p>
       )}
-
-      <Contact className='mt-2' />
+      <div className='min-h-[534px] w-full'>
+        <Contact className='mt-2' />
+      </div>
     </Layout>
   );
 }
