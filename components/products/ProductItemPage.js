@@ -7,7 +7,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
-export const ProductItemPage = ({ product }) => {
+export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
@@ -245,6 +245,7 @@ export const ProductItemPage = ({ product }) => {
                 quality={5}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
+                priority={index < 3}
               />
             </div>
           </Link>
