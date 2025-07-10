@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
+  swcMinify: true,
+  experimental: {
+    optimizeCss: true,
+    esmExternals: true,
+  },
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback,

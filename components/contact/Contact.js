@@ -20,7 +20,7 @@ const Contact = () => {
   };
 
   return (
-    <section className='contact' id='contact'>
+    <section className='contact min-h-[534px]' id='contact'>
       <div className='contact__container'>
         <h1 className='section__title my-10'>Contact us!</h1>
         <div className='contact__container grid'>
@@ -31,6 +31,7 @@ const Contact = () => {
               whileInView='visible'
               variants={cardVariants}
               viewport={{ once: true }}
+              layout='position'
             >
               <div className=''>
                 <h2 className='contact__card-title'>Address</h2>
@@ -49,6 +50,7 @@ const Contact = () => {
               whileInView='visible'
               variants={cardVariants}
               viewport={{ once: true }}
+              layout='position'
             >
               <div className=''>
                 <h2 className='contact__card-title'>Phone</h2>
@@ -70,6 +72,7 @@ const Contact = () => {
               whileInView='visible'
               variants={cardVariants}
               viewport={{ once: true }}
+              layout='position'
             >
               <div className=''>
                 <h2 className='contact__card-title'>Fax</h2>
@@ -82,6 +85,7 @@ const Contact = () => {
               whileInView='visible'
               variants={cardVariants}
               viewport={{ once: true }}
+              layout='position'
             >
               <div className=''>
                 <h2 className='contact__card-title'>Email</h2>

@@ -1,6 +1,6 @@
 "use client";
 import Signupbutton from "./Signupbutton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { BsCart2 } from "react-icons/bs";
 import Image from "next/image";
@@ -22,15 +22,6 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    isMobileHandler();
-    window.addEventListener("resize", isMobileHandler);
-  }, []);
 
   const active =
     session?.user?.active &&
@@ -94,41 +85,11 @@ const Header = () => {
     handleSearch(suggestion); // pass the selected suggestion to the search function
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-
-      // Only updates if there is really a necessary state change
-      if (scrollY > 60 && !isScrolled) {
-        setIsScrolled(true);
-      } else if (scrollY <= 40 && isScrolled) {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isScrolled]);
-
-  const isMobileHandler = () => {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    }
-  };
-
   return (
-    <header
-      className={`header mx-auto transition-all z-40 duration-300 ${
-        isScrolled ? "pt-1" : "pt-3"
-      } sm:pt-${isScrolled ? "1" : "3"}`}
-    >
-      {!isScrolled && <MiniHeader />}
+    <header className='header'>
+      <MiniHeader />
       <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
-        <div className='flex items-center w-[90%] justify-between border rounded-full px-3  bg-gray-100'>
+        <div className='flex items-center w-[90%] justify-between border rounded-full px-3 bg-gray-100 my-2'>
           <input
             autoComplete='off'
             type='text'
@@ -163,11 +124,10 @@ const Header = () => {
       <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
         <div className='flex items-center'>
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              handleHomeClick();
-            }}
+            onClick={handleHomeClick}
+            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32'
           >
+<<<<<<< HEAD
             {isClient && (
               <Image
                 src={Logo2}
@@ -177,6 +137,17 @@ const Header = () => {
                 height={isMobile ? 50 : 100}
               />
             )}
+=======
+            <Image
+              src={Logo2}
+              alt='STAT Surgical Supply Logo'
+              title='STAT Surgical Supply Logo'
+              fill
+              priority
+              sizes='(max-width:768px) 56px, (max-width:1024px) 96px, 128px'
+              className='object-contain'
+            />
+>>>>>>> 34bb125f166f1699f98c7853983fd5726dcb021d
           </button>
         </div>
 
@@ -235,7 +206,6 @@ const Header = () => {
         isVisible={isVisible}
       />
       <Menu />
-
       <StaticHeader />
     </header>
   );

@@ -75,6 +75,9 @@ export default function Products() {
         );
       })
     : products;
+  const productsPerPage = 24;
+  const [page, setPage] = useState(1);
+  const paginatedProducts = filteredProducts.slice(0, page * productsPerPage);
 
   const handleManufacturerClick = (manufacturer) => {
     router.push(
@@ -118,6 +121,7 @@ export default function Products() {
             <button
               className='bg-[#144e8b] px-4 py-2 rounded'
               onClick={() => setShowManufacturers(!showManufacturers)}
+              aria-label='Toggle Manufacturers List'
             >
               <AiOutlineMenuFold color='white' />
             </button>
@@ -176,14 +180,16 @@ export default function Products() {
           <h2 className='section__title' id='products'>
             Products
           </h2>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-2'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6'>
             {loading ? (
               <p>Loading products...</p>
-            ) : products.length > 0 ? (
-              filteredProducts.map((product, index) => (
-                <div key={index}>
-                  <ProductItemPage product={product} />
-                </div>
+            ) : paginatedProducts.length > 0 ? (
+              paginatedProducts.map((product, index) => (
+                <ProductItemPage
+                  key={product._id}
+                  product={product}
+                  index={index}
+                />
               ))
             ) : products.length === 0 && searchedWord ? (
               <SearchForm
@@ -194,6 +200,16 @@ export default function Products() {
               />
             ) : null}
           </div>
+          {!loading && filteredProducts.length > paginatedProducts.length && (
+            <div className='text-center my-5 mt-4'>
+              <button
+                onClick={() => setPage((prev) => prev + 1)}
+                className='primary-button'
+              >
+                Load More Products
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

@@ -7,7 +7,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 
-export const ProductItemPage = ({ product }) => {
+export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
@@ -234,7 +234,7 @@ export const ProductItemPage = ({ product }) => {
             href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
             className='justify-center items-center text-center flex-1'
           >
-            <div className='p-2'>
+            <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
               <Image
                 src={product.image}
                 alt={currentDescription}
@@ -244,7 +244,7 @@ export const ProductItemPage = ({ product }) => {
                 height={1000}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
-                quality={5}
+                priority={index < 3}
               />
             </div>
           </Link>

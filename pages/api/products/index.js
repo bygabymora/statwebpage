@@ -35,25 +35,51 @@ const handler = async (req, res) => {
 
     // If not logged in or not approved: minimal info + sort by name A→Z
     if (!loggedIn || !userApproved) {
-      products.sort((a, b) => a.name.localeCompare(b.name));
+      const minimal = products.map((p) => {
+        const eachStock = p.each?.quickBooksQuantityOnHandProduction || 0;
+        const boxStock = p.box?.quickBooksQuantityOnHandProduction || 0;
+        const eachPrice = p.each?.wpPrice || 0;
+        const boxPrice = p.box?.wpPrice || 0;
 
-      const minimal = products.map((p) => ({
-        name: p.name,
-        _id: p._id,
-        manufacturer: p.manufacturer,
-        image: p.image,
-        sentOvernigth: p.sentOvernigth,
-        each: {
-          description: p.each?.description || null,
-          minSalePrice: p.each?.minSalePrice || null,
-          wpPrice: p.each?.wpPrice || null,
-        },
-        box: {
-          description: p.box?.description || null,
-          minSalePrice: p.box?.minSalePrice || null,
-          wpPrice: p.box?.wpPrice || null,
-        },
-      }));
+        const hasStock = eachStock > 0 || boxStock > 0;
+        const hasPrice = eachPrice > 0 || boxPrice > 0;
+        // Rank products based on stock and price availability
+        // 0: has both stock and price, 1: has price only,
+        // 2: has stock only, 3: has neither
+        // This allows us to sort products by priority
+        let rank = 3;
+        if (hasPrice && hasStock) rank = 0;
+        else if (hasPrice) rank = 1;
+        else if (hasStock) rank = 2;
+
+        return {
+          name: p.name,
+          _id: p._id,
+          manufacturer: p.manufacturer,
+          image: p.image,
+          sentOvernigth: p.sentOvernigth,
+          each: {
+            description: p.each?.description || null,
+            minSalePrice: p.each?.minSalePrice || null,
+            wpPrice: eachPrice,
+            quickBooksQuantityOnHandProduction: eachStock,
+          },
+          box: {
+            description: p.box?.description || null,
+            minSalePrice: p.box?.minSalePrice || null,
+            wpPrice: boxPrice,
+            quickBooksQuantityOnHandProduction: boxStock,
+          },
+          hasStock,
+          hasPrice,
+          rank,
+        };
+      });
+
+      minimal.sort((a, b) => {
+        if (a.rank !== b.rank) return a.rank - b.rank;
+        return a.name.localeCompare(b.name);
+      });
 
       return res.status(200).json(minimal);
     }
@@ -73,8 +99,9 @@ const handler = async (req, res) => {
       const bHasPrice = (b.each?.wpPrice || 0) > 0 || (b.box?.wpPrice || 0) > 0;
       if (aHasPrice && !bHasPrice) return -1;
       if (!aHasPrice && bHasPrice) return 1;
-
-      return a.name.localeCompare(b.name);
+      const nameA = a.name || "";
+      const nameB = b.name || "";
+      return nameA.localeCompare(nameB);
     });
 
     // Map full info, zeroing out on-hand counts for restricted users on protected products

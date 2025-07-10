@@ -356,9 +356,6 @@ export default function ProductScreen({ product }) {
                 {currentDescription}
               </h1>
             </li>
-            <li className='text-sm text-[#788b9b]'>
-              <h1 className='text-[#2c3339]'>{product.information}</h1>
-            </li>
             {product.sentOverNight && (
               <li className='space-y-2'>
                 <br />
