@@ -7,20 +7,10 @@ export default function Document() {
         <link
           rel='preconnect'
           href='https://www.googletagmanager.com'
-<<<<<<< HEAD
           crossOrigin
         />
         <link rel='preconnect' href='https://js.stripe.com' crossOrigin />
 
-=======
-          crossOrigin='anonymous'
-        />
-        <link
-          rel='preconnect'
-          href='https://js.stripe.com'
-          crossOrigin='anonymous'
-        />
->>>>>>> 34bb125f166f1699f98c7853983fd5726dcb021d
         {/* Preload all fonts */}
         <link
           rel='preload'

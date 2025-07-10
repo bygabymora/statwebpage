@@ -127,27 +127,13 @@ const Header = () => {
             onClick={handleHomeClick}
             className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32'
           >
-<<<<<<< HEAD
-            {isClient && (
-              <Image
-                src={Logo2}
-                alt='logo'
-                title='STAT Surgical Supply Logo'
-                width={isMobile ? 50 : 100}
-                height={isMobile ? 50 : 100}
-              />
-            )}
-=======
             <Image
               src={Logo2}
-              alt='STAT Surgical Supply Logo'
+              alt='logo'
               title='STAT Surgical Supply Logo'
-              fill
-              priority
-              sizes='(max-width:768px) 56px, (max-width:1024px) 96px, 128px'
-              className='object-contain'
+              width={100}
+              height={100}
             />
->>>>>>> 34bb125f166f1699f98c7853983fd5726dcb021d
           </button>
         </div>
 
