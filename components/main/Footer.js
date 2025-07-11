@@ -80,7 +80,9 @@ export default function Footer() {
           <div className='footer-linkGroup flex flex-col m-5'>
             <h4 className='font-bold'>Support</h4>
             <Link href='/faqs'>FAQs</Link>
-            <Link href='/return-policy'>Return Policy</Link>
+            <Link href='/return-policy' title='View our return policy'>
+              Return Policy
+            </Link>
             <Link href='/terms-of-use'>Terms of Use</Link>
             <Link href='/privacy-policy' prefetch={false}>
               Privacy Policy
