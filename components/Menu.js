@@ -162,6 +162,7 @@ const Menu = () => {
                       {sub.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
                           <Link
+                            title={link.name}
                             href={link.href}
                             onClick={link.onClick} // Call the onClick function
                             className={`block text-gray-700 text-base px-3 py-2 rounded-md hover:bg-gray-200 transition-all ${
