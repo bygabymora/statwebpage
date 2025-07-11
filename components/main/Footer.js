@@ -94,6 +94,7 @@ export default function Footer() {
       <h3 className='font-bold'>Sell us your products today!</h3>
       <Link
         className='flex justify-center items-center'
+        title='Send us your list'
         href='/ManufacturerForm'
       >
         <span className='banner-link'>Send us your list</span>
