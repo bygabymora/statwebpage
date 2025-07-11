@@ -67,27 +67,33 @@ const Navbar = () => {
       <span className='block md:hidden'>
         <div className={toggleMenu ? "nav__menu show-menu" : "nav__menu"}>
           <div className='nav__list grid'>
-            <Link href='/' className='nav__link' onClick={handleHomeClick}>
+            <Link
+              href='/'
+              title='Home Stat Surgical Supply'
+              className='nav__link'
+              onClick={handleHomeClick}
+            >
               <BiHomeSmile className='uil uil-estate nav__icon' />
               Home
             </Link>
-            <Link href='/about' className='nav__link'>
+            <Link href='/about' className='nav__link' title='About'>
               <BiUser className='uil uil-user nav__icon' />
               About
             </Link>
-            <Link href='/products' className='nav__link'>
+            <Link href='/products' title='Products' className='nav__link'>
               <BiPhotoAlbum className='uil uil-scenery nav__icon' />
               Products
             </Link>
             <Link
               href='/#contact'
+              title='Contact Us'
               onClick={() => handleLinkClick("contact")}
               className='nav__link'
             >
               <MdOutlineWavingHand className='uil uil-message nav__icon' />
               Contact
             </Link>
-            <Link href='/news' className='nav__link'>
+            <Link href='/news' title='News' className='nav__link'>
               <BiPhotoAlbum className='uil uil-scenery nav__icon' />
               News
             </Link>

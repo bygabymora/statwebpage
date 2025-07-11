@@ -65,6 +65,7 @@ export default function Footer() {
             <Link href='/about'>About Us</Link>
             <Link
               href='/careers'
+              title='Careers'
               onClick={(e) => {
                 e.preventDefault();
                 alert(

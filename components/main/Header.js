@@ -175,7 +175,12 @@ const Header = () => {
 
         <div className='flex items-center gap-6 relative'>
           {active && (
-            <Link href='/cart' aria-label='Cart' className='relative group'>
+            <Link
+              href='/cart'
+              title='Cart'
+              aria-label='Cart'
+              className='relative group'
+            >
               <BsCart2 className='text-3xl text-[#144e8b] transition-transform transform group-hover:scale-110' />
               {cartItemsCount > 0 && (
                 <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
