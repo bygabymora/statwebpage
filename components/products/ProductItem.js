@@ -275,7 +275,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
       <div className='flex flex-row justify-between'>
         <Link
-          href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
+          href={`/products/${product.name}`}
           className='justify-center items-center text-center flex-1'
         >
           <div className='p-2'>
@@ -301,7 +301,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
         <div className='flex flex-col justify-center items-center px-2 flex-1'>
           <Link
-            href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
+            href={`/products/${product.name}`}
             className='justify-center items-center text-center'
           >
             <div className='max-w-full'>

@@ -137,7 +137,7 @@ export default function Layout({ children, title, product, news, schema }) {
           property='og:url'
           content={
             product
-              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
+              ? `https://www.statsurgicalsupply.com/products/${product.name}`
               : "https://www.statsurgicalsupply.com/"
           }
         />
