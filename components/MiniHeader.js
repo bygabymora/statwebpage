@@ -57,7 +57,7 @@ export default function Header() {
           <FaMapMarkerAlt />
         </a>
         <span>|</span>
-        <a href='tel:+18136074110' className='hover:underline'>
+        <a href='tel:+18136074110' title='Call us' className='hover:underline'>
           (813) 252-0727
         </a>
       </div>
