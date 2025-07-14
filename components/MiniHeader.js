@@ -14,7 +14,7 @@ export default function Header() {
           Contact Us
         </a>
         <span>|</span>
-        <p>Stat Surgical Supply Reliable, Affordable, High Quality.</p>
+        <p>Stat Surgical Supply - The supplies you need, STAT.</p>
       </div>
 
       <div className='flex space-x-4 items-center'>
