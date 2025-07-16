@@ -36,6 +36,7 @@ const Contact = () => {
               <div className=''>
                 <h2 className='contact__card-title'>Address</h2>
                 <Link
+                  title='Visit our office location'
                   className='contact__card-data'
                   href='https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu'
                   target='_blank'
@@ -58,6 +59,7 @@ const Contact = () => {
                 <a
                   href='tel:8132520727'
                   onClick={handleCallButtonClick}
+                  title='Call us'
                   className='contact__button'
                   target='_blank'
                 >

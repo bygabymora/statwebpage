@@ -106,6 +106,8 @@ export default function Layout({ children, title, product, news, schema }) {
           }
         />
         <meta name='robots' content='index, follow' />
+        <meta name='author' content='Stat Surgical Supply' />
+        <meta name='publisher' content='Stat Surgical Supply' />
         <link rel='icon' href='/favicon.ico' />
         <link
           rel='canonical'
@@ -137,7 +139,7 @@ export default function Layout({ children, title, product, news, schema }) {
           property='og:url'
           content={
             product
-              ? `https://www.statsurgicalsupply.com/products/${product.manufacturer}-${product.name}?pId=${product._id}`
+              ? `https://www.statsurgicalsupply.com/products/${product.name}`
               : "https://www.statsurgicalsupply.com/"
           }
         />

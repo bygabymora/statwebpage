@@ -31,7 +31,7 @@ const StaticHeader = () => {
   if (pathname !== "/products") return null;
 
   return (
-    <div className='bg-gray-50 z-10 text-[#144e8b] text-center py-2 text-lg font-semibold justify-center items-center gap-2 hidden md:flex'>
+    <div className='bg-gray-50 z-10 text-[#144e8b] text-center py-1 text-lg font-semibold justify-center items-center gap-1 hidden md:flex'>
       <AnimatePresence mode='wait'>
         <motion.div
           key={currentMessageIndex}

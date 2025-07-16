@@ -97,7 +97,7 @@ export default function Products() {
   return (
     <Layout title='Products'>
       <nav className='text-sm text-gray-700'>
-        <div className='flex justify-between items-center'>
+        <div className='flex justify-between items-center my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
             {breadcrumbs.map((breadcrumb, index) => (
               <li key={index} className='flex items-center'>
@@ -128,7 +128,7 @@ export default function Products() {
           </div>
         </div>
       </nav>
-      <div className='mt-2 grid grid-cols-1 md:grid-cols-4'>
+      <div className='mt-1 grid grid-cols-1 md:grid-cols-4'>
         <div className='md:col-span-1 p-4'>
           <ul
             className={`${
@@ -136,7 +136,7 @@ export default function Products() {
             } md:block md:sticky md:top-[16rem]`}
           >
             <h2
-              className='block justify-center items-center text-center my-3 text-xs lg:text-lg'
+              className='block justify-center items-center text-center text-xs lg:text-lg'
               id='manufacturers'
             >
               MANUFACTURERS
@@ -177,7 +177,7 @@ export default function Products() {
           </ul>
         </div>
         <div className='md:col-span-3'>
-          <h2 className='section__title' id='products'>
+          <h2 className='section__title -mt-7' id='products'>
             Products
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6'>

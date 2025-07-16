@@ -231,7 +231,8 @@ export const ProductItemPage = ({ product, index }) => {
       <div className='flex flex-row justify-between'>
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
-            href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
+            href={`/products/${product.name}`}
+            title={product.name}
             className='justify-center items-center text-center flex-1'
           >
             <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
@@ -252,7 +253,7 @@ export const ProductItemPage = ({ product, index }) => {
         <div className='flex flex-col justify-center items-center px-2 flex-1'>
           {typeof product._id === "string" && product._id.trim() !== "" && (
             <Link
-              href={`/products/${product.manufacturer}-${product.name}?pId=${product._id}`}
+              href={`/products/${product.name}`}
               prefetch={false}
               className='justify-center items-center text-center'
             >

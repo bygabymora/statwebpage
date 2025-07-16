@@ -65,6 +65,7 @@ export default function Footer() {
             <Link href='/about'>About Us</Link>
             <Link
               href='/careers'
+              title='Careers'
               onClick={(e) => {
                 e.preventDefault();
                 alert(
@@ -79,7 +80,9 @@ export default function Footer() {
           <div className='footer-linkGroup flex flex-col m-5'>
             <h4 className='font-bold'>Support</h4>
             <Link href='/faqs'>FAQs</Link>
-            <Link href='/return-policy'>Return Policy</Link>
+            <Link href='/return-policy' title='View our return policy'>
+              Return Policy
+            </Link>
             <Link href='/terms-of-use'>Terms of Use</Link>
             <Link href='/privacy-policy' prefetch={false}>
               Privacy Policy
@@ -91,6 +94,7 @@ export default function Footer() {
       <h3 className='font-bold'>Sell us your products today!</h3>
       <Link
         className='flex justify-center items-center'
+        title='Send us your list'
         href='/ManufacturerForm'
       >
         <span className='banner-link'>Send us your list</span>

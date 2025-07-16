@@ -1,5 +1,3 @@
-// pages/login.js
-
 import React, { useEffect, useState } from "react";
 import Layout from "../components/main/Layout";
 import Link from "next/link";

@@ -1,24 +1,24 @@
-import React from 'react';
-import Layout from '../components/main/Layout';
-import Link from 'next/link';
-import { BiArrowFromLeft } from 'react-icons/bi';
+import React from "react";
+import Layout from "../components/main/Layout";
+import Link from "next/link";
+import { BiArrowFromLeft } from "react-icons/bi";
 
 export default function facs() {
   const handleCallButtonClick = (event) => {
     event.preventDefault();
     if (window.innerWidth >= 400) {
-      alert('Our phone number: 813-252-0727');
+      alert("Our phone number: 813-252-0727");
     } else {
-      window.location.href = 'tel:8132520727';
+      window.location.href = "tel:8132520727";
     }
   };
   return (
     <>
-      <Layout title="Terms of use">
-        <div className="card p-5 mb-10">
-          <h1 className="section__title">Terms of Use</h1>
+      <Layout title='Terms of use'>
+        <div className='card p-5 mb-10'>
+          <h1 className='section__title'>Terms of Use</h1>
           <br />
-          <h2 className="section__subtitle">Last updated October 23, 2023</h2>
+          <h2 className='section__subtitle'>Last updated October 23, 2023</h2>
           <p>
             This Terms of Use Agreement (“Agreement”), constitutes a legally
             binding agreement made between you, whether personally or on behalf
@@ -67,7 +67,7 @@ export default function facs() {
           <br />
           <h2>PURCHASES; PAYMENT</h2>
           <p>
-            {' '}
+            {" "}
             Stat Surgical Supply LLC will bill you through a payment provider
             for our Services. By using our paid options you agree to pay Stat
             Surgical Supply LLC all charges at the prices then in effect for the
@@ -88,9 +88,9 @@ export default function facs() {
           <br />
           <h2>REFUND AND RETURN</h2>
           <p>
-            For more information on our return and refund policy, please visit{' '}
-            <Link href="/return-policy" className="font-bold underline">
-              www.statsurgicalsupply.com/return-policy{' '}
+            For more information on our return and refund policy, please visit{" "}
+            <Link href='/return-policy' className='font-bold underline'>
+              www.statsurgicalsupply.com/return-policy{" "}
             </Link>
             .
           </p>
@@ -533,7 +533,7 @@ export default function facs() {
           <br />
           <h3>With Company</h3>
           <p>
-            {' '}
+            {" "}
             <br />
             <br />
             <strong>A. Governing Law; Jurisdiction. </strong>This Agreement and
@@ -611,7 +611,7 @@ export default function facs() {
             <br />
             <strong>
               E. Exceptions to Informal Negotiations and Arbitration.
-            </strong>{' '}
+            </strong>{" "}
             You and Company agree that the following Disputes are not subject to
             the above provisions concerning informal negotiations and binding
             arbitration: (1) any Disputes seeking to enforce or protect, or
@@ -810,42 +810,42 @@ export default function facs() {
             or by telephone at 1-916-445-1254.
           </p>
           <br />
-          <h2 className="contact__card-title">Address</h2>
+          <h2 className='contact__card-title'>Address</h2>
           <a
             onClick={handleCallButtonClick}
-            className="contact__button"
-            target="_blank"
-            href="https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu"
+            className='contact__button'
+            target='_blank'
+            href='https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu'
           >
             100 South Ashley Drive, Suite 600, Tampa, FL 33602
             <BiArrowFromLeft />
           </a>
 
-          <h2 className="contact__card-title">Phone</h2>
+          <h2 className='contact__card-title'>Phone</h2>
 
           <a
-            href="tel:8132520727"
+            href='tel:8132520727'
             onClick={handleCallButtonClick}
-            className="contact__button"
-            target="_blank"
+            className='contact__button'
+            target='_blank'
           >
             813-252-0727
             <BiArrowFromLeft />
           </a>
 
-          <h2 className="contact__card-title">Fax</h2>
-          <span className="contact__card-data">813-607-4110 </span>
+          <h2 className='contact__card-title'>Fax</h2>
+          <span className='contact__card-data'>813-607-4110 </span>
 
-          <h2 className="contact__card-title">Email</h2>
+          <h2 className='contact__card-title'>Email</h2>
 
           <a
-            href="mailto:sales@statsurgicalsupply.com"
-            className="contact__button"
-            target="_blank"
+            href='mailto:sales@statsurgicalsupply.com'
+            className='contact__button'
+            target='_blank'
           >
             sales@statsurgicalsupply.com <BiArrowFromLeft />
           </a>
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <h2>Terms of Use (Rev. 1343F05)</h2>
           </div>
         </div>
