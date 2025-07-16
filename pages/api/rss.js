@@ -16,10 +16,7 @@ export default async function handler(req, res) {
       pubDate: new Date(),
     });
 
-    const newsItems = await News.find({})
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .lean();
+    const newsItems = await News.find({}).sort({ createdAt: -1 }).lean();
 
     newsItems.forEach((item) => {
       feed.item({
