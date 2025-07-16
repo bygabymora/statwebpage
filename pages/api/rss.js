@@ -5,7 +5,7 @@ import News from "../../models/News";
 export default async function handler(req, res) {
   await db.connect(true);
 
-  const siteUrl = "https://statusurgicalsupply.com";
+  const siteUrl = "https://www.statsurgicalsupply.com/";
   const feed = new Feed({
     title: "Status Surgical Supply News",
     description: "Latest news from Status Surgical Supply",
