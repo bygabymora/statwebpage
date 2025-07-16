@@ -1,4 +1,4 @@
-import { Feed } from "rss";
+import RSS from "rss";
 import db from "../../utils/db";
 import News from "../../models/News";
 
@@ -7,9 +7,9 @@ export default async function handler(req, res) {
     await db.connect(true);
 
     const siteUrl = "https://www.statsurgicalsupply.com";
-    const feed = new Feed({
-      title: "Stats Surgical Supply News",
-      description: "Latest news from Stats Surgical Supply",
+    const feed = new RSS({
+      title: "Stat Surgical Supply News",
+      description: "Latest news from Stat Surgical Supply",
       id: siteUrl,
       link: siteUrl,
       language: "en",
