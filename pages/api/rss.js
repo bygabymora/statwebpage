@@ -10,11 +10,10 @@ export default async function handler(req, res) {
     const feed = new RSS({
       title: "Stat Surgical Supply News",
       description: "Latest news from Stat Surgical Supply",
-      id: siteUrl,
-      link: siteUrl,
+      feed_url: `${siteUrl}/api/rss`,
+      site_url: siteUrl,
       language: "en",
-      favicon: `${siteUrl}/favicon.ico`,
-      updated: new Date(),
+      pubDate: new Date(),
     });
 
     const newsItems = await News.find({})
@@ -23,18 +22,17 @@ export default async function handler(req, res) {
       .lean();
 
     newsItems.forEach((item) => {
-      feed.addItem({
+      feed.item({
         title: item.title,
-        id: `${siteUrl}/news/${item.slug}`,
-        link: `${siteUrl}/news/${item.slug}`,
+        url: `${siteUrl}/news/${item.slug}`,
         description: item.content,
         date: item.createdAt || new Date(),
-        author: [{ name: item.author }],
+        author: item.author,
       });
     });
 
     res.setHeader("Content-Type", "application/rss+xml");
-    res.status(200).send(feed.rss2());
+    res.status(200).send(feed.xml({ indent: true }));
   } catch (error) {
     console.error("❌ Error generating RSS:", error);
     res.status(500).json({ message: "Internal Server Error", error });
