@@ -190,6 +190,14 @@ export default function Layout({ children, title, product, news, schema }) {
               property='og:description'
               content={news.content.slice(0, 200)}
             />
+            <meta
+              name='author'
+              content={news.author || "Stat Surgical Supply"}
+            />
+            <meta
+              property='article:published_time'
+              content={new Date(news.createdAt).toISOString()}
+            />
             <meta property='og:image' content={news.imageUrl} />
             <meta
               property='og:url'
