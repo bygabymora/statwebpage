@@ -109,7 +109,15 @@ export default function Newscreen({ news }) {
           <div className='mt-2 flex gap-3 text-sm opacity-90'>
             <span className='italic'>By {news.author}</span>
             <span className='w-1 h-1 bg-white rounded-full' />
-            <span>{new Date(news.createdAt).toLocaleDateString()}</span>
+            <span>
+              <time dateTime={news.createdAt}>
+                {new Date(news.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+            </span>
           </div>
           <div className='mt-4 flex gap-4'>
             <div className='mt-4 flex gap-4'>
