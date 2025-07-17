@@ -96,6 +96,7 @@ export default function Newscreen({ news }) {
           alt={news.title}
           layout='fill'
           objectFit='cover'
+          title={news.title}
           className='filter brightness-75'
           priority
         />
@@ -132,6 +133,7 @@ export default function Newscreen({ news }) {
               <a
                 href='https://www.linkedin.com/company/statsurgicalsupply/'
                 target='_blank'
+                title='LinkedIn Profile'
                 rel='noreferrer'
                 className='p-2 bg-white/20 rounded-full hover:bg-white/40 transition'
               >
@@ -177,6 +179,7 @@ export default function Newscreen({ news }) {
                     target='_blank'
                     rel='noopener noreferrer'
                     className='underline hover:text-[#0e3260] transition'
+                    title={src.title}
                   >
                     {src.title}
                   </a>
