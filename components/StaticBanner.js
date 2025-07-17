@@ -21,7 +21,6 @@ const StaticBanner = () => {
             src='/images/assets/StaticBanner.png'
             alt='Banner'
             loading={"lazy"}
-            fetchpriority='high'
             className='rounded-lg shadow-lg'
           />
         </div>
