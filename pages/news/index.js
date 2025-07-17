@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+import { HiArrowCircleLeft } from "react-icons/hi";
 import Layout from "../../components/main/Layout";
 import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
@@ -10,6 +12,14 @@ export default function News({ news }) {
 
   return (
     <Layout title='News'>
+      <div className='mb-1'>
+        <Link
+          href='/'
+          className='inline-flex items-center text-[#144e8b] hover:text-[#0e3260] transition my-2'
+        >
+          <HiArrowCircleLeft className='mr-3' /> Home
+        </Link>
+      </div>
       <h2 className='section__title' id='news'>
         What you might have missed
       </h2>
