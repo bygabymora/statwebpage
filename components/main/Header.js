@@ -130,7 +130,7 @@ const Header = () => {
             <Image
               src={Logo2}
               alt='logo'
-              title='STAT Surgical Supply Logo'
+              title='STAT Surgical Supply'
               width={100}
               height={100}
             />

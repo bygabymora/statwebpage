@@ -107,7 +107,7 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Logo'
-          title='STAT Surgical Supply Logo'
+          title='STAT Surgical Supply'
           loading='lazy'
           width={300}
           height={100}
