@@ -9,6 +9,7 @@ export const NewsItem = ({ news }) => {
         <Link
           href={{ pathname: `news/${news.slug}` }}
           className='group flex justify-center items-center text-center'
+          title={news.slug}
         >
           <div className='p-2'>
             <Image
@@ -17,6 +18,7 @@ export const NewsItem = ({ news }) => {
               className='news-image rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 ease-in-out'
               width={300}
               height={200}
+              title={news.slug}
               loading='lazy'
             />
           </div>
@@ -37,6 +39,7 @@ export const NewsItem = ({ news }) => {
         <Link
           href={{ pathname: `news/${news.slug}` }}
           className='justify-center items-center text-center'
+          title={news.slug}
         >
           <h2 className='font-bold break-words'>
             {news.title}
