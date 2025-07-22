@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import "../styles/global.css";
 import StoreProvider from "../utils/Store";
 import { SessionProvider, useSession } from "next-auth/react";
@@ -49,6 +49,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
+
+  useLayoutEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [router.asPath]);
 
   return (
     <SessionProvider session={session}>
