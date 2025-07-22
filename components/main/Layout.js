@@ -15,7 +15,6 @@ export default function Layout({ children, title, product, news, schema }) {
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
-  console.log("product In Layout", product);
 
   const approvalMessage = useMemo(
     () => ({
