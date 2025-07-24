@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Layout from "../components/main/Layout";
 import { FaQuestionCircle } from "react-icons/fa";
-import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+import { IoChevronDown } from "react-icons/io5";
+import Link from "next/link";
+import { BsChevronRight } from "react-icons/bs";
 
 const faqData = [
   {
@@ -34,7 +36,7 @@ const faqData = [
   {
     question: "How far in advance should I order surgical supplies?",
     answer:
-      "For standard items, we recommend ordering at least 7–10 days before your scheduled procedure. For large or custom orders, allow 2–3 weeks to ensure availability.",
+      "For standard items, we recommend ordering at least 7-10 days before your scheduled procedure. For large or custom orders, allow 2-3 weeks to ensure availability.",
   },
 ];
 
@@ -56,8 +58,31 @@ export default function FAQs() {
     })),
   };
 
+  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "FAQs" }];
+
   return (
     <Layout title='FAQs'>
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-4'>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className='flex items-center'>
+              {breadcrumb.href ? (
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#144e8b]'
+                >
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className='mx-2 text-gray-500' />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <Head>
         <script
           type='application/ld+json'
@@ -67,44 +92,67 @@ export default function FAQs() {
         />
       </Head>
 
-      <section className='max-w-4xl mx-auto p-5 text-center'>
-        <h1 className='text-3xl font-bold text-[#144e8b]'>
-          Frequently Asked Questions
-        </h1>
+      <section className='max-w-4xl mx-auto px-4 py-10 -mt-8'>
+        <div className='text-center'>
+          <h1 className='text-4xl font-bold text-[#144e8b] mb-2'>
+            Frequently Asked Questions
+          </h1>
+          <p className='text-gray-500 max-w-xl mx-auto my-3'>
+            Get quick answers to common inquiries about surgical procedures and
+            our supplies.
+          </p>
+        </div>
 
-        <section className='max-w-3xl mx-auto px-4 space-y-4 my-10'>
+        <div className='mt-10 space-y-5'>
           {faqData.map((item, idx) => (
             <div
               key={idx}
-              className='bg-white rounded-2xl shadow-lg overflow-hidden transition-transform transform hover:scale-105'
+              className='bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200'
             >
               <button
                 onClick={() => toggle(idx)}
-                className='w-full flex items-center justify-between p-6 focus:outline-none'
+                className='w-full flex items-center justify-between px-6 py-5 focus:outline-none'
               >
-                <div className='flex items-center space-x-3'>
+                <div className='flex items-center space-x-4 text-left'>
                   <div className='p-2 bg-green-100 rounded-full'>
-                    <FaQuestionCircle className='text-[#07783e] text-xl' />
+                    <FaQuestionCircle className='text-[#07783e]' />
                   </div>
-                  <span className='text-lg font-semibold text-gray-800'>
+                  <span className='text-lg font-medium text-gray-800'>
                     {item.question}
                   </span>
                 </div>
-                {openIndex === idx ? (
-                  <IoChevronUp className='text-2xl text-gray-600' />
-                ) : (
-                  <IoChevronDown className='text-2xl text-gray-600' />
-                )}
+                <IoChevronDown
+                  className={`text-2xl text-gray-500 transform transition-transform duration-300 ${
+                    openIndex === idx ? "rotate-180" : ""
+                  }`}
+                />
               </button>
               {openIndex === idx && (
-                <div className='p-6 border-t border-gray-200 bg-gray-50'>
-                  <p className='text-gray-700 leading-relaxed'>{item.answer}</p>
+                <div className='px-6 pb-6 text-gray-600 animate-fade-in-down'>
+                  {item.answer}
                 </div>
               )}
             </div>
           ))}
-        </section>
+        </div>
       </section>
+
+      {/* Custom animation */}
+      <style jsx>{`
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-down {
+          animation: fadeInDown 0.3s ease-out;
+        }
+      `}</style>
     </Layout>
   );
 }
