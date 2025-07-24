@@ -1,36 +1,54 @@
 import React from "react";
 import Link from "next/link";
-import { HiArrowCircleLeft } from "react-icons/hi";
 import Layout from "../../components/main/Layout";
 import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
+import { BsChevronRight } from "react-icons/bs";
 
 export default function News({ news }) {
   // Sort the news array by createdAt in descending order (latest first)
   news.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "News" }];
+
   return (
-    <Layout title='News'>
-      <div className='mb-1'>
-        <Link
-          href='/'
-          className='inline-flex items-center text-[#144e8b] hover:text-[#0e3260] transition my-2'
-        >
-          <HiArrowCircleLeft className='mr-3' /> Home
-        </Link>
+    <Layout title='News Of Health'>
+      <nav className='text-sm text-gray-700 -mt-2 mb-6'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className='flex items-center'>
+              {breadcrumb.href ? (
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#144e8b]'
+                >
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className='mx-2 text-gray-500' />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className='text-center -mt-2'>
+        <h2 className='section__title' id='news'>
+          What you might have missed
+        </h2>
+        <p className='text-center my-2'>
+          Here are some of the latest news from the world of health.
+        </p>
       </div>
-      <h2 className='section__title' id='news'>
-        What you might have missed
-      </h2>
-      <p className='text-center'>
-        Here are some of the latest news from the world of health.
-      </p>
-      <br />
-      <div className='grid grid-cols-1 md:grid-cols-2'>
-        {news.map((newsItem) => (
-          <NewsItem news={newsItem} key={newsItem.slug}></NewsItem>
-        ))}
+      <div className='text-center my-9 border-t border-gray-200'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5'>
+          {news.map((newsItem) => (
+            <NewsItem news={newsItem} key={newsItem.slug} />
+          ))}
+        </div>
       </div>
     </Layout>
   );

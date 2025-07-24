@@ -35,6 +35,7 @@ export default function Newscreen({ news }) {
           <Image
             src={match[1]}
             alt={`Image ${idx}`}
+            title={`Image ${news.title}`}
             width={288}
             height={100}
             className='float-left w-72 h-auto mr-5 mb-4 rounded-lg object-cover'
@@ -103,6 +104,7 @@ export default function Newscreen({ news }) {
           <a
             href='https://www.linkedin.com/company/statsurgicalsupply/'
             target='_blank'
+            title='Visit our LinkedIn profile'
             rel='noreferrer'
             className='text-gray-600 hover:text-[#0077b5] transition'
           >
@@ -122,6 +124,7 @@ export default function Newscreen({ news }) {
             <Image
               src={news.imageUrl}
               alt={news.title}
+              title={news.title}
               layout='fill'
               objectFit='cover'
               priority
@@ -147,6 +150,7 @@ export default function Newscreen({ news }) {
                     href={src.url}
                     className='text-[#144e8b] hover:underline'
                     target='_blank'
+                    title={src.title}
                     rel='noopener noreferrer'
                   >
                     {src.title}

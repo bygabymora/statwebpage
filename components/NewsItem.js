@@ -4,50 +4,39 @@ import Link from "next/link";
 
 export const NewsItem = ({ news }) => {
   return (
-    <div className='flex flex-col md:flex-row justify-between items-center text-center mb-3 text-xs md:text-sm lg:text-lg max-w-full gap-3 border border-gray-200 shadow-lg rounded-lg p-4 hover:shadow-xl transition-shadow duration-300 ease-in-out'>
-      <div className='flex flex-col justify-center items-center'>
-        <Link
-          href={{ pathname: `news/${news.slug}` }}
-          className='group flex justify-center items-center text-center'
-          title={news.slug}
-        >
-          <div className='p-2'>
-            <Image
-              src={news.imageUrl}
-              alt={news.slug}
-              className='news-image rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 ease-in-out'
-              width={300}
-              height={200}
-              title={news.slug}
-              loading='lazy'
-            />
-          </div>
-        </Link>
-        <div className='max-w-full text-center'>
-          <div className='max-w-full text-center mt-1 font-bold text-[#19426e]'>
-            <time dateTime={news.createdAt}>
-              {new Date(news.createdAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
-          </div>
+    <div className='flex flex-col border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 w-full h-full'>
+      {/* IMAGE */}
+      <Link
+        href={`/news/${news.slug}`}
+        className='w-full aspect-[6/4] relative group'
+      >
+        <Image
+          src={news.imageUrl}
+          alt={news.title}
+          fill
+          className='object-cover group-hover:scale-105 transition-transform duration-300'
+        />
+      </Link>
+
+      {/* TEXT */}
+      <div className='flex flex-col justify-between p-4 h-full'>
+        <div>
+          <Link href={`/news/${news.slug}`}>
+            <h3 className='text-lg font-semibold text-[#144e8b] hover:underline my-1'>
+              {news.title}
+            </h3>
+          </Link>
+          <p className='text-gray-600 text-sm mt-1 line-clamp-3'>{news.slug}</p>
         </div>
-      </div>
-      <div className='flex flex-col justify-center items-center w-full md:w-[300px]'>
-        <Link
-          href={{ pathname: `news/${news.slug}` }}
-          className='justify-center items-center text-center'
-          title={news.slug}
-        >
-          <h2 className='font-bold break-words'>
-            {news.title}
-            <br />
-          </h2>
-          <br />
-          <div className='max-w-full'>{news.slug}</div>
-        </Link>
+        <div className='mt-3 text-lg font-semibold text-gray-600'>
+          <time dateTime={news.createdAt}>
+            {new Date(news.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </time>
+        </div>
       </div>
     </div>
   );
