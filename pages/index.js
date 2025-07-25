@@ -157,7 +157,7 @@ export default function Home() {
 
   useEffect(() => {
     const onResize = () => {
-      setMaxItems(window.innerWidth < 768 ? 5 : 9);
+      setMaxItems(window.innerWidth < 768 ? 9 : 9);
     };
     onResize();
     window.addEventListener("resize", onResize);
