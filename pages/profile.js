@@ -75,7 +75,7 @@ export default function ProfileScreen() {
   return (
     <Layout title='Profile'>
       <section className='profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
-        <h1 className='text-2xl font-bold text-[#144e8b] text-center mb-6'>
+        <h1 className='text-2xl font-bold text-[#0e355e] text-center mb-6'>
           {session.user.firstName} {session.user.lastName} Profile Information
         </h1>
         <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
@@ -107,7 +107,7 @@ export default function ProfileScreen() {
             active && (
               <Link
                 href='/order-history'
-                className='inline-block text-[#144e8b] font-medium border border-[#144e8b] px-4 py-2 rounded-full hover:bg-[#144e8b] hover:text-white transition'
+                className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-4 py-2 rounded-full hover:bg-[#0e355e] hover:text-white transition'
               >
                 View Order History
               </Link>
@@ -119,7 +119,7 @@ export default function ProfileScreen() {
       {showModifyForm && (
         <div className='mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9'>
           <form onSubmit={handleSubmit(submitHandler)}>
-            <div className='text-2xl font-bold text-[#144e8b] text-center mb-6'>
+            <div className='text-2xl font-bold text-[#0e355e] text-center mb-6'>
               Update Profile
             </div>
             <div className='mb-4'>

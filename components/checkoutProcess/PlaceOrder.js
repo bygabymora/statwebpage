@@ -424,7 +424,7 @@ export default function PlaceOrder({
     `,
         }}
       />
-      <h1 className='mb-6 text-2xl font-bold text-[#144e8b] text-center'>
+      <h1 className='mb-6 text-2xl font-bold text-[#0e355e] text-center'>
         Confirm Your Order
       </h1>
       {order?.orderItems?.length === 0 ? (
@@ -432,7 +432,7 @@ export default function PlaceOrder({
           Your cart is empty.{" "}
           <Link
             href='/products'
-            className='underline font-bold text-[#144e8b] hover:text-[#0e3a6e] transition'
+            className='underline font-bold text-[#0e355e] hover:text-[#122338] transition'
           >
             Go shopping
           </Link>
@@ -441,7 +441,7 @@ export default function PlaceOrder({
         <div className='grid md:grid-cols-4'>
           <div className='md:col-span-3'>
             <div className='card bg-white shadow-lg p-6 rounded-lg border mt-5'>
-              <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+              <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                 Payment and Billing
               </h2>
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg flex flex-col md:justify-between'>
@@ -461,7 +461,7 @@ export default function PlaceOrder({
                       : ""}
                     <br />
                     <button
-                      className='font-bold text-[#144e8b] hover:text-[#0e3a6e] mt-3 transition'
+                      className='font-bold text-[#0e355e] hover:text-[#122338] mt-3 transition'
                       onClick={() => {
                         setActiveStep(2);
                       }}
@@ -722,7 +722,7 @@ export default function PlaceOrder({
                     </div>
                   </div>
                 )}
-              <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+              <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                 Shipping Address
               </h2>
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
@@ -779,7 +779,7 @@ export default function PlaceOrder({
               </div>
 
               <button
-                className='font-bold text-[#144e8b] hover:text-[#0e3a6e] mt-3 transition'
+                className='font-bold text-[#0e355e] hover:text-[#122338] mt-3 transition'
                 onClick={() => {
                   setActiveStep(1);
                 }}
@@ -792,7 +792,7 @@ export default function PlaceOrder({
               ref={targetRef}
               className='card bg-white shadow-lg p-6 rounded-lg border mt-5 my-5'
             >
-              <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+              <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                 Order Items
               </h2>
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
@@ -875,7 +875,7 @@ export default function PlaceOrder({
               </div>
 
               <button
-                className='font-bold text-[#144e8b] hover:text-[#0e3a6e] mt-3 transition'
+                className='font-bold text-[#0e355e] hover:text-[#122338] mt-3 transition'
                 onClick={() => {
                   setActiveStep(0);
                 }}
@@ -907,7 +907,7 @@ export default function PlaceOrder({
                 )}
                 <li className='mb-4 flex justify-between text-xl font-bold'>
                   <span>Total</span>
-                  <span className='text-[#144e8b]'>
+                  <span className='text-[#0e355e]'>
                     {" "}
                     $
                     {new Intl.NumberFormat("en-US", {
@@ -959,7 +959,7 @@ export default function PlaceOrder({
                     <button
                       disabled={loading}
                       onClick={placeOrderHandler}
-                      className='w-full bg-[#144e8b] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
+                      className='w-full bg-[#0e355e] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#0e3a6e] transition'
                     >
                       {loading ? "Processing..." : "Confirm Order"}
                     </button>

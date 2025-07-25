@@ -30,7 +30,7 @@ const StaticBanner = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className='text-[#144e8b] text-3xl md:text-4xl font-bold mb-4'
+            className='text-[#0e355e] text-3xl md:text-4xl font-bold mb-4'
           >
             Partner With Us and Sell Your Surgical Disposables
           </motion.h2>
@@ -47,7 +47,7 @@ const StaticBanner = () => {
               "Contribute to reducing medical waste.",
             ].map((item, index) => (
               <li key={index} className='flex items-center'>
-                <AiOutlineSend className='mr-2 text-[#144e8b] shrink-0' />{" "}
+                <AiOutlineSend className='mr-2 text-[#0e355e] shrink-0' />{" "}
                 {item}
               </li>
             ))}
@@ -56,7 +56,7 @@ const StaticBanner = () => {
             <Link
               href='/ManufacturerForm'
               title='Send us your list'
-              className='flex w-fit items-center gap-3 bg-[#144e8b] text-white px-10 py-2 rounded-full shadow-lg hover:bg-[#788b9b] hover:scale-105 transition duration-300 transform'
+              className='flex w-fit items-center gap-3 bg-[#0e355e] text-white px-10 py-2 rounded-full shadow-lg hover:bg-[#788b9b] hover:scale-105 transition duration-300 transform'
             >
               <span className='font-semibold'>Send us your list</span>
               <AiOutlineSend className='text-2xl' />

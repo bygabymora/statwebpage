@@ -113,7 +113,7 @@ export default function Footer() {
           height={100}
         />
         <div className='flex flex-col items-center w-full max-w-lg px-4 text-center'>
-          <h4 className='text-xl font-semibold text-[#144e8b]'>
+          <h4 className='text-xl font-semibold text-[#0e355e]'>
             Subscribe to our Newsletter
           </h4>
           <form
@@ -150,8 +150,8 @@ export default function Footer() {
       </div>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full max-w-5xl mt-6'>
         <div className='text-center sm:text-left font-bold'>
-          <p className='text-[#144e8b]'>Email: sales@statsurgicalsupply.com</p>
-          <p className='text-[#144e8b]'>Phone: (813) 252-0727</p>
+          <p className='text-[#0e355e]'>Email: sales@statsurgicalsupply.com</p>
+          <p className='text-[#0e355e]'>Phone: (813) 252-0727</p>
         </div>
         <br />
         <Image

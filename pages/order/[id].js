@@ -475,7 +475,7 @@ function OrderScreen() {
           <h1 className='text-2xl font-semibold text-[#07783e] text-center p-3'>
             Thank you for your order!
           </h1>
-          <div className='text-center font-semibold text-[#144e8b] text-xl'>
+          <div className='text-center font-semibold text-[#0e355e] text-xl'>
             Any information regarding your order <br /> can be provided by your
             Stat Rep.
           </div>
@@ -485,11 +485,11 @@ function OrderScreen() {
         <div className='mt-3 flex-1 p-3 flex gap-2 flex-col md:flex-row bg-gray-100 border-l-4 border-[#03793d] rounded-lg'>
           <div className='flex-1 flex gap-2 flex-col'>
             <div className='items-start'>
-              <div className='text-2xl font-bold text-[#144e8b]'>
+              <div className='text-2xl font-bold text-[#0e355e]'>
                 Order #{order.docNumber}
               </div>
               {invoice && invoice.docNumber && (
-                <div className='text-2xl font-bold text-[#144e8b]'>
+                <div className='text-2xl font-bold text-[#0e355e]'>
                   Invoice #{invoice.docNumber}
                 </div>
               )}
@@ -516,7 +516,7 @@ function OrderScreen() {
 
           <div className='flex-1 flex gap-2 flex-col'>
             <h2 className='text-lg px-1 font-bold'>Stat Rep:</h2>
-            <div className='flex-1 p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
+            <div className='flex-1 p-4 bg-white rounded-lg text-[#0e355e] font-semibold'>
               {accountOwner?.name}
               <br />
               <a href={`mailto:${accountOwner?.email}`} className='underline'>
@@ -534,7 +534,7 @@ function OrderScreen() {
 
           <div className='flex-1 flex gap-2 flex-col'>
             <h2 className='text-lg px-1 font-bold'>Payment Status</h2>
-            <div className='flex-1 p-4 bg-white rounded-lg text-[#144e8b] font-semibold'>
+            <div className='flex-1 p-4 bg-white rounded-lg text-[#0e355e] font-semibold'>
               <div>
                 <span className='font-semibold'>Due Date: </span>
                 {formatDateWithMonthLetters(dueDate)}
@@ -575,7 +575,7 @@ function OrderScreen() {
                 ))}
               </div>
             ) : (
-              <div className='p-4 bg-white rounded-lg text-center text-[#144e8b] font-semibold'>
+              <div className='p-4 bg-white rounded-lg text-center text-[#0e355e] font-semibold'>
                 Not shipped yet
               </div>
             )}
@@ -598,7 +598,7 @@ function OrderScreen() {
           <div className='overflow-x-auto md:col-span-3'>
             <div className=''>
               <div className='mt-4 bg-white shadow-lg p-6 rounded-lg border'>
-                <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+                <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                   Shipping Instructions
                 </h2>
                 {orderItems &&
@@ -648,7 +648,7 @@ function OrderScreen() {
               <div className='flex flex-col md:flex-row gap-2 my-4'>
                 {/* Address information */}
                 <div className='flex-1 bg-white shadow-lg p-6 rounded-lg border'>
-                  <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+                  <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                     Shipping Address
                   </h2>
                   <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
@@ -683,7 +683,7 @@ function OrderScreen() {
                   </div>
                 </div>
                 <div className='flex-1 bg-white shadow-lg p-6 rounded-lg border'>
-                  <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+                  <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                     Billing Address
                   </h2>
                   <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
@@ -720,7 +720,7 @@ function OrderScreen() {
               </div>
             </div>
             <div className='bg-white shadow-lg p-6 rounded-lg border mt-5 my-5'>
-              <h2 className='mb-4 text-xl font-semibold text-[#144e8b]'>
+              <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
                 Order Items
               </h2>
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
@@ -942,7 +942,7 @@ function OrderScreen() {
                     <a
                       href='mailto:sales@statsurgicalsupply.com'
                       target='_blank'
-                      className='font-bold underline text-[#144e8b]'
+                      className='font-bold underline text-[#0e355e]'
                     >
                       sales@statsurgicalsupply.com
                     </a>{" "}
@@ -950,7 +950,7 @@ function OrderScreen() {
                     <a
                       href='tel:8132520727'
                       onClick={handleCallButtonClick}
-                      className='font-bold underline text-[#144e8b]'
+                      className='font-bold underline text-[#0e355e]'
                       target='_blank'
                     >
                       813-252-0727

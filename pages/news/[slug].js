@@ -49,7 +49,7 @@ export default function Newscreen({ news }) {
       return (
         <h2
           key={idx}
-          className='text-2xl font-bold text-[#144e8b] clear-both my-6'
+          className='text-2xl font-bold text-[#0e355e] clear-both my-6'
         >
           {para.substring(1)}
         </h2>
@@ -66,19 +66,19 @@ export default function Newscreen({ news }) {
   return (
     <Layout title={news.slug} news={news}>
       <div
-        className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#144e8b] to-[#67b7dc] z-50'
+        className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
         style={{ width: `${scrollProgress}%` }}
       />
 
       <div className='container mx-auto px-4 sm:px-6 lg:px-24 py-8 -mt-10'>
         <Link
           href='/news'
-          className='flex items-center text-[#144e8b] hover:text-[#0e3260] mb-4'
+          className='flex items-center text-[#0e355e] hover:text-[#144e8b] mb-4'
         >
           <BsBackspace className='mr-2' /> Back to News
         </Link>
 
-        <h1 className='text-3xl font-extrabold text-[#144e8b] mb-3'>
+        <h1 className='text-3xl font-extrabold text-[#0e355e] mb-3'>
           {news.title}
         </h1>
         <div className='text-gray-500 text-sm flex items-center gap-2 mb-4'>
@@ -142,13 +142,13 @@ export default function Newscreen({ news }) {
 
         {news.sources?.length > 0 && (
           <section className='border-t border-gray-200 pt-4 mb-8'>
-            <h3 className='text-xl font-bold text-[#144e8b] mb-3'>Sources</h3>
+            <h3 className='text-xl font-bold text-[#0e355e] mb-3'>Sources</h3>
             <ul className='list-disc list-inside space-y-2'>
               {news.sources.map((src, i) => (
                 <li key={i}>
                   <a
                     href={src.url}
-                    className='text-[#144e8b] hover:underline'
+                    className='text-[#0e355e] hover:underline'
                     target='_blank'
                     title={src.title}
                     rel='noopener noreferrer'
@@ -164,7 +164,7 @@ export default function Newscreen({ news }) {
         <div className='text-center mt-12'>
           <Link
             href='/news'
-            className='px-6 py-2 bg-[#144e8b] text-white rounded-full font-semibold hover:bg-[#0e3260] transition'
+            className='px-6 py-2 bg-[#0e355e] text-white rounded-full font-semibold hover:bg-[#0e3260] transition'
           >
             Explore More News
           </Link>

@@ -43,7 +43,7 @@ export default function PaymentScreen() {
     <Layout title='Payment Method'>
       <CheckoutWizard activeStep={2} />
       <div className='mx-auto max-w-lg bg-white shadow-lg rounded-2xl p-6 my-5'>
-        <h1 className='text-2xl font-semibold text-center text-[#144e8b] mb-4'>
+        <h1 className='text-2xl font-semibold text-center text-[#0e355e] mb-4'>
           Select a Payment Method
         </h1>
         <p className='text-gray-600 text-center mb-6'>
@@ -101,7 +101,7 @@ export default function PaymentScreen() {
               Back
             </button>
             <button
-              className='px-6 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition-all'
+              className='px-6 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition-all'
               type='submit'
             >
               Next

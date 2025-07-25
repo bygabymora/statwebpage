@@ -25,7 +25,7 @@ export default function SecureBuyingSelling() {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -41,7 +41,7 @@ export default function SecureBuyingSelling() {
       </nav>
       <section className='w-full bg-white px-6'>
         <div className='max-w-6xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-[#144e8b]'>
+          <h2 className='text-4xl font-bold text-[#0e355e]'>
             Secure Buying & Selling
           </h2>
           <p className='text-lg text-[#414b53] mt-4 max-w-3xl mx-auto'>
@@ -51,8 +51,8 @@ export default function SecureBuyingSelling() {
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10'>
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaLock className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaLock className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Secure Payments
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -62,8 +62,8 @@ export default function SecureBuyingSelling() {
             </div>
 
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaCheckCircle className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaCheckCircle className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Verified Suppliers
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -72,8 +72,8 @@ export default function SecureBuyingSelling() {
             </div>
 
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaUndoAlt className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaUndoAlt className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Hassle-Free Returns
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -82,8 +82,8 @@ export default function SecureBuyingSelling() {
             </div>
 
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaShieldAlt className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaShieldAlt className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Buyer Protection
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -92,8 +92,8 @@ export default function SecureBuyingSelling() {
             </div>
 
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaHandshake className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaHandshake className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Fair Deals
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -103,8 +103,8 @@ export default function SecureBuyingSelling() {
             </div>
 
             <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaThumbsUp className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaThumbsUp className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Customer Satisfaction
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -116,7 +116,7 @@ export default function SecureBuyingSelling() {
           <div className='mt-10 my-10'>
             <button
               onClick={() => (window.location.href = "/products")}
-              className='px-8 py-3 bg-[#03793d] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
+              className='px-8 py-3 bg-[#07783e] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
             >
               Start Shopping Securely
             </button>

@@ -347,7 +347,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
               <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                 <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
-                <span className='font-bold text-[#144e8b]'>
+                <span className='font-bold text-[#0e355e]'>
                   {product.manufacturer} - {product.name} - {typeOfPurchase}
                 </span>{" "}
                 {user?.cart?.length > 0 &&
@@ -366,7 +366,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                   contact us for more information.
                 </p>
                 <button
-                  className='mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition'
+                  className='mt-4 px-4 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition'
                   onClick={() => setShowModal(false)}
                 >
                   Close

@@ -98,7 +98,7 @@ const Menu = () => {
               e.preventDefault();
               router.push("/products");
             }}
-            className='cursor-pointer hover:text-[#03793d]'
+            className='cursor-pointer hover:text-[#07783e]'
           >
             Manufacturers
           </span>
@@ -127,7 +127,7 @@ const Menu = () => {
 
   return (
     <nav className='bg-gray-100 shadow w-full hidden md:block'>
-      <ul className='flex justify-center space-x-6 py-1 text-[#144e8b] font-medium text-sm lg:text-base'>
+      <ul className='flex justify-center space-x-6 py-1 text-[#0e355e] font-medium text-sm lg:text-base'>
         {updatedMenuItems.map((item, index) => (
           <li
             key={index}
@@ -135,7 +135,7 @@ const Menu = () => {
             onMouseEnter={() => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
           >
-            <span className='px-3 py-1 inline-block hover:text-[#03793d] transition-colors duration-200'>
+            <span className='px-3 py-1 inline-block hover:text-[#07783e] transition-colors duration-200'>
               {item.title}
             </span>
 
@@ -155,7 +155,7 @@ const Menu = () => {
                     key={subIndex}
                     className='px-6 py-4 border-b last:border-b-0'
                   >
-                    <h4 className='font-semibold text-base text-[#144e8b] mb-2'>
+                    <h4 className='font-semibold text-base text-[#0e355e] mb-2'>
                       {sub.title}
                     </h4>
                     <ul className='space-y-2'>

@@ -69,7 +69,7 @@ export default function FAQs() {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -94,7 +94,7 @@ export default function FAQs() {
 
       <section className='max-w-4xl mx-auto px-4 py-10 -mt-8'>
         <div className='text-center'>
-          <h1 className='text-4xl font-bold text-[#144e8b] mb-2'>
+          <h1 className='text-4xl font-bold text-[#0e355e] mb-2'>
             Frequently Asked Questions
           </h1>
           <p className='text-gray-500 max-w-xl mx-auto my-3'>

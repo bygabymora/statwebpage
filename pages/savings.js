@@ -19,7 +19,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -35,7 +35,7 @@ export default function GuaranteedSavings({ isInClearance }) {
       </nav>
       <section className='w-full bg-white my-10 px-6'>
         <div className='max-w-6xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-[#144e8b] leading-tight'>
+          <h2 className='text-4xl font-bold text-[#0e355e] leading-tight'>
             Guaranteed Savings, Tailored for You
           </h2>
           <p className='text-lg text-[#414b53] mt-4 max-w-3xl mx-auto'>
@@ -45,8 +45,8 @@ export default function GuaranteedSavings({ isInClearance }) {
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12'>
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
-              <FaDollarSign className='text-5xl text-[#03793d] animate-pulse' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaDollarSign className='text-5xl text-[#07783e] animate-pulse' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Best Prices
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -55,8 +55,8 @@ export default function GuaranteedSavings({ isInClearance }) {
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
-              <FaHandshake className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaHandshake className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Negotiable Discounts
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -65,8 +65,8 @@ export default function GuaranteedSavings({ isInClearance }) {
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
-              <FaChartLine className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+              <FaChartLine className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Cost Optimization
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -76,9 +76,9 @@ export default function GuaranteedSavings({ isInClearance }) {
           </div>
 
           {isInClearance && (
-            <div className='mt-12 p-8 bg-[#e8f5e9] border-2 border-[#03793d] rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
-              <FaTags className='text-5xl text-[#03793d]' />
-              <h4 className='text-xl font-bold text-[#144e8b] mt-4'>
+            <div className='mt-12 p-8 bg-[#e8f5e9] border-2 border-[#07783e] rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
+              <FaTags className='text-5xl text-[#07783e]' />
+              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Limited-Time Clearance
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
@@ -87,7 +87,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               </p>
               <Link
                 href='/clearance'
-                className='mt-4 px-6 py-2 bg-[#03793d] text-white font-bold rounded-lg shadow-md hover:bg-[#025e2d] transition-all duration-300'
+                className='mt-4 px-6 py-2 bg-[#07783e] text-white font-bold rounded-lg shadow-md hover:bg-[#065f2d] transition-all duration-300'
               >
                 View Deals
               </Link>
@@ -99,7 +99,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               onClick={() => {
                 window.location.href = "/products";
               }}
-              className='px-8 py-3 bg-[#03793d] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
+              className='px-8 py-3 bg-[#07783e] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
             >
               Start Saving Now
             </button>

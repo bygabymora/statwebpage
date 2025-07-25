@@ -96,7 +96,7 @@ function Carousel({ products }) {
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
-        className='w-full mt-3 flex items-center justify-center text-[#144e8b]'
+        className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
       >
         <BiSkipPreviousCircle className='text-lg' /> Prev
       </button>
@@ -125,7 +125,7 @@ function Carousel({ products }) {
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
-        className='w-full mt-3 flex items-center justify-center text-[#144e8b]'
+        className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
       >
         Next <BiSkipNextCircle className='text-lg' />
       </button>

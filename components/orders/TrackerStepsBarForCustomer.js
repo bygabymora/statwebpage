@@ -126,7 +126,7 @@ const TrackerStepsBarForCustomer = ({
             </div>
             {statusToIndex[finalStatus(parcel)] === -1 &&
             groupName === "Group2" ? (
-              <div className='p-4 bg-white rounded-md text-center text-[#144e8b] font-semibold'>
+              <div className='p-4 bg-white rounded-md text-center text-[#0e355e] font-semibold'>
                 Unknown Status
               </div>
             ) : !warningStatuses.includes(parcel.trackerStatus) ? (
@@ -174,7 +174,7 @@ const TrackerStepsBarForCustomer = ({
                 return (
                   <React.Fragment key={index}>
                     <div className='flex flex-col items-center'>
-                      <div className='mt-2 text-xs font-semibold text-[#144e8b]'>
+                      <div className='mt-2 text-xs font-semibold text-[#0e355e]'>
                         {getStepLabel(index, finalStatus(parcel))}
                       </div>
                     </div>
@@ -206,7 +206,7 @@ const TrackerStepsBarForCustomer = ({
                       ))}
                   </div>
                 ) : (
-                  <div className='p-4 bg-white rounded-md text-center text-[#144e8b] font-semibold'>
+                  <div className='p-4 bg-white rounded-md text-center text-[#0e355e] font-semibold'>
                     No tracking details available yet.
                   </div>
                 )}

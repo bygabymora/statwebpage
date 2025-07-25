@@ -7,12 +7,12 @@ const messages = [
   {
     text: "Welcome to Stat Surgical Supply!",
     icon: (
-      <FaHandsHelping className='text-xl text-[#144e8b] animate-bounce mr-2' />
+      <FaHandsHelping className='text-xl text-[#0e355e] animate-bounce mr-2' />
     ),
   },
   {
     text: "We focus on top manufacturers to bring you the best products!",
-    icon: <FaBoxOpen className='text-xl text-[#144e8b] animate-bounce mr-2' />,
+    icon: <FaBoxOpen className='text-xl text-[#0e355e] animate-bounce mr-2' />,
   },
 ];
 
@@ -31,7 +31,7 @@ const StaticHeader = () => {
   if (pathname !== "/products") return null;
 
   return (
-    <div className='bg-gray-50 z-10 text-[#144e8b] text-center py-1 text-lg font-semibold justify-center items-center gap-1 hidden md:flex'>
+    <div className='bg-gray-50 z-10 text-[#0e355e] text-center py-1 text-lg font-semibold justify-center items-center gap-1 hidden md:flex'>
       <AnimatePresence mode='wait'>
         <motion.div
           key={currentMessageIndex}

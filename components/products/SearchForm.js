@@ -95,7 +95,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
           ref={form}
           onSubmit={submitHandler}
         >
-          <div className='mb-4 font-bold text-[#144e8b]'>Product Needed</div>
+          <div className='mb-4 font-bold text-[#0e355e]'>Product Needed</div>
           <div className='contact__form-div' hidden>
             <label className='contact__form-tag'>Searched Word</label>
             <input

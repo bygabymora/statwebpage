@@ -51,7 +51,7 @@ export default function ManufacturerForm() {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -66,14 +66,14 @@ export default function ManufacturerForm() {
         </ul>
       </nav>
       <div className='max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8 my-5'>
-        <h3 className='text-xl text-center font-semibold text-[#144e8b] mb-6'>
+        <h3 className='text-xl text-center font-semibold text-[#0e355e] mb-6'>
           For the most accurate quote, please provide us with a list that
           includes reference numbers, quantities(each/box), and expiration
           dating.
         </h3>
         <form ref={form} onSubmit={sendEmail} className='space-y-6'>
           <div>
-            <label className='block text-[#144e8b] mb-2'>Name*</label>
+            <label className='block text-[#0e355e] mb-2'>Name*</label>
             <input
               autoComplete='off'
               type='text'
@@ -84,7 +84,7 @@ export default function ManufacturerForm() {
             />
           </div>
           <div>
-            <label className='block text-[#144e8b] mb-2'>Email*</label>
+            <label className='block text-[#0e355e] mb-2'>Email*</label>
             <input
               autoComplete='off'
               type='email'
@@ -95,7 +95,7 @@ export default function ManufacturerForm() {
             />
           </div>
           <div>
-            <label className='block text-[#144e8b] mb-2'>Product Name*</label>
+            <label className='block text-[#0e355e] mb-2'>Product Name*</label>
             <input
               autoComplete='off'
               type='text'
@@ -106,7 +106,7 @@ export default function ManufacturerForm() {
             />
           </div>
           <div>
-            <label className='block text-[#144e8b] mb-2'>Manufacturer*</label>
+            <label className='block text-[#0e355e] mb-2'>Manufacturer*</label>
             <input
               autoComplete='off'
               type='text'

@@ -267,7 +267,7 @@ export default function ProductScreen({ product }) {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -342,17 +342,17 @@ export default function ProductScreen({ product }) {
         <div className='w-full max-w-lg flex flex-col items-center lg:items-start'>
           <ul className='space-y-2'>
             <li>
-              <h1 className='text-xl font-bold text-[#144e8b]'>
+              <h1 className='text-xl font-bold text-[#0e355e]'>
                 {product.name}
               </h1>
             </li>
             <li>
-              <h1 className='text-xl font-bold text-[#144e8b]'>
+              <h1 className='text-xl font-bold text-[#0e355e]'>
                 {product.manufacturer}
               </h1>
             </li>
             <li>
-              <h1 className='text-xl font-bold text-[#144e8bee]'>
+              <h1 className='text-xl font-bold text-[#0e355e]'>
                 {currentDescription}
               </h1>
             </li>
@@ -362,7 +362,7 @@ export default function ProductScreen({ product }) {
                 <br />
                 <br />
                 <br />
-                <div className='text-lg font-semibold text-[#144e8bee]'>
+                <div className='text-lg font-semibold text-[#0e355e]'>
                   Shipping recomendations:
                 </div>
                 <p className='text-sm text-[#788b9b]'>
@@ -423,7 +423,7 @@ export default function ProductScreen({ product }) {
               <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
                 <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                   <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
-                  <span className='font-bold text-[#144e8b]'>
+                  <span className='font-bold text-[#0e355e]'>
                     {product.manufacturer} - {product.name} - {typeOfPurchase}
                   </span>{" "}
                   {user?.cart?.length > 0 &&
@@ -442,7 +442,7 @@ export default function ProductScreen({ product }) {
                     contact us for more information.
                   </p>
                   <button
-                    className='mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition'
+                    className='mt-4 px-4 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition'
                     onClick={() => setShowModal(false)}
                   >
                     Close
