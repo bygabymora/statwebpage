@@ -10,6 +10,7 @@ import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Script from "next/script";
+
 export default function Layout({ children, title, product, news, schema }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
@@ -101,7 +102,7 @@ export default function Layout({ children, title, product, news, schema }) {
           content={
             product?.keywords && Array.isArray(product.keywords)
               ? product.keywords.join(", ")
-              : ""
+              : "surgical supplies, medical equipment, healthcare products, quality surgical instruments, affordable, fast shipping, price comparison"
           }
         />
         <meta name='robots' content='index, follow' />
@@ -170,16 +171,6 @@ export default function Layout({ children, title, product, news, schema }) {
           />
         )}
 
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-11333627655');
-            `,
-          }}
-        ></script>
         {news && (
           <>
             <meta name='description' content={news.content.slice(0, 160)} />
@@ -216,10 +207,20 @@ export default function Layout({ children, title, product, news, schema }) {
           </>
         )}
       </Head>
+
       <Script
         async
         src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
-      ></Script>
+      />
+      <Script id='gtag-init' strategy='afterInteractive'>
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-11333627655');
+        `}
+      </Script>
+
       <ToastContainer position='bottom-center' limit={1} />
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
