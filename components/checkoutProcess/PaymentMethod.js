@@ -132,7 +132,7 @@ export default function PaymentMethod({
   return (
     <>
       <div className='mx-auto max-w-2xl'>
-        <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
+        <h1 className='text-3xl font-bold text-center text-[#0e355e] mb-6'>
           Select a Payment Method
         </h1>
         <div className='mx-auto max-w-lg bg-white shadow-lg rounded-2xl p-6 my-5'>

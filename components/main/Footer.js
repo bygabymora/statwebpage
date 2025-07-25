@@ -107,13 +107,13 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Logo'
-          title='STAT Surgical Supply Logo'
+          title='STAT Surgical Supply'
           loading='lazy'
           width={300}
           height={100}
         />
         <div className='flex flex-col items-center w-full max-w-lg px-4 text-center'>
-          <h4 className='text-xl font-semibold text-[#144e8b]'>
+          <h4 className='text-xl font-semibold text-[#0e355e]'>
             Subscribe to our Newsletter
           </h4>
           <form
@@ -150,8 +150,8 @@ export default function Footer() {
       </div>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full max-w-5xl mt-6'>
         <div className='text-center sm:text-left font-bold'>
-          <p className='text-[#144e8b]'>Email: sales@statsurgicalsupply.com</p>
-          <p className='text-[#144e8b]'>Phone: (813) 252-0727</p>
+          <p className='text-[#0e355e]'>Email: sales@statsurgicalsupply.com</p>
+          <p className='text-[#0e355e]'>Phone: (813) 252-0727</p>
         </div>
         <br />
         <Image
@@ -194,6 +194,7 @@ export default function Footer() {
           </Link>
           <Link
             target='_blank'
+            title='Google Business Profile'
             href='https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=576236845&hl=es-US&cs=0&sxsrf=AM9HkKl1tpL3nUX-DjSFoU6UOamEFuZhXg:1698186565938&q=Stat+Surgical+Supply&ludocid=15318238201630152176&ibp=gwp;0,7&lsig=AB86z5Vgj89yReXI6YGJA4xeQsis&kgs=731d10de23055d4c&shndl=-1&shem=lbsc,lsp&source=sh/x/loc/act/m1/4'
           >
             <Image

@@ -313,7 +313,7 @@ export default function Shipping({
   return (
     <>
       <div className='mx-auto max-w-2xl'>
-        <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
+        <h1 className='text-3xl font-bold text-center text-[#0e355e] mb-6'>
           Shipping Information
         </h1>
         <p className='text-center font-semibold m-5 '>
@@ -645,7 +645,7 @@ export default function Shipping({
                 </div>
 
                 <div className='col-span-1 sm:col-span-2'>
-                  <div className='mb-4 my-4 font-bold text-[#144e8b]'>
+                  <div className='mb-4 my-4 font-bold text-[#0e355e]'>
                     Additional notes (Specific Instructions)
                   </div>
                   <textarea

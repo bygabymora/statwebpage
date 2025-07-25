@@ -7,14 +7,15 @@
   --header-height: 5rem;
 
   /*========== Colors ==========*/
-  --title-color: #144e8b;
+  --title-color: #0e355e;
   --title-color-dark: #07783e;
   --text-color: #2c3339;
   --dark-text-color: #15191b;
   --body-color: white;
   --container-color: #fff;
   --yellow: #ffd700;
-
+  --btn-color: #144e8b;
+  --btn-color2: #5b8756;
   /*========== Font and typography ==========*/
   --title-font: "Montserrat", sans-serif;
   --subtitle-font: "Roboto", serif;

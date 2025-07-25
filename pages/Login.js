@@ -159,7 +159,7 @@ export default function Login() {
           Don&apos;t have an account?{" "}
           <Link
             href='/register'
-            className='font-bold underline active:text-[#144e8b]'
+            className='font-bold underline active:text-[#0e355e]'
           >
             Register
           </Link>
@@ -169,7 +169,7 @@ export default function Login() {
         <div className='mb-4'>
           <Link
             href={`/recoverAccess?email=${encodeURIComponent(emailValue)}`}
-            className='font-bold underline active:text-[#144e8b]'
+            className='font-bold underline active:text-[#0e355e]'
           >
             Forgot Password?
           </Link>

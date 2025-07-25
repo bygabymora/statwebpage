@@ -36,7 +36,7 @@ const benefits = [
 export default function BenefitsSection() {
   return (
     <section className='w-full my-10'>
-      <h2 className='text-3xl font-bold text-center text-[#144e8b]'>
+      <h2 className='text-3xl font-bold text-center text-[#0e355e]'>
         Our Key Benefits
       </h2>
       <p className='text-center text-lg text-gray-600 mt-2'>
@@ -53,7 +53,7 @@ export default function BenefitsSection() {
               {benefit.icon}
             </div>
             <div className='ml-5 flex-1'>
-              <h3 className='text-xl font-semibold text-[#144e8b]'>
+              <h3 className='text-xl font-semibold text-[#0e355e]'>
                 {benefit.title}
               </h3>
               <p className='text-gray-600 mt-1'>{benefit.description}</p>

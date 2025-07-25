@@ -20,7 +20,7 @@ export default function Support() {
               {breadcrumb.href ? (
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
@@ -36,23 +36,23 @@ export default function Support() {
       </nav>
       <section className='w-full min-h-screen flex justify-center items-center px-6'>
         <div className='max-w-4xl w-full p-10 text-center'>
-          <h2 className='text-4xl font-bold text-[#144e8b]'>Support</h2>
+          <h2 className='text-4xl font-bold text-[#0e355e]'>Support</h2>
           <p className='text-lg text-[#414b53] mt-4'>
             Need help? Contact us through email, phone, or visit us in person.
           </p>
 
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10'>
             <div className='flex flex-col items-center p-6 bg-white rounded-xl shadow-md transition-transform duration-300 hover:scale-105'>
-              <FaMapMarkerAlt className='text-5xl text-[#03793d]' />
-              <h4 className='font-bold text-[#144e8b] mt-3'>Visit Us</h4>
+              <FaMapMarkerAlt className='text-5xl text-[#07783e]' />
+              <h4 className='font-bold text-[#0e355e] mt-3'>Visit Us</h4>
               <p className='text-[#414b53] text-sm mt-1'>
                 100 Ashley Dr S #600, Tampa, FL
               </p>
             </div>
 
             <div className='flex flex-col items-center p-6 bg-white rounded-xl shadow-md transition-transform duration-300 hover:scale-105'>
-              <FaPhone className='text-5xl text-[#03793d]' />
-              <h4 className='font-bold text-[#144e8b] mt-3'>Call Us</h4>
+              <FaPhone className='text-5xl text-[#07783e]' />
+              <h4 className='font-bold text-[#0e355e] mt-3'>Call Us</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
                 href='tel:+18132520727'
@@ -62,8 +62,8 @@ export default function Support() {
             </div>
 
             <div className='flex flex-col items-center p-6 bg-white rounded-xl shadow-md transition-transform duration-300 hover:scale-105'>
-              <FaEnvelope className='text-5xl text-[#03793d]' />
-              <h4 className='font-bold text-[#144e8b] mt-3'>Email</h4>
+              <FaEnvelope className='text-5xl text-[#07783e]' />
+              <h4 className='font-bold text-[#0e355e] mt-3'>Email</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
                 href='mailto:centralsales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
@@ -84,12 +84,12 @@ export default function Support() {
           </div>
 
           <div className='mt-10 text-left'>
-            <h3 className='text-2xl font-bold text-[#144e8b]'>
+            <h3 className='text-2xl font-bold text-[#0e355e]'>
               Frequently Asked Questions
             </h3>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> How long
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> How long
                 does support take to respond?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -98,7 +98,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> How do you
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> How do you
                 acquire your products?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -108,7 +108,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> What is the
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> What is the
                 expiration dating of your products?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -119,7 +119,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> Are your
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> Are your
                 products in original packaging?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -129,7 +129,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> Are your
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> Are your
                 prices negotiable?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -140,7 +140,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> What
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> What
                 payment methods do you accept?
               </p>
               <p className='mt-2 text-sm text-gray-600'>
@@ -151,7 +151,7 @@ export default function Support() {
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <p className='flex items-center text-[#414b53]'>
-                <FaQuestionCircle className='text-[#03793d] mr-2' /> Can I buy
+                <FaQuestionCircle className='text-[#07783e] mr-2' /> Can I buy
                 items individually or do I have to buy a full box?
               </p>
               <p className='mt-2 text-sm text-gray-600'>

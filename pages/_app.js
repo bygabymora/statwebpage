@@ -50,6 +50,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     };
   }, [router.events]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [router.asPath]);
+
   return (
     <SessionProvider session={session}>
       <ModalProvider>

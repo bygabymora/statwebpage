@@ -42,7 +42,7 @@ const CookieAcceptancePopup = () => {
             <Link
               href='/privacy-policy'
               prefetch={false}
-              className='ml-1 text-[#144e8b] font-semibold hover:underline'
+              className='ml-1 text-[#0e355e] font-semibold hover:underline'
             >
               Learn about our privacy policy
             </Link>
@@ -50,7 +50,7 @@ const CookieAcceptancePopup = () => {
           <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-end'>
             <button
               onClick={acceptCookies}
-              className='px-5 py-2 rounded-full bg-[#144e8b] text-white hover:bg-[#03793d] transition shadow-sm text-sm'
+              className='px-5 py-2 rounded-full bg-[#0e355e] text-white hover:bg-[#07783e] transition shadow-sm text-sm'
             >
               I Understand
             </button>

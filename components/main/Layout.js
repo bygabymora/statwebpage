@@ -10,12 +10,12 @@ import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Script from "next/script";
+
 export default function Layout({ children, title, product, news, schema }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
-  console.log("product In Layout", product);
 
   const approvalMessage = useMemo(
     () => ({
@@ -102,7 +102,7 @@ export default function Layout({ children, title, product, news, schema }) {
           content={
             product?.keywords && Array.isArray(product.keywords)
               ? product.keywords.join(", ")
-              : ""
+              : "surgical supplies, medical equipment, healthcare products, quality surgical instruments, affordable, fast shipping, price comparison"
           }
         />
         <meta name='robots' content='index, follow' />
@@ -171,16 +171,6 @@ export default function Layout({ children, title, product, news, schema }) {
           />
         )}
 
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-11333627655');
-            `,
-          }}
-        ></script>
         {news && (
           <>
             <meta name='description' content={news.content.slice(0, 160)} />
@@ -189,6 +179,14 @@ export default function Layout({ children, title, product, news, schema }) {
             <meta
               property='og:description'
               content={news.content.slice(0, 200)}
+            />
+            <meta
+              name='author'
+              content={news.author || "Stat Surgical Supply"}
+            />
+            <meta
+              property='article:published_time'
+              content={new Date(news.createdAt).toISOString()}
             />
             <meta property='og:image' content={news.imageUrl} />
             <meta
@@ -209,14 +207,27 @@ export default function Layout({ children, title, product, news, schema }) {
           </>
         )}
       </Head>
+
       <Script
         async
         src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
-      ></Script>
+      />
+      <Script id='gtag-init' strategy='afterInteractive'>
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-11333627655');
+        `}
+      </Script>
+
       <ToastContainer position='bottom-center' limit={1} />
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
-        <main className='main m-auto mt-[11rem] max-w-[1400px] px-4 pt-10 min-h-[30vh] w-full'>
+        <main
+          className='main m-auto mt-[11rem] max-w-[1400px] px-4 pt-10 min-h-[30vh] w-full'
+          key={router.asPath}
+        >
           {children}
         </main>
         <Footer />

@@ -104,7 +104,7 @@ export default function Products() {
                 {breadcrumb.href ? (
                   <Link
                     href={breadcrumb.href}
-                    className='hover:underline text-[#144e8b]'
+                    className='hover:underline text-[#0e355e]'
                   >
                     {breadcrumb.name}
                   </Link>

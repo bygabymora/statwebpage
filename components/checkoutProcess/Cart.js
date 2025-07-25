@@ -126,23 +126,23 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
   return (
     <div className='mx-auto'>
-      <h1 className='text-3xl font-bold text-center text-[#144e8b] mb-6'>
+      <h1 className='text-3xl font-bold text-center text-[#0e355e] mb-6'>
         Shopping Cart
       </h1>
 
       {order.orderItems?.length === 0 ? (
         <div className='p-6 flex flex-col items-center text-center space-y-4 my-5'>
-          <BsCartX className='text-[#144e8b] text-4xl' />
+          <BsCartX className='text-[#0e355e] text-4xl' />
           <p className='text-[#414b53] text-lg font-semibold'>Cart is empty.</p>
           <Link
             href='/products'
-            className='text-white bg-[#144e8b] hover:bg-[#788b9b] px-4 py-2 rounded-full font-medium transition'
+            className='text-white bg-[#0e355e] hover:bg-[#788b9b] px-4 py-2 rounded-full font-medium transition'
           >
             Go shopping!
           </Link>
         </div>
       ) : (
-        <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg mb-4 grid flex-1 sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
+        <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#07783e] rounded-lg mb-4 grid flex-1 sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
           <div className=' bg-white p-2 rounded-md gap-4 md:col-span-3 '>
             <div className=' '>
               <div className='w-full space-y-4'>

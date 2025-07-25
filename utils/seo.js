@@ -9,11 +9,11 @@ function generateJSONLD(news) {
     },
     headline: news.title,
     image: [news.imageUrl],
-    datePublished: news.createdAt,
-    dateModified: news.updatedAt,
+    datePublished: new Date(news.createdAt).toISOString(),
+    dateModified: new Date(news.updatedAt).toISOString(),
     author: {
       "@type": "Person",
-      name: news.author,
+      name: news.author || "STAT Surgical Supply",
     },
     publisher: {
       "@type": "Organization",
@@ -21,6 +21,8 @@ function generateJSONLD(news) {
       logo: {
         "@type": "ImageObject",
         url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
+        width: 600,
+        height: 60,
       },
     },
     description: news.content.substring(0, 160),
