@@ -1,5 +1,9 @@
-// utils/seo.js
 function generateJSONLD(news) {
+  const isValidDate = (value) => {
+    const date = new Date(value);
+    return value && !isNaN(date);
+  };
+
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -9,8 +13,12 @@ function generateJSONLD(news) {
     },
     headline: news.title,
     image: [news.imageUrl],
-    datePublished: new Date(news.createdAt).toISOString(),
-    dateModified: new Date(news.updatedAt).toISOString(),
+    ...(isValidDate(news.createdAt) && {
+      datePublished: new Date(news.createdAt).toISOString(),
+    }),
+    ...(isValidDate(news.updatedAt) && {
+      dateModified: new Date(news.updatedAt).toISOString(),
+    }),
     author: {
       "@type": "Person",
       name: news.author || "STAT Surgical Supply",
@@ -25,7 +33,7 @@ function generateJSONLD(news) {
         height: 60,
       },
     },
-    description: news.content.substring(0, 160),
+    description: news.content?.substring(0, 160) || "",
   };
 }
 
@@ -40,7 +48,6 @@ function generateProductJSONLD(product) {
     product.box?.customerPrice ||
     0
   ).toFixed(2);
-  console.log("Generating JSON-LD for product:", product.image);
 
   const keywords = Array.isArray(product.keywords)
     ? product.keywords.join(", ")

@@ -64,7 +64,7 @@ export default function Newscreen({ news }) {
   });
 
   return (
-    <Layout title={news.slug} news={news}>
+    <Layout title={news.slug} news={news} canonical={`/news/${news.slug}`}>
       <div
         className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
         style={{ width: `${scrollProgress}%` }}

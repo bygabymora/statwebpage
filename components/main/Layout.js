@@ -173,21 +173,23 @@ export default function Layout({ children, title, product, news, schema }) {
 
         {news && (
           <>
-            <meta name='description' content={news.content.slice(0, 160)} />
-            <meta name='keywords' content={news.tags.join(", ")} />
+            <meta name='description' content={news.content?.slice(0, 160)} />
+            <meta name='keywords' content={news.tags?.join(", ")} />
             <meta property='og:title' content={news.title} />
             <meta
               property='og:description'
-              content={news.content.slice(0, 200)}
+              content={news.content?.slice(0, 200)}
             />
             <meta
               name='author'
               content={news.author || "Stat Surgical Supply"}
             />
-            <meta
-              property='article:published_time'
-              content={new Date(news.createdAt).toISOString()}
-            />
+            {news?.createdAt && !isNaN(new Date(news.createdAt)) && (
+              <meta
+                property='article:published_time'
+                content={new Date(news.createdAt).toISOString()}
+              />
+            )}
             <meta property='og:image' content={news.imageUrl} />
             <meta
               property='og:url'
