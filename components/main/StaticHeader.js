@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaHandsHelping, FaBoxOpen } from "react-icons/fa";
+import { HeartPulse, Ambulance } from "lucide-react";
 
 const messages = [
   {
     text: "Welcome to Stat Surgical Supply!",
     icon: (
-      <FaHandsHelping className='text-xl text-[#0e355e] animate-bounce mr-2' />
+      <HeartPulse
+        size={21}
+        className='text-xl text-[#0e355e] animate-bounce mr-2'
+      />
     ),
   },
   {
     text: "We focus on top manufacturers to bring you the best products!",
-    icon: <FaBoxOpen className='text-xl text-[#0e355e] animate-bounce mr-2' />,
+    icon: (
+      <Ambulance
+        size={21}
+        className='text-xl text-[#0e355e] animate-bounce mr-2'
+      />
+    ),
   },
 ];
 

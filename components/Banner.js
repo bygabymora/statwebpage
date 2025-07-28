@@ -5,8 +5,7 @@ import Banner2 from "../public/images/assets/banner2.svg";
 import Banner3 from "../public/images/assets/banner3.svg";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FiPhoneForwarded } from "react-icons/fi";
-import { TiShoppingCart } from "react-icons/ti";
+import { ShoppingBag, PhoneForwarded } from "lucide-react";
 
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -39,7 +38,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <TiShoppingCart />
+                <ShoppingBag size={19} className='relative top-[1px]' />
                 Shop Now
               </motion.button>
             </Link>
@@ -50,7 +49,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <FiPhoneForwarded />
+                <PhoneForwarded size={19} className='relative top-[1px]' />
                 Contact Us
               </motion.button>
             </Link>

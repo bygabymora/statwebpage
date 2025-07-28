@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout"; // we keep it SSR
 import { ProductItem } from "../components/products/ProductItem";
+import { Rewind, FastForward } from "lucide-react";
 
 // We dynamically load “large” components
 const Banner = dynamic(() => import("../components/Banner"), { ssr: false });
@@ -98,7 +98,7 @@ function Carousel({ products }) {
         disabled={currentSlide === 0}
         className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
       >
-        <BiSkipPreviousCircle className='text-lg' /> Prev
+        <Rewind size={19} className='mr-2 relative top-[1px]' /> Prev
       </button>
 
       <div
@@ -125,9 +125,9 @@ function Carousel({ products }) {
       <button
         onClick={nextSlide}
         disabled={currentSlide >= totalSlides - 1}
-        className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
+        className='w-full flex items-center justify-center text-[#0e355e] mt-1'
       >
-        Next <BiSkipNextCircle className='text-lg' />
+        Next <FastForward size={19} className='ml-2 relative top-[1px]' />
       </button>
     </div>
   );

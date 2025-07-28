@@ -1,32 +1,28 @@
-import {
-  FaBoxOpen,
-  FaDollarSign,
-  FaHeadset,
-  FaShieldAlt,
-} from "react-icons/fa";
+import React from "react";
 import Link from "next/link";
+import { DollarSign, Package, ShieldCheck, Headset } from "lucide-react";
 
 const benefits = [
   {
-    icon: <FaDollarSign />,
+    icon: <DollarSign size={36} />,
     title: "Guaranteed Savings",
     description: "Save up to 50% on selected products.",
     link: "/savings",
   },
   {
-    icon: <FaBoxOpen />,
+    icon: <Package size={36} />,
     title: "Available Stock",
     description: "Diverse catalog with fast delivery.",
     link: "/products",
   },
   {
-    icon: <FaShieldAlt />,
+    icon: <ShieldCheck size={36} />,
     title: "Secure Buying & Selling",
     description: "Reliable and verified processes.",
     link: "/selling",
   },
   {
-    icon: <FaHeadset />,
+    icon: <Headset size={36} />,
     title: "Support",
     description: "Email, phone, or schedule a visit at our location.",
     link: "/support",
@@ -49,7 +45,7 @@ export default function BenefitsSection() {
             className='flex items-center p-6 bg-white border-l-4 border-[#03793d] rounded-lg shadow-md 
             transition-transform duration-300 hover:scale-105 hover:shadow-lg group'
           >
-            <div className='text-4xl text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12'>
+            <div className='text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12'>
               {benefit.icon}
             </div>
             <div className='ml-5 flex-1'>
