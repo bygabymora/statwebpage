@@ -18,11 +18,11 @@ export default function Footer() {
   const { showStatusMessage, user } = useModalContext();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
-  const message = {
+  const alertMessage = {
     title: "We're not hiring right now",
-    body: "Stat Surgical is not hiring at this time.",
+    body: "Stat Surgical Supply is not hiring at this time.",
     warning: "Please check back with us periodically for updates.",
   };
 
@@ -75,16 +75,15 @@ export default function Footer() {
               <button
                 className='text-[#0e355e]'
                 title='Careers'
-                onClick={() => setShowModal(true)}
+                onClick={() => setIsAlertOpen(true)}
               >
                 Careers
               </button>
 
               <CustomAlertModal
-                isOpen={showModal}
-                onConfirm={() => setShowModal(false)}
-                onCancel={() => setShowModal(false)}
-                message={message}
+                isOpen={isAlertOpen}
+                message={alertMessage}
+                onConfirm={() => setIsAlertOpen(false)}
               />
             </div>
             <Link href='/#contact'>Contact</Link>
