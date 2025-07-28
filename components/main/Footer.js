@@ -11,12 +11,20 @@ import { useEffect, useState, useRef } from "react";
 import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import CustomAlertModal from "./CustomAlertModal";
 
 export default function Footer() {
   const formRef = useRef();
   const { showStatusMessage, user } = useModalContext();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const message = {
+    title: "We're not hiring right now",
+    body: "Stat Surgical is not hiring at this time.",
+    warning: "Please check back with us periodically for updates.",
+  };
 
   useEffect(() => {
     if (user?.isApproved) {
@@ -63,18 +71,22 @@ export default function Footer() {
           <div className='footer-linkGroup flex flex-col m-5'>
             <h4 className='font-bold'>Company</h4>
             <Link href='/about'>About Us</Link>
-            <Link
-              href='/careers'
-              title='Careers'
-              onClick={(e) => {
-                e.preventDefault();
-                alert(
-                  "Stat Surgical is not hiring at this time. Please check back with us periodically for updates - we will post positions as they become available"
-                );
-              }}
-            >
-              Careers
-            </Link>
+            <div className='flex items-center'>
+              <button
+                className='text-[#0e355e]'
+                title='Careers'
+                onClick={() => setShowModal(true)}
+              >
+                Careers
+              </button>
+
+              <CustomAlertModal
+                isOpen={showModal}
+                onConfirm={() => setShowModal(false)}
+                onCancel={() => setShowModal(false)}
+                message={message}
+              />
+            </div>
             <Link href='/#contact'>Contact</Link>
           </div>
           <div className='footer-linkGroup flex flex-col m-5'>
