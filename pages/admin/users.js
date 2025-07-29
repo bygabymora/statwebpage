@@ -111,8 +111,8 @@ function AdminUsersScreen() {
           <div className='text-red-500'>{error}</div>
         ) : (
           <div className='overflow-x-auto'>
-            <table className='min-w-full bg-white shadow-md rounded-lg overflow-hidden'>
-              <thead className='bg-gray-100 border border-collapse'>
+            <table className='min-w-full bg-white shadow-md rounded-xl overflow-hidden text-sm'>
+              <thead className='bg-gray-200 text-gray-700'>
                 <tr>
                   {[
                     "ID",
@@ -126,55 +126,43 @@ function AdminUsersScreen() {
                     "Protected Inventory",
                     "Actions",
                   ].map((header) => (
-                    <th
-                      key={header}
-                      className='p-4 text-left uppercase border border-collapse'
-                    >
+                    <th key={header} className='p-4 text-left'>
                       {header}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr key={user._id} className='border-b hover:bg-gray-100'>
-                    <td className='border border-collapse p-4'>
-                      {user._id.substring(20, 24)}
-                    </td>
-                    <td className='border border-collapse p-4'>
+                {users.map((user, index) => (
+                  <tr
+                    key={user._id}
+                    className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  >
+                    <td className='p-4 font-mono'>{user._id.slice(-6)}</td>
+                    <td className='p-4'>
                       {user.firstName} {user.lastName}
                     </td>
-                    <td className='border border-collapse p-4'>{user.email}</td>
-                    <td className='border border-collapse p-4'>
-                      {user.companyName || "—"}
-                    </td>
-                    <td className='border border-collapse p-4'>
-                      {user.companyEinCode || "—"}
-                    </td>
-                    <td className='border border-collapse p-4'>
-                      {user.active ? "✅" : "❌"}
-                    </td>
-                    <td className='border border-collapse p-4'>
-                      {user.approved ? "✅" : "❌"}
-                    </td>
-                    <td className='border p-4'>{user.isAdmin ? "✅" : "❌"}</td>
-                    <td className='border border-collapse p-4'>
-                      {user.restricted ? "✅" : "❌"}
-                    </td>
-                    <td className='p-4 flex items-center space-x-2'>
+                    <td className='p-4'>{user.email}</td>
+                    <td className='p-4'>{user.companyName || "—"}</td>
+                    <td className='p-4'>{user.companyEinCode || "—"}</td>
+                    <td className='p-4'>{user.active ? "✅" : "❌"}</td>
+                    <td className='p-4'>{user.approved ? "✅" : "❌"}</td>
+                    <td className='p-4'>{user.isAdmin ? "✅" : "❌"}</td>
+                    <td className='p-4'>{user.restricted ? "✅" : "❌"}</td>
+                    <td className='p-4 flex gap-2 justify-center'>
                       <button
                         onClick={() => router.push(`/admin/user/${user._id}`)}
-                        className='p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10'
+                        className='p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md w-9 h-9 flex items-center justify-center'
                         title='Edit User'
                       >
-                        <BiSolidEdit />
+                        <BiSolidEdit size={18} />
                       </button>
                       <button
                         onClick={() => confirmDelete(user._id)}
-                        className='p-2 bg-[#144e8b] text-white rounded-md hover:bg-[#788b9b] flex items-center justify-center w-10 h-10'
+                        className='p-2 bg-red-600 hover:bg-red-700 text-white rounded-md w-9 h-9 flex items-center justify-center'
                         title='Delete User'
                       >
-                        <BsTrash3 />
+                        <BsTrash3 size={18} />
                       </button>
                     </td>
                   </tr>

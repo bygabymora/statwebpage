@@ -152,51 +152,38 @@ export default function AdminNewsScreen() {
         ) : (
           <div className='overflow-x-auto'>
             <br />
-            <table className='min-w-full bg-white shadow-md rounded-lg overflow-hidden'>
-              <thead className='bg-gray-100 border border-collapse'>
+            <table className='min-w-full bg-white shadow-md rounded-xl overflow-hidden text-sm'>
+              <thead className='bg-gray-200 text-gray-700'>
                 <tr>
-                  <th className='p-2 text-left border-r border-gray-300'>
-                    Title
-                  </th>
-                  {["Category", "Tags", "Author", "Actions"].map((header) => (
-                    <th
-                      key={header}
-                      className='p-4 text-left uppercase border border-collapse'
-                    >
-                      {header}
-                    </th>
-                  ))}
+                  <th className='p-4 text-left'>Title</th>
+                  <th className='p-4 text-left'>Category</th>
+                  <th className='p-4 text-left'>Tags</th>
+                  <th className='p-4 text-left'>Author</th>
+                  <th className='p-4 text-center'>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {newsEntries.map((news) => (
-                  <tr key={news._id} className='border-b hover:bg-gray-100'>
-                    <td className='p-2 border-r border-gray-300'>
-                      {news.title}
-                    </td>
-                    <td className='border border-collapse p-2'>
-                      {news.category}
-                    </td>
-                    <td className='border border-collapse p-2'>
-                      {news.tags.join(", ")}
-                    </td>
-                    <td className='border border-collapse p-2'>
-                      {news.author}
-                    </td>
-                    <td className='border border-collapse p-5 text-center flex flex-row'>
+                {newsEntries.map((news, index) => (
+                  <tr
+                    key={news._id}
+                    className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  >
+                    <td className='p-4'>{news.title}</td>
+                    <td className='p-4'>{news.category}</td>
+                    <td className='p-4'>{news.tags.join(", ")}</td>
+                    <td className='p-4'>{news.author}</td>
+                    <td className='p-4 text-center flex justify-center gap-3'>
                       <Link
                         href={`/admin/news/${news._id}`}
-                        className='primary-button font-bold underline'
+                        className='text-blue-600 hover:text-blue-800'
                       >
-                        <BiSolidEdit />
+                        <BiSolidEdit size={20} />
                       </Link>
-                      &nbsp;
                       <button
                         onClick={() => deleteHandler(news._id)}
-                        className='primary-button font-bold underline'
-                        type='button'
+                        className='text-red-600 hover:text-red-800'
                       >
-                        <BsTrash3 />
+                        <BsTrash3 size={18} />
                       </button>
                     </td>
                   </tr>
