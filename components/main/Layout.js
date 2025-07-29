@@ -143,7 +143,7 @@ export default function Layout({
               : "Buy surgical supplies online at affordable prices. Fast shipping, secure checkout, and excellent customer support. Perfect for clinics, hospitals, and outpatient centers."
           }
         />
-        <meta property='og:image' content={product?.image || Logo} />
+        <meta property='og:image' content={product?.image || Logo.src} />
         <meta
           property='og:url'
           content={
@@ -169,7 +169,7 @@ export default function Layout({
               : "Buy surgical supplies online at affordable prices."
           }
         />
-        <meta name='twitter:image' content={product?.image || Logo} />
+        <meta name='twitter:image' content={product?.image || Logo.src} />
 
         {product && (
           <script
