@@ -4,7 +4,6 @@ import Header from "./Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./Footer";
-import Logo from "../../public/images/assets/logo2.png";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
@@ -25,6 +24,8 @@ export default function Layout({
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
+  const defaultOgImage =
+    "https://www.statsurgicalsupply.com/images/assets/StaticBanner.png";
 
   const approvalMessage = useMemo(
     () => ({
@@ -98,130 +99,164 @@ export default function Layout({
             ? `${title} | Stat Surgical Supply`
             : "Stat Surgical Supply - Quality Surgical Supplies"}
         </title>
-        <meta
-          name='description'
-          content={
-            product
-              ? product.each?.description?.slice(0, 160)
-              : "Buy surgical supplies online at affordable prices. Fast shipping, secure checkout, and excellent customer support. Perfect for clinics, hospitals, and outpatient centers."
-          }
-        />
-        <meta
-          name='keywords'
-          content={
-            product?.keywords && Array.isArray(product.keywords)
-              ? product.keywords.join(", ")
-              : "surgical supplies, medical equipment, healthcare products, quality surgical instruments, affordable, fast shipping, price comparison"
-          }
-        />
         <meta name='robots' content='index, follow' />
         <meta name='author' content='Stat Surgical Supply' />
         <meta name='publisher' content='Stat Surgical Supply' />
         <link rel='icon' href='/favicon.ico' />
-        <link
-          rel='canonical'
-          href={
-            product
-              ? `https://www.statsurgicalsupply.com/products/${product.name}`
-              : "https://www.statsurgicalsupply.com/"
-          }
-        />
-        <meta property='og:type' content={product ? "product" : "website"} />
-        <meta
-          property='og:title'
-          content={
-            product
-              ? `${product.manufacturer} - ${product.name}`
-              : "Stat Surgical Supply"
-          }
-        />
-        <meta
-          name='description'
-          content={
-            product
-              ? product.each?.description?.slice(0, 200)
-              : "Buy surgical supplies online at affordable prices. Fast shipping, secure checkout, and excellent customer support. Perfect for clinics, hospitals, and outpatient centers."
-          }
-        />
-        <meta property='og:image' content={product?.image || Logo.src} />
-        <meta
-          property='og:url'
-          content={
-            product
-              ? `https://www.statsurgicalsupply.com/products/${product.name}`
-              : "https://www.statsurgicalsupply.com/"
-          }
-        />
-        <meta name='twitter:card' content='summary_large_image' />
-        <meta
-          name='twitter:title'
-          content={
-            product
-              ? `${product.manufacturer} - ${product.name}`
-              : "Stat Surgical Supply"
-          }
-        />
-        <meta
-          name='twitter:description'
-          content={
-            product
-              ? product.description?.slice(0, 200)
-              : "Buy surgical supplies online at affordable prices."
-          }
-        />
-        <meta name='twitter:image' content={product?.image || Logo.src} />
 
-        {product && (
-          <script
-            type='application/ld+json'
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(schema || generateProductJSONLD(product)),
-            }}
-          />
-        )}
+        {product ? (
+          <>
+            <meta
+              name='description'
+              content={
+                product.each?.description?.slice(0, 160) ||
+                "Buy surgical supplies online at affordable prices."
+              }
+            />
+            <meta
+              name='keywords'
+              content={
+                Array.isArray(product.keywords)
+                  ? product.keywords.join(", ")
+                  : "surgical supplies, medical equipment, healthcare products"
+              }
+            />
+            <meta property='og:type' content='product' />
+            <meta
+              property='og:title'
+              content={`${product.manufacturer} - ${product.name}`}
+            />
+            <meta
+              property='og:description'
+              content={product.each?.description?.slice(0, 200)}
+            />
+            <meta
+              property='og:image'
+              content={product.image || defaultOgImage}
+            />
+            <meta
+              property='og:url'
+              content={`https://www.statsurgicalsupply.com/products/${product.name}`}
+            />
 
-        {news && (
+            <meta name='twitter:card' content='summary_large_image' />
+            <meta
+              name='twitter:title'
+              content={`${product.manufacturer} - ${product.name}`}
+            />
+            <meta
+              name='twitter:description'
+              content={product.each?.description?.slice(0, 200)}
+            />
+            <meta
+              name='twitter:image'
+              content={product.image || defaultOgImage}
+            />
+
+            <link
+              rel='canonical'
+              href={`https://www.statsurgicalsupply.com/products/${product.name}`}
+            />
+
+            <script
+              type='application/ld+json'
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(
+                  schema || generateProductJSONLD(product)
+                ),
+              }}
+            />
+          </>
+        ) : news ? (
           <>
             <meta
               name='description'
               content={description || news.content?.slice(0, 160)}
             />
             <meta name='keywords' content={news.tags?.join(", ")} />
+            <meta property='og:type' content='article' />
             <meta property='og:title' content={title || news.title} />
             <meta
               property='og:description'
               content={description || news.content?.slice(0, 200)}
             />
             <meta
-              name='author'
-              content={news.author || "Stat Surgical Supply"}
+              property='og:image'
+              content={image || news.imageUrl || defaultOgImage}
             />
-            {news?.createdAt && !isNaN(new Date(news.createdAt)) && (
-              <meta
-                property='article:published_time'
-                content={new Date(news.createdAt).toISOString()}
-              />
-            )}
-            <meta property='og:image' content={image || news.imageUrl} />
             <meta
               property='og:url'
               content={
                 url || `https://www.statsurgicalsupply.com/news/${news.slug}`
               }
             />
-            <meta property='og:type' content='article' />
+            {news.createdAt && (
+              <meta
+                property='article:published_time'
+                content={new Date(news.createdAt).toISOString()}
+              />
+            )}
+
+            <meta name='twitter:card' content='summary_large_image' />
+            <meta name='twitter:title' content={title || news.title} />
+            <meta
+              name='twitter:description'
+              content={description || news.content?.slice(0, 200)}
+            />
+            <meta
+              name='twitter:image'
+              content={image || news.imageUrl || defaultOgImage}
+            />
+
             <link
               rel='canonical'
               href={
                 url || `https://www.statsurgicalsupply.com/news/${news.slug}`
               }
             />
+
             <script
               type='application/ld+json'
               dangerouslySetInnerHTML={{
                 __html: JSON.stringify(generateJSONLD(news)),
               }}
             />
+          </>
+        ) : (
+          <>
+            {/* Default (homepage, or fallback) */}
+            <meta
+              name='description'
+              content='High-Quality Surgical Supplies at Unmatched Prices.
+Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+            />
+            <meta
+              name='keywords'
+              content='surgical supplies, medical equipment, healthcare products'
+            />
+            <meta property='og:type' content='website' />
+            <meta property='og:title' content='Stat Surgical Supply' />
+            <meta
+              property='og:description'
+              content='High-Quality Surgical Supplies at Unmatched Prices.
+Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+            />
+            <meta property='og:image' content={defaultOgImage} />
+            <meta
+              property='og:url'
+              content='https://www.statsurgicalsupply.com/'
+            />
+
+            <meta name='twitter:card' content='summary_large_image' />
+            <meta name='twitter:title' content='Stat Surgical Supply' />
+            <meta
+              name='twitter:description'
+              content='High-Quality Surgical Supplies at Unmatched Prices.
+Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+            />
+            <meta name='twitter:image' content={defaultOgImage} />
+
+            <link rel='canonical' href='https://www.statsurgicalsupply.com/' />
           </>
         )}
       </Head>
