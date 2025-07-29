@@ -228,7 +228,7 @@ export default function Layout({
             <meta
               name='description'
               content='High-Quality Surgical Supplies at Unmatched Prices.
-Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
             />
             <meta
               name='keywords'
@@ -239,7 +239,7 @@ Explore our wide range of high-end surgical disposables. We offer industry-leadi
             <meta
               property='og:description'
               content='High-Quality Surgical Supplies at Unmatched Prices.
-Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
             />
             <meta property='og:image' content={defaultOgImage} />
             <meta
@@ -252,7 +252,7 @@ Explore our wide range of high-end surgical disposables. We offer industry-leadi
             <meta
               name='twitter:description'
               content='High-Quality Surgical Supplies at Unmatched Prices.
-Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
 
