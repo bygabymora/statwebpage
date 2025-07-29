@@ -171,9 +171,19 @@ export default function Layout({
           <>
             <meta
               name='description'
-              content={description || news.content?.slice(0, 160)}
+              content={
+                description ||
+                news.content?.slice(0, 160) ||
+                "Stay up to date with important news and insights in the medical and healthcare industry. Trusted updates from Stat Surgical Supply."
+              }
             />
-            <meta name='keywords' content={news.tags?.join(", ")} />
+            <meta
+              name='keywords'
+              content={
+                news.tags?.join(", ") ||
+                "medical news, healthcare, health updates, surgery, innovation, patient care, medical technology, hospital news"
+              }
+            />
             <meta property='og:type' content='article' />
             <meta property='og:title' content={title || news.title} />
             <meta
