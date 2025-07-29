@@ -66,6 +66,7 @@ export default function Support() {
               <h4 className='font-bold text-[#0e355e] mt-3'>Email</h4>
               <a
                 className='text-[#414b53] text-sm mt-1'
+                title='Email Support equipment'
                 href='mailto:centralsales@statsurgicalsupply.com?subject=Support%20Request&body=Hello,%20I%20need%20help%20with...'
               >
                 centralsales@statsurgicalsupply.com
@@ -78,6 +79,7 @@ export default function Support() {
               src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d881.1556225029047!2d-82.45766380676294!3d27.944216161107967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2c59877a39355%3A0xd495507c20fbd5f0!2sStat%20Surgical%20Supply!5e0!3m2!1sen!2sco!4v1748536969142!5m2!1sen!2sco'
               className='w-full h-96'
               allowFullScreen
+              title='Location Map'
               loading='lazy'
               referrerPolicy='no-referrer-when-downgrade'
             />
