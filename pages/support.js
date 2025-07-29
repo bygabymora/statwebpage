@@ -56,6 +56,7 @@ export default function Support() {
               <a
                 className='text-[#414b53] text-sm mt-1'
                 href='tel:+18132520727'
+                title='Call Support'
               >
                 +1 813-252-0727
               </a>
