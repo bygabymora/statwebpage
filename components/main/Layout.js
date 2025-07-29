@@ -11,7 +11,16 @@ import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Script from "next/script";
 
-export default function Layout({ children, title, product, news, schema }) {
+export default function Layout({
+  children,
+  title,
+  product,
+  news,
+  schema,
+  description,
+  image,
+  url,
+}) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
@@ -173,12 +182,15 @@ export default function Layout({ children, title, product, news, schema }) {
 
         {news && (
           <>
-            <meta name='description' content={news.content?.slice(0, 160)} />
+            <meta
+              name='description'
+              content={description || news.content?.slice(0, 160)}
+            />
             <meta name='keywords' content={news.tags?.join(", ")} />
-            <meta property='og:title' content={news.title} />
+            <meta property='og:title' content={title || news.title} />
             <meta
               property='og:description'
-              content={news.content?.slice(0, 200)}
+              content={description || news.content?.slice(0, 200)}
             />
             <meta
               name='author'
@@ -190,15 +202,19 @@ export default function Layout({ children, title, product, news, schema }) {
                 content={new Date(news.createdAt).toISOString()}
               />
             )}
-            <meta property='og:image' content={news.imageUrl} />
+            <meta property='og:image' content={image || news.imageUrl} />
             <meta
               property='og:url'
-              content={`https://www.statsurgicalsupply.com/news/${news.slug}`}
+              content={
+                url || `https://www.statsurgicalsupply.com/news/${news.slug}`
+              }
             />
             <meta property='og:type' content='article' />
             <link
               rel='canonical'
-              href={`https://www.statsurgicalsupply.com/news/${news.slug}`}
+              href={
+                url || `https://www.statsurgicalsupply.com/news/${news.slug}`
+              }
             />
             <script
               type='application/ld+json'
