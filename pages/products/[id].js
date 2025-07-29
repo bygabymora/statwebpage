@@ -740,6 +740,7 @@ export default function ProductScreen({ product }) {
                   width={100}
                   height={100}
                   className='rounded-md'
+                  title={product.name}
                 />
               </td>
               {active === "loading"
@@ -798,6 +799,7 @@ export default function ProductScreen({ product }) {
                 width={100}
                 height={100}
                 className='rounded-md'
+                title={product.name}
               />
             </div>
             {active === "loading"

@@ -62,6 +62,7 @@ export default function AboutScreen() {
           <Image
             src={image}
             alt='About Us'
+            title='About Us'
             className='w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[550px] -mt-10'
             priority
           />
