@@ -551,12 +551,15 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             </div>
           )}
           <div className='flex gap-5'>
-            <Link href='/Login'>
+            <Link href='/Login' title='Login to buy this medical supplies'>
               <button className='primary-button align-middle text-white'>
                 Login
               </button>
             </Link>
-            <Link href='/Register'>
+            <Link
+              href='/Register'
+              title='Register to buy this medical supplies'
+            >
               <button className='primary-button align-middle text-white'>
                 Register
               </button>
