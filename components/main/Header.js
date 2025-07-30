@@ -1,4 +1,3 @@
-"use client";
 import Signupbutton from "./Signupbutton";
 import React, { useState } from "react";
 import Link from "next/link";
