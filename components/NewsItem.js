@@ -26,9 +26,11 @@ export const NewsItem = ({ news }) => {
               {news.title}
             </h3>
           </Link>
-          <p className='text-gray-600 text-sm mt-1 line-clamp-3'>{news.slug}</p>
+          <p className='text-gray-600 text-sm mt-1 line-clamp-3'>
+            {news.content?.slice(0, 200)}
+          </p>
         </div>
-        <div className='mt-3 text-lg font-semibold text-gray-400'>
+        <div className='mt-3 text-lg font-semibold text-gray-500'>
           <time dateTime={news.createdAt}>
             {new Date(news.createdAt).toLocaleDateString("en-US", {
               year: "numeric",
