@@ -190,14 +190,14 @@ main {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #144e8b; /* Thumb color */
+  background-color: #0e355e; /* Thumb color */
   border-radius: 8px; /* Round edges of the scrollbar thumb */
-  border: 3px solid #144e8b; /* To create padding-like effect, make thumb narrower */
+  border: 3px solid #0e355e; /* To create padding-like effect, make thumb narrower */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #5b8756; /* Change thumb color when hovered */
-  border: 3px solid #5b8756; /* Keep the padding-like effect when hovered */
+  background: #07783e; /* Change thumb color when hovered */
+  border: 3px solid #07783e; /* Keep the padding-like effect when hovered */
 }
 
 /*=============== BUTTONS ===============*/

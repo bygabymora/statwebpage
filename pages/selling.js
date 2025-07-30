@@ -16,6 +16,53 @@ export default function SecureBuyingSelling() {
     { name: "Secure Buying & Selling" },
   ];
 
+  const features = [
+    {
+      icon: (
+        <FaLock className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Secure Payments",
+      description:
+        "All transactions are encrypted and verified for maximum security.",
+    },
+    {
+      icon: (
+        <FaCheckCircle className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Verified Suppliers",
+      description: "We work exclusively with certified and trusted suppliers.",
+    },
+    {
+      icon: (
+        <FaUndoAlt className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Hassle-Free Returns",
+      description: "Easily return products that do not meet expectations.",
+    },
+    {
+      icon: (
+        <FaShieldAlt className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Buyer Protection",
+      description: "We offer guarantees to protect your purchases and sales.",
+    },
+    {
+      icon: (
+        <FaHandshake className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Fair Deals",
+      description:
+        "We ensure you get the best value on every deal, whether buying from or selling to us.",
+    },
+    {
+      icon: (
+        <FaThumbsUp className='text-5xl text-[#07783e] group-hover:animate-bounce' />
+      ),
+      title: "Customer Satisfaction",
+      description: "Our support team is always ready to assist you.",
+    },
+  ];
+
   return (
     <Layout title={"Secure Buying & Selling"}>
       <nav className='text-sm text-gray-700'>
@@ -39,6 +86,7 @@ export default function SecureBuyingSelling() {
           ))}
         </ul>
       </nav>
+
       <section className='w-full bg-white px-6'>
         <div className='max-w-6xl mx-auto text-center'>
           <h2 className='text-4xl font-bold text-[#0e355e]'>
@@ -50,67 +98,20 @@ export default function SecureBuyingSelling() {
           </p>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10'>
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaLock className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Secure Payments
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                All transactions are encrypted and verified for maximum
-                security.
-              </p>
-            </div>
-
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaCheckCircle className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Verified Suppliers
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                We work exclusively with certified and trusted suppliers.
-              </p>
-            </div>
-
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaUndoAlt className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Hassle-Free Returns
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                Easily return products that do not meet expectations.
-              </p>
-            </div>
-
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaShieldAlt className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Buyer Protection
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                We offer guarantees to protect your purchases and sales.
-              </p>
-            </div>
-
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaHandshake className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Fair Deals
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                We ensure you get the best value on every deal, whether buying
-                from or selling to us.
-              </p>
-            </div>
-
-            <div className='p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center'>
-              <FaThumbsUp className='text-5xl text-[#07783e]' />
-              <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
-                Customer Satisfaction
-              </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
-                Our support team is always ready to assist you.
-              </p>
-            </div>
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className='group p-6 bg-[#f8f9fa] rounded-xl shadow-md flex flex-col items-center transition-transform duration-300 hover:scale-105'
+              >
+                {feature.icon}
+                <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
+                  {feature.title}
+                </h4>
+                <p className='text-[#414b53] text-sm mt-2'>
+                  {feature.description}
+                </p>
+              </div>
+            ))}
           </div>
 
           <div className='mt-10 my-10'>
