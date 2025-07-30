@@ -90,6 +90,16 @@ export default function AboutScreen() {
             rely on us for cost savings. Our customers are &quot;priority
             one&quot;.
           </p>
+          <div className='mt-10 flex justify-start'>
+            <Link href='/products'>
+              <animated.button
+                style={contentAnimation}
+                className='px-6 py-3 bg-[#0e355e] hover:bg-[#144e8b] text-white font-semibold rounded-full shadow-md transition duration-300'
+              >
+                Explore Our Products
+              </animated.button>
+            </Link>
+          </div>
         </animated.div>
       </div>
     </Layout>
