@@ -238,7 +238,7 @@ export default function Layout({
               name='description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies, delivery, and sterilization standards."
+                "Find answers to the most frequently asked questions about our surgical supplies and services. Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
               }
             />
             <meta
@@ -254,7 +254,7 @@ export default function Layout({
               property='og:description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services."
+                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
               }
             />
             <meta property='og:image' content={defaultOgImage} />
@@ -272,7 +272,7 @@ export default function Layout({
               name='twitter:description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services."
+                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
               }
             />
             <meta name='twitter:image' content={defaultOgImage} />
