@@ -9,10 +9,12 @@ export const NewsItem = ({ news }) => {
       <Link
         href={`/news/${news.slug}`}
         className='w-full aspect-[6/4] relative group'
+        title={news.title}
       >
         <Image
           src={news.imageUrl}
           alt={news.title}
+          title={news.title}
           fill
           className='object-cover group-hover:scale-105 transition-transform duration-300'
         />
