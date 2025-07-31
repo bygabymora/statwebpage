@@ -8,7 +8,6 @@ function generateJSONLD(news) {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     keywords: news.tags?.join(", "),
-    dateCreated: new Date(news.createdAt).toISOString(),
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
