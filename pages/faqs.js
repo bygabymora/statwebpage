@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Head from "next/head";
 import Layout from "../components/main/Layout";
 import { FaQuestionCircle } from "react-icons/fa";
 import { IoChevronDown } from "react-icons/io5";
@@ -44,6 +43,21 @@ export default function FAQs() {
   const [openIndex, setOpenIndex] = useState(null);
   const toggle = (i) => setOpenIndex(openIndex === i ? null : i);
 
+  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "FAQs" }];
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      ...(item.href && {
+        item: `https://www.statsurgicalsupply.com${item.href}`,
+      }),
+    })),
+  };
+
   // JSON-LD Schema
   const faqSchema = {
     "@context": "https://schema.org",
@@ -58,10 +72,12 @@ export default function FAQs() {
     })),
   };
 
-  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "FAQs" }];
-
   return (
-    <Layout title='FAQs'>
+    <Layout
+      title='FAQs'
+      description='Find answers to the most frequently asked questions about our surgical supplies, delivery standards, sterilization, and ordering guidelines.'
+      schema={[faqSchema, breadcrumbSchema]}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-4'>
           {breadcrumbs.map((breadcrumb, index) => (
@@ -83,15 +99,6 @@ export default function FAQs() {
           ))}
         </ul>
       </nav>
-      <Head>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqSchema, null, 2),
-          }}
-        />
-      </Head>
-
       <section className='max-w-4xl mx-auto px-4 py-10 -mt-8'>
         <div className='text-center'>
           <h1 className='text-4xl font-bold text-[#0e355e] mb-2'>
@@ -136,7 +143,6 @@ export default function FAQs() {
           ))}
         </div>
       </section>
-
       {/* Custom animation */}
       <style jsx>{`
         @keyframes fadeInDown {

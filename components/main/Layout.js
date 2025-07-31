@@ -232,6 +232,64 @@ export default function Layout({
               }}
             />
           </>
+        ) : schema ? (
+          <>
+            <meta
+              name='description'
+              content={
+                description ||
+                "Find answers to the most frequently asked questions about our surgical supplies, delivery, and sterilization standards."
+              }
+            />
+            <meta
+              name='keywords'
+              content='FAQs, surgical supplies, sterilization, expiration, order timeline'
+            />
+            <meta property='og:type' content='website' />
+            <meta
+              property='og:title'
+              content={title || "Frequently Asked Questions"}
+            />
+            <meta
+              property='og:description'
+              content={
+                description ||
+                "Find answers to the most frequently asked questions about our surgical supplies and services."
+              }
+            />
+            <meta property='og:image' content={defaultOgImage} />
+            <meta
+              property='og:url'
+              content={`https://www.statsurgicalsupply.com${router.asPath}`}
+            />
+
+            <meta name='twitter:card' content='summary_large_image' />
+            <meta
+              name='twitter:title'
+              content={title || "Frequently Asked Questions"}
+            />
+            <meta
+              name='twitter:description'
+              content={
+                description ||
+                "Find answers to the most frequently asked questions about our surgical supplies and services."
+              }
+            />
+            <meta name='twitter:image' content={defaultOgImage} />
+
+            <link
+              rel='canonical'
+              href={`https://www.statsurgicalsupply.com${router.asPath}`}
+            />
+
+            {(Array.isArray(schema) ? schema : [schema]).map((entry, i) => (
+              <script
+                key={i}
+                type='application/ld+json'
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+              />
+            ))}
+          </>
         ) : (
           <>
             {/* Default (homepage, or fallback) */}
