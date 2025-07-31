@@ -7,20 +7,31 @@ export default async function handler(req, res) {
 
     const siteUrl = "https://www.statsurgicalsupply.com";
 
-    const newsItems = await News.find({}).sort({ createdAt: -1 }).lean();
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+    const newsItems = await News.find({ createdAt: { $gte: twoDaysAgo } })
+      .sort({ createdAt: -1 })
+      .lean();
 
     const itemsXml = newsItems
       .map((item) => {
         const pubDate = new Date(item.createdAt || Date.now()).toISOString();
         const title = escapeXml(item.title);
-        const description = escapeXml(item.content || "");
+        const description = escapeXml(
+          (item.summary || item.content || "").slice(0, 300)
+        );
         const author = escapeXml(item.author || "Stat Surgical Supply");
         const slug = item.slug;
+        const keywords = escapeXml(
+          item.keywords?.join(", ") || "surgical supplies, healthcare, USA"
+        );
 
         return `
         <item>
           <title>${title}</title>
           <link>${siteUrl}/news/${slug}</link>
+          <guid isPermaLink="true">${siteUrl}/news/${slug}</guid>
           <description>${description}</description>
           <pubDate>${pubDate}</pubDate>
           <author>${author}</author>
@@ -29,8 +40,11 @@ export default async function handler(req, res) {
               <news:name>Stat Surgical Supply News</news:name>
               <news:language>en</news:language>
             </news:publication>
+            <news:genres>PressRelease</news:genres>
+          <news:access>Public</news:access>
             <news:publication_date>${pubDate}</news:publication_date>
             <news:title>${title}</news:title>
+          <news:keywords>${keywords}</news:keywords>
           </news:news>
         </item>`;
       })
