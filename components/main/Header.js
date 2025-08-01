@@ -121,10 +121,10 @@ const Header = () => {
         )}
       </div>
       <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
-        <div className='flex items-center'>
+        <div className='flex items-center min-h-[200px]'>
           <button
             onClick={handleHomeClick}
-            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32'
+            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32 min-h-[200px]'
           >
             <Image
               src={Logo2}
