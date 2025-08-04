@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Listbox } from "@headlessui/react";
 import axios from "axios";
 import { BiMessageAdd } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
 import { getError } from "../../utils/error";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
 
 const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const form = useRef();
@@ -14,6 +16,8 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const [manufacturer, setManufacturer] = useState("");
   const [phone, setPhone] = useState("");
   const { contact, showStatusMessage, accountOwner } = useModalContext();
+  const [uom, setUom] = useState("");
+  const uomOptions = ["Box", "Each"];
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -28,6 +32,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
         email,
         phone,
         message,
+        uom,
       });
       sendEmail(e);
       form.current.reset();
@@ -41,7 +46,15 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const sendEmail = (e) => {
     e.preventDefault();
 
-    if (!name || !email || !phone || !manufacturer || !quantity || !message) {
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !manufacturer ||
+      !quantity ||
+      !message ||
+      !uom
+    ) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
@@ -53,6 +66,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       manufacturer,
       quantity,
       searchedWord,
+      uom,
     };
 
     const item = {
@@ -73,8 +87,11 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
 
   useEffect(() => {
     if (contact) {
-      setName(contact.firstName + " " + contact.lastName);
-      setEmail(contact.email);
+      const fullName = [contact.firstName, contact.lastName]
+        .filter(Boolean)
+        .join(" ");
+      if (fullName) setName(fullName);
+      if (contact.email) setEmail(contact.email);
     }
   }, [contact]);
 
@@ -147,6 +164,41 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               />
             </div>
           </div>
+          <div className='contact__form-div w-full z-50'>
+            <label className='contact__form-tag'>
+              Unit of Measure (Box or Each)*
+            </label>
+            <Listbox value={uom} onChange={setUom}>
+              <div className='relative'>
+                <Listbox.Button className='contact__form-input w-full flex justify-between items-center pr-10'>
+                  {uom || "Select an option"}
+                  <ChevronUpDownIcon className='h-5 w-5 text-gray-400 absolute right-3' />
+                </Listbox.Button>
+                <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                  {uomOptions.map((option) => (
+                    <Listbox.Option
+                      key={option}
+                      value={option}
+                      className={({ active }) =>
+                        `cursor-pointer select-none px-4 py-2 ${
+                          active ? "bg-blue-100 text-blue-900" : "text-gray-900"
+                        }`
+                      }
+                    >
+                      {({ selected }) => (
+                        <span className='flex items-center justify-between'>
+                          {option}
+                          {selected && (
+                            <CheckIcon className='w-4 h-4 text-blue-600' />
+                          )}
+                        </span>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Name*</label>
             <input
@@ -157,7 +209,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input'
               onChange={(e) => setName(e.target.value)}
               value={name}
-              required
+              required={!contact}
             />
           </div>
           <div className='contact__form-div'>
@@ -170,7 +222,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input '
               onChange={(e) => setEmail(e.target.value)}
               value={email}
-              required
+              required={!contact}
             />
           </div>
           <div className='contact__form-div'>
@@ -183,7 +235,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input'
               onChange={(e) => setPhone(e.target.value)}
               value={phone}
-              required
+              required={!contact}
             />
           </div>
 
