@@ -56,8 +56,6 @@ export const messageManagement = (
         subject: `${contact.name} – Thank you for your product request!`,
         p1: `
       <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
-        Hi <strong>${contact.name.split(" ")[0]}</strong>,
-        <br><br>
         Thank you for considering <strong>STAT Surgical Supply</strong> for your needs. We've added the item to your wishlist, and as soon as it becomes available, we’ll notify you right away.
       </div>
     `,
