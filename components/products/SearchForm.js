@@ -38,6 +38,16 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
     }
   };
 
+  useEffect(() => {
+    if (contact) {
+      const fullName = [contact.firstName, contact.lastName]
+        .filter(Boolean)
+        .join(" ");
+      if (fullName) setName(fullName);
+      if (contact.email) setEmail(contact.email);
+    }
+  }, [contact]);
+
   //-------------Email-------------//
 
   const sendEmail = (e) => {
@@ -185,7 +195,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input'
               onChange={(e) => setName(e.target.value)}
               value={name}
-              required
+              required={!contact}
             />
           </div>
           <div className='contact__form-div'>
@@ -198,7 +208,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input '
               onChange={(e) => setEmail(e.target.value)}
               value={email}
-              required
+              required={!contact}
             />
           </div>
           <div className='contact__form-div'>
@@ -211,7 +221,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               className='contact__form-input'
               onChange={(e) => setPhone(e.target.value)}
               value={phone}
-              required
+              required={!contact}
             />
           </div>
 
