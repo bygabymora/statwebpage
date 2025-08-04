@@ -38,16 +38,6 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
     }
   };
 
-  useEffect(() => {
-    if (contact) {
-      const fullName = [contact.firstName, contact.lastName]
-        .filter(Boolean)
-        .join(" ");
-      if (fullName) setName(fullName);
-      if (contact.email) setEmail(contact.email);
-    }
-  }, [contact]);
-
   //-------------Email-------------//
 
   const sendEmail = (e) => {
@@ -94,8 +84,11 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
 
   useEffect(() => {
     if (contact) {
-      setName(contact.firstName + " " + contact.lastName);
-      setEmail(contact.email);
+      const fullName = [contact.firstName, contact.lastName]
+        .filter(Boolean)
+        .join(" ");
+      if (fullName) setName(fullName);
+      if (contact.email) setEmail(contact.email);
     }
   }, [contact]);
 
