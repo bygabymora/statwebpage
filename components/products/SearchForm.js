@@ -14,6 +14,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const [manufacturer, setManufacturer] = useState("");
   const [phone, setPhone] = useState("");
   const { contact, showStatusMessage, accountOwner } = useModalContext();
+  const [uom, setUom] = useState("");
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -28,6 +29,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
         email,
         phone,
         message,
+        uom,
       });
       sendEmail(e);
       form.current.reset();
@@ -41,7 +43,15 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const sendEmail = (e) => {
     e.preventDefault();
 
-    if (!name || !email || !phone || !manufacturer || !quantity || !message) {
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !manufacturer ||
+      !quantity ||
+      !message ||
+      !uom
+    ) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
@@ -53,6 +63,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       manufacturer,
       quantity,
       searchedWord,
+      uom,
     };
 
     const item = {
@@ -146,6 +157,23 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
                 value={quantity}
               />
             </div>
+          </div>
+          <div className='contact__form-div'>
+            <label className='contact__form-tag'>
+              Unit of Measure (Box or Each)*
+            </label>
+            <select
+              className='contact__form-input'
+              value={uom}
+              onChange={(e) => setUom(e.target.value)}
+              required
+            >
+              <option value='' disabled>
+                Select an option
+              </option>
+              <option value='Box'>Box</option>
+              <option value='Each'>Each</option>
+            </select>
           </div>
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Name*</label>

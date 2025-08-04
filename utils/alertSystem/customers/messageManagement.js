@@ -54,12 +54,27 @@ export const messageManagement = (
       emailMessage = {
         ...emailMessage,
         subject: `${contact.name} Thank you for your product request!`,
-        p1: `<div style="font-weight: light; font-size: 20px; color: #333333;">Your Request is:</div>`,
-        p2: `<div style="font-weight: light; font-size: 20px; color: #333333;">Product: ${item.searchedWord} <br> Manufacturer: ${item.manufacturer} <br> Quantity: ${item.quantity}</div>`,
-        p3: `<div style="font-weight: light; font-size: 20px; color: #333333;">Additional Message: ${message}
-              <br>
-             <strong> We will try our best to find it! </strong>
-             </div>`,
+        p1: `
+      <div style="font-weight: light; font-size: 20px; color: #333333;">
+        <strong>Contact Information:</strong><br>
+        Name: ${contact.name.split(" ")[0]}<br>
+        Email: ${contact.email}<br>
+        Phone: ${contact.phone}
+      </div>`,
+        p2: `
+      <div style="font-weight: light; font-size: 20px; color: #333333;">
+        <strong>Your Request:</strong><br>
+        Product: ${item.searchedWord}<br>
+        Manufacturer: ${item.manufacturer}<br>
+        Quantity: ${item.quantity}<br>
+        UoM: ${contact.uom}
+      </div>`,
+        p3: `
+      <div style="font-weight: light; font-size: 20px; color: #333333;">
+        <strong>Additional Message:</strong><br>
+        ${message}<br><br>
+        <strong>We will try our best to find it!</strong>
+      </div>`,
       };
       break;
 
