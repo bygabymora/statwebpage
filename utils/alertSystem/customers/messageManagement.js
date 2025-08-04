@@ -53,28 +53,45 @@ export const messageManagement = (
     case "Product Request":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.name} Thank you for your product request!`,
+        subject: `${contact.name} – Thank you for your product request!`,
         p1: `
-      <div style="font-weight: light; font-size: 20px; color: #333333;">
-        <strong>Contact Information:</strong><br>
-        Name: ${contact.name.split(" ")[0]}<br>
-        Email: ${contact.email}<br>
-        Phone: ${contact.phone}
-      </div>`,
+      <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+        Hi <strong>${contact.name.split(" ")[0]}</strong>,
+        <br><br>
+        Thank you for considering <strong>STAT Surgical Supply</strong> for your needs. We've added the item to your wishlist, and as soon as it becomes available, we’ll notify you right away.
+      </div>
+    `,
         p2: `
-      <div style="font-weight: light; font-size: 20px; color: #333333;">
-        <strong>Your Request:</strong><br>
-        Product: ${item.searchedWord}<br>
-        Manufacturer: ${item.manufacturer}<br>
-        Quantity: ${item.quantity}<br>
-        UoM: ${contact.uom}
-      </div>`,
+      <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+        <strong>Contact Information:</strong><br>
+        • Name: ${contact.name}<br>
+        • Email: ${contact.email}<br>
+        • Phone: ${contact.phone}
+      </div>
+      <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+        <strong>Requested Product:</strong><br>
+        • Reference: ${item.searchedWord}<br>
+        • Manufacturer: ${item.manufacturer}<br>
+        • Quantity: ${item.quantity}<br>
+        • Unit of Measure: ${contact.uom}
+      </div>
+    `,
         p3: `
-      <div style="font-weight: light; font-size: 20px; color: #333333;">
-        <strong>Additional Message:</strong><br>
-        ${message}<br><br>
-        <strong>We will try our best to find it!</strong>
-      </div>`,
+      <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+        <strong>Additional Notes:</strong><br>
+        ${message ? message : "—"}<br><br>
+        We truly appreciate your trust in us and are committed to helping you find exactly what you need.
+        <br><br>
+        Warm regards,<br>
+        <strong>STAT Surgical Supply Team</strong>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="https://www.statsurgicalsupply.com/contact" 
+           style="background-color: #0e355e; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">
+          Contact Us
+        </a>
+      </div>
+    `,
       };
       break;
 
