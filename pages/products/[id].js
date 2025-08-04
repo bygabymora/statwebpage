@@ -472,9 +472,7 @@ export default function ProductScreen({ product }) {
                           ? "Loading"
                           : active && (
                               <div className='mb-2 flex justify-between'>
-                                <div className='font-bold mb-1 text-sm'>
-                                  U o M
-                                </div>
+                                <div className='font-bold'>U o M</div>
                                 <Listbox
                                   value={typeOfPurchase}
                                   onChange={(value) => {

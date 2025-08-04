@@ -395,7 +395,7 @@ export const ProductItemPage = ({ product, index }) => {
                   ? "Loading"
                   : active && (
                       <div className='mb-2 justify-between -ml-5'>
-                        <div className='font-bold mb-1 text-sm'>U o M</div>
+                        <div className='font-bold text-base'>U o M</div>
                         <Listbox
                           value={typeOfPurchase}
                           onChange={(value) => {
@@ -435,7 +435,7 @@ export const ProductItemPage = ({ product, index }) => {
                         >
                           <div className='relative'>
                             <Listbox.Button
-                              className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                              className={`w-full rounded-md py-1 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
                             >
                               {typeOfPurchase || "Select"}
                             </Listbox.Button>
