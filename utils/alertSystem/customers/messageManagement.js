@@ -86,7 +86,7 @@ export const messageManagement = (
         <strong>STAT Surgical Supply Team</strong>
       </div>
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://www.statsurgicalsupply.com/contact" 
+        <a href="https://www.statsurgicalsupply.com/support" 
            style="background-color: #0e355e; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">
           Contact Us
         </a>
