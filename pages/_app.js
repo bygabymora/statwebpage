@@ -4,7 +4,6 @@ import StoreProvider from "../utils/Store";
 import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import CookieAcceptancePopup from "../components/CookieAcceptancePopup";
 import Script from "next/script";
 import { reportWebVitals } from "../utils/reportWebVitals";
 import { ModalProvider } from "../components/context/ModalContext";
@@ -15,6 +14,11 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const LazyPayPalScriptProvider = dynamic(
   () =>
     import("@paypal/react-paypal-js").then((mod) => mod.PayPalScriptProvider),
+  { ssr: false }
+);
+
+const LazyCookieAcceptancePopup = dynamic(
+  () => import("../components/CookieAcceptancePopup"),
   { ssr: false }
 );
 
@@ -49,7 +53,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     <SessionProvider session={session}>
       <ModalProvider>
         <StoreProvider>
-          <CookieAcceptancePopup />
+          <LazyCookieAcceptancePopup />
           <Analytics />
           <SpeedInsights />
           {isProd && (
