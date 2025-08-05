@@ -75,6 +75,7 @@ const Banner = () => {
                 title='Surgical Supplies'
                 fill
                 priority={index === 0}
+                fetchPriority={index === 0 ? "high" : undefined}
                 sizes='(max-width: 768px) 330px, (max-width: 1024px) 500px, 500px'
                 className='rounded-lg object-cover'
               />
