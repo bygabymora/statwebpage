@@ -8,13 +8,8 @@ import CookieAcceptancePopup from "../components/CookieAcceptancePopup";
 import Script from "next/script";
 import { reportWebVitals } from "../utils/reportWebVitals";
 import { ModalProvider } from "../components/context/ModalContext";
-import { loadStripe } from "@stripe/stripe-js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
 
 // Lazy-load PayPalScriptProvider ONLY when needed
 const LazyPayPalScriptProvider = dynamic(
@@ -35,14 +30,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         });
       }
     };
-
-    stripePromise.then((stripe) => {
-      if (!stripe) {
-        console.warn("Stripe failed to initialize correctly.");
-      } else {
-        console.log("Preloaded stripe");
-      }
-    });
 
     router.events.on("routeChangeComplete", handleRouteChange);
     return () => {
