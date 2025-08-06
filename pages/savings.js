@@ -36,11 +36,12 @@ export default function GuaranteedSavings({ isInClearance }) {
       <section className='w-full bg-white my-10 px-6'>
         <div className='max-w-6xl mx-auto text-center'>
           <h2 className='text-4xl font-bold text-[#0e355e] leading-tight'>
-            Guaranteed Savings, Tailored for You
+            Save on Surgical Supplies and Medical Equipment
           </h2>
           <p className='text-lg text-[#414b53] mt-4 max-w-3xl mx-auto'>
-            Get the best deals on high-quality medical supplies. Flexible
-            pricing and exclusive discounts await you.
+            Discover guaranteed savings on surgical supplies, medical equipment,
+            and healthcare products. Access exclusive discounts and flexible
+            pricing options trusted by clinics and hospitals.
           </p>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12'>
@@ -83,7 +84,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
                 Special discounted items available for a short time. Grab them
-                before they re gone!
+                before they’re gone!
               </p>
               <Link
                 href='/clearance'
@@ -101,7 +102,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               }}
               className='px-8 py-3 bg-[#07783e] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
             >
-              Start Saving Now
+              Shop Surgical Supplies
             </button>
           </div>
         </div>

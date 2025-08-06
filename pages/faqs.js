@@ -60,7 +60,8 @@ const faqData = [
       "Each product includes lot numbers and expiration dates for traceability. Certificates and manufacturer information can be cross-verified with our team or on the product's documentation.",
   },
   {
-    question: "What payment methods are accepted for surgical supply orders?",
+    question:
+      "What payment methods are accepted for placing surgical supply orders?",
     answer:
       "We accept credit cards, wire payments, and purchase orders (POs) for approved institutions. Financing terms may be available for repeat customers.",
   },
