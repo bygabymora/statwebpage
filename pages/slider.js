@@ -9,26 +9,29 @@ import Link from "next/link";
 const benefits = [
   {
     icon: <FaDollarSign />,
-    title: "Guaranteed Savings",
-    description: "Save up to 50% on selected products.",
+    title: "Guaranteed Savings on Surgical Supplies",
+    description:
+      "Save up to 50% on surgical disposables and medical equipment.",
     link: "/savings",
   },
   {
     icon: <FaBoxOpen />,
-    title: "Available Stock",
-    description: "Diverse catalog with fast delivery.",
+    title: "In-Stock Surgical Products with Fast Delivery",
+    description: "Wide selection of medical supplies ready to ship nationwide.",
     link: "/products",
   },
   {
     icon: <FaShieldAlt />,
-    title: "Secure Buying & Selling",
-    description: "Reliable and verified processes.",
+    title: "Secure Buying & Selling Process",
+    description:
+      "Sell or buy surgical products with confidence and verified procedures.",
     link: "/selling",
   },
   {
     icon: <FaHeadset />,
-    title: "Support",
-    description: "Email, phone, or schedule a visit at our location.",
+    title: "Dedicated Support for Medical Professionals",
+    description:
+      "Talk to our team via email, phone, or schedule a visit at our warehouse.",
     link: "/support",
   },
 ];
@@ -39,8 +42,10 @@ export default function BenefitsSection() {
       <h2 className='text-3xl font-bold text-center text-[#0e355e]'>
         Our Key Benefits
       </h2>
-      <p className='text-center text-lg text-gray-600 mt-2'>
-        Discover why we are the trusted choice in surgical supplies.
+      <p className='text-[#414b53de] text-base font-normal text-center mt-2'>
+        Discover why clinics, hospitals, and medical professionals choose <br />{" "}
+        STAT Surgical Supply for high-quality surgical disposables and medical
+        equipment.
       </p>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10'>
         {benefits.map((benefit, index) => (

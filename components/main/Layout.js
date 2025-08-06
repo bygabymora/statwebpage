@@ -295,8 +295,7 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='High-Quality Surgical Supplies at Unmatched Prices.
-                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+              content='STAT Surgical Supply provides high-quality surgical supplies, medical equipment, and healthcare products at competitive prices. Shop trusted brands and save on surgical disposables today.'
             />
             <meta
               name='keywords'
