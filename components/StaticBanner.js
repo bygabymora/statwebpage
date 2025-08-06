@@ -32,12 +32,13 @@ const StaticBanner = () => {
             transition={{ duration: 0.5 }}
             className='text-[#0e355e] text-3xl md:text-4xl font-bold mb-4'
           >
-            Partner With Us and Sell Your Surgical Disposables
+            Sell Your Surgical Disposables - Partner with Us
           </motion.h2>
 
           <p className='text-lg text-[#414b53] mb-6 max-w-lg'>
-            Stat Surgical Supply is looking to fill our customer demand. We pay
-            top dollar for in-date high-end surgical disposables.
+            STAT Surgical Supply is actively sourcing high-end, in-date surgical
+            disposables and implants. We offer competitive payouts to meet
+            growing customer demand.
           </p>
 
           <ul className='text-lg text-[#414b53] mb-6 space-y-2'>
