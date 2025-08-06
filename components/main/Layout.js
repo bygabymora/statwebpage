@@ -332,6 +332,7 @@ export default function Layout({
       <Script
         async
         src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
+        strategy='lazyOnload'
       />
       <Script id='gtag-init' strategy='afterInteractive'>
         {`
