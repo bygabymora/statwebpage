@@ -171,7 +171,7 @@ export default function Footer() {
           alt='Payment Methods'
           title='Payment Methods'
           width={300}
-          height={"auto"}
+          height={69}
           loading='lazy'
         />
         <div className='flex space-x-4 mt-4 sm:mt-0'>
