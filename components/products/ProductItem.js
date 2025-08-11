@@ -293,8 +293,8 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
           <div className='p-2'>
             <Image
               src={product.image}
-              alt={product.name}
-              title={product.name}
+              alt={`Surgical Instrument ${product.name} - ${product.manufacturer}`}
+              title={`${product.name} - ${product.manufacturer} Surgical Tools`}
               className='rounded-lg shadow-lg'
               width={800}
               height={1000}

@@ -117,8 +117,8 @@ export default function Footer() {
         <Image
           className='footer-logo hidden lg:block'
           src={Logo}
-          alt='STAT Logo'
-          title='STAT Surgical Supply'
+          alt='STAT Surgical Supply Main Logo'
+          title='STAT Surgical Supply - Wholesale Medical Products'
           loading='lazy'
           width={300}
           height={100}
@@ -168,8 +168,8 @@ export default function Footer() {
         <Image
           className='footer-logo self-end sm:mr-3 sm:mb-3'
           src={Payment}
-          alt='Payment Methods'
-          title='Payment Methods'
+          alt='Accepted Payment Methods - STAT Surgical Supply'
+          title='Payment Options - Credit Card, PayPal & More'
           width={300}
           height={69}
           loading='lazy'
@@ -182,8 +182,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={linkedIn}
-              alt='Linkedin Logo'
-              title='Linkedin Logo'
+              alt='STAT Surgical Supply LinkedIn Profile'
+              title='Visit STAT Surgical Supply on LinkedIn'
               width={50}
               height={50}
               loading='lazy'
@@ -196,8 +196,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={facebook}
-              alt='Facebook Logo'
-              title='Facebook Logo'
+              alt='STAT Surgical Supply Facebook Page'
+              title='Connect with STAT Surgical Supply on Facebook'
               width={50}
               height={50}
               loading='lazy'
@@ -211,8 +211,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={Google}
-              alt='Google Logo'
-              title='Google Logo'
+              alt='STAT Surgical Supply Google Business Profile'
+              title='View STAT Surgical Supply on Google'
               width={50}
               height={50}
               loading='lazy'

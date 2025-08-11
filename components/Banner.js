@@ -77,8 +77,8 @@ const Banner = () => {
             >
               <Image
                 src={banner}
-                alt='Surgical Supplies'
-                title='Surgical Supplies'
+                alt='Premium Surgical Supplies for Hospitals and Clinics'
+                title='Buy Surgical Supplies Online - STAT Surgical Supply'
                 fill
                 priority={index === 0}
                 fetchPriority={index === 0 ? "high" : undefined}

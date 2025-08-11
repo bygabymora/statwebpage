@@ -17,9 +17,9 @@ const StaticBanner = () => {
           <Image
             width={500}
             height={500}
-            title='Static Banner'
+            title='Static Banner - STAT Surgical Supply Discounts'
             src='/images/assets/StaticBanner.png'
-            alt='Banner'
+            alt='Medical Promotion Banner'
             loading={"lazy"}
             className='rounded-lg shadow-lg'
           />
