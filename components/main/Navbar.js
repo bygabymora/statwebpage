@@ -69,14 +69,18 @@ const Navbar = () => {
           <div className='nav__list grid'>
             <Link
               href='/'
-              title='Home Stat Surgical Supply'
+              title='Home - STAT Surgical Supply Medical Equipment'
               className='nav__link'
               onClick={handleHomeClick}
             >
               <BiHomeSmile className='uil uil-estate nav__icon' />
               Home
             </Link>
-            <Link href='/about' className='nav__link' title='About'>
+            <Link
+              href='/about'
+              className='nav__link'
+              title='About STAT Surgical Supply - Company Information'
+            >
               <BiUser className='uil uil-user nav__icon' />
               About
             </Link>
@@ -86,7 +90,7 @@ const Navbar = () => {
             </Link>
             <Link
               href='/#contact'
-              title='Contact Us'
+              title='Contact STAT Surgical Supply - Customer Service'
               onClick={() => handleLinkClick("contact")}
               className='nav__link'
             >

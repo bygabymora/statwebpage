@@ -56,7 +56,7 @@ const StaticBanner = () => {
           <div className='md:w-auto'>
             <Link
               href='/ManufacturerForm'
-              title='Send us your list'
+              title='Submit Your Manufacturer Product List - STAT Surgical Supply'
               className='flex w-fit items-center gap-3 bg-[#0e355e] text-white px-10 py-2 rounded-full shadow-lg hover:bg-[#788b9b] hover:scale-105 transition duration-300 transform'
             >
               <span className='font-semibold'>Send us your list</span>

@@ -287,7 +287,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       <div className='flex flex-row justify-between'>
         <Link
           href={`/products/${product.name}`}
-          title={product.name}
+          title={`${product.name} - ${
+            product.manufacturer
+          } -${product.each?.description?.slice(0, 50)}`}
           className='justify-center items-center text-center flex-1'
         >
           <div className='p-2'>

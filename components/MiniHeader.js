@@ -10,7 +10,11 @@ export default function Header() {
   return (
     <div className='hidden md:flex bg-white text-[#0e355e] text-sm md:text-lg z-[9999] max-w-7xl mx-auto justify-between items-center px-4'>
       <div className='flex space-x-4'>
-        <a href='#contact' title='Contact Us' className='hover:underline'>
+        <a
+          href='#contact'
+          title='Contact STAT Surgical Supply - Request Information'
+          className='hover:underline'
+        >
           Contact Us
         </a>
         <span>|</span>

@@ -174,7 +174,7 @@ const Header = () => {
           {active && (
             <Link
               href='/cart'
-              title='Cart'
+              title='Your Shopping Cart - STAT Surgical Supply'
               aria-label='Cart'
               className='relative group'
             >
