@@ -118,7 +118,7 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Surgical Supply Main Logo'
-          title='STAT Surgical Supply - Wholesale Medical Products'
+          title='Wholesale Medical & Surgical Products | STAT Surgical Supply'
           loading='lazy'
           width={300}
           height={100}
@@ -168,8 +168,8 @@ export default function Footer() {
         <Image
           className='footer-logo self-end sm:mr-3 sm:mb-3'
           src={Payment}
-          alt='Accepted Payment Methods - STAT Surgical Supply'
-          title='Payment Options - Credit Card, PayPal & More'
+          alt='Accepted Payment Methods - Credit Card, PayPal, Bank Transfer'
+          title='Payment Options for Medical Equipment Purchases'
           width={300}
           height={69}
           loading='lazy'
@@ -182,8 +182,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={linkedIn}
-              alt='STAT Surgical Supply LinkedIn Profile'
-              title='Visit STAT Surgical Supply on LinkedIn'
+              alt='STAT Surgical Supply LinkedIn Page'
+              title='Follow STAT Surgical Supply on LinkedIn'
               width={50}
               height={50}
               loading='lazy'
@@ -196,8 +196,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={facebook}
-              alt='STAT Surgical Supply Facebook Page'
-              title='Connect with STAT Surgical Supply on Facebook'
+              alt='STAT Surgical Supply Facebook Profile'
+              title='Visit STAT Surgical Supply on Facebook'
               width={50}
               height={50}
               loading='lazy'
@@ -211,8 +211,8 @@ export default function Footer() {
             <Image
               className='footer-logo lg:block'
               src={Google}
-              alt='STAT Surgical Supply Google Business Profile'
-              title='View STAT Surgical Supply on Google'
+              alt='STAT Surgical Supply Google Profile'
+              title='See STAT Surgical Supply on Google Business Profile'
               width={50}
               height={50}
               loading='lazy'
