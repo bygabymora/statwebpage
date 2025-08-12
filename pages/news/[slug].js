@@ -110,7 +110,7 @@ export default function Newscreen({ news }) {
           <a
             href='https://www.linkedin.com/company/statsurgicalsupply/'
             target='_blank'
-            title='Visit our LinkedIn profile'
+            title='Follow STAT Surgical Supply on LinkedIn'
             rel='noreferrer'
             className='text-gray-600 hover:text-[#0077b5] transition'
           >
