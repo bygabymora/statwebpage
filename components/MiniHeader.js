@@ -12,7 +12,7 @@ export default function Header() {
       <div className='flex space-x-4'>
         <a
           href='#contact'
-          title='Contact STAT Surgical Supply - Request Information'
+          title='Contact Our Team - STAT Surgical Supply'
           className='hover:underline'
         >
           Contact Us
