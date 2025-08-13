@@ -70,8 +70,8 @@ function generateProductJSONLD(product) {
     mpn: product._id,
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: "88",
+      ratingValue: "4.5",
+      reviewCount: "10",
     },
     review: [
       {
