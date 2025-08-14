@@ -36,14 +36,14 @@ export default function Support() {
       </nav>
       <section className='w-full min-h-screen flex justify-center items-center px-6'>
         <div className='max-w-4xl w-full p-10 text-center'>
-          <h2 className='text-4xl font-bold text-[#0e355e]'>
+          <h1 className='text-4xl font-bold text-[#0e355e]'>
             Customer Support for Surgical & Medical Supplies
-          </h2>
-          <p className='text-lg text-[#414b53] mt-4'>
+          </h1>
+          <h2 className='text-[#414b53] mt-4 font-normal text-base'>
             Need assistance with your surgical supply order or product
             questions? Contact our support team by phone, email, or visit us in
             person. we’re here to help medical professionals like you.
-          </p>
+          </h2>
 
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10'>
             <div className='flex flex-col items-center p-6 bg-white rounded-xl shadow-md transition-transform duration-300 hover:scale-105'>
@@ -99,76 +99,76 @@ export default function Support() {
               Frequently Asked Questions
             </h3>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> How long
                 does support take to respond?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 We usually respond within 24 hours.
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> How do you
                 acquire your products?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 Stat Surgical acquires products from domestic hospitals, surgery
                 centers, and trusted suppliers.
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> What is the
                 expiration dating of your products?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 Stat Surgical strives to provide long-dated products. Typically
                 products have 1-3+ years until expiration. We never send
                 short-dated products unless approved by the customer.
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> Are your
                 products in original packaging?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 All products arrive in original manufacturer packaging, exactly
                 as if shipped directly from the source.
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> Can I
                 negotiate prices on surgical and medical supplies?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 Stat Surgical has the best prices in the business. We will never
                 let pricing get in the way of our “strong” relationships with
                 our customers. If pricing is an issue, we will make it work!
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> What
                 payment methods do you accept for billing?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 We accept purchase orders from domestic hospitals and surgery
                 centers. Other approved customers can pay via ACH, wire
                 transfer, domestic credit card, or domestic PayPal.
-              </p>
+              </h5>
             </div>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
-              <p className='flex items-center text-[#414b53]'>
+              <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> Can I buy
                 items individually or do I have to buy a full box?
-              </p>
-              <p className='mt-2 text-sm text-gray-600'>
+              </h4>
+              <h5 className='mt-2 text-sm text-gray-600'>
                 Unlike manufacturer minimums, you can purchase single items or
                 full boxes. Cost savings are always our priority!
-              </p>
+              </h5>
             </div>
           </div>
         </div>
