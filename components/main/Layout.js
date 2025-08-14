@@ -221,7 +221,11 @@ export default function Layout({
             <link
               rel='canonical'
               href={
-                url || `https://www.statsurgicalsupply.com/news/${news.slug}`
+                url && url.trim() !== ""
+                  ? url
+                  : news?.slug
+                  ? `https://www.statsurgicalsupply.com/news/${news.slug}`
+                  : "https://www.statsurgicalsupply.com/news"
               }
             />
 
