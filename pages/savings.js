@@ -38,11 +38,11 @@ export default function GuaranteedSavings({ isInClearance }) {
           <h2 className='text-4xl font-bold text-[#0e355e] leading-tight'>
             Save on Surgical Supplies and Medical Equipment
           </h2>
-          <p className='text-lg text-[#414b53] mt-4 max-w-3xl mx-auto'>
+          <h3 className='text-[#414b53] mt-4 max-w-3xl mx-auto text-base font-normal'>
             Discover guaranteed savings on surgical supplies, medical equipment,
             and healthcare products. Access exclusive discounts and flexible
             pricing options trusted by clinics and hospitals.
-          </p>
+          </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12'>
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -50,9 +50,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Best Prices
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Save up to 50% on selected products.
-              </p>
+              </h3>
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -60,9 +60,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Negotiable Discounts
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Exclusive pricing, just for you.
-              </p>
+              </h3>
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -70,9 +70,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Cost Optimization
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Lower your expenses effortlessly.
-              </p>
+              </h3>
             </div>
           </div>
 
