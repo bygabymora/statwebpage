@@ -3,7 +3,8 @@ import Link from "next/link";
 import {
   BiHomeSmile,
   BiUser,
-  BiPhotoAlbum,
+  BiNews,
+  BiSolidPackage,
   BiGridVertical,
   BiXCircle,
 } from "react-icons/bi";
@@ -85,7 +86,7 @@ const Navbar = () => {
               About
             </Link>
             <Link href='/products' title='Products' className='nav__link'>
-              <BiPhotoAlbum className='uil uil-scenery nav__icon' />
+              <BiSolidPackage className='uil uil-scenery nav__icon' />
               Products
             </Link>
             <Link
@@ -98,7 +99,7 @@ const Navbar = () => {
               Contact
             </Link>
             <Link href='/news' title='News' className='nav__link'>
-              <BiPhotoAlbum className='uil uil-scenery nav__icon' />
+              <BiNews className='uil uil-scenery nav__icon' />
               News
             </Link>
 

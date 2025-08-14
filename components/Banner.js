@@ -32,11 +32,11 @@ const Banner = () => {
             prices.
           </h2>
 
-          <p className='text-[#414b53de] text-base font-normal text-center mb-6'>
+          <h2 className='text-[#414b53de] text-base font-normal text-center mb-6'>
             Explore our wide range of premium surgical supplies, medical
             equipment, and disposable instruments. We offer industry-leading
             brands with cost-saving solutions tailored to your healthcare needs.
-          </p>
+          </h2>
 
           <div className='flex flex-wrap gap-4 justify-center text-center w-full'>
             <Link href='/products' className='w-full sm:w-auto'>
