@@ -66,7 +66,7 @@ export default function SecureBuyingSelling() {
   return (
     <Layout title={"Secure Buying & Selling"}>
       <nav className='text-sm text-gray-700'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-5'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
               {breadcrumb.href ? (
@@ -89,9 +89,9 @@ export default function SecureBuyingSelling() {
 
       <section className='w-full bg-white px-6'>
         <div className='max-w-6xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-[#0e355e]'>
+          <h1 className='text-4xl font-bold text-[#0e355e] mt-5'>
             Secure Buying & Selling
-          </h2>
+          </h1>
           <h2 className='text-[#414b53] mt-4 max-w-3xl mx-auto text-base font-normal'>
             We guarantee a safe and hassle-free transaction process, ensuring
             trust and transparency in every purchase and sale.
