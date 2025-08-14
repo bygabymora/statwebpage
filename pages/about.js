@@ -71,9 +71,9 @@ export default function AboutScreen() {
           className='w-full lg:w-1/2 text-justify'
           style={contentAnimation}
         >
-          <h2 className='hidden lg:block text-4xl font-bold text-[#0e355e] mb-6 -mt-10'>
+          <h1 className='hidden lg:block text-4xl font-bold text-[#0e355e] mb-6 -mt-10'>
             About Us
-          </h2>
+          </h1>
           <h2 className='text-[#414b53de] text-base font-normal'>
             Stat Surgical was founded to combat the rising costs of healthcare
             supply chains. Our company targets the &quot;small&quot; portion of

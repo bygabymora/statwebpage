@@ -56,7 +56,9 @@ export default function ManufacturerForm() {
                   {breadcrumb.name}
                 </Link>
               ) : (
-                <span>{breadcrumb.name}</span>
+                <h1 className='text-base font-normal text-[#2c3339]'>
+                  {breadcrumb.name}
+                </h1>
               )}
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight className='mx-2 text-gray-500' />

@@ -14,8 +14,8 @@ export default function News({ news }) {
 
   return (
     <Layout title='News Of Health' news={news}>
-      <nav className='text-sm text-gray-700 -mt-2 mb-6'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-6'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
               {breadcrumb.href ? (
@@ -35,13 +35,13 @@ export default function News({ news }) {
           ))}
         </ul>
       </nav>
-      <div className='text-center -mt-2'>
-        <h2 className='section__title' id='news'>
+      <div className='text-center mt-5'>
+        <h1 className='section__title' id='news'>
           What you might have missed
-        </h2>
-        <p className='text-center my-2'>
+        </h1>
+        <h2 className='text-center my-2 text-base font-normal text-[#2c3339]'>
           Here are some of the latest news from the world of health.
-        </p>
+        </h2>
       </div>
       <div className='text-center my-9 border-t border-gray-200'>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5'>
