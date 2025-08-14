@@ -169,9 +169,9 @@ export default function FAQs() {
                   <div className='p-2 bg-green-100 rounded-full'>
                     <FaQuestionCircle className='text-[#07783e]' />
                   </div>
-                  <span className='text-lg font-medium text-gray-800'>
+                  <h2 className='text-lg font-medium text-gray-800'>
                     {item.question}
-                  </span>
+                  </h2>
                 </div>
                 <IoChevronDown
                   className={`text-2xl text-gray-500 transform transition-transform duration-300 ${
