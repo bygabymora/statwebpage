@@ -177,9 +177,9 @@ export default function Products() {
           </ul>
         </div>
         <div className='md:col-span-3'>
-          <h2 className='section__title -mt-7' id='products'>
+          <h1 className='section__title -mt-7' id='products'>
             Products
-          </h2>
+          </h1>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6'>
             {loading ? (
               <p>Loading products...</p>

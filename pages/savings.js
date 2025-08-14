@@ -13,7 +13,7 @@ export default function GuaranteedSavings({ isInClearance }) {
   return (
     <Layout title={"Guaranteed Savings"}>
       <nav className='text-sm text-gray-700'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 my-5'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-5'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
               {breadcrumb.href ? (
@@ -33,11 +33,11 @@ export default function GuaranteedSavings({ isInClearance }) {
           ))}
         </ul>
       </nav>
-      <section className='w-full bg-white my-10 px-6'>
+      <section className='w-full bg-white my-5 px-6'>
         <div className='max-w-6xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-[#0e355e] leading-tight'>
+          <h1 className='text-4xl font-bold text-[#0e355e] leading-tight'>
             Save on Surgical Supplies and Medical Equipment
-          </h2>
+          </h1>
           <h3 className='text-[#414b53] mt-4 max-w-3xl mx-auto text-base font-normal'>
             Discover guaranteed savings on surgical supplies, medical equipment,
             and healthcare products. Access exclusive discounts and flexible
