@@ -57,9 +57,12 @@ export default function Newscreen({ news }) {
     }
 
     return (
-      <p key={idx} className='mb-4 text-gray-700 leading-relaxed'>
+      <h3
+        key={idx}
+        className='text-base text-[#414b53] mb-6 max-w-base font-normal leading-relaxed'
+      >
         {para}
-      </p>
+      </h3>
     );
   });
 
