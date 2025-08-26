@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Banner1 from "../public/images/assets/banner1.webp";
+import Banner1 from "../public/images/assets/banner1.jpg";
 import Banner2 from "../public/images/assets/banner2.svg";
 import Banner3 from "../public/images/assets/banner3.svg";
 import Link from "next/link";
