@@ -10,6 +10,9 @@ const nextConfig = {
     return config;
   },
   images: {
+    deviceSizes: [320, 360, 414, 640, 768, 1024, 1280, 1536],
+    imageSizes: [16, 24, 32, 48, 64, 96, 128, 135, 169, 192, 256, 384],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
