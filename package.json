@@ -9,11 +9,22 @@
     "lint": "next lint",
     "test": "jest"
   },
-  "browserslist": [
-    "defaults and supports es6-module",
-    "not IE 11",
-    "not op_mini all"
-  ],
+  "browserslist": {
+    "production": [
+      "chrome >= 90",
+      "edge >= 90",
+      "firefox >= 90",
+      "safari >= 14",
+      "ios_saf >= 14",
+      "android >= 90",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
     "@cloudinary/react": "^1.14.3",
     "@cloudinary/url-gen": "^1.21.0",

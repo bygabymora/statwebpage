@@ -9,6 +9,11 @@ const nextConfig = {
     };
     return config;
   },
+  experimental: {
+    legacyBrowsers: false, // <- drop legacy polyfills (IE/very old Safari)
+    browsersListForSwc: true, // <- SWC uses your browserslist targets
+  },
+
   images: {
     deviceSizes: [320, 360, 414, 640, 768, 1024, 1280, 1536],
     imageSizes: [16, 24, 32, 48, 64, 96, 128, 135, 169, 192, 256, 384],
@@ -18,7 +23,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
         port: "",
-        pathname: "/**", // This allows all paths. Adjust if needed.
+        pathname: "/**",
       },
     ],
   },
