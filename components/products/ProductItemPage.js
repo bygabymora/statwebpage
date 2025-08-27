@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { Listbox } from "@headlessui/react";
@@ -8,6 +7,7 @@ import { BiCheck, BiChevronDown } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import LCPProductImage from "./LCPProductImage";
 
 export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -246,16 +246,17 @@ export const ProductItemPage = ({ product, index }) => {
             className='justify-center items-center text-center flex-1'
           >
             <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
-              <Image
+              <LCPProductImage
                 src={product.image}
                 alt={currentDescription}
                 title={currentDescription}
-                className='rounded-lg shadow-lg'
+                containerClassName='relative w-full aspect-[4/5] max-w-xs mx-auto rounded-lg shadow-lg'
+                className='w-full'
                 width={800}
                 height={1000}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
-                priority={index < 3}
+                priority={index === 0}
               />
             </div>
           </Link>

@@ -9,19 +9,35 @@ import ResponsiveImage from "../ui/ResponsiveImage";
 export default function LCPProductImage({
   src,
   alt = "",
-  className = "w-full max-w-[800px] mx-auto",
+  containerClassName = "w-full max-w-[800px] mx-auto",
+  className = "w-full",
+  aspectRatio = "4 / 5",
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 800px",
+  quality = 70,
+  // puedes pasar lcp o priority desde fuera
+  lcp = false,
+  priority = false,
+  title,
+  onContextMenu,
+  onDragStart,
 }) {
+  const isPriority = Boolean(lcp || priority);
   return (
-    <div className={className}>
+    <div
+      className={containerClassName}
+      title={title}
+      onContextMenu={onContextMenu}
+      onDragStart={onDragStart}
+    >
       <ResponsiveImage
         src={src}
         alt={alt}
         preset='hero'
-        aspectRatio='4 / 5' // 800x1000
-        className='w-full'
-        lcp // <- key for LCP
-        quality={70}
-        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 800px'
+        aspectRatio={aspectRatio} // 800x1000
+        className={className}
+        priority={isPriority}
+        quality={quality}
+        sizes={sizes}
       />
     </div>
   );

@@ -14,6 +14,7 @@ export default function ResponsiveImage({
   className = "",
   // Use CSS aspect-ratio to keep layout stable; default to ~4:5 (your 1800x2250)
   aspectRatio = "4 / 5", // ~1800x2250 looking
+  lpc = false,
   priority = false,
   quality = 60,
   // Optional: pass a custom sizes if the preset isn't perfect for a page
@@ -22,6 +23,7 @@ export default function ResponsiveImage({
   blurDataURL,
 }) {
   const computedSizes = sizes || PRESET_SIZES[preset] || PRESET_SIZES.thumb;
+  const isPriority = Boolean(lpc || priority);
 
   return (
     <div
@@ -36,8 +38,9 @@ export default function ResponsiveImage({
         sizes={computedSizes}
         quality={quality}
         // Lazy by default; only set priority on true LCP/above-the-fold images
-        priority={priority}
-        // Avoid layout flicker; use blur if you have it, else keep empty
+        priority={isPriority} // Next add <link rel="preload"> y NO use lazy
+        fetchPriority={isPriority ? "high" : undefined}
+        loading={isPriority ? "eager" : undefined}
         placeholder={blurDataURL ? "blur" : "empty"}
         blurDataURL={blurDataURL}
         style={{ objectFit: "cover" }}
