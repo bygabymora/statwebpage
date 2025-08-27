@@ -96,8 +96,8 @@ export default function Products() {
 
   return (
     <Layout title='Products'>
-      <nav className='text-sm text-gray-700'>
-        <div className='flex justify-between items-center my-4'>
+      <nav className='text-sm text-gray-700 mt-0 md:mt-2'>
+        <div className='flex justify-between items-center my-0 md:my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
             {breadcrumbs.map((breadcrumb, index) => (
               <li key={index} className='flex items-center'>
@@ -146,7 +146,7 @@ export default function Products() {
                 {" "}
                 <div
                   onClick={handleShowAll}
-                  className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 sticky top-0 ${
+                  className={`cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 sticky top-0 ${
                     selectedManufacturer === null && !query
                       ? "primary-button"
                       : "secondary-button"
@@ -163,7 +163,7 @@ export default function Products() {
                     <div
                       key={index}
                       onClick={() => handleManufacturerClick(manufacturer)}
-                      className={` cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg py-2 ${
+                      className={`cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg py-2 ${
                         selectedManufacturer === manufacturer
                           ? "bg-slate-200"
                           : ""
