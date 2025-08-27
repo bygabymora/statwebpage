@@ -28,8 +28,8 @@ const Banner = () => {
           </h1>
 
           <h2 className='text-[#414b53de] text-base font-normal text-center'>
-            Your Trusted Source for Surgical Supplies. High-quality at unmatched
-            prices.
+            Your Trusted Source for Surgical Supplies. Trusted by more than 150+
+            health care centers. High-quality at unmatched prices.
           </h2>
 
           <h2 className='text-[#414b53de] text-base font-normal text-center mb-6'>
