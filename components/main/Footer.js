@@ -55,7 +55,7 @@ export default function Footer() {
 
   return (
     <footer
-      className='relative flex flex-col items-center shadow-inner min-h-[400px] justify-center footer'
+      className='relative w-full shadow-inner flex flex-col items-center justify-between px-4 py-8 min-h-[720px] md:min-h-[560px] lg:min-h-[480px]'
       style={{ height: "auto", minHeight: "400px" }}
     >
       <div className='footer-container'>
