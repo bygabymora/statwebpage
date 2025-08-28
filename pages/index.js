@@ -1,19 +1,70 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
-import Layout from "../components/main/Layout"; // we keep it SSR
+import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
 
-// We dynamically load “large” components
-const Banner = dynamic(() => import("../components/Banner"), { ssr: false });
+// Render hero/above-the-fold on the server so LCP is discoverable
+const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
 const StaticBanner = dynamic(() => import("../components/StaticBanner"), {
-  ssr: false,
+  ssr: true,
 });
+// This one can stay client-side if it's below the fold
 const Benefits = dynamic(() => import("./slider"), { ssr: false });
 const Contact = dynamic(() => import("../components/contact/Contact"), {
   ssr: true,
 });
 
+// ----- Server-side (ISR) -----
+import db from "../utils/db";
+import Product from "../models/Product";
+import { enrichAndSortForPublic } from "../utils/productSort";
+
+export async function getStaticProps() {
+  await db.connect(true);
+
+  // Pull just what the home grid/cards need (keeps payload small)
+  const raw = await Product.find(
+    { approved: true, active: true },
+    {
+      name: 1,
+      image: 1,
+      manufacturer: 1,
+      sentOvernigth: 1,
+      "each.description": 1,
+      "box.description": 1,
+      "each.quickBooksQuantityOnHandProduction": 1,
+      "box.quickBooksQuantityOnHandProduction": 1,
+      "each.clearanceCountInStock": 1,
+      "box.clearanceCountInStock": 1,
+      "each.wpPrice": 1,
+      "box.wpPrice": 1,
+      "clearance.price": 1,
+    }
+  ).lean();
+
+  // Same public ordering you described:
+  // 0) stock+price, 1) stock w/o price, 2) out of stock
+  const ordered = enrichAndSortForPublic(raw);
+
+  // Home "featured": the same filter you had (each price > 0 AND in stock)
+  const featured = ordered.filter(
+    (p) =>
+      (p.each?.wpPrice ?? 0) > 0 &&
+      (p.each?.quickBooksQuantityOnHandProduction ?? 0) > 0
+  );
+
+  // Limit how many cards we send initially for mobile perf
+  const HOME_COUNT = 9;
+  const products = featured.slice(0, HOME_COUNT);
+
+  return {
+    props: { products: JSON.parse(JSON.stringify(products)) },
+    revalidate: 300, // ISR every 5 minutes
+  };
+}
+
+// ----- Client-only carousel (your original, kept intact) -----
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleItems, setVisibleItems] = useState(3);
@@ -24,23 +75,21 @@ function Carousel({ products }) {
   const [mouseStartX, setMouseStartX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  // adapt slide count by width
   useEffect(() => {
     const updateTotals = () => {
       if (window.innerWidth < 768) {
         setVisibleItems(1);
-        setTotalSlides(9);
+        setTotalSlides(Math.max(products.length, 1));
       } else {
         setVisibleItems(3);
-        setTotalSlides(7);
+        setTotalSlides(Math.max(Math.ceil(products.length / 3), 1));
       }
     };
     updateTotals();
     window.addEventListener("resize", updateTotals);
     return () => window.removeEventListener("resize", updateTotals);
-  }, []);
+  }, [products.length]);
 
-  // auto-advance
   useEffect(() => {
     if (isInteracting) return;
     const iv = setInterval(
@@ -133,45 +182,11 @@ function Carousel({ products }) {
   );
 }
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [maxItems, setMaxItems] = useState(9);
-
-  // fetch data
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products");
-        if (!res.ok) throw new Error(`Status ${res.status}`);
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    const onResize = () => {
-      setMaxItems(window.innerWidth < 768 ? 9 : 9);
-    };
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  const filtered = products
-    .filter(
-      (p) =>
-        p.each?.wpPrice > 0 && p.each?.quickBooksQuantityOnHandProduction > 0
-    )
-    .slice(0, maxItems);
+export default function Home({ products }) {
+  // No client fetch; products already in the initial HTML (good for LCP/TTFB)
   return (
     <Layout>
+      {/* Make sure your Banner image uses next/image with priority if it's your LCP */}
       <Banner />
       <StaticBanner />
       <Benefits className='mt-2' />
@@ -180,10 +195,8 @@ export default function Home() {
         Featured Products
       </h2>
 
-      {loading ? (
-        <p className='text-center mt-10'>Loading products…</p>
-      ) : filtered.length > 0 ? (
-        <Carousel products={filtered} />
+      {products.length > 0 ? (
+        <Carousel products={products} />
       ) : (
         <p className='text-center mt-10'>No products available.</p>
       )}
