@@ -32,7 +32,7 @@ export async function getStaticProps() {
     }
   ).lean();
 
-  // ⬇⬇ MISMO orden que necesitas
+  // ⬇⬇ SAME order you need
   const products = enrichAndSortForPublic(productsRaw);
 
   return {
@@ -64,7 +64,7 @@ export default function Products({ products }) {
     return [...map.values()];
   }, [products]);
 
-  // Mantiene el ORDEN original (solo filtramos)
+  // Keeps the original ORDER (just filtering)
   const byManufacturer = useMemo(() => {
     if (!selectedManufacturer) return products;
     const target = selectedManufacturer.trim().toLowerCase();

@@ -9,7 +9,7 @@ export function enrichAndSortForPublic(products) {
       const hasStock = eachStock > 0 || boxStock > 0;
       const hasPrice = eachPrice > 0 || boxPrice > 0;
 
-      let rank = 2; // por defecto: sin stock
+      let rank = 2; // default: sin stock
       if (hasStock && hasPrice) rank = 0; // stock + precio
       else if (hasStock && !hasPrice) rank = 1; // stock + "call for price"
 
