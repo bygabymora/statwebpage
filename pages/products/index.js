@@ -1,95 +1,115 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Layout from "../../components/main/Layout";
 import { ProductItemPage } from "../../components/products/ProductItemPage";
 import { AiOutlineMenuFold } from "react-icons/ai";
-import axios from "axios";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import SearchForm from "../../components/products/SearchForm";
+import db from "../../utils/db";
+import Product from "../../models/Product";
+import { enrichAndSortForPublic } from "../../utils/productSort";
 
-export default function Products() {
+export async function getStaticProps() {
+  await db.connect(true);
+
+  const productsRaw = await Product.find(
+    { approved: true, active: true },
+    {
+      name: 1,
+      image: 1,
+      manufacturer: 1,
+      "each.description": 1,
+      "box.description": 1,
+      "each.quickBooksQuantityOnHandProduction": 1,
+      "box.quickBooksQuantityOnHandProduction": 1,
+      "each.clearanceCountInStock": 1,
+      "box.clearanceCountInStock": 1,
+      "each.wpPrice": 1,
+      "box.wpPrice": 1,
+      "clearance.price": 1,
+      sentOvernigth: 1,
+    }
+  ).lean();
+
+  // ⬇⬇ MISMO orden que necesitas
+  const products = enrichAndSortForPublic(productsRaw);
+
+  return {
+    props: { products: JSON.parse(JSON.stringify(products)) },
+    revalidate: 300,
+  };
+}
+
+export default function Products({ products }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [searchedWord, setSearchedWord] = useState("");
   const { manufacturer, query } = router.query;
+
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
-  const [products, setProducts] = useState([]);
-  const manufacturersMap = new Map();
-  const [loading, setLoading] = useState(true);
-
-  const fetchSearchResults = async () => {
-    const { data } = await axios.get(`/api/search?keyword=${query}`);
-    setProducts(data);
-    if (data.length === 0) {
-      setSearchedWord(query);
-    }
-  };
-
-  const fetchData = async () => {
-    const { data } = await axios.get(`/api/products`);
-    setProducts(data);
-  };
+  const [page, setPage] = useState(1);
+  const productsPerPage = 24;
 
   useEffect(() => {
-    try {
-      setLoading(true);
-      if (!query) {
-        console.log("No query provided");
-        fetchData();
-      } else {
-        console.log("Query provided:", query);
-        fetchSearchResults();
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [router, query, router.query]);
-
-  // FIX: Every time you change manufacturers in the URL, it updates the selected manufacturer
-  useEffect(() => {
-    if (manufacturer) {
-      setSelectedManufacturer(decodeURIComponent(manufacturer));
-    } else {
-      setSelectedManufacturer(null);
-    }
+    if (manufacturer) setSelectedManufacturer(decodeURIComponent(manufacturer));
+    else setSelectedManufacturer(null);
   }, [manufacturer]);
 
-  products.forEach((product) => {
-    const normalized = product.manufacturer?.trim().toLowerCase();
-    if (!manufacturersMap.has(normalized)) {
-      manufacturersMap.set(normalized, product.manufacturer?.trim());
-    }
-  });
+  const manufacturers = useMemo(() => {
+    const map = new Map();
+    products.forEach((p) => {
+      const norm = p.manufacturer?.trim().toLowerCase();
+      if (!map.has(norm)) map.set(norm, p.manufacturer?.trim());
+    });
+    return [...map.values()];
+  }, [products]);
 
-  const manufacturers = [...manufacturersMap.values()];
+  // Mantiene el ORDEN original (solo filtramos)
+  const byManufacturer = useMemo(() => {
+    if (!selectedManufacturer) return products;
+    const target = selectedManufacturer.trim().toLowerCase();
+    return products.filter(
+      (p) => p.manufacturer?.trim().toLowerCase() === target
+    );
+  }, [products, selectedManufacturer]);
 
-  const filteredProducts = selectedManufacturer
-    ? products.filter((product) => {
-        return (
-          product.manufacturer?.trim().toLowerCase() ===
-          selectedManufacturer?.trim().toLowerCase()
-        );
-      })
-    : products;
-  const productsPerPage = 24;
-  const [page, setPage] = useState(1);
-  const paginatedProducts = filteredProducts.slice(0, page * productsPerPage);
+  const filteredProducts = useMemo(() => {
+    if (!query) return byManufacturer;
+    const q = String(query).trim().toLowerCase();
+    return byManufacturer.filter((p) => {
+      const haystack = [
+        p.name,
+        p.manufacturer,
+        p.each?.description,
+        p.box?.description,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [byManufacturer, query]);
+
+  const paginatedProducts = useMemo(
+    () => filteredProducts.slice(0, page * productsPerPage),
+    [filteredProducts, page]
+  );
 
   const handleManufacturerClick = (manufacturer) => {
     router.push(
       `/products?manufacturer=${encodeURIComponent(manufacturer)}`,
       undefined,
-      { shallow: true }
+      {
+        shallow: true,
+      }
     );
     window.scrollTo({ top: 0, behavior: "smooth" });
+    setPage(1);
   };
 
   const handleShowAll = () => {
     router.push("/products", undefined, { shallow: true });
+    setPage(1);
   };
 
   const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
@@ -120,7 +140,7 @@ export default function Products() {
           <div className='block md:hidden'>
             <button
               className='bg-[#144e8b] px-4 py-2 rounded'
-              onClick={() => setShowManufacturers(!showManufacturers)}
+              onClick={() => setShowManufacturers((s) => !s)}
               aria-label='Toggle Manufacturers List'
             >
               <AiOutlineMenuFold color='white' />
@@ -181,9 +201,7 @@ export default function Products() {
             Products
           </h1>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6'>
-            {loading ? (
-              <p>Loading products...</p>
-            ) : paginatedProducts.length > 0 ? (
+            {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product, index) => (
                 <ProductItemPage
                   key={product._id}
@@ -191,16 +209,19 @@ export default function Products() {
                   index={index}
                 />
               ))
-            ) : products.length === 0 && searchedWord ? (
+            ) : query ? (
               <SearchForm
-                searchedWord={searchedWord}
-                setSearchedWord={setSearchedWord}
-                name={name}
-                setName={setName}
+                searchedWord={String(query)}
+                setSearchedWord={() => {}}
+                name=''
+                setName={() => {}}
               />
-            ) : null}
+            ) : (
+              <p>No products found.</p>
+            )}
           </div>
-          {!loading && filteredProducts.length > paginatedProducts.length && (
+
+          {filteredProducts.length > paginatedProducts.length && (
             <div className='text-center my-5 mt-4'>
               <button
                 onClick={() => setPage((prev) => prev + 1)}
