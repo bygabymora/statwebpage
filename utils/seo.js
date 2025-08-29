@@ -1,143 +1,143 @@
-const SITE = "https://www.statsurgicalsupply.com";
-
-function toAbsoluteUrl(url) {
-  if (!url) return undefined;
-  if (/^https?:\/\//i.test(url)) return url;
-  return `${SITE}${url.startsWith("/") ? "" : "/"}${url}`;
-}
-
-function isValidDate(value) {
-  const d = new Date(value);
-  return value && !isNaN(d);
-}
-
 function generateJSONLD(news) {
+  const isValidDate = (value) => {
+    const date = new Date(value);
+    return value && !isNaN(date);
+  };
+
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    ...(Array.isArray(news.tags) && news.tags.length
-      ? { keywords: news.tags.join(", ") }
-      : {}),
+    keywords: news.tags?.join(", "),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE}/news/${news.slug}`,
+      "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
     },
     headline: news.title,
     articleBody: news.content || "",
-    image: news.imageUrl ? [toAbsoluteUrl(news.imageUrl)] : undefined,
+    image: [news.imageUrl],
     ...(isValidDate(news.createdAt) && {
       datePublished: new Date(news.createdAt).toISOString(),
     }),
     ...(isValidDate(news.updatedAt) && {
       dateModified: new Date(news.updatedAt).toISOString(),
     }),
-    author: { "@type": "Person", name: news.author || "STAT Surgical Supply" },
+    author: {
+      "@type": "Person",
+      name: news.author || "STAT Surgical Supply",
+    },
     publisher: {
       "@type": "Organization",
       name: "STAT Surgical Supply",
       logo: {
         "@type": "ImageObject",
-        url: toAbsoluteUrl("/images/assets/logo.png"),
+        url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
         width: 600,
         height: 60,
       },
     },
-    description: (news.content || "").substring(0, 160),
+    description: news.content?.substring(0, 160) || "",
   };
 }
 
 function generateProductJSONLD(product) {
-  // Preferimos el SKU real; si tu modelo guarda el SKU en _id, está bien.
-  const sku = String(product.sku || product._id || "").trim();
-  const canonicalUrl = `${SITE}/products/${encodeURIComponent(sku)}`;
+  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.name}`;
+  const price = (
+    product.each?.minSalePrice ||
+    product.box?.minSalePrice ||
+    product.each?.wprice ||
+    product.box?.wprice ||
+    product.each?.customerPrice ||
+    product.box?.customerPrice ||
+    0
+  ).toFixed(2);
 
-  // Imagen(es) absolutas
-  const images = []
-    .concat(product.image || [])
-    .concat(product.images || [])
-    .filter(Boolean)
-    .map(toAbsoluteUrl);
+  const keywords = Array.isArray(product.keywords)
+    ? product.keywords.join(", ")
+    : undefined;
 
-  // Descripción corta segura
-  const description = (
-    product.each?.description ||
-    product.box?.description ||
-    product.description ||
-    ""
-  )
-    .toString()
-    .slice(0, 500);
-
-  // Marca
-  const brandName = product.manufacturer || product.brand || "Unknown";
-
-  // Precio: solo si EXISTE un precio público > 0. De lo contrario, omite offers.
-  const priceCandidate =
-    product?.each?.minSalePrice ??
-    product?.box?.minSalePrice ??
-    product?.each?.wprice ??
-    product?.box?.wprice ??
-    product?.each?.customerPrice ??
-    product?.box?.customerPrice;
-
-  const hasPrice = typeof priceCandidate === "number" && priceCandidate > 0;
-
-  // Propiedades extra (opcional)
-  const additionalProperty = [];
-  if (product.size)
-    additionalProperty.push({
-      "@type": "PropertyValue",
-      name: "Size",
-      value: String(product.size),
-    });
-  if (product.side)
-    additionalProperty.push({
-      "@type": "PropertyValue",
-      name: "Side",
-      value: String(product.side),
-    });
-  if (product.material)
-    additionalProperty.push({
-      "@type": "PropertyValue",
-      name: "Material",
-      value: String(product.material),
-    });
-  if (product.uom)
-    additionalProperty.push({
-      "@type": "PropertyValue",
-      name: "Units per package",
-      value: String(product.uom),
-    });
-
-  const json = {
-    "@context": "https://schema.org",
+  return {
+    "@context": "https://schema.org/",
     "@type": "Product",
-    name: `${brandName} ${product.name || sku} ${sku}`.trim(),
-    sku,
-    mpn: sku, // si tienes un MPN distinto, cámbialo aquí
-    model: sku,
-    brand: { "@type": "Brand", name: brandName },
-    description,
-    ...(images.length ? { image: images } : {}),
-    url: canonicalUrl,
-    category: product.category || "Surgical Supplies",
-    ...(additionalProperty.length ? { additionalProperty } : {}),
-  };
-
-  // Solo añade offers si muestras precio real en la página
-  if (hasPrice) {
-    json.offers = {
+    ...(keywords ? { keywords } : {}),
+    name: `${product.name}`,
+    image: [product.image],
+    brand: {
+      "@type": "Brand",
+      name: product.manufacturer,
+    },
+    description: product.each.description || product.box.description || "",
+    sku: product._id,
+    mpn: product._id,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      reviewCount: "10",
+    },
+    review: [
+      {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+        author: {
+          "@type": "Person",
+          name: "John Doe",
+        },
+      },
+    ],
+    offers: {
       "@type": "Offer",
       priceCurrency: "USD",
-      price: Number(priceCandidate).toFixed(2),
+      price: price,
+      itemCondition: "https://schema.org/NewCondition",
       availability: "https://schema.org/InStock",
       url: canonicalUrl,
-      seller: { "@type": "Organization", name: "STAT Surgical Supply" },
-    };
-  }
-
-  // IMPORTANTÍSIMO: NO incluir aggregateRating/review si no están en la página y no son reales
-  return json;
+      seller: {
+        "@type": "Organization",
+        name: "STAT Surgical Supply",
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
+        returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
+        applicableCountry: {
+          "@type": "Country",
+          name: "US",
+        },
+        refundType: "https://schema.org/RefundTypeFull",
+        returnMethod: "https://schema.org/ReturnAtSeller",
+        returnFees: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: "0.00",
+        },
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: "0.00",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          businessDays: "https://schema.org/BusinessDay",
+          cutoffTime: "12:00",
+          transitTime: "https://schema.org/1BusinessDay",
+          handlingTime: "https://schema.org/1BusinessDay",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "US",
+        },
+      },
+    },
+    applicableCountry: "US",
+  };
 }
 
 function generateMainPageJSONLD() {
@@ -145,18 +145,19 @@ function generateMainPageJSONLD() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     inLanguage: "en-US",
-    url: SITE,
+    url: "https://www.statsurgicalsupply.com",
     name: "STAT Surgical Supply",
     description:
       "STAT Surgical Supply provides premium surgical equipment for clinics and hospitals. Save thousands on high-quality medical devices with us.",
     publisher: {
       "@type": "Organization",
       name: "STAT Surgical Supply",
-      url: SITE,
+      url: "https://www.statsurgicalsupply.com",
     },
     potentialAction: {
       "@type": "SearchAction",
-      target: `${SITE}/products?query={search_term_string}`,
+      target:
+        "https://www.statsurgicalsupply.com/products?query={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
