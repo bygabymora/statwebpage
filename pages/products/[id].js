@@ -267,7 +267,7 @@ export default function ProductScreen({ product }) {
 
   return (
     <Layout
-      title={product.name}
+      title={`${product.name} - ${product.manufacturer}`}
       product={product}
       schema={generateProductJSONLD(product)}
     >
@@ -307,7 +307,7 @@ export default function ProductScreen({ product }) {
             className='relative '
           >
             <Image
-              alt={product.name || ""}
+              alt={currentDescription}
               src={product.image}
               title={product.name || ""}
               width={350}
@@ -353,18 +353,18 @@ export default function ProductScreen({ product }) {
         <div className='w-full max-w-lg flex flex-col items-center lg:items-start'>
           <ul className='space-y-2'>
             <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
                 {product.name}
-              </h1>
+              </h2>
             </li>
             <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
                 {product.manufacturer}
-              </h1>
+              </h2>
             </li>
             <li>
               <h1 className='text-xl font-bold text-[#0e355e]'>
-                {currentDescription}
+                {currentDescription} - {product.name}
               </h1>
             </li>
             {product.sentOverNight && (
@@ -779,7 +779,7 @@ export default function ProductScreen({ product }) {
               <td className='py-2 px-4 border-b flex justify-center'>
                 <Image
                   src={product.image}
-                  alt={product.name}
+                  alt={currentDescription}
                   width={100}
                   height={100}
                   className='rounded-md'
@@ -838,7 +838,7 @@ export default function ProductScreen({ product }) {
               <h3 className='font-bold'>Image</h3>
               <Image
                 src={product.image}
-                alt={product.name}
+                alt={currentDescription}
                 width={100}
                 height={100}
                 className='rounded-md'
@@ -870,26 +870,26 @@ export default function ProductScreen({ product }) {
               <p>{product.manufacturer}</p>
             </div>
             <div className='rounded-lg'>
-              <h3 className='font-bold'>Shipping Info</h3>
+              <h3 className='font-bold my-2'>Shipping Info</h3>
               {nowTampa.isBefore(cutoff) ? (
                 (() => {
                   const diff = moment.duration(cutoff.diff(nowTampa));
                   const hours = Math.floor(diff.asHours());
                   const minutes = diff.minutes();
                   return (
-                    <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                    <h3 className='text-[#2c3339] text-base font-normal text-center mb-2'>
                       Want it by tomorrow? Place your order within the next{" "}
                       {hours} hour{hours !== 1 && "s"} and {minutes} minute
                       {minutes !== 1 && "s"} and select overnight shipping at
                       checkout.
-                    </div>
+                    </h3>
                   );
                 })()
               ) : nowLocal.isBefore(midnight) ? (
-                <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                <h3 className='text-[#2c3339] text-base font-normal text-center mb-2'>
                   The cutoff for next-day shipping has passed. Orders placed now
                   will arrive in two days.
-                </div>
+                </h3>
               ) : null}
             </div>
           </div>

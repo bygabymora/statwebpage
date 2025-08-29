@@ -108,10 +108,11 @@ export default function Layout({
           <>
             <meta
               name='description'
-              content={
-                product.each?.description?.slice(0, 160) ||
-                "Buy surgical supplies online at affordable prices."
-              }
+              content={`Buy surgical supplies. Order ${product.manufacturer} ${
+                product.name
+              } (${
+                product.each?.description?.slice(0, 43) || "No description"
+              }). Hospital-grade. Fast shipping & bulk pricing. Request a quote today.`}
             />
             <meta
               name='keywords'
