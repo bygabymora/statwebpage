@@ -863,7 +863,7 @@ export default function ProductScreen({ product }) {
             </div>
             <div className='rounded-lg'>
               <h3 className='font-bold'>Reference</h3>
-              <p>{product.reference || "N/A"}</p>
+              <p>{product.name || "N/A"}</p>
             </div>
             <div className='rounded-lg'>
               <h3 className='font-bold'>Manufacturer</h3>
