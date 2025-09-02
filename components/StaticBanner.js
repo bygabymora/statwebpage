@@ -17,7 +17,7 @@ const StaticBanner = () => {
           <Image
             width={500}
             height={500}
-            title='Healthcare Promotion Banner'
+            title='Quality Surgical Solutions'
             src='/images/assets/StaticBanner.png'
             alt='Seasonal Discounts on Healthcare Products'
             loading={"lazy"}
