@@ -104,7 +104,7 @@ function generateProductJSONLD(product) {
           "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 30,
         returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-        applicableCountry: {
+        areaServed: {
           "@type": "Country",
           name: "US",
         },
@@ -125,10 +125,18 @@ function generateProductJSONLD(product) {
         },
         deliveryTime: {
           "@type": "ShippingDeliveryTime",
-          businessDays: "https://schema.org/BusinessDay",
-          cutoffTime: "12:00",
-          transitTime: "https://schema.org/1BusinessDay",
-          handlingTime: "https://schema.org/1BusinessDay",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 2,
+            maxValue: 5,
+            unitCode: "DAY",
+          },
         },
         shippingDestination: {
           "@type": "DefinedRegion",
@@ -136,7 +144,6 @@ function generateProductJSONLD(product) {
         },
       },
     },
-    applicableCountry: "US",
   };
 }
 
