@@ -22,7 +22,7 @@ const Contact = () => {
   return (
     <section className='contact min-h-[534px]' id='contact'>
       <div className='contact__container'>
-        <h1 className='section__title my-10'>Contact us!</h1>
+        <h2 className='section__title my-10'>Contact us!</h2>
         <div className='contact__container grid'>
           <div className='contact__content space-y-1.5'>
             <motion.div
