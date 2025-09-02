@@ -97,7 +97,7 @@ export default function Layout({
         <title>
           {title
             ? `${title} | Stat Surgical Supply`
-            : "Stat Surgical Supply - Quality Surgical Supplies"}
+            : "Stat Surgical Supply | Buy Healthcare Products"}
         </title>
         <meta name='robots' content='index, follow' />
         <meta name='author' content='Stat Surgical Supply' />
@@ -300,7 +300,7 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='STAT Surgical Supply provides high-quality surgical supplies, medical equipment, and healthcare products at competitive prices. Shop trusted brands and save on surgical disposables today.'
+              content='Discover Stat Surgical Supply - your trusted source for medical equipment, surgical disposables, and healthcare solutions. Shop leading brands at competitive prices.'
             />
             <meta
               name='keywords'
