@@ -323,8 +323,7 @@ export default function Layout({
             <meta name='twitter:title' content='Stat Surgical Supply' />
             <meta
               name='twitter:description'
-              content='High-Quality Surgical Supplies at Unmatched Prices.
-                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+              content='High-Quality Surgical Supplies at Unmatched Prices. Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
 
