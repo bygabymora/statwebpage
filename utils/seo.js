@@ -155,7 +155,7 @@ function generateMainPageJSONLD() {
     url: "https://www.statsurgicalsupply.com",
     name: "STAT Surgical Supply",
     description:
-      "STAT Surgical Supply provides premium surgical equipment for clinics and hospitals. Save thousands on high-quality medical devices with us.",
+      "STAT Surgical Supply provides premium surgical equipment for clinics and hospitals. Save thousands on high-quality supplies with us.",
     publisher: {
       "@type": "Organization",
       name: "STAT Surgical Supply",
