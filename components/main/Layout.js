@@ -304,7 +304,7 @@ export default function Layout({
             />
             <meta
               name='keywords'
-              content='surgical supplies, medical equipment, healthcare products'
+              content='sterile surgical disposables, medical disposables for surgery, types of medical equipment, buy surgical supplies online'
             />
             <meta property='og:type' content='website' />
             <meta property='og:title' content='Stat Surgical Supply' />
