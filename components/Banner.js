@@ -77,7 +77,7 @@ const Banner = () => {
             >
               <Image
                 src={banner}
-                alt='Premium Medical Equipment for Hospitals and Clinics'
+                alt='Premium online Equipment for Hospitals and Clinics'
                 title='Buy Hospital & Clinic Equipment - healthcare equipment'
                 fill
                 priority={index === 0}

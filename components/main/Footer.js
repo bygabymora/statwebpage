@@ -169,7 +169,7 @@ export default function Footer() {
           className='footer-logo self-end sm:mr-3 sm:mb-3'
           src={Payment}
           alt='Accepted Payment Methods - Credit Card, PayPal, Bank Transfer'
-          title='Payment Options for Medical Equipment Purchases'
+          title='Payment Options for types Equipment Purchases'
           width={300}
           height={69}
           loading='lazy'
