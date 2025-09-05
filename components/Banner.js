@@ -27,15 +27,12 @@ const Banner = () => {
             Welcome to STAT Surgical Supply
           </h1>
 
-          <h2 className='text-[#414b53de] text-base font-normal text-center'>
-            Your Trusted Source for Surgical Supplies. Trusted by more than 150+
-            healthcare facilities. High-quality at unmatched prices.
-          </h2>
-
           <h2 className='text-[#414b53de] text-base font-normal text-center mb-6'>
-            Explore our wide range of premium surgical supplies, medical
-            equipment, and disposable instruments. We offer industry-leading
-            brands with cost-saving solutions tailored to your healthcare needs.
+            Your Trusted Source for Surgical Supplies. Trusted by more than 150+
+            healthcare facilities. High-quality at unmatched prices. Explore our
+            wide range of premium surgical disposables, implants, and
+            instruments. We offer industry-leading brands with cost-saving
+            solutions tailored to your healthcare needs.
           </h2>
 
           <div className='flex flex-wrap gap-4 justify-center text-center w-full'>
