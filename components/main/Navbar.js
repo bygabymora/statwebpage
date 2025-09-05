@@ -70,7 +70,7 @@ const Navbar = () => {
           <div className='nav__list grid'>
             <Link
               href='/'
-              title='Home - supplies Equipment & Healthcare Solutions'
+              title='Home - surgery Equipment & Healthcare Solutions'
               className='nav__link'
               onClick={handleHomeClick}
             >
