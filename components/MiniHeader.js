@@ -12,7 +12,7 @@ export default function Header() {
       <div className='flex space-x-4'>
         <a
           href='#contact'
-          title='Contact Our Team - STAT Surgical Supply'
+          title='Get in Touch with Our Team'
           className='hover:underline'
         >
           Contact Us
@@ -27,14 +27,14 @@ export default function Header() {
           target='_blank'
           rel='noopener noreferrer'
           aria-label='Visit our Facebook page'
-          title='Follow STAT Surgical Supply on Facebook'
+          title='Connect with Us on Facebook'
           className='hover:text-gray-400'
         >
           <FaFacebookF />
         </a>
         <a
           href='mailto:sales@statsurgicalsupply.com'
-          title='Email STAT Surgical Supply Sales Department'
+          title='Email Our Sales Department'
           aria-label='Send an email to sales@statsurgicalsupply.com'
           className='hover:text-gray-400'
         >
@@ -43,9 +43,9 @@ export default function Header() {
         <a
           href='https://www.linkedin.com/company/statsurgicalsupply'
           target='_blank'
-          title='Follow STAT Surgical Supply on LinkedIn'
+          title='Join Us on LinkedIn'
           rel='Visit our LinkedIn profile'
-          aria-label='Visit our Facebook page'
+          aria-label='Visit our LinkedIn page'
           className='hover:text-gray-400'
         >
           <FaLinkedinIn />
@@ -54,7 +54,7 @@ export default function Header() {
           href='https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,581m/data=!3m2!1e3!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu&g_ep=EgoyMDI1MDMzMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D'
           target='_blank'
           rel='noopener noreferrer'
-          title='See STAT Surgical Supply on Google Maps'
+          title='Find Us on Google Maps'
           aria-label='See our location on Google Maps'
           className='hover:text-gray-400'
         >
@@ -63,7 +63,7 @@ export default function Header() {
         <span>|</span>
         <a
           href='tel:+18136074110'
-          title='Call STAT Surgical Supply - Main Line'
+          title='Call Our Main Office'
           className='hover:underline'
         >
           (813) 252-0727
