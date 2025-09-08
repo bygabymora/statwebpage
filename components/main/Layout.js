@@ -91,6 +91,46 @@ export default function Layout({
     }
   }, [session?.user?.approved]);
 
+  const getProductDescription = (product) => {
+    const base = `${product.manufacturer} ${product.name}`;
+    const manufacturer = product.manufacturer?.toLowerCase() || "";
+
+    if (manufacturer.includes("medtronic")) {
+      return `${base} - Medtronic surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & reliable quality.`;
+    }
+
+    if (manufacturer.includes("intuitive")) {
+      return `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`;
+    }
+
+    if (manufacturer.includes("stryker")) {
+      return `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`;
+    }
+
+    if (manufacturer.includes("ethicon")) {
+      return `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`;
+    }
+
+    if (manufacturer.includes("bard")) {
+      return `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`;
+    }
+
+    // Generic for other manufacturers
+    return `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
+  };
+
+  const getProductKeywords = (product) => {
+    const manufacturer = product.manufacturer || "surgical supplies";
+    return [
+      `${manufacturer} surgical supplies`,
+      `${manufacturer} medical equipment`,
+      `${manufacturer} instruments`,
+      `${manufacturer} devices`,
+      "hospital-grade products",
+      "bulk pricing surgical supplies",
+    ].join(", ");
+  };
+
   return (
     <div className='w-full' lang='en-US'>
       <Head>
@@ -106,22 +146,8 @@ export default function Layout({
 
         {product ? (
           <>
-            <meta
-              name='description'
-              content={`Buy surgical supplies. Order ${product.manufacturer} ${
-                product.name
-              } (${
-                product.each?.description?.slice(0, 43) || "No description"
-              }). Hospital-grade. Fast shipping & bulk pricing. Request a quote today.`}
-            />
-            <meta
-              name='keywords'
-              content={
-                Array.isArray(product.keywords)
-                  ? product.keywords.join(", ")
-                  : "surgical supplies, medical equipment, healthcare products"
-              }
-            />
+            <meta name='description' content={getProductDescription(product)} />
+            <meta name='keywords' content={getProductKeywords(product)} />
             <meta property='og:type' content='product' />
             <meta
               property='og:title'

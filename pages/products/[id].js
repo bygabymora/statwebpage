@@ -265,11 +265,14 @@ export default function ProductScreen({ product }) {
     return <div>Product not found</div>;
   }
 
+  const getProductTitle = (product) => {
+    const base = `${product.manufacturer}: ${product.name}`;
+    return `${base} | Surgical Supply Online`;
+  };
+
   return (
     <Layout
-      title={`${product.manufacturer} - ${
-        product.name
-      }: ${currentDescription.slice(0, 32)}`}
+      title={getProductTitle(product)}
       product={product}
       schema={generateProductJSONLD(product)}
     >
