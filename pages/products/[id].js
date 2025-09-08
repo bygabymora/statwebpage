@@ -267,7 +267,9 @@ export default function ProductScreen({ product }) {
 
   return (
     <Layout
-      title={`${product.name} ${product.manufacturer}`}
+      title={`${product.manufacturer} - ${
+        product.name
+      }: ${currentDescription.slice(0, 32)}`}
       product={product}
       schema={generateProductJSONLD(product)}
     >
