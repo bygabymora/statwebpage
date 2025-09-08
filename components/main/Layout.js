@@ -92,7 +92,9 @@ export default function Layout({
   }, [session?.user?.approved]);
 
   const getProductDescription = (product) => {
-    const base = `${product.manufacturer} ${product.name}`;
+    const base = `${product.manufacturer} ${
+      product.name
+    }: ${product.each?.description?.slice(0, 43)}`;
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
     if (manufacturer.includes("medtronic")) {
@@ -146,7 +148,10 @@ export default function Layout({
 
         {product ? (
           <>
-            <meta name='description' content={getProductDescription(product)} />
+            <meta
+              name='description'
+              content={`${getProductDescription(product)}`}
+            />
             <meta name='keywords' content={getProductKeywords(product)} />
             <meta property='og:type' content='product' />
             <meta
