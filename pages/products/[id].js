@@ -314,7 +314,9 @@ export default function ProductScreen({ product }) {
             <Image
               alt={currentDescription}
               src={product.image}
-              title={product.name || ""}
+              title={`${product.manufacturer} ${product.name} ${
+                product.each?.description?.slice(0, 43) || ""
+              }`}
               width={350}
               height={350}
               className='rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300' // <-- Added no-drag class here
