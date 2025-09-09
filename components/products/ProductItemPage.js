@@ -242,14 +242,18 @@ export const ProductItemPage = ({ product, index }) => {
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
             href={`/products/${product.name}`}
-            title={product.name}
+            title={`${product.manufacturer} ${product.name} ${
+              product.each?.description?.slice(0, 43) || ""
+            }`}
             className='justify-center items-center text-center flex-1'
           >
             <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
               <LCPProductImage
                 src={product.image}
                 alt={currentDescription}
-                title={currentDescription}
+                title={`${product.manufacturer} ${product.name} ${
+                  product.each?.description?.slice(0, 43) || ""
+                }`}
                 containerClassName='relative w-full aspect-[4/5] max-w-xs mx-auto rounded-lg shadow-lg'
                 className='w-full'
                 width={800}

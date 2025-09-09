@@ -296,7 +296,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             <Image
               src={product.image}
               alt={`${product.manufacturer} - Model ${product.name}`}
-              title={`${product.name} - ${product.manufacturer} Medical Device`}
+              title={`${product.manufacturer} ${product.name} ${
+                product.each?.description?.slice(0, 43) || ""
+              }`}
               className='rounded-lg shadow-lg'
               width={800}
               height={1000}
