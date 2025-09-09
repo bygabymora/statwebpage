@@ -25,13 +25,13 @@ export default function LCPProductImage({
   return (
     <div
       className={containerClassName}
-      title={title}
       onContextMenu={onContextMenu}
       onDragStart={onDragStart}
     >
       <ResponsiveImage
         src={src}
         alt={alt}
+        title={title}
         preset='hero'
         aspectRatio={aspectRatio} // 800x1000
         className={className}

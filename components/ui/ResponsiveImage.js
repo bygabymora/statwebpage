@@ -10,6 +10,7 @@ const PRESET_SIZES = {
 export default function ResponsiveImage({
   src,
   alt = "",
+  title,
   preset = "thumb",
   className = "",
   // Use CSS aspect-ratio to keep layout stable; default to ~4:5 (your 1800x2250)
@@ -33,6 +34,7 @@ export default function ResponsiveImage({
       <Image
         src={src}
         alt={alt}
+        title={title}
         // `fill` + container aspect-ratio = no CLS and lets `sizes` work properly
         fill
         sizes={computedSizes}

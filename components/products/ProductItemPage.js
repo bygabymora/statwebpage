@@ -250,7 +250,7 @@ export const ProductItemPage = ({ product, index }) => {
             <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
               <LCPProductImage
                 src={product.image}
-                alt={currentDescription}
+                alt={`${product.manufacturer} - Model ${product.name}`}
                 title={`${product.manufacturer} ${product.name} ${
                   product.each?.description?.slice(0, 43) || ""
                 }`}
