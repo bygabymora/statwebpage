@@ -9,10 +9,6 @@ const nextConfig = {
     };
     return config;
   },
-  experimental: {
-    legacyBrowsers: false, // <- drop legacy polyfills (IE/very old Safari)
-    browsersListForSwc: true, // <- SWC uses your browserslist targets
-  },
 
   images: {
     deviceSizes: [320, 360, 414, 640, 768, 1024, 1280, 1536],
