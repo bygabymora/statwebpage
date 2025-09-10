@@ -274,9 +274,9 @@ export const ProductItemPage = ({ product, index }) => {
             >
               <div className='max-w-full'>
                 <div className='h-[3em] overflow-hidden relative flex text-[#414b53de] text-base font-normal'>
-                  <h2 className='flex-1 text-[#1b1f22de] text-base font-normal'>
+                  <h3 className='flex-1 text-[#1b1f22de] text-base font-normal'>
                     {currentDescription}
-                  </h2>
+                  </h3>
                 </div>
               </div>
             </Link>
