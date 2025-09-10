@@ -55,7 +55,7 @@ const Contact = () => {
             >
               <div className=''>
                 <h2 className='contact__card-title'>Phone</h2>
-                <span className='contact__card-data'>813-252-0727 </span>
+                <h3 className='contact__card-data'>813-252-0727 </h3>
                 <a
                   href='tel:8132520727'
                   onClick={handleCallButtonClick}
@@ -78,7 +78,7 @@ const Contact = () => {
             >
               <div className=''>
                 <h2 className='contact__card-title'>Fax</h2>
-                <span className='contact__card-data'>813-607-4110 </span>
+                <h3 className='contact__card-data'>813-607-4110 </h3>
               </div>
             </motion.div>
             <motion.div
@@ -91,9 +91,9 @@ const Contact = () => {
             >
               <div className=''>
                 <h2 className='contact__card-title'>Email</h2>
-                <span className='contact__card-data'>
+                <h3 className='contact__card-data'>
                   sales@statsurgicalsupply.com
-                </span>
+                </h3>
                 <a
                   href='mailto:sales@statsurgicalsupply.com'
                   className='contact__button'
