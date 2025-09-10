@@ -321,8 +321,10 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             className='justify-center items-center text-center'
           >
             <div className='max-w-full'>
-              <div className='h-[3em] overflow-hidden relative flex '>
-                <span className='flex-1'>{currentDescription}</span>
+              <div className='h-[3em] overflow-hidden relative flex text-[#414b53de] text-base font-normal'>
+                <h3 className='flex-1 text-[#1b1f22de] text-base font-normal'>
+                  {currentDescription}
+                </h3>
               </div>
             </div>
           </Link>
