@@ -50,7 +50,7 @@ export default function Footer() {
     handleSendEmails(emailmessage, contactToEmail);
 
     setEmail("");
-    if (!user?.isApproved) setName(""); //  Clear name only if user is not authenticated
+    if (!user?.isApproved) setName(""); // Clear name only if user is not authenticated
   };
 
   return (
