@@ -118,7 +118,7 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Surgical Supply Main Logo'
-          title='Wholesale Medical & Surgical Products | STAT Surgical Supply'
+          title='Medical Equipment for Professionals | Wholesale by STAT'
           loading='lazy'
           width={300}
           height={100}

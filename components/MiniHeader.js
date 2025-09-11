@@ -43,7 +43,7 @@ export default function Header() {
         <a
           href='https://www.linkedin.com/company/statsurgicalsupply'
           target='_blank'
-          title='Join Us on LinkedIn | Healthcare & Surgical Solutions'
+          title='Follow Us on LinkedIn | Healthcare Innovation & Solutions'
           rel='Visit our LinkedIn profile'
           aria-label='Visit our LinkedIn page'
           className='hover:text-gray-400'
@@ -63,7 +63,7 @@ export default function Header() {
         <span>|</span>
         <a
           href='tel:+18136074110'
-          title='Call Our Main Office | Surgical & Medical Supply Experts'
+          title='Call Our Main Office | Experts in Medical Solutions'
           className='hover:underline'
         >
           (813) 252-0727
