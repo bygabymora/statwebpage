@@ -74,7 +74,7 @@ export default function AboutScreen() {
           <h1 className='hidden lg:block text-4xl font-bold text-[#0e355e] mb-6 -mt-10'>
             About Us
           </h1>
-          <h2 className='text-[#414b53de] text-base font-normal'>
+          <h3 className='text-[#414b53de] text-base font-normal'>
             Stat Surgical was founded to combat the rising costs of healthcare
             supply chains. Our company targets the &quot;small&quot; portion of
             &quot;off-contract&quot; purchases and backorders. Stat Surgical
@@ -89,7 +89,7 @@ export default function AboutScreen() {
             IDNs. As surgical disposable costs rise, numerous healthcare systems
             rely on us for cost savings. Our customers are &quot;priority
             one&quot;.
-          </h2>
+          </h3>
           <div className='mt-10 flex justify-start'>
             <Link href='/products'>
               <animated.button
