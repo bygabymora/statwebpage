@@ -424,11 +424,11 @@ export default function facs() {
             <br />
             <strong>C.</strong> in Stat Surgical Supply LLC sole discretion and
             without limitation, refuse, restrict access to or availability of,
-            or disable (to the extent technologically feasible) any user’s
+            or disable (to the extent technologically feasible) any user&rsquo;s
             contribution or any portion thereof that may violate this Agreement
             or any Stat Surgical Supply LLC policy;
             <br />
-            <strong>D.</strong> in Company’s sole discretion and without
+            <strong>D.</strong> in Company&rsquo;s sole discretion and without
             limitation, notice or liability to remove from the Sites or
             otherwise disable all files and content that are excessive in size
             or are in any way burdensome to Stat Surgical Supply LLC &apos;s
@@ -450,15 +450,15 @@ export default function facs() {
             <br />
             <br />
             WITHOUT LIMITING ANY OTHER PROVISION OF THIS AGREEMENT, COMPANY
-            RESERVES THE RIGHT TO, IN COMPANY’S SOLE DISCRETION AND WITHOUT
-            NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SITES AND THE
-            COMPANY SERVICES, TO ANY PERSON FOR ANY REASON OR FOR NO REASON AT
-            ALL, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION,
-            WARRANTY OR COVENANT CONTAINED IN THIS AGREEMENT, OR OF ANY
-            APPLICABLE LAW OR REGULATION, AND COMPANY MAY TERMINATE YOUR USE OR
-            PARTICIPATION IN THE SITES AND THE COMPANY SERVICES, DELETE YOUR
-            PROFILE AND ANY CONTENT OR INFORMATION THAT YOU HAVE POSTED AT ANY
-            TIME, WITHOUT WARNING, IN COMPANY’S SOLE DISCRETION.
+            RESERVES THE RIGHT TO, IN COMPANY&rsquo;S SOLE DISCRETION AND
+            WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SITES AND
+            THE COMPANY SERVICES, TO ANY PERSON FOR ANY REASON OR FOR NO REASON
+            AT ALL, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY
+            REPRESENTATION, WARRANTY OR COVENANT CONTAINED IN THIS AGREEMENT, OR
+            OF ANY APPLICABLE LAW OR REGULATION, AND COMPANY MAY TERMINATE YOUR
+            USE OR PARTICIPATION IN THE SITES AND THE COMPANY SERVICES, DELETE
+            YOUR PROFILE AND ANY CONTENT OR INFORMATION THAT YOU HAVE POSTED AT
+            ANY TIME, WITHOUT WARNING, IN COMPANY&rsquo;S SOLE DISCRETION.
             <br />
             <br />
             In order to protect the integrity of the Sites and Company Services,
@@ -475,12 +475,12 @@ export default function facs() {
             <br />
             YOU UNDERSTAND THAT CERTAIN STATES ALLOW YOU TO CANCEL THIS
             AGREEMENT, WITHOUT ANY PENALTY OR OBLIGATION, AT ANY TIME PRIOR TO
-            MIDNIGHT OF COMPANY’S THIRD BUSINESS DAY FOLLOWING THE DATE OF THIS
-            AGREEMENT, EXCLUDING SUNDAYS AND HOLIDAYS. TO CANCEL, CALL A COMPANY
-            CUSTOMER CARE REPRESENTATIVE DURING NORMAL BUSINESS HOURS USING THE
-            CONTACT INFORMATION LISTING BELOW IN THIS AGREEMENT OR BY ACCESSING
-            YOUR ACCOUNT SETTINGS. THIS SECTION APPLIES ONLY TO INDIVIDUALS
-            RESIDING IN STATES WITH SUCH LAWS.
+            MIDNIGHT OF COMPANY&rsquo;S THIRD BUSINESS DAY FOLLOWING THE DATE OF
+            THIS AGREEMENT, EXCLUDING SUNDAYS AND HOLIDAYS. TO CANCEL, CALL A
+            COMPANY CUSTOMER CARE REPRESENTATIVE DURING NORMAL BUSINESS HOURS
+            USING THE CONTACT INFORMATION LISTING BELOW IN THIS AGREEMENT OR BY
+            ACCESSING YOUR ACCOUNT SETTINGS. THIS SECTION APPLIES ONLY TO
+            INDIVIDUALS RESIDING IN STATES WITH SUCH LAWS.
             <br />
             <br />
             If Company terminates or suspends your account for any reason, you
@@ -579,27 +579,28 @@ export default function facs() {
             PROVISION, YOU WOULD HAVE THE RIGHT TO SUE IN COURT AND HAVE A JURY
             TRIAL. The arbitration shall be commenced and conducted under the
             Commercial Arbitration Rules of the American Arbitration Association
-            (&quot;AAA&quot;) and, where appropriate, the AAA’s Supplementary
-            Procedures for Consumer Related Disputes (&quot;AAA Consumer
-            Rules&quot;), both of which are available at the AAA website
-            www.adr.org. The determination of whether a Dispute is subject to
-            arbitration shall be governed by the Federal Arbitration Act and
-            determined by a court rather than an arbitrator. Your arbitration
-            fees and your share of arbitrator compensation shall be governed by
-            the AAA Consumer Rules and, where appropriate, limited by the AAA
-            Consumer Rules. If such costs are determined by the arbitrator to be
-            excessive, Company will pay all arbitration fees and expenses. The
-            arbitration may be conducted in person, through the submission of
-            documents, by phone or online. The arbitrator will make a decision
-            in writing, but need not provide a statement of reasons unless
-            requested by a party. The arbitrator must follow applicable law, and
-            any award may be challenged if the arbitrator fails to do so. Except
-            where otherwise required by the applicable AAA rules or applicable
-            law, the arbitration will take place in Hillsborough County, State
-            of Florida. Except as otherwise provided in this Agreement, you and
-            Company may litigate in court to compel arbitration, stay
-            proceedings pending arbitration, or to confirm, modify, vacate or
-            enter judgment on the award entered by the arbitrator.
+            (&quot;AAA&quot;) and, where appropriate, the AAA&rsquo;s
+            Supplementary Procedures for Consumer Related Disputes (&quot;AAA
+            Consumer Rules&quot;), both of which are available at the AAA
+            website www.adr.org. The determination of whether a Dispute is
+            subject to arbitration shall be governed by the Federal Arbitration
+            Act and determined by a court rather than an arbitrator. Your
+            arbitration fees and your share of arbitrator compensation shall be
+            governed by the AAA Consumer Rules and, where appropriate, limited
+            by the AAA Consumer Rules. If such costs are determined by the
+            arbitrator to be excessive, Company will pay all arbitration fees
+            and expenses. The arbitration may be conducted in person, through
+            the submission of documents, by phone or online. The arbitrator will
+            make a decision in writing, but need not provide a statement of
+            reasons unless requested by a party. The arbitrator must follow
+            applicable law, and any award may be challenged if the arbitrator
+            fails to do so. Except where otherwise required by the applicable
+            AAA rules or applicable law, the arbitration will take place in
+            Hillsborough County, State of Florida. Except as otherwise provided
+            in this Agreement, you and Company may litigate in court to compel
+            arbitration, stay proceedings pending arbitration, or to confirm,
+            modify, vacate or enter judgment on the award entered by the
+            arbitrator.
             <br />
             <br />
             <strong>D. Restrictions.</strong> You and Company agree that any
@@ -619,16 +620,16 @@ export default function facs() {
             You and Company agree that the following Disputes are not subject to
             the above provisions concerning informal negotiations and binding
             arbitration: (1) any Disputes seeking to enforce or protect, or
-            concerning the validity of any of your or Company’s intellectual
-            property rights; (2) any Dispute related to, or arising from,
-            allegations of theft, piracy, invasion of privacy or unauthorized
-            use; and (3) any claim for injunctive relief. If this Section is
-            found to be illegal or unenforceable then neither you nor Company
-            will elect to arbitrate any Dispute falling within that portion of
-            this Section found to be illegal or unenforceable and such Dispute
-            shall be decided by a court of competent jurisdiction within the
-            courts listed for jurisdiction above, and you and Company agree to
-            submit to the personal jurisdiction of that court.
+            concerning the validity of any of your or Company&rsquo;s
+            intellectual property rights; (2) any Dispute related to, or arising
+            from, allegations of theft, piracy, invasion of privacy or
+            unauthorized use; and (3) any claim for injunctive relief. If this
+            Section is found to be illegal or unenforceable then neither you nor
+            Company will elect to arbitrate any Dispute falling within that
+            portion of this Section found to be illegal or unenforceable and
+            such Dispute shall be decided by a court of competent jurisdiction
+            within the courts listed for jurisdiction above, and you and Company
+            agree to submit to the personal jurisdiction of that court.
           </p>
           <br />
           <h2>CORRECTIONS</h2>
@@ -696,11 +697,12 @@ export default function facs() {
             INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA OR OTHER DAMAGES
             ARISING FROM YOUR USE OF THE SITES OR COMPANY SERVICES, EVEN IF
             COMPANY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-            NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, COMPANY’S
-            LIABILITY TO YOU FOR ANY CAUSE WHATSOEVER AND REGARDLESS OF THE FORM
-            OF THE ACTION, WILL AT ALL TIMES BE LIMITED TO THE AMOUNT PAID, IF
-            ANY, BY YOU TO COMPANY FOR THE COMPANY SERVICES DURING THE PERIOD OF
-            THREE (3) MONTHS PRIOR TO ANY CAUSE OF ACTION ARISING.
+            NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN,
+            COMPANY&rsquo;S LIABILITY TO YOU FOR ANY CAUSE WHATSOEVER AND
+            REGARDLESS OF THE FORM OF THE ACTION, WILL AT ALL TIMES BE LIMITED
+            TO THE AMOUNT PAID, IF ANY, BY YOU TO COMPANY FOR THE COMPANY
+            SERVICES DURING THE PERIOD OF THREE (3) MONTHS PRIOR TO ANY CAUSE OF
+            ACTION ARISING.
             <br /> <br />
             CERTAIN STATE LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR
             THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY
@@ -719,17 +721,18 @@ export default function facs() {
             You agree to defend, indemnify and hold Company, its subsidiaries,
             and affiliates, and their respective officers, agents, partners and
             employees, harmless from and against, any loss, damage, liability,
-            claim, or demand, including reasonable attorneys’ fees and expenses,
-            made by any third party due to or arising out of your contributed
-            content, use of the Company Services, and/or arising from a breach
-            of this Agreement and/or any breach of your representations and
-            warranties set forth above. Notwithstanding the foregoing, Company
-            reserves the right, at your expense, to assume the exclusive defense
-            and control of any matter for which you are required to indemnify
-            Company, and you agree to cooperate, at your expense, with Company’s
-            defense of such claims. Company will use reasonable efforts to
-            notify you of any such claim, action, or proceeding which is subject
-            to this indemnification upon becoming aware of it.
+            claim, or demand, including reasonable attorneys&rsquo; fees and
+            expenses, made by any third party due to or arising out of your
+            contributed content, use of the Company Services, and/or arising
+            from a breach of this Agreement and/or any breach of your
+            representations and warranties set forth above. Notwithstanding the
+            foregoing, Company reserves the right, at your expense, to assume
+            the exclusive defense and control of any matter for which you are
+            required to indemnify Company, and you agree to cooperate, at your
+            expense, with Company&rsquo;s defense of such claims. Company will
+            use reasonable efforts to notify you of any such claim, action, or
+            proceeding which is subject to this indemnification upon becoming
+            aware of it.
           </p>
           <br />
           <h2>NOTICES</h2>
@@ -793,13 +796,13 @@ export default function facs() {
             remaining provisions. There is no joint venture, partnership,
             employment or agency relationship created between you and Company as
             a result of this Agreement or use of the Sites and Company Services.
-            Upon Company’s request, you will furnish Company any documentation,
-            substantiation or releases necessary to verify your compliance with
-            this Agreement. You agree that this Agreement will not be construed
-            against Company by virtue of having drafted them. You hereby waive
-            any and all defenses you may have based on the electronic form of
-            this Agreement and the lack of signing by the parties hereto to
-            execute this Agreement.
+            Upon Company&rsquo;s request, you will furnish Company any
+            documentation, substantiation or releases necessary to verify your
+            compliance with this Agreement. You agree that this Agreement will
+            not be construed against Company by virtue of having drafted them.
+            You hereby waive any and all defenses you may have based on the
+            electronic form of this Agreement and the lack of signing by the
+            parties hereto to execute this Agreement.
           </p>
           <br />
           <h2>CONTACT US</h2>
