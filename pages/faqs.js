@@ -149,10 +149,10 @@ export default function FAQs() {
           <h1 className='text-4xl font-bold text-[#0e355e] mb-2'>
             Frequently Asked Questions
           </h1>
-          <p className='text-gray-500 max-w-xl mx-auto my-3'>
+          <h3 className='text-[#414b53de] text-base font-normal text-center mb-6'>
             Get quick answers to common inquiries about surgical procedures,
             ordering surgical tools, and maintaining sterile medical equipment.
-          </p>
+          </h3>
         </div>
 
         <div className='mt-10 space-y-5'>
