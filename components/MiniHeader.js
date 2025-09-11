@@ -12,7 +12,7 @@ export default function Header() {
       <div className='flex space-x-4'>
         <a
           href='#contact'
-          title='Contact Our Team | Medical & Surgical Supplies in Tampa'
+          title='Contact Our Team | Medical products in Tampa'
           className='hover:underline'
         >
           Contact Us
@@ -34,7 +34,7 @@ export default function Header() {
         </a>
         <a
           href='mailto:sales@statsurgicalsupply.com'
-          title='Email Our Sales Department | Surgical & Medical Products'
+          title='Email Our Sales Department | Medical Products'
           aria-label='Send an email to sales@statsurgicalsupply.com'
           className='hover:text-gray-400'
         >

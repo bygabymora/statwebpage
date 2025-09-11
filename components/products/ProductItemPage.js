@@ -579,12 +579,15 @@ export const ProductItemPage = ({ product, index }) => {
                 </div>
               )}
               <div className='flex gap-5'>
-                <Link href='/Login' title='Login to buy this supplies'>
+                <Link href='/Login' title='Access Your Account to Order Now'>
                   <button className='primary-button align-middle text-white'>
                     Login
                   </button>
                 </Link>
-                <Link href='/Register' title='Register to buy this supplies'>
+                <Link
+                  href='/Register'
+                  title='Create an Account to Buy Surgical Supplies Online'
+                >
                   <button className='primary-button align-middle text-white'>
                     Register
                   </button>
