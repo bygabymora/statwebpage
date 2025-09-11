@@ -201,7 +201,7 @@ export default function Support() {
                 name: "What is the expiration dating of your products?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Stat Surgical strives to provide long-dated products. Typically products have 1–3+ years until expiration. We never send short-dated products unless approved by the customer.",
+                  text: "Stat Surgical strives to provide long-dated products. Typically products have 1-3+ years until expiration. We never send short-dated products unless approved by the customer.",
                 },
               },
               {

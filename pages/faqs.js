@@ -14,7 +14,7 @@ const faqData = [
   {
     question: "What factors influence the duration of surgery?",
     answer:
-      "Procedure complexity, patient health, anesthesia type, and the surgical team’s experience all play a role in how long a surgery takes.",
+      "Procedure complexity, patient health, anesthesia type, and the surgical team's experience all play a role in how long a surgery takes.",
   },
   {
     question: "How sterile are surgical supplies upon delivery?",
@@ -189,7 +189,7 @@ export default function FAQs() {
         </div>
         <div className='text-center mt-12'>
           <p className='text-lg text-gray-700'>
-            Didn’t find what you’re looking for?
+            Didn&rsquo;t find what you&rsquo;re looking for?
           </p>
           <Link
             href='/support'
