@@ -84,7 +84,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
                 Special discounted items available for a short time. Grab them
-                before they’re gone!
+                before they&rsquo;re gone!
               </p>
               <Link
                 href='/clearance'

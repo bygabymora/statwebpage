@@ -42,7 +42,7 @@ export default function Support() {
           <h3 className='text-[#414b53] mt-4 font-normal text-base'>
             Need assistance with your surgical supply order or product
             questions? Contact our support team by phone, email, or visit us in
-            person. we’re here to help medical professionals like you.
+            person. we&rsquo;re here to help medical professionals like you.
           </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10'>
@@ -95,9 +95,9 @@ export default function Support() {
           </div>
 
           <div className='mt-10 text-left'>
-            <h3 className='text-2xl font-bold text-[#0e355e]'>
+            <h2 className='text-2xl font-bold text-[#0e355e]'>
               Frequently Asked Questions
-            </h3>
+            </h2>
             <div className='mt-4 bg-gray-100 p-4 rounded-lg shadow-md'>
               <h4 className='flex items-center text-[#414b53]'>
                 <FaQuestionCircle className='text-[#07783e] mr-2' /> How long
