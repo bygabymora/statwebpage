@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
-import { generateMainPageJSONLD } from "../utils/seo";
 
 // Render hero/above-the-fold on the server so LCP is discoverable
 const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
@@ -186,7 +185,7 @@ function Carousel({ products }) {
 export default function Home({ products }) {
   // No client fetch; products already in the initial HTML (good for LCP/TTFB)
   return (
-    <Layout schema={generateMainPageJSONLD(products)} products={products}>
+    <Layout>
       {/* Make sure your Banner image uses next/image with priority if it's your LCP */}
       <Banner />
       <StaticBanner />
