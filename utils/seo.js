@@ -40,7 +40,9 @@ function generateJSONLD(news) {
 }
 
 function generateProductJSONLD(product) {
-  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.name}`;
+  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
+    product.name
+  )}`;
   const price = (
     product.each?.minSalePrice ||
     product.box?.minSalePrice ||
@@ -65,7 +67,7 @@ function generateProductJSONLD(product) {
       "@type": "Brand",
       name: product.manufacturer,
     },
-    description: product.each.description || product.box.description || "",
+    description: product?.each?.description || product?.box?.description || "",
     sku: product._id,
     mpn: product._id,
     aggregateRating: {
@@ -102,19 +104,11 @@ function generateProductJSONLD(product) {
         "@type": "MerchantReturnPolicy",
         returnPolicyCategory:
           "https://schema.org/MerchantReturnFiniteReturnWindow",
+        applicableCountry: "US",
         merchantReturnDays: 30,
-        returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-        areaServed: {
-          "@type": "Country",
-          name: "US",
-        },
-        refundType: "https://schema.org/RefundTypeFull",
-        returnMethod: "https://schema.org/ReturnAtSeller",
-        returnFees: {
-          "@type": "MonetaryAmount",
-          currency: "USD",
-          value: "0.00",
-        },
+        returnMethod: "https://schema.org/ReturnByMail",
+        refundType: "https://schema.org/FullRefund",
+        returnFees: "https://schema.org/FreeReturn",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
