@@ -331,7 +331,7 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='Discover Stat Surgical Supply - trusted source for medical equipment, surgical disposables and healthcare solutions. Shop leading brands today.'
+              content='Buy healthcare products online at Stat Surgical Supply. Trusted source for surgical equipment, medical disposables, and healthcare solutions. Shop leading brands and products today.'
             />
             <meta
               name='keywords'
