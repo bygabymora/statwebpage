@@ -7,6 +7,7 @@ export default function Document() {
         <link
           rel='preconnect'
           href='https://www.googletagmanager.com'
+          strategy='lazyOnload'
           crossOrigin='anonymous'
         />
         <link

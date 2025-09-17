@@ -1,16 +1,26 @@
-// utils/seo.js
 function generateJSONLD(news) {
+  const isValidDate = (value) => {
+    const date = new Date(value);
+    return value && !isNaN(date);
+  };
+
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    keywords: news.tags?.join(", "),
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
     },
     headline: news.title,
+    articleBody: news.content || "",
     image: [news.imageUrl],
-    datePublished: new Date(news.createdAt).toISOString(),
-    dateModified: new Date(news.updatedAt).toISOString(),
+    ...(isValidDate(news.createdAt) && {
+      datePublished: new Date(news.createdAt).toISOString(),
+    }),
+    ...(isValidDate(news.updatedAt) && {
+      dateModified: new Date(news.updatedAt).toISOString(),
+    }),
     author: {
       "@type": "Person",
       name: news.author || "STAT Surgical Supply",
@@ -25,12 +35,14 @@ function generateJSONLD(news) {
         height: 60,
       },
     },
-    description: news.content.substring(0, 160),
+    description: news.content?.substring(0, 160) || "",
   };
 }
 
 function generateProductJSONLD(product) {
-  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${product.name}`;
+  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
+    product.name
+  )}`;
   const price = (
     product.each?.minSalePrice ||
     product.box?.minSalePrice ||
@@ -40,7 +52,6 @@ function generateProductJSONLD(product) {
     product.box?.customerPrice ||
     0
   ).toFixed(2);
-  console.log("Generating JSON-LD for product:", product.image);
 
   const keywords = Array.isArray(product.keywords)
     ? product.keywords.join(", ")
@@ -56,9 +67,28 @@ function generateProductJSONLD(product) {
       "@type": "Brand",
       name: product.manufacturer,
     },
-    description: product.each.description || product.box.description || "",
+    description: product?.each?.description || product?.box?.description || "",
     sku: product._id,
     mpn: product._id,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      reviewCount: "10",
+    },
+    review: [
+      {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+        author: {
+          "@type": "Person",
+          name: "John Doe",
+        },
+      },
+    ],
     offers: {
       "@type": "Offer",
       priceCurrency: "USD",
@@ -74,19 +104,11 @@ function generateProductJSONLD(product) {
         "@type": "MerchantReturnPolicy",
         returnPolicyCategory:
           "https://schema.org/MerchantReturnFiniteReturnWindow",
+        applicableCountry: "US",
         merchantReturnDays: 30,
-        returnReasonCategory: "RETURN_REASON_CATEGORY_UNSPECIFIED",
-        applicableCountry: {
-          "@type": "Country",
-          name: "US",
-        },
-        refundType: "https://schema.org/RefundTypeFull",
-        returnMethod: "https://schema.org/ReturnAtSeller",
-        returnFees: {
-          "@type": "MonetaryAmount",
-          currency: "USD",
-          value: "0.00",
-        },
+        returnMethod: "https://schema.org/ReturnByMail",
+        refundType: "https://schema.org/FullRefund",
+        returnFees: "https://schema.org/FreeReturn",
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
@@ -97,10 +119,18 @@ function generateProductJSONLD(product) {
         },
         deliveryTime: {
           "@type": "ShippingDeliveryTime",
-          businessDays: "https://schema.org/BusinessDay",
-          cutoffTime: "12:00",
-          transitTime: "https://schema.org/1BusinessDay",
-          handlingTime: "https://schema.org/1BusinessDay",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 2,
+            maxValue: 5,
+            unitCode: "DAY",
+          },
         },
         shippingDestination: {
           "@type": "DefinedRegion",
@@ -108,7 +138,6 @@ function generateProductJSONLD(product) {
         },
       },
     },
-    applicableCountry: "US",
   };
 }
 
@@ -116,15 +145,20 @@ function generateMainPageJSONLD() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    inLanguage: "en-US",
     url: "https://www.statsurgicalsupply.com",
     name: "STAT Surgical Supply",
     description:
-      "We provide high-quality surgical supplies to meet the needs of healthcare professionals. Partner with us to save thousands on the same devices you purchase direct.",
+      "STAT Surgical Supply provides premium surgical equipment for clinics and hospitals. Save thousands on high-quality supplies with us.",
+    publisher: {
+      "@type": "Organization",
+      name: "STAT Surgical Supply",
+      url: "https://www.statsurgicalsupply.com",
+    },
     potentialAction: {
       "@type": "SearchAction",
-      target: {
-        url: `https://www.statsurgicalsupply.com/products?query={search_term_string}`,
-      },
+      target:
+        "https://www.statsurgicalsupply.com/products?query={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };

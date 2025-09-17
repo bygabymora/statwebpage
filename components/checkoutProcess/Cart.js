@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { BsCartX, BsTrash3 } from "react-icons/bs";
 import axios from "axios";
+import { Listbox } from "@headlessui/react";
+import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 
@@ -149,7 +151,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                 {order.orderItems?.map((item) => (
                   <div
                     key={item._id}
-                    className='border rounded-lg p-4 shadow-sm flex  md:items-center'
+                    className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center md:space-x-4 gap-2 w-full'
                   >
                     {/* Product */}
                     <div className='flex flex-1 items-center  space-x-4 mb-4 md:mb-0 md:flex-1'>
@@ -185,22 +187,48 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
                         {/* Quantity */}
                         <div className='flex flex-1 items-center'>
-                          <span className='font-semibold mr-1'>Qty:</span>
-                          <select
-                            value={item.quantity}
-                            onChange={(e) =>
-                              updateCartHandler(item, Number(e.target.value))
-                            }
-                            className='px-3 py-2 leading-tight text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline'
-                          >
-                            {[...Array(item.countInStock || 0).keys()].map(
-                              (x) => (
-                                <option key={x + 1} value={x + 1}>
-                                  {x + 1}
-                                </option>
-                              )
-                            )}
-                          </select>
+                          <span className='font-semibold mr-2 text-sm'>
+                            Qty:
+                          </span>
+                          <div className='relative w-[90px]'>
+                            <Listbox
+                              value={item.quantity}
+                              onChange={(value) =>
+                                updateCartHandler(item, value)
+                              }
+                            >
+                              <Listbox.Button className='w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]'>
+                                {item.quantity}
+                              </Listbox.Button>
+                              <BiChevronDown className='w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                              <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm custom-scrollbar'>
+                                {[...Array(item.countInStock || 0).keys()].map(
+                                  (x) => (
+                                    <Listbox.Option
+                                      key={x + 1}
+                                      value={x + 1}
+                                      className={({ active }) =>
+                                        `cursor-pointer select-none px-4 py-2 ${
+                                          active
+                                            ? "bg-blue-100 text-[#0e355e]"
+                                            : "text-gray-900"
+                                        }`
+                                      }
+                                    >
+                                      {({ selected }) => (
+                                        <span className='flex items-center justify-between'>
+                                          {x + 1}
+                                          {selected && (
+                                            <BiCheck className='w-4 h-4 text-[#0e355e]' />
+                                          )}
+                                        </span>
+                                      )}
+                                    </Listbox.Option>
+                                  )
+                                )}
+                              </Listbox.Options>
+                            </Listbox>
+                          </div>
                         </div>
                       </div>
                       {/* Price */}

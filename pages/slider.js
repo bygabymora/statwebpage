@@ -1,30 +1,37 @@
-import React from "react";
+import {
+  FaBoxOpen,
+  FaDollarSign,
+  FaHeadset,
+  FaShieldAlt,
+} from "react-icons/fa";
 import Link from "next/link";
-import { DollarSign, Package, ShieldCheck, Headset } from "lucide-react";
 
 const benefits = [
   {
-    icon: <DollarSign size={36} />,
-    title: "Guaranteed Savings",
-    description: "Save up to 50% on selected products.",
+    icon: <FaDollarSign />,
+    title: "Guaranteed Savings on Surgical Supplies",
+    description:
+      "Save up to 50% on surgical disposables and medical equipment.",
     link: "/savings",
   },
   {
-    icon: <Package size={36} />,
-    title: "Available Stock",
-    description: "Diverse catalog with fast delivery.",
+    icon: <FaBoxOpen />,
+    title: "In-Stock Surgical Products with Fast Delivery",
+    description: "Wide selection of medical supplies ready to ship nationwide.",
     link: "/products",
   },
   {
-    icon: <ShieldCheck size={36} />,
-    title: "Secure Buying & Selling",
-    description: "Reliable and verified processes.",
+    icon: <FaShieldAlt />,
+    title: "Secure Buying & Selling Process",
+    description:
+      "Sell or buy surgical products with confidence and verified procedures.",
     link: "/selling",
   },
   {
-    icon: <Headset size={36} />,
-    title: "Support",
-    description: "Email, phone, or schedule a visit at our location.",
+    icon: <FaHeadset />,
+    title: "Dedicated Support for Medical Professionals",
+    description:
+      "Talk to our team via email, phone, or schedule a visit at our warehouse.",
     link: "/support",
   },
 ];
@@ -35,9 +42,11 @@ export default function BenefitsSection() {
       <h2 className='text-3xl font-bold text-center text-[#0e355e]'>
         Our Key Benefits
       </h2>
-      <p className='text-center text-lg text-gray-600 mt-2'>
-        Discover why we are the trusted choice in surgical supplies.
-      </p>
+      <h3 className='text-[#414b53de] text-base font-normal text-center mt-2'>
+        Discover why clinics, hospitals, and medical professionals choose <br />{" "}
+        STAT Surgical Supply for high-quality surgical disposables and medical
+        equipment.
+      </h3>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10'>
         {benefits.map((benefit, index) => (
           <div
@@ -45,7 +54,7 @@ export default function BenefitsSection() {
             className='flex items-center p-6 bg-white border-l-4 border-[#03793d] rounded-lg shadow-md 
             transition-transform duration-300 hover:scale-105 hover:shadow-lg group'
           >
-            <div className='text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12'>
+            <div className='text-4xl text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12'>
               {benefit.icon}
             </div>
             <div className='ml-5 flex-1'>

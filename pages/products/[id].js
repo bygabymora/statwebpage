@@ -6,6 +6,8 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { Listbox } from "@headlessui/react";
+import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
@@ -82,6 +84,15 @@ export default function ProductScreen({ product }) {
       );
     }
   }, [typeOfPurchase, product.each]);
+
+  const availableTypes = [
+    ...(product.each?.quickBooksQuantityOnHandProduction > 0 ? ["Each"] : []),
+    ...(product.box?.quickBooksQuantityOnHandProduction > 0 ? ["Box"] : []),
+    ...(product.each?.clearanceCountInStock > 0 ||
+    product.box?.clearanceCountInStock > 0
+      ? ["Clearance"]
+      : []),
+  ];
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
@@ -254,9 +265,14 @@ export default function ProductScreen({ product }) {
     return <div>Product not found</div>;
   }
 
+  const getProductTitle = (product) => {
+    const base = `${product.manufacturer}: ${product.name}`;
+    return `${base} | Surgical Supply Online`;
+  };
+
   return (
     <Layout
-      title={product.name}
+      title={getProductTitle(product)}
       product={product}
       schema={generateProductJSONLD(product)}
     >
@@ -296,9 +312,11 @@ export default function ProductScreen({ product }) {
             className='relative '
           >
             <Image
-              alt={product.name || ""}
+              alt={currentDescription}
               src={product.image}
-              title={product.name || ""}
+              title={`${product.manufacturer} ${product.name} ${
+                product.each?.description?.slice(0, 43) || ""
+              }`}
               width={350}
               height={350}
               className='rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300' // <-- Added no-drag class here
@@ -342,18 +360,18 @@ export default function ProductScreen({ product }) {
         <div className='w-full max-w-lg flex flex-col items-center lg:items-start'>
           <ul className='space-y-2'>
             <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
                 {product.name}
-              </h1>
+              </h2>
             </li>
             <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
                 {product.manufacturer}
-              </h1>
+              </h2>
             </li>
             <li>
               <h1 className='text-xl font-bold text-[#0e355e]'>
-                {currentDescription}
+                {currentDescription} - {product.name}
               </h1>
             </li>
             {product.sentOverNight && (
@@ -461,15 +479,12 @@ export default function ProductScreen({ product }) {
                           ? "Loading"
                           : active && (
                               <div className='mb-2 flex justify-between'>
-                                <div className='font-bold'>U o M &nbsp;</div>
-                                <select
+                                <div className='font-bold'>U o M</div>
+                                <Listbox
                                   value={typeOfPurchase}
-                                  onChange={(e) => {
-                                    setTypeOfPurchase(e.target.value);
-                                    if (
-                                      e.target.value === "Each" &&
-                                      product.each
-                                    ) {
+                                  onChange={(value) => {
+                                    setTypeOfPurchase(value);
+                                    if (value === "Each" && product.each) {
                                       setCurrentPrice(
                                         product.each?.wpPrice || 0
                                       );
@@ -481,10 +496,7 @@ export default function ProductScreen({ product }) {
                                           ?.quickBooksQuantityOnHandProduction ||
                                           0
                                       );
-                                    } else if (
-                                      e.target.value === "Box" &&
-                                      product.box
-                                    ) {
+                                    } else if (value === "Box" && product.box) {
                                       setCurrentPrice(
                                         product.box?.wpPrice || 0
                                       );
@@ -496,19 +508,57 @@ export default function ProductScreen({ product }) {
                                           ?.quickBooksQuantityOnHandProduction ||
                                           0
                                       );
+                                    } else if (
+                                      value === "Clearance" &&
+                                      product.clearance
+                                    ) {
+                                      setCurrentPrice(
+                                        product.clearance?.price || 0
+                                      );
+                                      setCurrentDescription(
+                                        product.clearance?.description || ""
+                                      );
+                                      setCurrentCountInStock(
+                                        product.each?.clearanceCountInStock >
+                                          0 ||
+                                          product.box?.clearanceCountInStock > 0
+                                      );
                                     }
                                   }}
                                 >
-                                  {product.each
-                                    ?.quickBooksQuantityOnHandProduction >
-                                    0 && <option value='Each'>Each</option>}
-                                  {product.box
-                                    ?.quickBooksQuantityOnHandProduction >
-                                    0 && <option value='Box'>Box</option>}
-                                  {product.clearance?.countInStock > 0 && (
-                                    <option value='Clearance'>Clearance</option>
-                                  )}
-                                </select>
+                                  <div className='relative'>
+                                    <Listbox.Button
+                                      className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                                    >
+                                      {typeOfPurchase || "Select"}
+                                    </Listbox.Button>
+                                    <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                                    <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                                      {availableTypes.map((option) => (
+                                        <Listbox.Option
+                                          key={option}
+                                          value={option}
+                                          className={({ active }) =>
+                                            `cursor-pointer select-none px-4 py-2 ${
+                                              active
+                                                ? "bg-blue-100 text-[#0e355e]"
+                                                : "text-gray-900"
+                                            }`
+                                          }
+                                        >
+                                          {({ selected }) => (
+                                            <span className='flex items-center justify-between'>
+                                              {option}
+                                              {selected && (
+                                                <BiCheck className='w-4 h-4 text-[#0e355e]' />
+                                              )}
+                                            </span>
+                                          )}
+                                        </Listbox.Option>
+                                      ))}
+                                    </Listbox.Options>
+                                  </div>
+                                </Listbox>
                               </div>
                             )}
                         {active === "loading"
@@ -736,10 +786,11 @@ export default function ProductScreen({ product }) {
               <td className='py-2 px-4 border-b flex justify-center'>
                 <Image
                   src={product.image}
-                  alt={product.name}
+                  alt={currentDescription}
                   width={100}
                   height={100}
                   className='rounded-md'
+                  title={product.name}
                 />
               </td>
               {active === "loading"
@@ -794,10 +845,11 @@ export default function ProductScreen({ product }) {
               <h3 className='font-bold'>Image</h3>
               <Image
                 src={product.image}
-                alt={product.name}
+                alt={currentDescription}
                 width={100}
                 height={100}
                 className='rounded-md'
+                title={product.name}
               />
             </div>
             {active === "loading"
@@ -818,33 +870,33 @@ export default function ProductScreen({ product }) {
             </div>
             <div className='rounded-lg'>
               <h3 className='font-bold'>Reference</h3>
-              <p>{product.reference || "N/A"}</p>
+              <p>{product.name || "N/A"}</p>
             </div>
             <div className='rounded-lg'>
               <h3 className='font-bold'>Manufacturer</h3>
               <p>{product.manufacturer}</p>
             </div>
             <div className='rounded-lg'>
-              <h3 className='font-bold'>Shipping Info</h3>
+              <h3 className='font-bold my-2'>Shipping Info</h3>
               {nowTampa.isBefore(cutoff) ? (
                 (() => {
                   const diff = moment.duration(cutoff.diff(nowTampa));
                   const hours = Math.floor(diff.asHours());
                   const minutes = diff.minutes();
                   return (
-                    <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                    <h3 className='text-[#2c3339] text-base font-normal text-center mb-2'>
                       Want it by tomorrow? Place your order within the next{" "}
                       {hours} hour{hours !== 1 && "s"} and {minutes} minute
                       {minutes !== 1 && "s"} and select overnight shipping at
                       checkout.
-                    </div>
+                    </h3>
                   );
                 })()
               ) : nowLocal.isBefore(midnight) ? (
-                <div className='py-2 px-4 border-b text-sm text-gray-600'>
+                <h3 className='text-[#2c3339] text-base font-normal text-center mb-2'>
                   The cutoff for next-day shipping has passed. Orders placed now
                   will arrive in two days.
-                </div>
+                </h3>
               ) : null}
             </div>
           </div>

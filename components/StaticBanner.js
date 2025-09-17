@@ -18,9 +18,9 @@ const StaticBanner = () => {
           <Image
             width={500}
             height={500}
-            title='Static Banner'
+            title='Quality Surgical Solutions'
             src='/images/assets/StaticBanner.png'
-            alt='Banner'
+            alt='Seasonal Discounts on Healthcare Products'
             loading={"lazy"}
             className='rounded-lg shadow-lg'
           />
@@ -33,13 +33,15 @@ const StaticBanner = () => {
             transition={{ duration: 0.5 }}
             className='text-[#0e355e] text-3xl md:text-4xl font-bold mb-4'
           >
-            Partner With Us and Sell Your Surgical Disposables
+            Sell Your Surgical Disposables - Partner with Us
           </motion.h2>
 
-          <p className='text-lg text-[#414b53] mb-6 max-w-lg'>
-            Stat Surgical Supply is looking to fill our customer demand. We pay
-            top dollar for in-date high-end surgical disposables.
-          </p>
+          <h3 className='text-base text-[#414b53] mb-6 max-w-base font-normal'>
+            STAT Surgical Supply is actively sourcing high-end, in-date surgical
+            disposables and implants. We offer competitive payouts to meet
+            growing customer demand. Join the 150+ health care centers who
+            already partner with us.
+          </h3>
 
           <ul className='text-lg text-[#414b53] mb-6 space-y-2'>
             {[
@@ -55,7 +57,7 @@ const StaticBanner = () => {
           <div className='md:w-auto'>
             <Link
               href='/ManufacturerForm'
-              title='Send us your list'
+              title='Submit Your Manufacturer Product List - sterile surgery'
               className='flex w-fit items-center gap-3 bg-[#0e355e] text-white px-10 py-2 rounded-full shadow-lg hover:bg-[#788b9b] hover:scale-105 transition duration-300 transform'
             >
               <span className='font-semibold'>Send us your list</span>

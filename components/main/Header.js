@@ -1,4 +1,3 @@
-"use client";
 import Signupbutton from "./Signupbutton";
 import React, { useState } from "react";
 import Link from "next/link";
@@ -122,15 +121,15 @@ const Header = () => {
         )}
       </div>
       <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
-        <div className='flex items-center'>
+        <div className='flex items-center min-h-[200px]'>
           <button
             onClick={handleHomeClick}
-            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32'
+            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32 min-h-[200px]'
           >
             <Image
               src={Logo2}
-              alt='logo'
-              title='STAT Surgical Supply'
+              alt='Company Logo - STAT Surgical Supply'
+              title='types Equipment Distributor'
               width={100}
               height={100}
             />
@@ -175,7 +174,7 @@ const Header = () => {
           {active && (
             <Link
               href='/cart'
-              title='Cart'
+              title='Your Shopping Cart Products'
               aria-label='Cart'
               className='relative group'
             >

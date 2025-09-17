@@ -3,7 +3,8 @@ import Link from "next/link";
 import {
   BiHomeSmile,
   BiUser,
-  BiPhotoAlbum,
+  BiNews,
+  BiSolidPackage,
   BiGridVertical,
   BiXCircle,
 } from "react-icons/bi";
@@ -69,24 +70,28 @@ const Navbar = () => {
           <div className='nav__list grid'>
             <Link
               href='/'
-              title='Home Stat Surgical Supply'
+              title='Home - surgery Equipment & Healthcare Solutions'
               className='nav__link'
               onClick={handleHomeClick}
             >
               <BiHomeSmile className='uil uil-estate nav__icon' />
               Home
             </Link>
-            <Link href='/about' className='nav__link' title='About'>
+            <Link
+              href='/about'
+              className='nav__link'
+              title='About Us - Company Profile & Mission'
+            >
               <BiUser className='uil uil-user nav__icon' />
               About
             </Link>
             <Link href='/products' title='Products' className='nav__link'>
-              <BiPhotoAlbum className='uil uil-scenery nav__icon' />
+              <BiSolidPackage className='uil uil-scenery nav__icon' />
               Products
             </Link>
             <Link
               href='/#contact'
-              title='Contact Us'
+              title='Get in Touch - Customer Service'
               onClick={() => handleLinkClick("contact")}
               className='nav__link'
             >
@@ -94,7 +99,7 @@ const Navbar = () => {
               Contact
             </Link>
             <Link href='/news' title='News' className='nav__link'>
-              <BiPhotoAlbum className='uil uil-scenery nav__icon' />
+              <BiNews className='uil uil-scenery nav__icon' />
               News
             </Link>
 

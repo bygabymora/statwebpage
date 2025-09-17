@@ -57,14 +57,23 @@ export default function Newscreen({ news }) {
     }
 
     return (
-      <p key={idx} className='mb-4 text-gray-700 leading-relaxed'>
+      <h3
+        key={idx}
+        className='text-base text-[#414b53] mb-6 max-w-base font-normal leading-relaxed'
+      >
         {para}
-      </p>
+      </h3>
     );
   });
 
   return (
-    <Layout title={news.slug} news={news}>
+    <Layout
+      title={news.title}
+      news={news}
+      description={news.content?.slice(0, 160)}
+      image={news.imageUrl}
+      url={`https://www.statsurgicalsupply.com/news/${news.slug}`}
+    >
       <div
         className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
         style={{ width: `${scrollProgress}%` }}
@@ -104,7 +113,7 @@ export default function Newscreen({ news }) {
           <a
             href='https://www.linkedin.com/company/statsurgicalsupply/'
             target='_blank'
-            title='Visit our LinkedIn profile'
+            title='Follow STAT Surgical Supply on LinkedIn'
             rel='noreferrer'
             className='text-gray-600 hover:text-[#0077b5] transition'
           >
@@ -131,7 +140,7 @@ export default function Newscreen({ news }) {
             />
           </div>
           <div className='text-gray-600 mb-4'>
-            <span className='text-sm'>{news.slug}</span>
+            <span className='text-sm'>{news.title}</span>
           </div>
         </div>
         <div className='border-t border-gray-200 pt-4 mb-8'>

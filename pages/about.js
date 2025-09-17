@@ -46,28 +46,60 @@ export default function AboutScreen() {
           ))}
         </ul>
       </nav>
-      <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto items-center lg:h-screen lg:items-center lg:justify-center'>
-        <animated.div className='image-container' style={imageAnimation}>
-          <Image src={image} alt='About Us' className='about-image' />
-        </animated.div>{" "}
-        <animated.div className='content-container' style={contentAnimation}>
-          <h2 className='section__title'> About Us</h2>
-          <p className='about-content'>
+      <div className='flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto px-4 my-20 gap-10'>
+        <animated.div
+          className='block lg:hidden text-center'
+          style={contentAnimation}
+        >
+          <h2 className='text-3xl font-bold text-[#0e355e] mb-4 -mt-10'>
+            About Us
+          </h2>
+        </animated.div>
+        <animated.div
+          className='w-full lg:w-1/2 flex justify-center'
+          style={imageAnimation}
+        >
+          <Image
+            src={image}
+            alt='About Us'
+            title='About Us'
+            className='w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[550px] -mt-10'
+            priority
+          />
+        </animated.div>
+        <animated.div
+          className='w-full lg:w-1/2 text-justify'
+          style={contentAnimation}
+        >
+          <h1 className='hidden lg:block text-4xl font-bold text-[#0e355e] mb-6 -mt-10'>
+            About Us
+          </h1>
+          <h3 className='text-[#414b53de] text-base font-normal'>
             Stat Surgical was founded to combat the rising costs of healthcare
-            supply chains. Our company targets the &quot;small &quot; portion of
+            supply chains. Our company targets the &quot;small&quot; portion of
             &quot;off-contract&quot; purchases and backorders. Stat Surgical
             strictly focuses on sourcing safe, ethical products from trusted
             suppliers, US-based hospitals, and surgery centers. We source
             surgical disposables in original OEM packaging, sealed, long-dated,
             and strictly inspected by our trained quality control department.
             When doing business with Stat Surgical you can buy products by the
-            &quot;each &quot;, or by the &quot;box &quot;. With 35+ years of
+            &quot;each&quot;, or by the &quot;box&quot;. With 35+ years of
             surgical sales experience, the founders have a wealth of knowledge
             of cost savings and the ability to navigate healthcare systems and
             IDNs. As surgical disposable costs rise, numerous healthcare systems
-            rely on us for cost savings. Our customers are &quot;priority one
-            &quot;.
-          </p>
+            rely on us for cost savings. Our customers are &quot;priority
+            one&quot;.
+          </h3>
+          <div className='mt-10 flex justify-start'>
+            <Link href='/products'>
+              <animated.button
+                style={contentAnimation}
+                className='px-6 py-3 bg-[#0e355e] hover:bg-[#144e8b] text-white font-semibold rounded-full shadow-md transition duration-300'
+              >
+                Explore Our Products
+              </animated.button>
+            </Link>
+          </div>
         </animated.div>
       </div>
     </Layout>

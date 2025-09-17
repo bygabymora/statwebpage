@@ -279,7 +279,7 @@ export default function ProfileScreen() {
             <div className='text-center'>
               <button
                 type='submit'
-                className='bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#0f3e6a] transition'
+                className='bg-[#0e355e] text-white px-6 py-2 rounded-full hover:bg-[#22517e] transition'
               >
                 Update Profile
               </button>
@@ -292,7 +292,7 @@ export default function ProfileScreen() {
         <div className='text-center mt-6 my-9'>
           <button
             onClick={toggleModifyForm}
-            className='bg-[#144e8b] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition'
+            className='bg-[#0e355e] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition'
           >
             Update Profile or Change Password
           </button>

@@ -53,7 +53,7 @@ export const messageManagement = (
     case "Product Request":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.name} – Thank you for your product request!`,
+        subject: `${contact.name} - Thank you for your product request!`,
         p1: `
       <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 20px;">
         Thank you for considering <strong>STAT Surgical Supply</strong> for your needs. We've added the item to your wishlist, and as soon as it becomes available, we’ll notify you right away.
@@ -84,7 +84,7 @@ export const messageManagement = (
         <strong>STAT Surgical Supply Team</strong>
       </div>
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://www.statsurgicalsupply.com/support" 
+        <a href="https://www.statsurgicalsupply.com/support"
            style="background-color: #0e355e; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 6px; display: inline-block;">
           Contact Us
         </a>

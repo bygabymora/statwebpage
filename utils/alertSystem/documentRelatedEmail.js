@@ -14,7 +14,7 @@ const handleSendEmails = async (message, contact, accountOwner) => {
 
     let payload = {
       toEmail: contact.email,
-      fromEmail: "gaby@statsurgicalsupply.com",
+      fromEmail: "sales@statsurgicalsupply.com",
       subject: message.subject,
       htmlContent: templateHtml,
       headers: {

@@ -158,7 +158,7 @@ export default function Login() {
         <div className='mb-4'>
           Don&apos;t have an account?{" "}
           <Link
-            href='/register'
+            href='/Register'
             className='font-bold underline active:text-[#0e355e]'
           >
             Register

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { Listbox } from "@headlessui/react";
+import { BiCheck, BiChevronDown } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import LCPProductImage from "./LCPProductImage";
 
 export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -16,7 +18,6 @@ export const ProductItemPage = ({ product, index }) => {
   const [email, setEmail] = useState("");
   const { showStatusMessage, fetchUserData, setUser, user, accountOwner } =
     useModalContext();
-
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
     if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
@@ -48,6 +49,15 @@ export const ProductItemPage = ({ product, index }) => {
     session?.user?.active &&
     session?.user?.approved &&
     status === "authenticated";
+
+  const availableTypes = [
+    ...(product.each?.quickBooksQuantityOnHandProduction > 0 ? ["Each"] : []),
+    ...(product.box?.quickBooksQuantityOnHandProduction > 0 ? ["Box"] : []),
+    ...(product.each?.clearanceCountInStock > 0 ||
+    product.box?.clearanceCountInStock > 0
+      ? ["Clearance"]
+      : []),
+  ];
 
   useEffect(() => {
     if (product.countInStock || 0) {
@@ -232,20 +242,25 @@ export const ProductItemPage = ({ product, index }) => {
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
             href={`/products/${product.name}`}
-            title={product.name}
+            title={`${product.manufacturer} ${product.name} ${
+              product.each?.description?.slice(0, 43) || ""
+            }`}
             className='justify-center items-center text-center flex-1'
           >
             <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
-              <Image
+              <LCPProductImage
                 src={product.image}
-                alt={currentDescription}
-                title={currentDescription}
-                className='rounded-lg shadow-lg'
+                alt={`${product.manufacturer} - Model ${product.name}`}
+                title={`${product.manufacturer} ${product.name} ${
+                  product.each?.description?.slice(0, 43) || ""
+                }`}
+                containerClassName='relative w-full aspect-[4/5] max-w-xs mx-auto rounded-lg shadow-lg'
+                className='w-full'
                 width={800}
                 height={1000}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
-                priority={index < 3}
+                priority={index === 0}
               />
             </div>
           </Link>
@@ -258,8 +273,10 @@ export const ProductItemPage = ({ product, index }) => {
               className='justify-center items-center text-center'
             >
               <div className='max-w-full'>
-                <div className='h-[3em] overflow-hidden relative flex '>
-                  <span className='flex-1'>{currentDescription}</span>
+                <div className='h-[3em] overflow-hidden relative flex text-[#414b53de] text-base font-normal'>
+                  <h3 className='flex-1 text-[#1b1f22de] text-base font-normal'>
+                    {currentDescription}
+                  </h3>
                 </div>
               </div>
             </Link>
@@ -384,13 +401,13 @@ export const ProductItemPage = ({ product, index }) => {
                 {active === "loading"
                   ? "Loading"
                   : active && (
-                      <div className='mb-2 justify-between'>
-                        <div className='font-bold'>U o M &nbsp;</div>
-                        <select
+                      <div className='mb-2 justify-between -ml-5'>
+                        <div className='font-bold text-base'>U o M</div>
+                        <Listbox
                           value={typeOfPurchase}
-                          onChange={(e) => {
-                            setTypeOfPurchase(e.target.value);
-                            if (e.target.value === "Each" && product.each) {
+                          onChange={(value) => {
+                            setTypeOfPurchase(value);
+                            if (value === "Each" && product.each) {
                               setCurrentPrice(product.each?.wpPrice || 0);
                               setCurrentDescription(
                                 product.each?.description || ""
@@ -399,10 +416,7 @@ export const ProductItemPage = ({ product, index }) => {
                                 product.each
                                   ?.quickBooksQuantityOnHandProduction || 0
                               );
-                            } else if (
-                              e.target.value === "Box" &&
-                              product.box
-                            ) {
+                            } else if (value === "Box" && product.box) {
                               setCurrentPrice(product.box?.wpPrice || 0);
                               setCurrentDescription(
                                 product.box?.description || ""
@@ -412,7 +426,7 @@ export const ProductItemPage = ({ product, index }) => {
                                   ?.quickBooksQuantityOnHandProduction || 0
                               );
                             } else if (
-                              e.target.value === "Clearance" &&
+                              value === "Clearance" &&
                               product.clearance
                             ) {
                               setCurrentPrice(product.clearance?.price || 0);
@@ -426,15 +440,39 @@ export const ProductItemPage = ({ product, index }) => {
                             }
                           }}
                         >
-                          {product.each?.quickBooksQuantityOnHandProduction >
-                            0 && <option value='Each'>Each</option>}
-                          {product.box?.quickBooksQuantityOnHandProduction >
-                            0 && <option value='Box'>Box</option>}
-                          {product.each?.clearanceCountInStock > 0 ||
-                            (product.box?.clearanceCountInStock > 0 && (
-                              <option value='Clearance'>Clearance</option>
-                            ))}
-                        </select>
+                          <div className='relative'>
+                            <Listbox.Button
+                              className={`w-full rounded-md py-1 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                            >
+                              {typeOfPurchase || "Select"}
+                            </Listbox.Button>
+                            <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                            <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                              {availableTypes.map((option) => (
+                                <Listbox.Option
+                                  key={option}
+                                  value={option}
+                                  className={({ active }) =>
+                                    `cursor-pointer select-none px-4 py-2 ${
+                                      active
+                                        ? "bg-blue-100 text-[#0e355e]"
+                                        : "text-gray-900"
+                                    }`
+                                  }
+                                >
+                                  {({ selected }) => (
+                                    <span className='flex items-center justify-between'>
+                                      {option}
+                                      {selected && (
+                                        <BiCheck className='w-4 h-4 text-[#0e355e]' />
+                                      )}
+                                    </span>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </div>
+                        </Listbox>
                       </div>
                     )}
                 {active === "loading"
@@ -541,12 +579,15 @@ export const ProductItemPage = ({ product, index }) => {
                 </div>
               )}
               <div className='flex gap-5'>
-                <Link href='/Login'>
+                <Link href='/Login' title='Access Your Account to Order Now'>
                   <button className='primary-button align-middle text-white'>
                     Login
                   </button>
                 </Link>
-                <Link href='/Register'>
+                <Link
+                  href='/Register'
+                  title='Create an Account to Buy Surgical Supplies Online'
+                >
                   <button className='primary-button align-middle text-white'>
                     Register
                   </button>

@@ -13,7 +13,7 @@ export default function GuaranteedSavings({ isInClearance }) {
   return (
     <Layout title={"Guaranteed Savings"}>
       <nav className='text-sm text-gray-700'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 my-5'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-5'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
               {breadcrumb.href ? (
@@ -33,15 +33,16 @@ export default function GuaranteedSavings({ isInClearance }) {
           ))}
         </ul>
       </nav>
-      <section className='w-full bg-white my-10 px-6'>
+      <section className='w-full bg-white my-5 px-6'>
         <div className='max-w-6xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-[#0e355e] leading-tight'>
-            Guaranteed Savings, Tailored for You
-          </h2>
-          <p className='text-lg text-[#414b53] mt-4 max-w-3xl mx-auto'>
-            Get the best deals on high-quality medical supplies. Flexible
-            pricing and exclusive discounts await you.
-          </p>
+          <h1 className='text-4xl font-bold text-[#0e355e] leading-tight'>
+            Save on Surgical Supplies and Medical Equipment
+          </h1>
+          <h3 className='text-[#414b53] mt-4 max-w-3xl mx-auto text-base font-normal'>
+            Discover guaranteed savings on surgical supplies, medical equipment,
+            and healthcare products. Access exclusive discounts and flexible
+            pricing options trusted by clinics and hospitals.
+          </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12'>
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -49,9 +50,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Best Prices
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Save up to 50% on selected products.
-              </p>
+              </h3>
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -59,9 +60,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Negotiable Discounts
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Exclusive pricing, just for you.
-              </p>
+              </h3>
             </div>
 
             <div className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
@@ -69,9 +70,9 @@ export default function GuaranteedSavings({ isInClearance }) {
               <h4 className='text-xl font-bold text-[#0e355e] mt-4'>
                 Cost Optimization
               </h4>
-              <p className='text-[#414b53] text-sm mt-2'>
+              <h3 className='text-[#414b53] text-sm mt-2 font-normal'>
                 Lower your expenses effortlessly.
-              </p>
+              </h3>
             </div>
           </div>
 
@@ -83,7 +84,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               </h4>
               <p className='text-[#414b53] text-sm mt-2'>
                 Special discounted items available for a short time. Grab them
-                before they re gone!
+                before they&rsquo;re gone!
               </p>
               <Link
                 href='/clearance'
@@ -101,7 +102,7 @@ export default function GuaranteedSavings({ isInClearance }) {
               }}
               className='px-8 py-3 bg-[#07783e] text-white text-lg font-bold rounded-lg shadow-lg hover:bg-[#025e2d] transition-all duration-300 transform hover:scale-105'
             >
-              Start Saving Now
+              Shop Surgical Supplies
             </button>
           </div>
         </div>

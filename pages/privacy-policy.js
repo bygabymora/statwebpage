@@ -57,7 +57,11 @@ export default function facs() {
             <br />
             United States.
             <br />
-            <a href='mailto:admin@statsurgicalsupply.com' target='_blank'>
+            <a
+              href='mailto:admin@statsurgicalsupply.com'
+              title='Email Support, medical equipment'
+              target='_blank'
+            >
               Email: admin@statsurgicalsupply.com
             </a>
             <br />
@@ -65,6 +69,7 @@ export default function facs() {
               href='tel:8132520727'
               onClick={handleCallButtonClick}
               target='_blank'
+              title='Call Support, medical equipment'
             >
               Phone: 813-252-0727
             </a>
