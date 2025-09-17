@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { HeartPulse, Ambulance } from "lucide-react";
+import { AiOutlineSend } from "react-icons/ai";
 
 const messages = [
   {
     text: "Welcome to Stat Surgical Supply!",
     icon: (
-      <HeartPulse
+      <AiOutlineSend
         size={21}
         className='text-xl text-[#0e355e] animate-bounce mr-2'
       />
@@ -16,7 +16,7 @@ const messages = [
   {
     text: "We focus on top manufacturers to bring you the best products!",
     icon: (
-      <Ambulance
+      <AiOutlineSend
         size={21}
         className='text-xl text-[#0e355e] animate-bounce mr-2'
       />

@@ -3,7 +3,6 @@ import React from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Ambulance } from "lucide-react";
 
 const StaticBanner = () => {
   return (
@@ -50,7 +49,7 @@ const StaticBanner = () => {
               "Contribute to reducing medical waste.",
             ].map((item, index) => (
               <li key={index} className='flex items-center'>
-                <Ambulance className='mr-2 text-[#0e355e] shrink-0' /> {item}
+                <span className='mr-2 text-[#0e355e] shrink-0' /> {item}
               </li>
             ))}
           </ul>

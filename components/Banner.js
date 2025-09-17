@@ -5,7 +5,7 @@ import Banner2 from "../public/images/assets/banner2.svg";
 import Banner3 from "../public/images/assets/banner3.webp";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShoppingBag, PhoneForwarded } from "lucide-react";
+import { AiOutlineSend } from "react-icons/ai";
 
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -41,7 +41,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <ShoppingBag size={19} className='relative top-[1px]' />
+                <AiOutlineSend size={19} className='relative top-[1px]' />
                 Shop Now
               </motion.button>
             </Link>
@@ -52,7 +52,7 @@ const Banner = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <PhoneForwarded size={19} className='relative top-[1px]' />
+                <AiOutlineSend size={19} className='relative top-[1px]' />
                 Contact Us
               </motion.button>
             </Link>

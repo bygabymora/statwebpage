@@ -4,7 +4,6 @@ import Image from "next/image";
 import image from "../public/images/assets/about.svg";
 import { useSpring, animated } from "react-spring";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
 export default function AboutScreen() {
   const imageAnimation = useSpring({
@@ -40,7 +39,7 @@ export default function AboutScreen() {
                 <span>{breadcrumb.name}</span>
               )}
               {index < breadcrumbs.length - 1 && (
-                <ChevronRight className='mx-1 text-gray-500' />
+                <span className='mx-1 text-gray-500' />
               )}
             </li>
           ))}
