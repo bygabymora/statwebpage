@@ -763,7 +763,7 @@ export default function ProductScreen({ product }) {
               {active === "loading"
                 ? "Loading"
                 : active && <th className='py-2 px-4 border-b'>Price</th>}
-              {active && <th className='py-2 px-4 border-b'>Stock Status</th>}
+              <th className='py-2 px-4 border-b'>Stock Status</th>
               <th className='py-2 px-4 border-b'>Reference</th>
               <th className='py-2 px-4 border-b'>Manufacturer</th>
               <th className='py-2 px-4 border-b'>Shipping Info</th>
@@ -788,19 +788,15 @@ export default function ProductScreen({ product }) {
                       {hasPrice ? `$${currentPrice}` : "Call for Price"}
                     </td>
                   )}
-              {active && (
-                <td className='py-2 px-4 border-b'>
-                  {currentCountInStock > 0 ? (
-                    <span className='text-[#414b53] font-semibold'>
-                      In Stock
-                    </span>
-                  ) : (
-                    <span className='text-[#414b53] font-semibold'>
-                      Out of Stock
-                    </span>
-                  )}
-                </td>
-              )}
+              <td className='py-2 px-4 border-b'>
+                {currentCountInStock > 0 ? (
+                  <span className='text-[#414b53] font-semibold'>In Stock</span>
+                ) : (
+                  <span className='text-[#414b53] font-semibold'>
+                    Out of Stock
+                  </span>
+                )}
+              </td>
               <td className='py-2 px-4 border-b'>{product.name}</td>
               <td className='py-2 px-4 border-b'>{product.manufacturer}</td>
               {nowTampa.isBefore(cutoff) ? (
