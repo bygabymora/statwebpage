@@ -33,8 +33,8 @@ export async function getStaticProps() {
       sentOvernigth: 1,
       "each.description": 1,
       "box.description": 1,
-      "each.quickBooksQuantityOnHandProduction": 1,
-      "box.quickBooksQuantityOnHandProduction": 1,
+      "each.countInStock": 1,
+      "box.countInStock": 1,
       "each.clearanceCountInStock": 1,
       "box.clearanceCountInStock": 1,
       "each.wpPrice": 1,
@@ -49,9 +49,7 @@ export async function getStaticProps() {
 
   // Home "featured": the same filter you had (each price > 0 AND in stock)
   const featured = ordered.filter(
-    (p) =>
-      (p.each?.wpPrice ?? 0) > 0 &&
-      (p.each?.quickBooksQuantityOnHandProduction ?? 0) > 0
+    (p) => (p.each?.wpPrice ?? 0) > 0 && (p.each?.countInStock ?? 0) > 0
   );
 
   // Limit how many cards we send initially for mobile perf

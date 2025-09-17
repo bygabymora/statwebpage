@@ -127,7 +127,7 @@ export default function AdminProductsScreen() {
                     </div>
                     <div>
                       <span className='font-semibold'>In Stock (Each):</span>{" "}
-                      {product.each?.quickBooksQuantityOnHandProduction ?? 0}
+                      {product.each?.countInStock ?? 0}
                     </div>
                     <div>
                       <span className='font-semibold'>Price Box:</span> $
@@ -135,7 +135,7 @@ export default function AdminProductsScreen() {
                     </div>
                     <div>
                       <span className='font-semibold'>In Stock (Box):</span>{" "}
-                      {product.box?.quickBooksQuantityOnHandProduction ?? 0}
+                      {product.box?.countInStock ?? 0}
                     </div>
                     <div>
                       <span className='font-semibold'>Description:</span>{" "}
@@ -209,13 +209,13 @@ export default function AdminProductsScreen() {
                         ${product.each?.wpPrice ?? "N/A"}
                       </td>
                       <td className='p-2 border'>
-                        {product.each?.quickBooksQuantityOnHandProduction ?? 0}
+                        {product.each?.countInStock ?? 0}
                       </td>
                       <td className='p-2 border'>
                         ${product.box?.wpPrice ?? "N/A"}
                       </td>
                       <td className='p-2 border'>
-                        {product.box?.quickBooksQuantityOnHandProduction ?? 0}
+                        {product.box?.countInStock ?? 0}
                       </td>
                       <td className='p-2 border align-top'>
                         <div className='line-clamp-3 break-words'>

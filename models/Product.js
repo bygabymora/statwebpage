@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema(
     reversed: { type: Boolean, default: false, required: false },
     active: { type: Boolean, default: true, required: false },
     noExpirationDate: { type: Boolean, default: false, required: false },
+    countInStock: { type: Number, required: false },
     quickBooksManufacturerIdProduction: { type: String, required: false },
     quickBooksManufacturerId: { type: String, required: false },
     callForPrice: { type: Boolean, default: false, required: false },

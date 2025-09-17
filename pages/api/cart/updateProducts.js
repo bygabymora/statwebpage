@@ -41,7 +41,7 @@ export default async function handler(req, res) {
           : {};
 
       // determine available stock
-      const available = updatedInfo.quickBooksQuantityOnHandProduction ?? 0;
+      const available = updatedInfo.countInStock ?? 0;
 
       // 1) sold-out? → warn & remove
       if (available === 0) {
@@ -86,13 +86,9 @@ export default async function handler(req, res) {
           product.quickBooksItemIdProduction,
         minSalePrice:
           updatedInfo.minSalePrice ?? updatedInfo.price ?? product.minSalePrice,
-        quickBooksQuantityOnHandProduction:
-          updatedInfo.quickBooksQuantityOnHandProduction,
+        countInStock: updatedInfo.countInStock,
         description: updatedInfo.description ?? product.description,
         price: updatedInfo.wpPrice ?? updatedInfo.price ?? product.price,
-        countInStock:
-          updatedInfo.quickBooksQuantityOnHandProduction ??
-          product.countInStock,
         updatedAt: product.updatedAt,
       });
     }

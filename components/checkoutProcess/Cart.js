@@ -76,9 +76,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
     const availableQty =
       item.typeOfPurchase === "Each"
-        ? product.each?.quickBooksQuantityOnHandProduction ?? 0
+        ? product.each?.countInStock ?? 0
         : item.typeOfPurchase === "Box"
-        ? product.box?.quickBooksQuantityOnHandProduction ?? 0
+        ? product.box?.countInStock ?? 0
         : item.typeOfPurchase === "Clearance"
         ? product.each?.clearanceCountInStock ?? 0
         : 0;

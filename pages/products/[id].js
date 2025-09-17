@@ -46,9 +46,9 @@ export default function ProductScreen({ product }) {
     session?.user?.approved &&
     status === "authenticated";
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
-    if ((product.box?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
+    if ((product.box?.countInStock ?? 0) > 0) {
       return "Box";
-    } else if ((product.each?.quickBooksQuantityOnHandProduction ?? 0) > 0) {
+    } else if ((product.each?.countInStock ?? 0) > 0) {
       return "Each";
     }
     return "Each";
@@ -59,15 +59,13 @@ export default function ProductScreen({ product }) {
       setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
-      setCurrentCountInStock(
-        product.box?.quickBooksQuantityOnHandProduction ?? null
-      );
+      setCurrentCountInStock(product.box?.countInStock ?? null);
     }
   }, [typeOfPurchase, product.box, product.countInStock]);
 
   useEffect(() => {
-    const eachStock = product.each?.quickBooksQuantityOnHandProduction ?? 0;
-    const boxStock = product.box?.quickBooksQuantityOnHandProduction ?? 0;
+    const eachStock = product.each?.countInStock ?? 0;
+    const boxStock = product.box?.countInStock ?? 0;
 
     if (eachStock === 0 && boxStock === 0) {
       setCurrentDescription(product.each?.description || "No description");
@@ -79,15 +77,13 @@ export default function ProductScreen({ product }) {
     if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(
-        product.each?.quickBooksQuantityOnHandProduction ?? null
-      );
+      setCurrentCountInStock(product.each?.countInStock ?? null);
     }
   }, [typeOfPurchase, product.each]);
 
   const availableTypes = [
-    ...(product.each?.quickBooksQuantityOnHandProduction > 0 ? ["Each"] : []),
-    ...(product.box?.quickBooksQuantityOnHandProduction > 0 ? ["Box"] : []),
+    ...(product.each?.countInStock > 0 ? ["Each"] : []),
+    ...(product.box?.countInStock > 0 ? ["Box"] : []),
     ...(product.each?.clearanceCountInStock > 0 ||
     product.box?.clearanceCountInStock > 0
       ? ["Clearance"]
@@ -98,15 +94,11 @@ export default function ProductScreen({ product }) {
     if (typeOfPurchase === "Each") {
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(
-        product.each?.quickBooksQuantityOnHandProduction ?? 0
-      );
+      setCurrentCountInStock(product.each?.countInStock ?? 0);
     } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || "");
-      setCurrentCountInStock(
-        product.box?.quickBooksQuantityOnHandProduction ?? 0
-      );
+      setCurrentCountInStock(product.box?.countInStock ?? 0);
     } else if (typeOfPurchase === "Clearance") {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || "No description");
@@ -124,14 +116,14 @@ export default function ProductScreen({ product }) {
 
     if (
       typeOfPurchase === "Each" &&
-      (data.each?.quickBooksQuantityOnHandProduction ?? 0) < quantity
+      (data.each?.countInStock ?? 0) < quantity
     ) {
       setShowModal(true);
       setIsOutOfStock(true);
       return;
     } else if (
       typeOfPurchase === "Box" &&
-      (data.box?.quickBooksQuantityOnHandProduction ?? 0) < quantity
+      (data.box?.countInStock ?? 0) < quantity
     ) {
       setShowModal(true);
       setIsOutOfStockBox(true);
@@ -471,8 +463,8 @@ export default function ProductScreen({ product }) {
             <div>
               {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
                 <div>
-                  {product.each?.quickBooksQuantityOnHandProduction > 0 ||
-                  product.box?.quickBooksQuantityOnHandProduction > 0 ? (
+                  {product.each?.countInStock > 0 ||
+                  product.box?.countInStock > 0 ? (
                     typeOfPurchase === "Each" || typeOfPurchase === "Box" ? (
                       <div>
                         {active === "loading"
@@ -492,9 +484,7 @@ export default function ProductScreen({ product }) {
                                         product.each?.description || ""
                                       );
                                       setCurrentCountInStock(
-                                        product.each
-                                          ?.quickBooksQuantityOnHandProduction ||
-                                          0
+                                        product.each?.countInStock || 0
                                       );
                                     } else if (value === "Box" && product.box) {
                                       setCurrentPrice(
@@ -504,9 +494,7 @@ export default function ProductScreen({ product }) {
                                         product.box?.description || ""
                                       );
                                       setCurrentCountInStock(
-                                        product.box
-                                          ?.quickBooksQuantityOnHandProduction ||
-                                          0
+                                        product.box?.countInStock || 0
                                       );
                                     } else if (
                                       value === "Clearance" &&
@@ -594,8 +582,8 @@ export default function ProductScreen({ product }) {
                       </div>
                     )
                   )}
-                  {(product.each?.quickBooksQuantityOnHandProduction > 0 ||
-                    product.box?.quickBooksQuantityOnHandProduction > 0) &&
+                  {(product.each?.countInStock > 0 ||
+                    product.box?.countInStock > 0) &&
                     active && (
                       <div>
                         {console.log("session", session)}
