@@ -42,11 +42,11 @@ export default function BenefitsSection() {
       <h2 className='text-3xl font-bold text-center text-[#0e355e]'>
         Our Key Benefits
       </h2>
-      <h3 className='text-[#414b53de] text-base font-normal text-center mt-2'>
+      <p className='text-[#414b53de] text-base font-normal text-center mt-2'>
         Discover why clinics, hospitals, and medical professionals choose <br />{" "}
         STAT Surgical Supply for high-quality surgical disposables and medical
         equipment.
-      </h3>
+      </p>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10'>
         {benefits.map((benefit, index) => (
           <div
