@@ -389,11 +389,14 @@ function OrderScreen() {
   }, [order.defaultTerm, order.paymentMethod]);
 
   const paymentAmountStatus = () => {
+    console.log("Calculating payment status...", invoice, order);
     let status = "";
     if (!invoice && !order.isPaid) {
       status = "Not Paid";
+    } else if (invoice && order.isPaid) {
+      status = "Paid";
     } else if (invoice && !order.isPaid) {
-      invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
+      order.isPaid
         ? (status = "Paid")
         : invoice.balance === invoice?.totalPrice
         ? (status = "Not Paid")
@@ -468,8 +471,7 @@ function OrderScreen() {
         typeof orderId === "string" && orderId.length >= 8
           ? orderId.substring(orderId.length - 8).toUpperCase()
           : ""
-      }`}
-    >
+      }`}>
       <div className='flex-1 bg-white rounded-lg p-2 flex flex-col md:flex-row'>
         <div className='flex-1'>
           <h1 className='text-2xl font-semibold text-[#07783e] text-center p-3'>
@@ -525,8 +527,7 @@ function OrderScreen() {
               <br />
               <a
                 href={`tel:${accountOwner?.phone}`}
-                className='underline cursor-pointer'
-              >
+                className='underline cursor-pointer'>
                 {formatPhoneNumber(accountOwner?.phone)}
               </a>
             </div>
@@ -544,11 +545,11 @@ function OrderScreen() {
                   paymentAmountStatus() === "Not Paid"
                     ? "bg-red-100"
                     : "bg-green-100"
-                } p-2 rounded-lg text-xl`}
-              >
+                } p-2 rounded-lg text-xl`}>
+                {console.log("Payment Status:", paymentAmountStatus())}
                 {paymentAmountStatus()}
               </div>
-              {stripeReadyToPay() && (
+              {stripeReadyToPay() && !order.isPaid && (
                 <div className='text-sm text-gray-500'>
                   Your order is ready to be shipped. It will be shipped as soon
                   as the payment is received.
@@ -729,8 +730,7 @@ function OrderScreen() {
                     {order.orderItems?.map((item) => (
                       <div
                         key={item._id}
-                        className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
-                      >
+                        className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'>
                         {/* Product */}
                         <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
                           <Image
@@ -744,8 +744,7 @@ function OrderScreen() {
                           <div>
                             <Link
                               href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
-                              className='block font-medium text-gray-800'
-                            >
+                              className='block font-medium text-gray-800'>
                               {item.manufacturer}
                             </Link>
                             <div className='text-gray-600 text-sm'>
@@ -858,8 +857,7 @@ function OrderScreen() {
                         <button
                           onClick={placeOrderHandler}
                           type='button'
-                          className='primary-button w-full'
-                        >
+                          className='primary-button w-full'>
                           <div className='flex flex-row align-middle justify-center items-center '>
                             Secure Checkout &nbsp; <AiTwotoneLock />
                           </div>
@@ -879,8 +877,7 @@ function OrderScreen() {
                         {session.user.isAdmin && (
                           <button
                             className='primary-button w-full'
-                            onClick={handleButtonClick}
-                          >
+                            onClick={handleButtonClick}>
                             Mark as paid
                           </button>
                         )}
@@ -891,8 +888,7 @@ function OrderScreen() {
                                 paymentMethod !== "Pay By Wire" &&
                                 handleCheckout
                               }
-                              hidden
-                            >
+                              hidden>
                               ...
                             </button>
                             <div className='font-bold'>
@@ -913,8 +909,7 @@ function OrderScreen() {
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
-                          forceReRender={[totalPrice]}
-                        ></PayPalButtons>
+                          forceReRender={[totalPrice]}></PayPalButtons>
                       )
                     ) : null}
                     {loadingPay && <div>Loading...</div>}
@@ -942,8 +937,7 @@ function OrderScreen() {
                     <a
                       href='mailto:sales@statsurgicalsupply.com'
                       target='_blank'
-                      className='font-bold underline text-[#0e355e]'
-                    >
+                      className='font-bold underline text-[#0e355e]'>
                       sales@statsurgicalsupply.com
                     </a>{" "}
                     or call us at{" "}
@@ -951,8 +945,7 @@ function OrderScreen() {
                       href='tel:8132520727'
                       onClick={handleCallButtonClick}
                       className='font-bold underline text-[#0e355e]'
-                      target='_blank'
-                    >
+                      target='_blank'>
                       813-252-0727
                     </a>
                     .
