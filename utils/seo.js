@@ -73,7 +73,7 @@ function generateProductJSONLD(product) {
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.5",
-      reviewCount: "10",
+      reviewCount: "5",
     },
     review: [
       {
