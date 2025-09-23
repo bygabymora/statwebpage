@@ -259,7 +259,7 @@ export default function ProductScreen({ product }) {
 
   const getProductTitle = (product) => {
     const base = `${product.manufacturer}: ${product.name}`;
-    return `${base} | Surgical Supply Online`;
+    return `${base} | Fast Delivery & Best Price`;
   };
 
   return (
