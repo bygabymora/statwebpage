@@ -3,38 +3,130 @@ import Order from "../../../../models/Order";
 import db from "../../../../utils/db";
 import Stripe from "stripe";
 
-const handler = async (req, res) => {
-  // Validate the order ID
-  const orderId = req.query.id;
-  if (!orderId) {
-    return res.status(400).json({ message: "Validating..." });
-  }
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2022-11-15",
-  });
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
-  const user = await getToken({ req });
-  if (!user) {
-    return res.status(401).send("Error: signin required");
+function safeBody(req) {
+  if (!req.body) return {};
+  if (typeof req.body === "string") {
+    try {
+      return JSON.parse(req.body || "{}");
+    } catch {
+      return {};
+    }
+  }
+  if (typeof req.body === "object") return req.body;
+  return {};
+}
+
+export default async function handler(req, res) {
+  if (req.method !== "PUT") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
-  await db.connect(true);
+  const orderId = req.query?.id;
+  if (!orderId)
+    return res.status(400).json({ message: "Missing order id in URL" });
+
+  if (!stripeSecret) {
+    return res.status(500).json({ message: "Missing STRIPE_SECRET_KEY" });
+  }
+
+  const user = await getToken({ req }).catch(() => null);
+  if (!user) return res.status(401).send("Error: signin required");
 
   try {
-    const order = await Order.findById(orderId);
+    await db.connect(true);
+  } catch {
+    return res
+      .status(503)
+      .json({ message: "Service unavailable: Database connection failed" });
+  }
 
-    if (!order) {
-      return res.status(404).send({ message: "Error: order not found" });
+  const stripe = new Stripe(stripeSecret, { apiVersion: "2022-11-15" });
+
+  // Lee identificadores posibles
+  const body = safeBody(req);
+  const sessionIdFromBody = body.sessionId || body.session_id || null;
+  const piIdFromBody = body.paymentIntentId || body.payment_intent || null;
+  const sessionIdFromQuery = req.query.session_id || null;
+  const piIdFromQuery = req.query.payment_intent || null;
+
+  // 1) Buscar orden
+  let order;
+  try {
+    order = await Order.findById(orderId);
+  } catch (error) {
+    if (error?.name === "CastError") {
+      return res
+        .status(400)
+        .json({ message: "Validating the payment, please wait..." });
+    }
+    return res.status(500).json({ message: "Error finding order" });
+  }
+  if (!order)
+    return res.status(404).json({ message: "Error: order not found" });
+
+  // Idempotencia: si ya está pagada, 200
+  if (order.isPaid) {
+    return res
+      .status(200)
+      .json({ message: "Payment already processed", order });
+  }
+
+  // 2) Resolver paymentIntentId (SIN depender de order.paymentId)
+  let paymentIntentId = piIdFromBody || piIdFromQuery || null;
+
+  try {
+    if (!paymentIntentId) {
+      const sessionId = sessionIdFromBody || sessionIdFromQuery || null;
+      if (sessionId) {
+        const session = await stripe.checkout.sessions.retrieve(sessionId, {
+          expand: ["payment_intent"],
+        });
+        paymentIntentId =
+          session?.payment_intent?.id || session?.payment_intent || null;
+      }
     }
 
-    if (order.isPaid) {
-      return res.status(400).send({ message: "Error: order is already paid" });
+    // Fallback por compatibilidad: si alguien guardó algo en order.paymentId
+    if (!paymentIntentId && order?.paymentId) {
+      paymentIntentId = order.paymentId;
     }
 
-    const paymentIntent = await stripe.paymentIntents.retrieve(order.paymentId);
+    if (!paymentIntentId) {
+      return res
+        .status(400)
+        .json({ message: "Missing paymentIntentId or sessionId" });
+    }
+  } catch {
+    return res.status(400).json({ message: "Stripe session lookup failed" });
+  }
 
+  // 3) Traer PaymentIntent
+  let paymentIntent = null;
+  try {
+    paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  } catch {
+    return res
+      .status(400)
+      .json({ message: "Stripe paymentIntent lookup failed" });
+  }
+
+  const status = paymentIntent?.status;
+  if (status !== "succeeded" && status !== "requires_capture") {
+    return res
+      .status(409)
+      .json({ message: `PaymentIntent not payable yet (status=${status})` });
+  }
+
+  // 4) Persistir pago e idempotencia
+  try {
     order.isPaid = true;
     order.paidAt = Date.now();
+
+    // Ahora sí guarda un paymentId real para tu UI
+    order.paymentId = paymentIntent.id;
+
     order.paymentResult = {
       id: paymentIntent.id,
       status: paymentIntent.status,
@@ -46,22 +138,14 @@ const handler = async (req, res) => {
       charge_id: paymentIntent.latest_charge,
       created: paymentIntent.created,
     };
+
     const paidOrder = await order.save();
-
-    res.send({ message: "order paid successfully", order: paidOrder });
-  } catch (error) {
-    // Check if the error is a CastError and respond accordingly
-    if (error.name === "CastError") {
-      return res
-        .status(400)
-        .json({ message: "Validating the payment, please wait..." });
-    }
-    // Handle any other errors here
-
-    res
+    return res
+      .status(200)
+      .json({ message: "order paid successfully", order: paidOrder });
+  } catch {
+    return res
       .status(500)
-      .send({ message: "Error while processing the order", error });
+      .json({ message: "Error while processing the order" });
   }
-};
-
-export default handler;
+}

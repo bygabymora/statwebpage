@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
+    checkoutSessionId: { type: String },
     wpUser: {
       userId: {
         type: mongoose.Schema.Types.ObjectId,
