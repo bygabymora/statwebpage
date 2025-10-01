@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
+import { motion } from "framer-motion";
 
 // Render hero/above-the-fold on the server so LCP is discoverable
 const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
@@ -62,7 +63,17 @@ export async function getStaticProps() {
   };
 }
 
-// ----- Client-only carousel (your original, kept intact) -----
+// Variants of scrolling animations
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.8, ease: "easeOut" },
+  }),
+};
+
+// Client-only carousel (your original, kept intact)
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleItems, setVisibleItems] = useState(3);
@@ -139,7 +150,12 @@ function Carousel({ products }) {
   };
 
   return (
-    <div className='carousel-container' lang='en-US'>
+    <motion.div
+      className='carousel-container'
+      initial='hidden'
+      whileInView='show'
+      viewport={{ once: true, amount: 0.2 }}
+    >
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
@@ -149,7 +165,7 @@ function Carousel({ products }) {
       </button>
 
       <div
-        className='carousel-items flex transition-transform duration-300'
+        className='carousel-items flex transition-transform duration-500'
         style={{
           transform: `translateX(-${currentSlide * (100 / visibleItems)}%)`,
         }}
@@ -162,10 +178,15 @@ function Carousel({ products }) {
         onMouseEnter={handleInteractionStart}
         onMouseLeave={handleMouseUp}
       >
-        {products.map((p) => (
-          <div className='carousel-item px-3 lg:px-0' key={p._id}>
+        {products.map((p, i) => (
+          <motion.div
+            key={p._id}
+            className='carousel-item px-3 lg:px-0'
+            variants={fadeInUp}
+            custom={i}
+          >
             <ProductItem product={p} />
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -176,7 +197,7 @@ function Carousel({ products }) {
       >
         Next <BiSkipNextCircle className='text-lg' />
       </button>
-    </div>
+    </motion.div>
   );
 }
 
@@ -184,23 +205,42 @@ export default function Home({ products }) {
   // No client fetch; products already in the initial HTML (good for LCP/TTFB)
   return (
     <Layout>
-      {/* Make sure your Banner image uses next/image with priority if it's your LCP */}
-      <Banner />
-      <StaticBanner />
-      <Benefits className='mt-2' />
+      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
+        <Banner />
+      </motion.div>
 
-      <h2 className='section__title' id='products'>
+      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
+        <StaticBanner />
+      </motion.div>
+
+      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
+        <Benefits className='mt-2' />
+      </motion.div>
+
+      <motion.h2
+        className='section__title text-center mt-10'
+        variants={fadeInUp}
+        initial='hidden'
+        whileInView='show'
+        viewport={{ once: true }}
+      >
         Featured Products
-      </h2>
+      </motion.h2>
 
       {products.length > 0 ? (
         <Carousel products={products} />
       ) : (
         <p className='text-center mt-10'>No products available.</p>
       )}
-      <div className='min-h-[534px] w-full'>
+
+      <motion.div
+        className='min-h-[534px] w-full'
+        initial='hidden'
+        whileInView='show'
+        viewport={{ once: true }}
+      >
         <Contact className='mt-2' />
-      </div>
+      </motion.div>
     </Layout>
   );
 }

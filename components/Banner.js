@@ -8,6 +8,24 @@ import { motion } from "framer-motion";
 import { FiPhoneForwarded } from "react-icons/fi";
 import { TiShoppingCart } from "react-icons/ti";
 
+const containerVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1, ease: "easeOut" },
+  },
+};
+
+const imageVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 1.2, ease: "easeOut" },
+  },
+};
+
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
   const banners = [Banner1, Banner2, Banner3];
@@ -20,9 +38,16 @@ const Banner = () => {
   }, [banners.length]);
 
   return (
-    <div className='text-title-color-dark text-center'>
+    <motion.div
+      className='text-title-color-dark text-center'
+      initial='hidden'
+      whileInView='visible'
+      viewport={{ once: true, amount: 0.3 }}
+      variants={containerVariants}
+    >
       <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 items-center'>
-        <div className='text-left -mt-6'>
+        {/* Texto */}
+        <motion.div className='text-left -mt-6' variants={containerVariants}>
           <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e]'>
             Welcome to STAT Surgical Supply
           </h1>
@@ -58,9 +83,12 @@ const Banner = () => {
               </motion.button>
             </Link>
           </div>
-        </div>
+        </motion.div>
 
-        <div className='relative w-full max-w-[500px] aspect-[1/1] mx-auto'>
+        <motion.div
+          className='relative w-full max-w-[500px] aspect-[1/1] mx-auto'
+          variants={imageVariants}
+        >
           {banners.map((banner, index) => (
             <motion.div
               key={index}
@@ -84,9 +112,9 @@ const Banner = () => {
               />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
