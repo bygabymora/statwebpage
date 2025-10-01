@@ -67,11 +67,9 @@ export default async function handler(req, res) {
     // 5. Sort in‐stock / priced / name
     products.sort((a, b) => {
       const aInStock =
-        (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
-        (a.box?.quickBooksQuantityOnHandProduction || 0) > 0;
+        (a.each?.countInStock || 0) > 0 || (a.box?.countInStock || 0) > 0;
       const bInStock =
-        (b.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
-        (b.box?.quickBooksQuantityOnHandProduction || 0) > 0;
+        (b.each?.countInStock || 0) > 0 || (b.box?.countInStock || 0) > 0;
       if (aInStock !== bInStock) return aInStock ? -1 : 1;
 
       const aHasPrice = (a.each?.wpPrice || 0) > 0 || (a.box?.wpPrice || 0) > 0;
@@ -93,13 +91,13 @@ export default async function handler(req, res) {
           each: product.each
             ? {
                 ...product.each,
-                quickBooksQuantityOnHandProduction: 0,
+                countInStock: 0,
               }
             : undefined,
           box: product.box
             ? {
                 ...product.box,
-                quickBooksQuantityOnHandProduction: 0,
+                countInStock: 0,
               }
             : undefined,
         };

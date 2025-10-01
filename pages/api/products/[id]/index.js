@@ -88,11 +88,9 @@ export default async function handler(req, res) {
       result = {
         ...product,
         each: product.each
-          ? { ...product.each, quickBooksQuantityOnHandProduction: 0 }
+          ? { ...product.each, countInStock: 0 }
           : product.each,
-        box: product.box
-          ? { ...product.box, quickBooksQuantityOnHandProduction: 0 }
-          : product.box,
+        box: product.box ? { ...product.box, countInStock: 0 } : product.box,
       };
     }
 

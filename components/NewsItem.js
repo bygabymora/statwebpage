@@ -5,7 +5,6 @@ import Link from "next/link";
 export const NewsItem = ({ news }) => {
   return (
     <div className='flex flex-col border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 w-full h-full'>
-      {/* IMAGE */}
       <Link
         href={`/news/${news.slug}`}
         className='w-full aspect-[6/4] relative group'
@@ -20,7 +19,6 @@ export const NewsItem = ({ news }) => {
         />
       </Link>
 
-      {/* TEXT */}
       <div className='flex flex-col justify-between p-4 h-full'>
         <div>
           <Link href={`/news/${news.slug}`}>
@@ -29,7 +27,7 @@ export const NewsItem = ({ news }) => {
             </h3>
           </Link>
           <p className='text-gray-600 text-sm mt-1 line-clamp-3'>
-            {news.content?.slice(0, 200)}
+            {news.excerpt}
           </p>
         </div>
         <div className='mt-3 text-lg font-semibold text-gray-500'>

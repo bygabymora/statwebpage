@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
+    checkoutSessionId: { type: String },
     wpUser: {
       userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -87,6 +88,7 @@ const orderSchema = new mongoose.Schema(
       receipt_url: { type: String },
       charge_id: { type: String },
       created: { type: Number },
+      paymentId: { type: String },
     },
     itemsPrice: { type: Number, required: false },
     totalPrice: { type: Number, required: false },

@@ -82,7 +82,7 @@ export default async function handler(req, res) {
           ? prod.clearance
           : {};
 
-      const available = info.quickBooksQuantityOnHandProduction || 0;
+      const available = info.countInStock || 0;
 
       // sold out → skip & warn
       if (available === 0) {
@@ -123,12 +123,10 @@ export default async function handler(req, res) {
         quickBooksItemIdProduction:
           info.quickBooksItemIdProduction ?? prod.quickBooksItemIdProduction,
         minSalePrice: info.minSalePrice ?? info.price ?? prod.minSalePrice,
-        quickBooksQuantityOnHandProduction:
-          info.quickBooksQuantityOnHandProduction,
+        countInStock: info.countInStock,
         description: info.description ?? prod.description,
         price: info.wpPrice ?? info.price ?? prod.price,
-        countInStock:
-          info.quickBooksQuantityOnHandProduction ?? prod.countInStock,
+        countInStock: info.countInStock ?? prod.countInStock,
         updatedAt: prod.updatedAt,
       });
     }
@@ -182,8 +180,7 @@ export default async function handler(req, res) {
         heldStock: it.heldStock,
         quickBooksItemIdProduction: it.quickBooksItemIdProduction,
         minSalePrice: it.minSalePrice,
-        quickBooksQuantityOnHandProduction:
-          it.quickBooksQuantityOnHandProduction,
+        countInStock: it.countInStock,
         description: it.description,
         countInStock: it.countInStock,
         updatedAt: it.updatedAt,

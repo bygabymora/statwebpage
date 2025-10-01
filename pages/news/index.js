@@ -58,36 +58,32 @@ export async function getServerSideProps() {
   await db.connect(true);
   const news = await New.find().lean();
 
-  // Convert _id, createdAt, updatedAt in sources to string and createdAt to ISO date strings
   const newsWithModifiedFields = news.map((newsItem) => {
     const sourcesWithModifiedFields = newsItem.sources.map((source) => {
       const { _id, createdAt, updatedAt, ...rest } = source;
-      const modifiedSource = {
+      return {
         ...rest,
         _id: _id.toString(),
+        createdAt: createdAt ? createdAt.toISOString() : null,
+        updatedAt: updatedAt ? updatedAt.toISOString() : null,
       };
-      if (createdAt) {
-        modifiedSource.createdAt = createdAt.toISOString();
-      }
-      if (updatedAt) {
-        modifiedSource.updatedAt = updatedAt.toISOString();
-      }
-      return modifiedSource;
     });
 
-    const { _id, createdAt, updatedAt, ...rest } = newsItem;
-    const modifiedNewsItem = {
+    const { _id, createdAt, updatedAt, content, ...rest } = newsItem;
+
+    // Generate an excerpt of maximum 250 characters
+    const excerpt = content
+      ? content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 250) + "..."
+      : "";
+
+    return {
       ...rest,
       _id: _id.toString(),
+      createdAt: createdAt ? createdAt.toISOString() : null,
+      updatedAt: updatedAt ? updatedAt.toISOString() : null,
       sources: sourcesWithModifiedFields,
+      excerpt, // we add only a short summary
     };
-    if (createdAt) {
-      modifiedNewsItem.createdAt = createdAt.toISOString();
-    }
-    if (updatedAt) {
-      modifiedNewsItem.updatedAt = updatedAt.toISOString();
-    }
-    return modifiedNewsItem;
   });
 
   return {

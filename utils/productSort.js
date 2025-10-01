@@ -1,8 +1,8 @@
 export function enrichAndSortForPublic(products) {
   return products
     .map((p) => {
-      const eachStock = p.each?.quickBooksQuantityOnHandProduction ?? 0;
-      const boxStock = p.box?.quickBooksQuantityOnHandProduction ?? 0;
+      const eachStock = p.each?.countInStock ?? 0;
+      const boxStock = p.box?.countInStock ?? 0;
       const eachPrice = p.each?.wpPrice ?? 0;
       const boxPrice = p.box?.wpPrice ?? 0;
 

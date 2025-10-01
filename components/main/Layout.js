@@ -331,34 +331,37 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='Buy healthcare products online at Stat Surgical Supply. Trusted source for surgical equipment, medical disposables, and healthcare solutions. Shop leading brands and products today.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
+            />
+            <meta property='og:type' content='website' />
+            <meta property='og:site_name' content='STAT Surgical Supply' />
+            <meta
+              property='og:url'
+              content='https://www.statsurgicalsupply.com/'
             />
             <meta
               name='keywords'
               content='sterile surgical disposables, medical disposables for surgery, types of medical equipment, buy surgical supplies online'
             />
-            <meta property='og:type' content='website' />
-            <meta property='og:title' content='Stat Surgical Supply' />
+            <meta
+              property='og:title'
+              content='Buy Healthcare & Surgical Products | STAT Surgical Supply'
+            />
             <meta
               property='og:description'
-              content='High-Quality Surgical Supplies at Unmatched Prices.
-                Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
             />
             <meta property='og:image' content={defaultOgImage} />
-            <meta
-              property='og:url'
-              content='https://www.statsurgicalsupply.com/'
-            />
-
             <meta name='twitter:card' content='summary_large_image' />
-            <meta name='twitter:title' content='Stat Surgical Supply' />
+            <meta
+              name='twitter:title'
+              content='Buy Healthcare & Surgical Products | STAT Surgical Supply'
+            />
             <meta
               name='twitter:description'
-              content='High-Quality Surgical Supplies at Unmatched Prices. Explore our wide range of high-end surgical disposables. We offer industry-leading brands with cost-saving solutions.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
-
-            <link rel='canonical' href='https://www.statsurgicalsupply.com/' />
           </>
         )}
       </Head>

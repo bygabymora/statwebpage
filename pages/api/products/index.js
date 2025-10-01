@@ -36,8 +36,8 @@ const handler = async (req, res) => {
     // If not logged in or not approved: minimal info + sort by name A→Z
     if (!loggedIn || !userApproved) {
       const minimal = products.map((p) => {
-        const eachStock = p.each?.quickBooksQuantityOnHandProduction || 0;
-        const boxStock = p.box?.quickBooksQuantityOnHandProduction || 0;
+        const eachStock = p.each?.countInStock || 0;
+        const boxStock = p.box?.countInStock || 0;
         const eachPrice = p.each?.wpPrice || 0;
         const boxPrice = p.box?.wpPrice || 0;
 
@@ -62,13 +62,13 @@ const handler = async (req, res) => {
             description: p.each?.description || null,
             minSalePrice: p.each?.minSalePrice || null,
             wpPrice: eachPrice,
-            quickBooksQuantityOnHandProduction: eachStock,
+            countInStock: eachStock,
           },
           box: {
             description: p.box?.description || null,
             minSalePrice: p.box?.minSalePrice || null,
             wpPrice: boxPrice,
-            quickBooksQuantityOnHandProduction: boxStock,
+            countInStock: boxStock,
           },
           hasStock,
           hasPrice,
@@ -87,11 +87,9 @@ const handler = async (req, res) => {
     // Logged in & approved → full info sorted by stock, price, name
     products.sort((a, b) => {
       const aInStock =
-        (a.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
-        (a.box?.quickBooksQuantityOnHandProduction || 0) > 0;
+        (a.each?.countInStock || 0) > 0 || (a.box?.countInStock || 0) > 0;
       const bInStock =
-        (b.each?.quickBooksQuantityOnHandProduction || 0) > 0 ||
-        (b.box?.quickBooksQuantityOnHandProduction || 0) > 0;
+        (b.each?.countInStock || 0) > 0 || (b.box?.countInStock || 0) > 0;
       if (aInStock && !bInStock) return -1;
       if (!aInStock && bInStock) return 1;
 
@@ -109,12 +107,8 @@ const handler = async (req, res) => {
       if (userRestricted && p.protected) {
         return {
           ...p,
-          each: p.each
-            ? { ...p.each, quickBooksQuantityOnHandProduction: 0 }
-            : p.each,
-          box: p.box
-            ? { ...p.box, quickBooksQuantityOnHandProduction: 0 }
-            : p.box,
+          each: p.each ? { ...p.each, countInStock: 0 } : p.each,
+          box: p.box ? { ...p.box, countInStock: 0 } : p.box,
         };
       }
       return p;

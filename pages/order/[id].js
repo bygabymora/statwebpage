@@ -2,7 +2,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { useSession } from "next-auth/react";
@@ -152,7 +152,7 @@ function OrderScreen() {
   //----Email----//
 
   useEffect(() => {
-    if (order & order.shippingAddress) {
+    if (order && order.shippingAddress) {
       setEmail(shippingAddress.email);
       setEmailName(shippingAddress.fullName);
       setEmailPhone(shippingAddress.phone);
@@ -305,50 +305,58 @@ function OrderScreen() {
     }
   };
 
+  const processedOnceRef = useRef(false);
+
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location?.search) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const paymentSuccess = urlParams.get("paymentSuccess");
-      if (paymentSuccess === "true") {
-        const handleOnApprove = async () => {
-          try {
-            dispatch({ type: "PAY_REQUEST" });
-            const { data } = await axios.put(
-              `/api/orders/${order._id}/pay`
-              // Include any necessary payload here
-            );
-            dispatch({ type: "PAY_SUCCESS", payload: data });
-            toast.success("Order is paid successfully");
+    if (processedOnceRef.current) return;
 
-            // Mark payment as complete and show success message
-            sendEmail();
-            setPaymentComplete(true);
+    // necesitas ambos listos
+    if (!orderId || !order?._id) return;
 
-            // Remove 'paymentSuccess' from the URL without reloading
-            urlParams.delete("paymentSuccess");
-            window.history.replaceState(
-              {},
-              document.title,
-              window.location.pathname + "?" + urlParams.toString()
-            );
+    // si ya está pagada, no intentes procesar
+    if (order?.isPaid) return;
 
-            // It will not process payment again since the 'paymentSuccess' query parameter has been removed
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          } catch (error) {
-            dispatch({ type: "PAY_FAIL", payload: getError(error) });
-            toast.error(getError(error));
-          }
-        };
+    if (typeof window === "undefined" || !window.location?.search) return;
 
-        // Call handleOnApprove here
-        handleOnApprove();
-      } else {
-        console.error("Payment failed");
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentSuccess = urlParams.get("paymentSuccess");
+    const session_id = urlParams.get("session_id");
+    const payment_intent = urlParams.get("payment_intent");
+
+    if (paymentSuccess === "true" && (session_id || payment_intent)) {
+      processedOnceRef.current = true;
+
+      (async () => {
+        try {
+          dispatch({ type: "PAY_REQUEST" });
+
+          await axios.put(`/api/orders/${order._id}/pay`, {
+            sessionId: session_id || null,
+            paymentIntentId: payment_intent || null,
+          });
+
+          dispatch({ type: "PAY_SUCCESS" });
+          toast.success("Order is paid successfully");
+
+          // limpia la URL para que no se vuelva a procesar
+          urlParams.delete("paymentSuccess");
+          urlParams.delete("session_id");
+          urlParams.delete("payment_intent");
+          const newQuery = urlParams.toString();
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname + (newQuery ? "?" + newQuery : "")
+          );
+
+          await fetchOrder(); // refresca datos sin recargar toda la página
+        } catch (error) {
+          dispatch({ type: "PAY_FAIL", payload: getError(error) });
+          toast.error(getError(error));
+        }
+      })();
     }
-  }, [order._id, sendEmail]);
+  }, [orderId, order?._id, order?.isPaid, sendEmail]);
 
   function onError(error) {
     toast.error(getError(error));
@@ -389,11 +397,14 @@ function OrderScreen() {
   }, [order.defaultTerm, order.paymentMethod]);
 
   const paymentAmountStatus = () => {
+    console.log("Calculating payment status...", invoice, order);
     let status = "";
     if (!invoice && !order.isPaid) {
       status = "Not Paid";
+    } else if (invoice && order.isPaid) {
+      status = "Paid";
     } else if (invoice && !order.isPaid) {
-      invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
+      order.isPaid
         ? (status = "Paid")
         : invoice.balance === invoice?.totalPrice
         ? (status = "Not Paid")
@@ -546,9 +557,10 @@ function OrderScreen() {
                     : "bg-green-100"
                 } p-2 rounded-lg text-xl`}
               >
+                {console.log("Payment Status:", paymentAmountStatus())}
                 {paymentAmountStatus()}
               </div>
-              {stripeReadyToPay() && (
+              {stripeReadyToPay() && !order.isPaid && (
                 <div className='text-sm text-gray-500'>
                   Your order is ready to be shipped. It will be shipped as soon
                   as the payment is received.
