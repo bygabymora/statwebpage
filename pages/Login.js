@@ -1,3 +1,4 @@
+// pages/Login.js
 import React, { useEffect, useState } from "react";
 import Layout from "../components/main/Layout";
 import Link from "next/link";
@@ -28,10 +29,11 @@ export default function Login() {
     handleSubmit,
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
-  const emailValue = watch("email", ""); // <-- grab email from the form
+  const emailValue = watch("email", ""); // always kept lowercased via setValueAs
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -44,10 +46,14 @@ export default function Login() {
   }, [session, redirect, router]);
 
   const submitHandler = async ({ email, password }) => {
+    // Double-safety: normalize before sending
+    const normalizedEmail =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
+
     try {
       const result = await signIn("credentials", {
         redirect: false,
-        email,
+        email: normalizedEmail,
         password,
       });
       if (result.error) {
@@ -87,14 +93,25 @@ export default function Login() {
             type='email'
             autoComplete='off'
             placeholder='Email'
+            className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline lowercase'
             {...register("email", {
               required: "Please enter email",
               pattern: {
                 value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
                 message: "Invalid email",
               },
+              // Ensure form state always stores lowercase + trimmed
+              setValueAs: (v) =>
+                typeof v === "string" ? v.trim().toLowerCase() : v,
             })}
-            className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+            onBlur={(e) => {
+              // Ensure input text itself gets normalized visually as well
+              const next = (e.target.value || "").trim().toLowerCase();
+              setValue("email", next, {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
+            }}
           />
           {errors.email && (
             <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>
