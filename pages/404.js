@@ -1,44 +1,36 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Layout from "../components/main/Layout";
+import Lottie from "lottie-react";
+import animationData from "../public/404-Ilustration.json";
 
 export default function Custom404() {
   return (
     <Layout>
-      <div className='flex items-center justify-center h-screen bg-gray-50'>
+      <div className='min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 -mt-9'>
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className='text-center p-10 bg-white rounded-2xl shadow-lg border border-gray-200 max-w-md'
+          className='text-center p-5 bg-white rounded-2xl shadow-lg border border-gray-200 max-w-md'
         >
-          <motion.h1
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: "spring" }}
-            className='text-5xl font-bold text-[#144e8b]'
-          >
-            404
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className='mt-4 text-xl font-semibold text-[#03793d]'
-          >
-            Page Not Found
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className='mt-2 text-[#414b53]'
-          >
+          <h1 className='text-5xl font-bold text-[#144e8b] my-5'>404</h1>
+          <div className='flex justify-center '>
+            <Lottie
+              animationData={animationData}
+              loop={true}
+              style={{
+                width: 220,
+                height: 220,
+                filter: "hue-rotate(15deg) saturate(70%)",
+              }}
+            />
+          </div>
+          <p className='text-xl font-bold text-[#03793d]'>Page Not Found</p>
+          <p className='mt-2 text-[#414b53]'>
             The page you are looking for might have been moved or does not
             exist.
-          </motion.p>
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
