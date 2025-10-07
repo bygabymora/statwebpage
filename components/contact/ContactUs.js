@@ -14,6 +14,11 @@ const ContactUs = () => {
 
   const sendEmail = (e) => {
     e.preventDefault(); // Avoid the default behavior of the form.
+    const botField = e.target.bot_field?.value;
+    if (botField) {
+      console.warn("Bot submission blocked 🚫");
+      return;
+    }
     const contactToEmail = { name, email };
     const emailmessage = messageManagement(
       contactToEmail,
@@ -54,6 +59,16 @@ const ContactUs = () => {
       <h3 className='contact__title'>Send a message</h3>
 
       <form className='contact__form' ref={form} onSubmit={sendEmail}>
+        <div style={{ display: "none" }}>
+          <label>Do not fill this field</label>
+          <input
+            type='text'
+            name='bot_field'
+            tabIndex='-1'
+            autoComplete='off'
+          />
+        </div>
+
         <div className='contact__form-div'>
           <label className='contact__form-tag' htmlFor='user_name'>
             Name*
