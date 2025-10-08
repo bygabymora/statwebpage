@@ -6,7 +6,7 @@ import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../context/ModalContext";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-const ACTION = "contact_submit"; // action expected by /api/recaptcha/verify
+const ACTION = "contact_submit";
 
 const ContactUs = () => {
   const form = useRef();
@@ -15,7 +15,6 @@ const ContactUs = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  // reCAPTCHA v3 (invisible)
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const sendEmail = async (e) => {
@@ -28,13 +27,11 @@ const ContactUs = () => {
       return;
     }
 
-    // Basic validations
     if (!name || !email || !message) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
 
-    // Execute reCAPTCHA v3
     if (!executeRecaptcha) {
       showStatusMessage("error", "reCAPTCHA not ready. Please try again.");
       return;
@@ -54,27 +51,60 @@ const ContactUs = () => {
       return;
     }
 
-    // Verify token on the server
+    // Verificar token en el servidor (ahora siempre 200 con 'reason')
+    let verifyData = null;
     try {
       const verifyRes = await fetch("/api/recaptcha/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, action: ACTION }),
       });
-
-      const verifyData = await verifyRes.json();
-      if (!verifyRes.ok || !verifyData?.success) {
-        // You can use verifyData.reason === 'low_score' | 'wrong_action' | 'google_not_success'
-        showStatusMessage("error", "reCAPTCHA failed. Please try again.");
-        return;
-      }
+      verifyData = await verifyRes.json();
     } catch (err) {
-      console.error("[reCAPTCHA verify] error:", err);
-      showStatusMessage("error", "reCAPTCHA verification error.");
+      console.error("[reCAPTCHA verify] network/fetch error:", err);
+      showStatusMessage("error", "No network. Try again.");
       return;
     }
 
-    // If the reCAPTCHA is valid, we send the email
+    if (!verifyData?.success) {
+      // Mensajes por motivo; log para diagnóstico
+      console.warn("[reCAPTCHA verify] failed:", verifyData);
+      const reason = verifyData?.reason;
+
+      if (reason === "server_misconfig") {
+        showStatusMessage(
+          "error",
+          "Server configuration error. Please try later."
+        );
+      } else if (reason === "missing_token") {
+        showStatusMessage(
+          "error",
+          "reCAPTCHA error. Please reload and try again."
+        );
+      } else if (reason === "wrong_action") {
+        showStatusMessage(
+          "error",
+          "Validation error. Please reload and try again."
+        );
+      } else if (reason === "low_score") {
+        showStatusMessage(
+          "error",
+          "Could not verify you are human. Please try again."
+        );
+      } else if (reason === "google_not_success") {
+        showStatusMessage("error", "reCAPTCHA failed with Google. Try again.");
+      } else if (reason === "google_parse_error") {
+        showStatusMessage(
+          "error",
+          "Unexpected response from Google. Try again."
+        );
+      } else {
+        showStatusMessage("error", "reCAPTCHA verification failed.");
+      }
+      return;
+    }
+
+    // OK → enviamos el correo
     const contactToEmail = { name, email: email.trim().toLowerCase() };
     const emailmessage = messageManagement(
       contactToEmail,
@@ -85,8 +115,6 @@ const ContactUs = () => {
     try {
       await handleSendEmails(emailmessage, contactToEmail);
       showStatusMessage("success", "Message sent successfully!");
-
-      // Clear inputs after sending the email
       setName("");
       setEmail("");
       setMessage("");
@@ -116,6 +144,7 @@ const ContactUs = () => {
       <h3 className='contact__title'>Send a message</h3>
 
       <form className='contact__form' ref={form} onSubmit={sendEmail}>
+        {/* Honeypot */}
         <div style={{ display: "none" }}>
           <label>Do not fill this field</label>
           <input
