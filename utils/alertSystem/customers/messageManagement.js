@@ -14,13 +14,46 @@ export const messageManagement = (
     case "Register":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.name}, You are now registered on our Web Page.`,
-        p1: `<div style="font-weight: light; font-size: 17px; color: #333333; ">Thank you for trusting us and considering our services. We will work to approve your account within 24 hours.</div> `,
-        p2: `<div style="font-weight: light; font-size: 20px; color: #333333; ">If it takes longer than expected, please contact us for more information. Thank you for choosing us!</div>`,
-        p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">If you have any questions, please contact us.
-              <br>
-              <strong> Stat Surgical Supply </strong>
-        </div>`,
+        subject: `${contact.firstName}, You are now registered on our Web Page.`,
+        p1: `
+      <div style="font-weight: light; font-size: 17px; color: #333333;">
+        Thank you for trusting us and considering our services. 
+        We will work to approve your account within 24 hours.
+      </div> 
+    `,
+        p2: `
+      <div style="font-weight: light; font-size: 20px; color: #333333;">
+        If it takes longer than expected, please contact us for more information. 
+        Thank you for choosing us!
+      </div>
+    `,
+        p3: `
+      <div style="font-weight: light; font-size: 16px; color: #333333; margin-top: 20px;">
+        <strong>Registration Summary:</strong>
+        <table style="border-collapse: collapse; margin-top: 10px;">
+          <tr>
+            <td style="padding: 4px 8px;"><strong>Full Name:</strong></td>
+            <td style="padding: 4px 8px;">${contact.firstName} ${contact.lastName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 8px;"><strong>Email:</strong></td>
+            <td style="padding: 4px 8px;">${contact.email}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 8px;"><strong>Company Name:</strong></td>
+            <td style="padding: 4px 8px;">${contact.companyName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 8px;"><strong>Company EIN:</strong></td>
+            <td style="padding: 4px 8px;">${contact.companyEinCode}</td>
+          </tr>
+        </table>
+      </div>
+      <div style="font-weight: light; font-size: 15px; color: #333333; margin-top: 25px;">
+        If you have any questions, please contact us.<br>
+        <strong>Stat Surgical Supply</strong>
+      </div>
+    `,
       };
       break;
 
