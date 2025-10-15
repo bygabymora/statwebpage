@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcryptjs from "bcryptjs";
-
 import db from "../../../utils/db";
 import WpUser from "../../../models/WpUser";
 
@@ -11,12 +10,12 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
-    signIn: "/Login", // tu página de login
-    error: "/Login", // errores vuelven a /Login (opcional)
+    signIn: "/Login", // your login page
+    error: "/Login", // errors return to /Login (optional)
   },
 
   providers: [
-    // === LOGIN CON EMAIL/PASSWORD (tu flujo actual) ===
+    // === LOGIN CON EMAIL/PASSWORD (your current flow) ===
     CredentialsProvider({
       async authorize(credentials) {
         await db.connect(true);
@@ -29,7 +28,7 @@ export default NextAuth({
         const ok = bcryptjs.compareSync(credentials.password, user.password);
         if (!ok) throw new Error("Invalid email or password");
 
-        // Lo que queda en "user" viaja a callbacks.jwt como 'user'
+        // What remains in "user" travels to callbacks.jwt as 'user'
         return {
           _id: user._id,
           firstName: user.firstName,
@@ -49,15 +48,15 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // authorization: { params: { hd: "tuempresa.com" } }, // si luego quieres sugerir dominio
+      // authorization: { params: { hd: "company.com" } }, // If you then want to suggest domain
     }),
   ],
 
   /**
    * signIn:
-   * - Si el proveedor es Google y NO existe el usuario en DB → REDIRIGE a /Register con datos prellenables
-   * - Si existe pero está inactivo → redirige a /Login con error
-   * - Si todo ok → continúa (return true)
+   * - If the provider is Google and the user does NOT exist in DB → REDIRECT to /Register with prefillable data
+   * - If it exists but is inactive → redirects to /Login with error
+   * - If everything ok → continue (return true)
    */
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -68,7 +67,7 @@ export default NextAuth({
           (typeof user === "object" && user?.email) ||
           "";
 
-        // Seguridad mínima: si Google no nos da email, no continuamos
+        // Minimum security: if Google does not give us email, we do not continue
         if (!email) {
           return "/Login?error=GoogleNoEmail";
         }
@@ -78,9 +77,9 @@ export default NextAuth({
           "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin"
         );
 
-        // 1) NO EXISTE → redirigir a Register con info para prellenar
+        // 1) DOES NOT EXIST → redirect to Register with info to prefill
         if (!dbUser) {
-          // Puedes enviar nombre y foto para prellenar tu formulario
+          // You can send name and picture to prefill your form
           const prefillName =
             profile?.name ||
             [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
@@ -94,30 +93,30 @@ export default NextAuth({
             picture,
           });
 
-          // Puedes devolver ruta relativa
+          // You can return a relative path
           return `/Register?${qs.toString()}`;
         }
 
-        // 2) EXISTE PERO INACTIVO → redirigir a login con error
+        // 2) EXISTS BUT INACTIVE → redirect to login with error
         if (!dbUser.active) {
           return "/Login?error=Inactive";
         }
 
-        // 3) EXISTE Y ACTIVO → permitir continuar
+        // 3) EXISTS AND ACTIVE → allow to continue
         return true;
       }
 
-      // Para credentials u otros providers
+      // For credentials or other providers
       return true;
     },
 
     /**
      * jwt:
-     * - En primer login, copia datos a token.
-     * - En sesiones siguientes, refresca desde DB para mantener flags.
+     * - At first login, copy data to token
+     * - In subsequent sessions, refresh from DB to maintain flags.
      */
     async jwt({ token, user, account }) {
-      // Primer login (credenciales o google)
+      // At first login (credentials or google)
       if (user) {
         token._id = user._id || null;
         token.firstName = user.firstName || user.name?.split(" ")[0] || "";
@@ -131,7 +130,7 @@ export default NextAuth({
         token.approved = user.approved ?? false;
         token.restricted = user.restricted ?? false;
 
-        // Si fue Google y existe en DB, reforzamos con DB (signIn ya filtró no-existentes)
+        // If it was Google and exists in DB, we reinforce with DB (signIn already filtered non-existent)
         if (account?.provider === "google") {
           await db.connect(true);
           const dbUser = await WpUser.findOne({ email: token.email }).select(
@@ -151,7 +150,7 @@ export default NextAuth({
           }
         }
       }
-      // Sesiones posteriores → refresco
+      // Subsequent sessions → refresh from DBv
       else if (token._id) {
         await db.connect(true);
         const dbUser = await WpUser.findById(token._id).select(
