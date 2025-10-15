@@ -17,7 +17,7 @@ export default function ResponsiveImage({
   aspectRatio = "4 / 5", // ~1800x2250 looking
   lpc = false,
   priority = false,
-  quality = 60,
+
   // Optional: pass a custom sizes if the preset isn't perfect for a page
   sizes,
   // If you already have a tiny base64, pass it. Otherwise we keep placeholder empty.
@@ -38,7 +38,6 @@ export default function ResponsiveImage({
         // `fill` + container aspect-ratio = no CLS and lets `sizes` work properly
         fill
         sizes={computedSizes}
-        quality={quality}
         // Lazy by default; only set priority on true LCP/above-the-fold images
         priority={isPriority} // Next add <link rel="preload"> y NO use lazy
         fetchPriority={isPriority ? "high" : undefined}

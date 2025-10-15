@@ -13,7 +13,7 @@ export default function LCPProductImage({
   className = "w-full",
   aspectRatio = "4 / 5",
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 800px",
-  quality = 70,
+
   // puedes pasar lcp o priority desde fuera
   lcp = false,
   priority = false,
@@ -36,7 +36,6 @@ export default function LCPProductImage({
         aspectRatio={aspectRatio} // 800x1000
         className={className}
         priority={isPriority}
-        quality={quality}
         sizes={sizes}
       />
     </div>

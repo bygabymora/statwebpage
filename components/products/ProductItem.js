@@ -292,7 +292,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               height={1000}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
-              quality={5}
               loading='lazy'
               priority={
                 index === 0 &&
