@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import CustomAlertModal from "../components/main/CustomAlertModal";
+import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 
 export default function Login() {
   const { data: session } = useSession();
@@ -170,6 +171,7 @@ export default function Login() {
             Login
           </button>
         </div>
+        <GoogleLoginButton callbackUrl='/' />
 
         {/* Register Link */}
         <div className='mb-4'>

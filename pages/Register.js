@@ -1,3 +1,4 @@
+// pages/Register.js
 import Link from "next/link";
 import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
@@ -14,13 +15,19 @@ import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 export default function RegisterScreen() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { redirect } = router.query;
+  // Query params to prefill (sent from NextAuth signIn callback)
+  const {
+    redirect,
+    prefillEmail = "",
+    prefillName = "",
+    picture = "",
+    from = "",
+  } = router.query || {};
   const [showPassword, setShowPassword] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ title: "", body: "" });
   const [shouldRedirect, setShouldRedirect] = useState(false);
-
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   }, []);
@@ -34,8 +41,34 @@ export default function RegisterScreen() {
     handleSubmit,
     register,
     getValues,
+    setValue, // needed to prefill
     formState: { errors },
   } = useForm();
+
+  // Prefill from query params (Google → name/email/picture)
+  useEffect(() => {
+    // Email
+    if (typeof prefillEmail === "string" && prefillEmail) {
+      const normalized = prefillEmail.trim().toLowerCase();
+      setValue("email", normalized, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    // Name → separate first/last
+    if (typeof prefillName === "string" && prefillName) {
+      const parts = prefillName.trim().split(/\s+/);
+      const first = parts[0] || "";
+      const last = parts.slice(1).join(" ") || "";
+      if (first)
+        setValue("firstName", first, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      if (last)
+        setValue("lastName", last, { shouldValidate: true, shouldDirty: true });
+    }
+  }, [prefillEmail, prefillName, setValue]);
 
   const submitHandler = async ({
     firstName,
@@ -48,15 +81,18 @@ export default function RegisterScreen() {
     try {
       setSubmitting(true);
 
+      // Normalize email for security
+      const normalizedEmail = (email || "").trim().toLowerCase();
+
       // Create the user
       await axios.post("/api/auth/signup", {
         firstName,
         lastName,
-        email,
+        email: normalizedEmail,
         password,
         companyName,
         companyEinCode,
-        active: true, // keep as you had it; set to false if you want manual activation
+        active: false,
         approved: false,
       });
 
@@ -76,8 +112,7 @@ export default function RegisterScreen() {
       });
       setIsModalOpen(true);
       setShouldRedirect(true);
-
-      const contactToEmail = { name: firstName, email };
+      const contactToEmail = { name: firstName, email: normalizedEmail };
       const emailmessage = messageManagement(contactToEmail, "Register");
       handleSendEmails(emailmessage, contactToEmail);
     } catch (err) {
@@ -99,7 +134,13 @@ export default function RegisterScreen() {
 
   return (
     <Layout title='Create Account'>
-      {/* No inline <script>; keep the page SSR-friendly and fast */}
+      {/* Contextual notice if coming from Google */}
+      {from === "google" && (
+        <div className='mx-auto max-w-screen-md mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-900'>
+          We found your Google account. Please complete the missing fields to
+          finish your registration.
+        </div>
+      )}
 
       <form
         className='mx-auto max-w-screen-md md:text-lg'
@@ -107,7 +148,24 @@ export default function RegisterScreen() {
         noValidate
       >
         <h1 className='mb-1 text-xl font-bold'>Create Account</h1>
+
         <div className='mb-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
+          {/* (Optional) Avatar if it came from Google */}
+          {picture ? (
+            <div className='md:col-span-2 flex items-center gap-3'>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={String(picture)}
+                alt='Google avatar'
+                className='h-10 w-10 rounded-full border'
+                referrerPolicy='no-referrer'
+              />
+              <span className='text-sm text-gray-600'>
+                Using your Google profile photo
+              </span>
+            </div>
+          ) : null}
+
           {/* First name */}
           <div className='md:mb-4'>
             <label
@@ -171,10 +229,12 @@ export default function RegisterScreen() {
               {...register("email", {
                 required: "Please enter email",
                 pattern: {
-                  // escaped dot before TLD
                   value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
                   message: "Please enter valid email",
                 },
+                // Ensure form state always stores lowercase + trimmed
+                setValueAs: (v) =>
+                  typeof v === "string" ? v.trim().toLowerCase() : v,
               })}
               className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='email'
@@ -185,6 +245,7 @@ export default function RegisterScreen() {
               <div className='text-red-500'>{errors.email.message}</div>
             )}
           </div>
+
           {/* Company name */}
           <div className='md:mb-4'>
             <label
@@ -208,6 +269,7 @@ export default function RegisterScreen() {
               <div className='text-red-500'>{errors.companyName.message}</div>
             )}
           </div>
+
           {/* Company EIN */}
           <div className='md:mb-4'>
             <label
@@ -234,6 +296,7 @@ export default function RegisterScreen() {
               </div>
             )}
           </div>
+
           {/* Password */}
           <div className='md:mb-4'>
             <label
@@ -326,6 +389,7 @@ export default function RegisterScreen() {
             )}
           </div>
         </div>
+
         {/* Terms */}
         <div className='mb-4'>
           <input
