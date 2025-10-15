@@ -1,38 +1,103 @@
-import NextAuth from "next-auth/next";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import db from "../../../utils/db";
 import WpUser from "../../../models/WpUser";
 import bcryptjs from "bcryptjs";
 
 export default NextAuth({
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
+  secret: process.env.NEXTAUTH_SECRET,
 
+  providers: [
+    // 🔹 LOGIN TRADICIONAL CON EMAIL/PASSWORD
+    CredentialsProvider({
+      async authorize(credentials) {
+        await db.connect(true);
+        const user = await WpUser.findOne({ email: credentials.email });
+
+        if (!user) throw new Error("Invalid email or password");
+        if (!user.active)
+          throw new Error("Your account is inactive. Please contact support.");
+        if (!bcryptjs.compareSync(credentials.password, user.password))
+          throw new Error("Invalid email or password");
+
+        return {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          companyName: user.companyName,
+          companyEinCode: user.companyEinCode,
+          isAdmin: user.isAdmin,
+          active: user.active,
+          approved: user.approved,
+          restricted: user.restricted,
+        };
+      },
+    }),
+
+    // 🔹 LOGIN CON GOOGLE
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
+
+  // 🔹 CALLBACKS
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // Caso 1: primer login (sea con credenciales o Google)
       if (user) {
-        // Newly authenticated user
-        token._id = user._id;
-        token.lastName = user.lastName;
-        token.firstName = user.firstName;
+        token._id = user._id || null;
+        token.firstName = user.firstName || user.name?.split(" ")[0] || "";
+        token.lastName =
+          user.lastName || user.name?.split(" ").slice(1).join(" ") || "";
         token.email = user.email;
-        token.isAdmin = user.isAdmin;
-        token.companyName = user.companyName;
-        token.companyEinCode = user.companyEinCode;
-        token.active = user.active;
-        token.approved = user.approved;
-        token.restricted = user.restricted;
-      } else if (token._id) {
-        // Check the database if the user is still active
+        token.isAdmin = user.isAdmin || false;
+        token.companyName = user.companyName || null;
+        token.companyEinCode = user.companyEinCode || null;
+        token.active = user.active ?? true;
+        token.approved = user.approved ?? false;
+        token.restricted = user.restricted ?? false;
+
+        // Si el login fue con Google, sincronizamos con tu base de datos
+        if (account?.provider === "google") {
+          await db.connect(true);
+          let dbUser = await WpUser.findOne({ email: user.email });
+
+          // Si no existe, lo creamos (puedes cambiar esta lógica si quieres aprobarlos manualmente)
+          if (!dbUser) {
+            dbUser = await WpUser.create({
+              firstName: token.firstName,
+              lastName: token.lastName,
+              email: token.email,
+              companyName: "",
+              companyEinCode: "",
+              password: "", // no se usa para Google
+              active: true,
+              approved: false, // puedes marcarlo en false para requerir aprobación
+              restricted: false,
+              isAdmin: false,
+            });
+          }
+
+          token._id = dbUser._id;
+          token.active = dbUser.active;
+          token.approved = dbUser.approved;
+          token.restricted = dbUser.restricted;
+        }
+      }
+
+      // Caso 2: sesión existente → refrescar datos
+      else if (token._id) {
         await db.connect(true);
         const dbUser = await WpUser.findById(token._id).select(
           "firstName lastName email active approved restricted"
         );
-
         if (dbUser) {
-          token.lastName = dbUser.lastName;
           token.firstName = dbUser.firstName;
+          token.lastName = dbUser.lastName;
           token.email = dbUser.email;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
@@ -48,8 +113,8 @@ export default NextAuth({
     async session({ session, token }) {
       session.user = {
         _id: token._id,
-        lastName: token.lastName,
         firstName: token.firstName,
+        lastName: token.lastName,
         email: token.email,
         isAdmin: token.isAdmin,
         companyName: token.companyName,
@@ -61,39 +126,4 @@ export default NextAuth({
       return session;
     },
   },
-
-  providers: [
-    CredentialsProvider({
-      async authorize(credentials) {
-        await db.connect(true);
-        const user = await WpUser.findOne({ email: credentials.email });
-
-        if (!user) {
-          throw new Error("Invalid email or password");
-        }
-
-        if (!user.active) {
-          throw new Error("Your account is inactive. Please contact support.");
-        }
-
-        if (!bcryptjs.compareSync(credentials.password, user.password)) {
-          throw new Error("Invalid email or password");
-        }
-
-        return {
-          _id: user._id,
-          lastName: user.lastName,
-          firstName: user.firstName,
-          email: user.email,
-          companyName: user.companyName,
-          companyEinCode: user.companyEinCode,
-          image: "f",
-          isAdmin: user.isAdmin,
-          active: user.active,
-          approved: user.approved,
-          restricted: user.restricted,
-        };
-      },
-    }),
-  ],
 });
