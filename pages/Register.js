@@ -1,4 +1,3 @@
-// pages/Register.js
 import Link from "next/link";
 import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
@@ -136,195 +135,193 @@ export default function RegisterScreen() {
     <Layout title='Create Account'>
       {/* Contextual notice if coming from Google */}
       {from === "google" && (
-        <div className='mx-auto max-w-screen-md mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-900'>
+        <div className='mx-auto max-w-md mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-sm -mt-2'>
           We found your Google account. Please complete the missing fields to
           finish your registration.
         </div>
       )}
 
       <form
-        className='mx-auto max-w-screen-md md:text-lg'
         onSubmit={handleSubmit(submitHandler)}
         noValidate
+        className='max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100 my-5'
       >
-        <h1 className='mb-1 text-xl font-bold'>Create Account</h1>
+        <h1 className='text-2xl font-bold text-[#0e355e] mb-2 text-center'>
+          Create Account
+        </h1>
+        <p className='text-gray-500 text-center mb-8 text-sm'>
+          Please fill in the fields below to register your organization.
+        </p>
 
-        <div className='mb-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
-          {/* (Optional) Avatar if it came from Google */}
-          {picture ? (
-            <div className='md:col-span-2 flex items-center gap-3'>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={String(picture)}
-                alt='Google avatar'
-                className='h-10 w-10 rounded-full border'
-                referrerPolicy='no-referrer'
-              />
-              <span className='text-sm text-gray-600'>
-                Using your Google profile photo
-              </span>
-            </div>
-          ) : null}
+        {/* Avatar (if from Google) */}
+        {picture && (
+          <div className='flex items-center justify-center mb-6'>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={String(picture)}
+              alt='Google avatar'
+              className='h-12 w-12 rounded-full border-2 border-[#03793d] shadow-sm'
+              referrerPolicy='no-referrer'
+            />
+            <span className='ml-3 text-gray-600 text-sm'>
+              Using your Google profile photo
+            </span>
+          </div>
+        )}
 
-          {/* First name */}
-          <div className='md:mb-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+          {/* First Name */}
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='firstName'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               First Name*
             </label>
             <input
-              autoComplete='given-name'
-              type='text'
-              className='w-full px-3 py-2 leading-tight border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='firstName'
+              type='text'
+              autoComplete='given-name'
               placeholder='First Name'
-              autoFocus
               {...register("firstName", {
                 required: "Please enter First Name",
               })}
-              aria-invalid={!!errors.firstName}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.firstName && (
-              <div className='text-red-500'>{errors.firstName.message}</div>
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.firstName.message}
+              </p>
             )}
           </div>
 
-          {/* Last name */}
-          <div className='md:mb-4'>
+          {/* Last Name */}
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='lastName'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Last Name*
             </label>
             <input
-              autoComplete='family-name'
-              type='text'
-              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='lastName'
+              type='text'
+              autoComplete='family-name'
               placeholder='Last Name'
-              {...register("lastName", {
-                required: "Please enter Last Name",
-              })}
-              aria-invalid={!!errors.lastName}
+              {...register("lastName", { required: "Please enter Last Name" })}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.lastName && (
-              <div className='text-red-500'>{errors.lastName.message}</div>
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.lastName.message}
+              </p>
             )}
           </div>
 
           {/* Email */}
-          <div className='md:mb-4 md:col-span-2'>
+          <div className='md:col-span-2'>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='email'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Email*
             </label>
             <input
-              autoComplete='email'
+              id='email'
               type='email'
+              autoComplete='email'
+              placeholder='your@email.com'
               {...register("email", {
                 required: "Please enter email",
                 pattern: {
                   value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
                   message: "Please enter valid email",
                 },
-                // Ensure form state always stores lowercase + trimmed
                 setValueAs: (v) =>
                   typeof v === "string" ? v.trim().toLowerCase() : v,
               })}
-              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-              id='email'
-              placeholder='Email'
-              aria-invalid={!!errors.email}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.email && (
-              <div className='text-red-500'>{errors.email.message}</div>
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.email.message}
+              </p>
             )}
           </div>
 
-          {/* Company name */}
-          <div className='md:mb-4'>
+          {/* Company Name */}
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='companyName'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Company Name*
             </label>
             <input
-              autoComplete='organization'
-              type='text'
-              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='companyName'
+              type='text'
+              autoComplete='organization'
               placeholder='Company Name'
               {...register("companyName", {
                 required: "Please enter company name",
               })}
-              aria-invalid={!!errors.companyName}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.companyName && (
-              <div className='text-red-500'>{errors.companyName.message}</div>
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.companyName.message}
+              </p>
             )}
           </div>
 
           {/* Company EIN */}
-          <div className='md:mb-4'>
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='companyEinCode'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Company EIN*
             </label>
             <input
-              autoComplete='off'
-              inputMode='numeric'
-              type='text'
-              className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
               id='companyEinCode'
-              placeholder='Company EIN'
+              type='text'
+              inputMode='numeric'
+              placeholder='00-0000000'
               {...register("companyEinCode", {
                 required: "Please enter company EIN",
               })}
-              aria-invalid={!!errors.companyEinCode}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.companyEinCode && (
-              <div className='text-red-500'>
+              <p className='text-red-500 text-xs mt-1'>
                 {errors.companyEinCode.message}
-              </div>
+              </p>
             )}
           </div>
 
           {/* Password */}
-          <div className='md:mb-4'>
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='password'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Password*
             </label>
             <div className='relative'>
               <input
-                autoComplete='new-password'
+                id='password'
                 type={showPassword ? "text" : "password"}
+                placeholder='••••••••'
                 {...register("password", {
                   required: "Please enter password",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
+                  minLength: { value: 8, message: "At least 8 characters" },
                   pattern: {
                     value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
                     message:
-                      "Password must contain 1 lowercase, 1 uppercase, 1 number, and 1 special character",
+                      "Must contain uppercase, lowercase, number & special char",
                   },
                 })}
-                className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                id='password'
-                placeholder='Password'
-                aria-invalid={!!errors.password}
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
               />
               <button
                 type='button'
@@ -332,42 +329,37 @@ export default function RegisterScreen() {
                   e.preventDefault();
                   togglePasswordVisibility();
                 }}
-                aria-pressed={showPassword}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
+                className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-[#03793d]'
               >
                 {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
               </button>
             </div>
             {errors.password && (
-              <div className='text-red-500'>{errors.password.message}</div>
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.password.message}
+              </p>
             )}
           </div>
-          {/* Confirm password */}
-          <div className='md:mb-4'>
+
+          {/* Confirm Password */}
+          <div>
             <label
-              className='block md:text-lg text-sm font-bold'
               htmlFor='confirmPassword'
+              className='block text-sm font-semibold text-gray-700 mb-2'
             >
               Confirm Password*
             </label>
             <div className='relative'>
               <input
-                autoComplete='new-password'
-                type={showPassword ? "text" : "password"}
-                className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                 id='confirmPassword'
-                placeholder='Confirm Password'
+                type={showPassword ? "text" : "password"}
+                placeholder='••••••••'
                 {...register("confirmPassword", {
-                  required: "Please enter confirm password",
+                  required: "Please confirm your password",
                   validate: (value) =>
                     value === getValues("password") || "Passwords do not match",
-                  minLength: {
-                    value: 8,
-                    message: "Confirm password must be at least 8 characters",
-                  },
                 })}
-                aria-invalid={!!errors.confirmPassword}
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
               />
               <button
                 type='button'
@@ -375,60 +367,54 @@ export default function RegisterScreen() {
                   e.preventDefault();
                   togglePasswordVisibility();
                 }}
-                aria-pressed={showPassword}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
+                className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-[#03793d]'
               >
                 {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
               </button>
             </div>
             {errors.confirmPassword && (
-              <div className='text-red-500'>
+              <p className='text-red-500 text-xs mt-1'>
                 {errors.confirmPassword.message}
-              </div>
+              </p>
             )}
           </div>
         </div>
 
         {/* Terms */}
-        <div className='mb-4'>
-          <input
-            type='checkbox'
-            className='border-gray-300 rounded-sm'
-            id='terms'
-            required
-            aria-required='true'
-            name='terms'
-          />
-          <label
-            className='mb-4 md:text-lg text-sm text-gray-700 ml-2'
-            htmlFor='terms'
-          >
-            {" "}
-            I understand that Stat Surgical Supply only sells to hospitals,
-            surgery centers, physician offices, and companies in the medical
-            device industry.{" "}
-            <span className='font-bold'>We do not sell to individuals.</span>
+        <div className='mt-6 mb-6'>
+          <label className='flex items-start text-sm text-gray-700'>
+            <input
+              type='checkbox'
+              id='terms'
+              required
+              className='mt-1 mr-2 border-gray-300 rounded focus:ring-[#03793d]'
+            />
+            <span>
+              I understand that{" "}
+              <span className='font-semibold'>Stat Surgical Supply</span> only
+              sells to hospitals, surgery centers, physician offices, and
+              companies in the medical device industry.{" "}
+              <span className='font-bold'>We do not sell to individuals.</span>
+            </span>
           </label>
         </div>
 
         {/* Actions */}
-        <div className='mb-4'>
-          <button
-            className='primary-button'
-            type='submit'
-            disabled={submitting}
-          >
-            {submitting ? "Registering..." : "Register"}
-          </button>
-        </div>
-        <div className='mb-4'>
-          Already have an account?&nbsp;
+        <button
+          type='submit'
+          disabled={submitting}
+          className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors'
+        >
+          {submitting ? "Registering..." : "Register"}
+        </button>
+
+        <div className='text-center text-sm text-gray-600 mt-6'>
+          Already have an account?{" "}
           <Link
             href='/Login'
-            className='font-bold underline active:text-[#0e355e]'
+            className='text-[#03793d] font-semibold hover:underline'
           >
-            Login
+            Log in
           </Link>
         </div>
       </form>

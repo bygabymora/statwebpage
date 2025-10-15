@@ -78,35 +78,41 @@ export default function Login() {
 
   return (
     <Layout title='Login'>
-      <form className='mx-2 pr-5' onSubmit={handleSubmit(submitHandler)}>
-        <h1 className='mb-1 text-xl font-bold'>Login</h1>
+      <form
+        onSubmit={handleSubmit(submitHandler)}
+        className='max-w-md mx-auto -mt-3 bg-white shadow-lg rounded-2xl p-8 border border-gray-100 my-5'
+      >
+        <h1 className='text-2xl font-bold text-[#0e355e] mb-6 text-center'>
+          Welcome Back
+        </h1>
+        <p className='text-gray-500 text-center mb-8 text-sm'>
+          Sign in to continue to your account
+        </p>
 
         {/* Email */}
-        <div className='mb-4'>
+        <div className='mb-6'>
           <label
             htmlFor='email'
-            className='block mb-2 text-sm font-bold text-gray-700'
+            className='block mb-2 text-sm font-semibold text-gray-700'
           >
-            Email
+            Email Address
           </label>
           <input
             id='email'
             type='email'
             autoComplete='off'
-            placeholder='Email'
-            className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline lowercase'
+            placeholder='your@email.com'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             {...register("email", {
               required: "Please enter email",
               pattern: {
                 value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
                 message: "Invalid email",
               },
-              // Ensure form state always stores lowercase + trimmed
               setValueAs: (v) =>
                 typeof v === "string" ? v.trim().toLowerCase() : v,
             })}
             onBlur={(e) => {
-              // Ensure input text itself gets normalized visually as well
               const next = (e.target.value || "").trim().toLowerCase();
               setValue("email", next, {
                 shouldValidate: true,
@@ -115,15 +121,15 @@ export default function Login() {
             }}
           />
           {errors.email && (
-            <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>
+            <p className='text-red-500 text-xs mt-1'>{errors.email.message}</p>
           )}
         </div>
 
         {/* Password */}
-        <div className='mb-4'>
+        <div className='mb-6'>
           <label
             htmlFor='password'
-            className='block mb-2 text-sm font-bold text-gray-700'
+            className='block mb-2 text-sm font-semibold text-gray-700'
           >
             Password
           </label>
@@ -131,7 +137,7 @@ export default function Login() {
             <input
               id='password'
               type={showPassword ? "text" : "password"}
-              placeholder='Password'
+              placeholder='••••••••'
               autoComplete='off'
               {...register("password", {
                 required: "Please enter a password",
@@ -145,7 +151,7 @@ export default function Login() {
                     "Must include uppercase, lowercase, number & special char",
                 },
               })}
-              className='w-full px-3 py-2 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             <button
               type='button'
@@ -153,42 +159,47 @@ export default function Login() {
                 e.preventDefault();
                 togglePasswordVisibility();
               }}
-              className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
+              className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-[#03793d]'
             >
               {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
             </button>
           </div>
           {errors.password && (
-            <p className='text-red-500 text-sm mt-1'>
+            <p className='text-red-500 text-xs mt-1'>
               {errors.password.message}
             </p>
           )}
         </div>
 
         {/* Submit */}
-        <div className='mb-4'>
-          <button className='primary-button w-full' type='submit'>
-            Login
+        <div className='mb-6'>
+          <button
+            className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors'
+            type='submit'
+          >
+            Log In
           </button>
         </div>
-        <GoogleLoginButton callbackUrl='/' />
 
-        {/* Register Link */}
-        <div className='mb-4'>
-          Don&apos;t have an account?{" "}
-          <Link
-            href='/Register'
-            className='font-bold underline active:text-[#0e355e]'
-          >
-            Register
-          </Link>
+        {/* Google Login */}
+        <div className='mb-6'>
+          <GoogleLoginButton callbackUrl='/' />
         </div>
 
-        {/* Forgot Password Link */}
-        <div className='mb-4'>
+        {/* Register & Forgot */}
+        <div className='flex flex-col sm:flex-row justify-between text-sm text-gray-600 gap-2'>
+          <div>
+            Don’t have an account?{" "}
+            <Link
+              href='/Register'
+              className='font-semibold text-[#03793d] hover:underline'
+            >
+              Register
+            </Link>
+          </div>
           <Link
             href={`/recoverAccess?email=${encodeURIComponent(emailValue)}`}
-            className='font-bold underline active:text-[#0e355e]'
+            className='font-semibold text-[#03793d] hover:underline'
           >
             Forgot Password?
           </Link>
