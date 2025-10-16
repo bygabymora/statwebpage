@@ -26,7 +26,7 @@ export default function ProfileScreen() {
     formState: { errors },
   } = useForm();
 
-  // Prellenar SOLO cuando haya session.user
+  // Prefill ONLY when there is session.user
   useEffect(() => {
     if (!session?.user) return;
     setValue("lastName", session.user.lastName || "");
@@ -54,7 +54,7 @@ export default function ProfileScreen() {
         password,
       });
 
-      // Reautenticar para refrescar la sesión
+      // Reauthenticate to refresh the session
       const result = await signIn("credentials", {
         redirect: false,
         email,
@@ -76,7 +76,7 @@ export default function ProfileScreen() {
     }
   };
 
-  // Render de carga simple
+  // Simple loading render
   if (isLoading) {
     return (
       <Layout title='Profile'>
@@ -112,11 +112,11 @@ export default function ProfileScreen() {
     user?.email ||
     "Your Profile";
   const localeBadge = user?.locale ? user.locale : null;
-  const avatar = user?.picture || "/img/default-avatar.png"; // coloca un placeholder en public/img si quieres
+  const avatar = user?.picture || "/img/default-avatar.png"; // put a placeholder in public/img if you want
 
   return (
     <Layout title='Profile'>
-      {/* Header con Avatar + Nombre + Email + Locale */}
+      {/* Header with Avatar + Name + Email + Location */}
       <section className='max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md mb-6'>
         <div className='flex items-center gap-4'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -138,7 +138,7 @@ export default function ProfileScreen() {
         </div>
       </section>
 
-      {/* Info de la cuenta */}
+      {/* Account info */}
       <section className='profile-info max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
         <h2 className='text-xl font-semibold text-[#0e355e] text-center mb-6'>
           Profile Information
@@ -182,8 +182,6 @@ export default function ProfileScreen() {
           )}
         </div>
       </section>
-
-      {/* Formulario de actualización */}
       {showModifyForm ? (
         <div className='mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9'>
           <form onSubmit={handleSubmit(submitHandler)}>
