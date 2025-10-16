@@ -35,25 +35,25 @@ export default function Shipping({
           },
           companyName: order.shippingAddress?.companyName
             ? order.shippingAddress?.companyName
-            : customerData.companyName,
+            : customerData?.companyName,
           phone: order.shippingAddress?.phone
             ? order.shippingAddress?.phone
-            : customerData.phone,
+            : customerData?.phone,
           address: order.shippingAddress?.address
             ? order.shippingAddress?.address
-            : customerData.location?.address,
+            : customerData?.location?.address,
           state: order.shippingAddress?.state
             ? order.shippingAddress?.state
-            : customerData.location?.state,
+            : customerData?.location?.state,
           city: order.shippingAddress?.city
             ? order.shippingAddress?.city
-            : customerData.location?.city,
+            : customerData?.location?.city,
           postalCode: order.shippingAddress?.postalCode
             ? order.shippingAddress?.postalCode
-            : customerData.location?.postalCode,
+            : customerData?.location?.postalCode,
           suiteNumber: order.shippingAddress?.suiteNumber
             ? order.shippingAddress?.suiteNumber
-            : customerData.location?.suiteNumber,
+            : customerData?.location?.suiteNumber,
           notes: order.shippingAddress?.notes
             ? order.shippingAddress?.notes
             : "",
@@ -68,59 +68,59 @@ export default function Shipping({
               : userData.lastName,
             email: order.billingAddress?.contactInfo?.email
               ? order.billingAddress?.contactInfo?.email
-              : customerData.email
-              ? customerData.email
-              : userData.email,
+              : customerData?.email
+              ? customerData?.email
+              : userData?.email,
           },
           companyName: order.billingAddress?.companyName
             ? order.billingAddress?.companyName
-            : customerData.companyName,
+            : customerData?.companyName,
           phone: order.billingAddress?.phone
             ? order.billingAddress?.phone
-            : customerData.companyName,
+            : customerData?.companyName,
           address: order.billingAddress?.address
             ? order.billingAddress?.address
-            : customerData.billAddr?.address,
-          state: customerData.billAddr?.state,
+            : customerData?.billAddr?.address,
+          state: customerData?.billAddr?.state,
           city: order.billingAddress?.city
             ? order.billingAddress?.city
-            : customerData.billAddr?.city,
+            : customerData?.billAddr?.city,
           postalCode: order.billingAddress?.postalCode
             ? order.billingAddress?.postalCode
-            : customerData.billAddr?.postalCode,
+            : customerData?.billAddr?.postalCode,
         },
         customer: {
           ...customerData,
         },
         defaultTerm: order.defaultTerm
           ? order.defaultTerm
-          : customerData.defaultTerm || "Net. 30",
+          : customerData?.defaultTerm || "Net. 30",
 
         shippingPreferences: {
           paymentMethod: order.shippingPreferences?.paymentMethod
             ? order.shippingPreferences?.paymentMethod
-            : customerData.fedexAccountNumber || customerData.upsAccountNumber
+            : customerData?.fedexAccountNumber || customerData?.upsAccountNumber
             ? "Use My Account"
             : "Bill Me",
           carrier: order.shippingPreferences?.carrier
             ? order.shippingPreferences?.carrier
-            : customerData.fedexAccountNumber
+            : customerData?.fedexAccountNumber
             ? "FedEx"
-            : customerData.upsAccountNumber
+            : customerData?.upsAccountNumber
             ? "UPS"
             : "FedEx",
           account: order.shippingPreferences?.account
             ? order.shippingPreferences?.account
-            : customerData.fedexAccountNumber
-            ? customerData.fedexAccountNumber
-            : customerData.upsAccountNumber
-            ? customerData.upsAccountNumber
+            : customerData?.fedexAccountNumber
+            ? customerData?.fedexAccountNumber
+            : customerData?.upsAccountNumber
+            ? customerData?.upsAccountNumber
             : "",
           shippingMethod: order.shippingPreferences?.shippingMethod
             ? order.shippingPreferences?.shippingMethod
-            : customerData.fedexAccountNumber
+            : customerData?.fedexAccountNumber
             ? "FedEx Ground"
-            : customerData.upsAccountNumber
+            : customerData?.upsAccountNumber
             ? "UPS Ground"
             : "FedEx Ground",
         },
