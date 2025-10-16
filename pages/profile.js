@@ -117,21 +117,23 @@ export default function ProfileScreen() {
   return (
     <Layout title='Profile'>
       {/* Header with Avatar + Name + Email + Location */}
-      <section className='max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md mb-6'>
-        <div className='flex items-center gap-4'>
+      <section className='max-w-screen-md mx-auto bg-white p-8 rounded-3xl shadow-lg mb-8 transition-all hover:shadow-xl'>
+        <div className='flex items-center gap-6'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={avatar}
             alt={fullName}
             referrerPolicy='no-referrer'
-            className='h-16 w-16 rounded-full border object-cover'
+            className='h-20 w-20 rounded-full border-4 border-[#0e355e]/10 object-cover shadow-sm'
           />
           <div className='flex-1'>
-            <h1 className='text-2xl font-bold text-[#0e355e]'>{fullName}</h1>
-            <p className='text-sm text-gray-600'>{user?.email}</p>
+            <h1 className='text-2xl font-semibold text-[#0e355e] tracking-tight'>
+              {fullName}
+            </h1>
+            <p className='text-sm text-gray-500'>{user?.email}</p>
             {localeBadge && (
-              <span className='mt-2 inline-block rounded-full border px-2 py-0.5 text-xs text-gray-600'>
-                Locale: {localeBadge}
+              <span className='mt-2 inline-block bg-[#f4f6f8] border border-gray-200 px-3 py-1 rounded-full text-xs text-gray-600'>
+                🌍 Locale: {localeBadge}
               </span>
             )}
           </div>
@@ -139,39 +141,33 @@ export default function ProfileScreen() {
       </section>
 
       {/* Account info */}
-      <section className='profile-info max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
-        <h2 className='text-xl font-semibold text-[#0e355e] text-center mb-6'>
+      <section className='max-w-screen-md mx-auto bg-white p-8 rounded-3xl shadow-lg'>
+        <h2 className='text-2xl font-semibold text-[#0e355e] text-center mb-8'>
           Profile Information
         </h2>
 
-        <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
-          <div>
-            <p className='text-sm font-semibold text-gray-500'>First Name</p>
-            <p className='text-base'>{user?.firstName || "-"}</p>
-          </div>
-          <div>
-            <p className='text-sm font-semibold text-gray-500'>Last Name</p>
-            <p className='text-base'>{user?.lastName || "-"}</p>
-          </div>
-          <div>
-            <p className='text-sm font-semibold text-gray-500'>Email</p>
-            <p className='text-base break-all'>{user?.email || "-"}</p>
-          </div>
-          <div>
-            <p className='text-sm font-semibold text-gray-500'>Company Name</p>
-            <p className='text-base'>{user?.companyName || "-"}</p>
-          </div>
-          <div>
-            <p className='text-sm font-semibold text-gray-500'>Company EIN</p>
-            <p className='text-base'>{user?.companyEinCode || "-"}</p>
-          </div>
+        <div className='grid md:grid-cols-2 gap-8 text-[#414b53]'>
+          {[
+            ["First Name", user?.firstName],
+            ["Last Name", user?.lastName],
+            ["Email", user?.email],
+            ["Company Name", user?.companyName],
+            ["Company EIN", user?.companyEinCode],
+          ].map(([label, value]) => (
+            <div key={label}>
+              <p className='text-sm font-medium text-gray-500 mb-1'>{label}</p>
+              <p className='text-base font-semibold text-gray-800 bg-gray-50 rounded-xl px-4 py-2 border border-gray-100'>
+                {value || "-"}
+              </p>
+            </div>
+          ))}
         </div>
 
-        <div className='mt-6 text-center'>
+        <div className='mt-8 text-center'>
           {isActive ? (
             <Link
               href='/order-history'
-              className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-4 py-2 rounded-full hover:bg-[#0e355e] hover:text-white transition'
+              className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-6 py-2.5 rounded-full hover:bg-[#0e355e] hover:text-white transition-all duration-300'
             >
               View Order History
             </Link>
@@ -182,173 +178,101 @@ export default function ProfileScreen() {
           )}
         </div>
       </section>
+
+      {/* Update Form */}
       {showModifyForm ? (
-        <div className='mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9'>
-          <form onSubmit={handleSubmit(submitHandler)}>
-            <div className='text-2xl font-bold text-[#0e355e] text-center mb-6'>
+        <div className='mx-auto max-w-screen-md bg-white p-8 rounded-3xl shadow-lg my-10'>
+          <form onSubmit={handleSubmit(submitHandler)} className='space-y-6'>
+            <h3 className='text-2xl font-semibold text-[#0e355e] text-center mb-8'>
               Update Profile
-            </div>
+            </h3>
 
-            <div className='mb-4'>
-              <label
-                className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='firstName'
-              >
-                First Name *
-              </label>
-              <input
-                autoComplete='off'
-                type='text'
-                id='firstName'
-                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("firstName", {
-                  required: "Please enter first Name",
-                })}
-              />
-              {errors.firstName && (
-                <p className='text-red-500 text-sm'>
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
-            <div className='mb-4'>
-              <label
-                className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='lastName'
-              >
-                Last Name *
-              </label>
-              <input
-                autoComplete='off'
-                type='text'
-                id='lastName'
-                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("lastName", {
-                  required: "Please enter lastName",
-                })}
-              />
-              {errors.lastName && (
-                <p className='text-red-500 text-sm'>
-                  {errors.lastName.message}
-                </p>
-              )}
-            </div>
-            <div className='mb-4'>
-              <label
-                className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='email'
-              >
-                Email *
-              </label>
-              <input
-                autoComplete='off'
-                type='email'
-                id='email'
-                className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("email", {
-                  required: "Please enter email",
-                  pattern: {
-                    value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
-                    message: "Please enter valid email",
-                  },
-                })}
-              />
-              {errors.email && (
-                <p className='text-red-500 text-sm'>{errors.email.message}</p>
-              )}
-            </div>
-            <div className='mb-4'>
-              <label
-                className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='password'
-              >
-                New Password *
-              </label>
-              <div className='relative'>
+            {[
+              ["firstName", "First Name", "text"],
+              ["lastName", "Last Name", "text"],
+              ["email", "Email", "email"],
+            ].map(([id, label, type]) => (
+              <div key={id}>
+                <label
+                  className='block mb-1 text-sm font-semibold text-gray-600'
+                  htmlFor={id}
+                >
+                  {label} *
+                </label>
                 <input
                   autoComplete='off'
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='password'
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "Please enter a password",
-                    minLength: {
-                      value: 8,
-                      message: "Password must have at least 8 characters",
-                    },
-                    validate: (value) =>
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(
-                        value
-                      ) ||
-                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-                  })}
-                  placeholder='Password'
-                />
-                <button
-                  type='button'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    togglePasswordVisibility();
-                  }}
-                  className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
-                >
-                  {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className='text-red-500 text-sm'>
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <div className='mb-6'>
-              <label
-                className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='confirmPassword'
-              >
-                Confirm New Password *
-              </label>
-              <div className='relative'>
-                <input
-                  autoComplete='off'
-                  type={showPassword ? "text" : "password"}
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='confirmPassword'
-                  placeholder='Confirm Password'
-                  {...register("confirmPassword", {
-                    required: "Please enter confirm password",
-                    validate: (value) =>
-                      value === getValues("password") ||
-                      "Passwords do not match",
-                    minLength: {
-                      value: 8,
-                      message: "Confirm password must be at least 8 characters",
-                    },
+                  type={type}
+                  id={id}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#144e8b] shadow-sm'
+                  {...register(id, {
+                    required: `Please enter ${label.toLowerCase()}`,
                   })}
                 />
-                <button
-                  type='button'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    togglePasswordVisibility();
-                  }}
-                  className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
-                >
-                  {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
-                </button>
+                {errors[id] && (
+                  <p className='text-red-500 text-sm mt-1'>
+                    {errors[id].message}
+                  </p>
+                )}
               </div>
-              {errors.confirmPassword && (
-                <p className='text-red-500 text-sm'>
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
+            ))}
 
-            <div className='text-center'>
+            {/* Password fields */}
+            {["password", "confirmPassword"].map((id, i) => (
+              <div key={id}>
+                <label
+                  className='block mb-1 text-sm font-semibold text-gray-600'
+                  htmlFor={id}
+                >
+                  {i === 0 ? "New Password *" : "Confirm New Password *"}
+                </label>
+                <div className='relative'>
+                  <input
+                    autoComplete='off'
+                    id={id}
+                    type={showPassword ? "text" : "password"}
+                    placeholder={i === 0 ? "Password" : "Confirm Password"}
+                    className='w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#144e8b] shadow-sm'
+                    {...register(id, {
+                      required: `Please enter ${
+                        i === 0 ? "a password" : "confirm password"
+                      }`,
+                      validate: (value) =>
+                        i === 0
+                          ? /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(
+                              value
+                            ) ||
+                            "Password must contain uppercase, lowercase, number and symbol."
+                          : value === getValues("password") ||
+                            "Passwords do not match",
+                      minLength: {
+                        value: 8,
+                        message: "Must be at least 8 characters",
+                      },
+                    })}
+                  />
+                  <button
+                    type='button'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      togglePasswordVisibility();
+                    }}
+                    className='absolute inset-y-0 right-3 flex items-center text-gray-500'
+                  >
+                    {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                  </button>
+                </div>
+                {errors[id] && (
+                  <p className='text-red-500 text-sm mt-1'>
+                    {errors[id].message}
+                  </p>
+                )}
+              </div>
+            ))}
+
+            <div className='text-center pt-2'>
               <button
                 type='submit'
-                className='bg-[#0e355e] text-white px-6 py-2 rounded-full hover:bg-[#22517e] transition'
+                className='bg-[#0e355e] text-white px-8 py-2.5 rounded-full hover:bg-[#22517e] transition-all duration-300 shadow-sm hover:shadow-md'
               >
                 Update Profile
               </button>
@@ -356,10 +280,10 @@ export default function ProfileScreen() {
           </form>
         </div>
       ) : (
-        <div className='text-center mt-6 my-9'>
+        <div className='text-center my-10'>
           <button
             onClick={toggleModifyForm}
-            className='bg-[#0e355e] text-white px-6 py-2 rounded-full hover:bg-[#788b9b] transition'
+            className='bg-[#0e355e] text-white px-8 py-2.5 rounded-full hover:bg-[#788b9b] transition-all duration-300 shadow-sm hover:shadow-md'
           >
             Update Profile or Change Password
           </button>
