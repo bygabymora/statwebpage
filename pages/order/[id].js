@@ -639,22 +639,22 @@ function OrderScreen() {
                 <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                   <div>
                     <span className='font-semibold'>Speed and Carrier: </span>
-                    {shippingPreferences.shippingMethod} -{" "}
-                    {shippingPreferences.carrier}
+                    {shippingPreferences?.shippingMethod} -{" "}
+                    {shippingPreferences?.carrier}
                   </div>
-                  {shippingPreferences.account && (
+                  {shippingPreferences?.account && (
                     <div>
                       <span className='font-semibold'> Account: </span>{" "}
-                      {shippingPreferences.account}
+                      {shippingPreferences?.account}
                     </div>
                   )}
-                  {shippingPreferences.paymentMethod && (
+                  {shippingPreferences?.paymentMethod && (
                     <div>
                       <span className='font-semibold'>Payment Method: </span>
-                      {shippingPreferences.paymentMethod}
+                      {shippingPreferences?.paymentMethod}
                     </div>
                   )}
-                  <div>{shippingAddress.notes}</div>
+                  <div>{shippingAddress?.notes}</div>
                 </div>
               </div>
               <div className='flex flex-col md:flex-row gap-2 my-4'>
@@ -666,28 +666,28 @@ function OrderScreen() {
                   <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                     <div className='flex flex-col md:flex-row md:justify-between bg-white p-2 rounded-md gap-4 '>
                       <div className='flex flex-1 flex-col'>
-                        {shippingAddress.companyName && (
+                        {shippingAddress?.companyName && (
                           <h3 className='font-bold'>
-                            {shippingAddress.companyName},
+                            {shippingAddress?.companyName},
                           </h3>
                         )}
-                        {formatPhoneNumber(shippingAddress.phone)} <br />
-                        {shippingAddress.address}
-                        {shippingAddress.suiteNumber
-                          ? "," + shippingAddress.suiteNumber
+                        {formatPhoneNumber(shippingAddress?.phone)} <br />
+                        {shippingAddress?.address}
+                        {shippingAddress?.suiteNumber
+                          ? "," + shippingAddress?.suiteNumber
                           : ""}{" "}
-                        <br /> {shippingAddress.state}, {shippingAddress.city},{" "}
-                        {shippingAddress.postalCode}
+                        <br /> {shippingAddress?.state}, {shippingAddress?.city}
+                        , {shippingAddress?.postalCode}
                       </div>
                       <div className='flex flex-1 flex-col'>
                         <h3 className='font-bold'> Attn to: </h3>
-                        {shippingAddress.contactInfo?.firstName}{" "}
-                        {shippingAddress.contactInfo?.lastName}
+                        {shippingAddress?.contactInfo?.firstName}{" "}
+                        {shippingAddress?.contactInfo?.lastName}
                         <br />
-                        {shippingAddress.contactInfo?.email}
-                        {shippingAddress.contactInfo?.secondEmail && (
+                        {shippingAddress?.contactInfo?.email}
+                        {shippingAddress?.contactInfo?.secondEmail && (
                           <span>
-                            , {shippingAddress.contactInfo?.secondEmail}
+                            , {shippingAddress?.contactInfo?.secondEmail}
                           </span>
                         )}
                       </div>
@@ -701,28 +701,28 @@ function OrderScreen() {
                   <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                     <div className='flex flex-col md:flex-row md:justify-between bg-white p-2 rounded-md gap-4 '>
                       <div className='flex flex-1 flex-col'>
-                        {billingAddress.companyName && (
+                        {billingAddress?.companyName && (
                           <h3 className='font-bold'>
-                            {billingAddress.companyName},
+                            {billingAddress?.companyName},
                           </h3>
                         )}
-                        {formatPhoneNumber(billingAddress.phone)} <br />
-                        {billingAddress.address}
-                        {billingAddress.suiteNumber
-                          ? "," + billingAddress.suiteNumber
+                        {formatPhoneNumber(billingAddress?.phone)} <br />
+                        {billingAddress?.address}
+                        {billingAddress?.suiteNumber
+                          ? "," + billingAddress?.suiteNumber
                           : ""}{" "}
-                        <br /> {billingAddress.state}, {billingAddress.city},{" "}
-                        {billingAddress.postalCode}
+                        <br /> {billingAddress?.state}, {billingAddress?.city},{" "}
+                        {billingAddress?.postalCode}
                       </div>
                       <div className='flex flex-1 flex-col'>
                         <h3 className='font-bold'> AP Contact: </h3>
-                        {billingAddress.contactInfo?.firstName}{" "}
-                        {billingAddress.contactInfo?.lastName}
+                        {billingAddress?.contactInfo?.firstName}{" "}
+                        {billingAddress?.contactInfo?.lastName}
                         <br />
-                        {billingAddress.contactInfo?.email}
-                        {billingAddress.contactInfo?.secondEmail && (
+                        {billingAddress?.contactInfo?.email}
+                        {billingAddress?.contactInfo?.secondEmail && (
                           <span>
-                            , {billingAddress.contactInfo?.secondEmail}
+                            , {billingAddress?.contactInfo?.secondEmail}
                           </span>
                         )}
                       </div>
