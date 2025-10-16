@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -10,10 +10,13 @@ import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 
 export default function ProfileScreen() {
   const { data: session, status } = useSession();
-  const active =
-    session?.user?.active &&
-    session?.user?.approved &&
-    status === "authenticated";
+
+  // status: 'loading' | 'authenticated' | 'unauthenticated'
+  const isLoading = status === "loading";
+  const isAuthed = status === "authenticated" && !!session?.user;
+  const isActive =
+    !!session?.user?.active && !!session?.user?.approved && isAuthed;
+
   const {
     handleSubmit,
     register,
@@ -23,23 +26,24 @@ export default function ProfileScreen() {
     formState: { errors },
   } = useForm();
 
+  // Prellenar SOLO cuando haya session.user
   useEffect(() => {
-    console.log("Session data:", session);
-    setValue("lastName", session.user.lastName);
-    setValue("firstName", session.user.firstName);
-    setValue("email", session.user.email);
-    setValue("companyName", session.user.companyName);
-    setValue("companyEinCode", session.user.companyEinCode);
-  }, [session.user, setValue]);
+    if (!session?.user) return;
+    setValue("lastName", session.user.lastName || "");
+    setValue("firstName", session.user.firstName || "");
+    setValue("email", session.user.email || "");
+    setValue("companyName", session.user.companyName || "");
+    setValue("companyEinCode", session.user.companyEinCode || "");
+  }, [session?.user, setValue]);
 
   const [showModifyForm, setShowModifyForm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-  const toggleModifyForm = () => {
-    setShowModifyForm((prevShowModifyForm) => !prevShowModifyForm);
-  };
+
+  const togglePasswordVisibility = useCallback(
+    () => setShowPassword((p) => !p),
+    []
+  );
+  const toggleModifyForm = useCallback(() => setShowModifyForm((p) => !p), []);
 
   const submitHandler = async ({ firstName, lastName, email, password }) => {
     try {
@@ -49,21 +53,21 @@ export default function ProfileScreen() {
         email,
         password,
       });
+
+      // Reautenticar para refrescar la sesión
       const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
-      if (!result.error) {
-        // Toggle the form only if there's no error
+
+      if (!result?.error) {
         toggleModifyForm();
         toast.success("Profile updated successfully");
-        // Optional: Reset the form with new values
         reset({ firstName, lastName, email, password: "" });
       } else {
         toast.error(result.error);
       }
-      setShowModifyForm(false);
     } catch (error) {
       toast.error(
         "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
@@ -72,60 +76,125 @@ export default function ProfileScreen() {
     }
   };
 
+  // Render de carga simple
+  if (isLoading) {
+    return (
+      <Layout title='Profile'>
+        <div className='mx-auto max-w-screen-md p-6'>
+          <div className='animate-pulse space-y-4'>
+            <div className='h-8 w-1/3 bg-gray-200 rounded' />
+            <div className='h-24 w-full bg-gray-100 rounded' />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isAuthed) {
+    return (
+      <Layout title='Profile'>
+        <div className='mx-auto max-w-screen-md p-6 text-center'>
+          <p className='mb-4 text-gray-600'>You need to be signed in.</p>
+          <Link
+            href='/Login'
+            className='inline-block rounded-full border border-[#0e355e] px-4 py-2 font-medium text-[#0e355e] hover:bg-[#0e355e] hover:text-white transition'
+          >
+            Go to Login
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
+
+  const user = session.user;
+  const fullName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    user?.email ||
+    "Your Profile";
+  const localeBadge = user?.locale ? user.locale : null;
+  const avatar = user?.picture || "/img/default-avatar.png"; // coloca un placeholder en public/img si quieres
+
   return (
     <Layout title='Profile'>
-      <section className='profile-info mb-10 max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
-        <h1 className='text-2xl font-bold text-[#0e355e] text-center mb-6'>
-          {session.user.firstName} {session.user.lastName} Profile Information
-        </h1>
+      {/* Header con Avatar + Nombre + Email + Locale */}
+      <section className='max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md mb-6'>
+        <div className='flex items-center gap-4'>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={avatar}
+            alt={fullName}
+            referrerPolicy='no-referrer'
+            className='h-16 w-16 rounded-full border object-cover'
+          />
+          <div className='flex-1'>
+            <h1 className='text-2xl font-bold text-[#0e355e]'>{fullName}</h1>
+            <p className='text-sm text-gray-600'>{user?.email}</p>
+            {localeBadge && (
+              <span className='mt-2 inline-block rounded-full border px-2 py-0.5 text-xs text-gray-600'>
+                Locale: {localeBadge}
+              </span>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Info de la cuenta */}
+      <section className='profile-info max-w-screen-md mx-auto bg-white p-6 rounded-2xl shadow-md'>
+        <h2 className='text-xl font-semibold text-[#0e355e] text-center mb-6'>
+          Profile Information
+        </h2>
+
         <div className='grid md:grid-cols-2 gap-6 text-[#414b53]'>
           <div>
             <p className='text-sm font-semibold text-gray-500'>First Name</p>
-            <p className='text-base'>{session?.user.firstName}</p>
+            <p className='text-base'>{user?.firstName || "-"}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Last Name</p>
-            <p className='text-base'>{session?.user.lastName}</p>
+            <p className='text-base'>{user?.lastName || "-"}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Email</p>
-            <p className='text-base'>{session.user.email}</p>
+            <p className='text-base break-all'>{user?.email || "-"}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Company Name</p>
-            <p className='text-base'>{session.user.companyName}</p>
+            <p className='text-base'>{user?.companyName || "-"}</p>
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-500'>Company EIN</p>
-            <p className='text-base'>{session.user.companyEinCode}</p>
+            <p className='text-base'>{user?.companyEinCode || "-"}</p>
           </div>
         </div>
+
         <div className='mt-6 text-center'>
-          {active === "loading" ? (
-            <p className='text-gray-400 italic'>Loading...</p>
+          {isActive ? (
+            <Link
+              href='/order-history'
+              className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-4 py-2 rounded-full hover:bg-[#0e355e] hover:text-white transition'
+            >
+              View Order History
+            </Link>
           ) : (
-            active && (
-              <Link
-                href='/order-history'
-                className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-4 py-2 rounded-full hover:bg-[#0e355e] hover:text-white transition'
-              >
-                View Order History
-              </Link>
-            )
+            <p className='text-gray-500 text-sm italic'>
+              Your account is pending approval or inactive.
+            </p>
           )}
         </div>
       </section>
 
-      {showModifyForm && (
+      {/* Formulario de actualización */}
+      {showModifyForm ? (
         <div className='mx-auto max-w-screen-md bg-white p-6 rounded-2xl shadow-md my-9'>
           <form onSubmit={handleSubmit(submitHandler)}>
             <div className='text-2xl font-bold text-[#0e355e] text-center mb-6'>
               Update Profile
             </div>
+
             <div className='mb-4'>
               <label
                 className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='name'
+                htmlFor='firstName'
               >
                 First Name *
               </label>
@@ -147,7 +216,7 @@ export default function ProfileScreen() {
             <div className='mb-4'>
               <label
                 className='block mb-1 text-sm font-semibold text-gray-600'
-                htmlFor='name'
+                htmlFor='lastName'
               >
                 Last Name *
               </label>
@@ -156,7 +225,9 @@ export default function ProfileScreen() {
                 type='text'
                 id='lastName'
                 className='w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
-                {...register("lastName", { required: "Please enter lastName" })}
+                {...register("lastName", {
+                  required: "Please enter lastName",
+                })}
               />
               {errors.lastName && (
                 <p className='text-red-500 text-sm'>
@@ -199,7 +270,6 @@ export default function ProfileScreen() {
                 <input
                   autoComplete='off'
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  autoFocus
                   id='password'
                   type={showPassword ? "text" : "password"}
                   {...register("password", {
@@ -209,17 +279,18 @@ export default function ProfileScreen() {
                       message: "Password must have at least 8 characters",
                     },
                     validate: (value) =>
-                      /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]+$/.test(
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(
                         value
                       ) ||
                       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
                   })}
                   placeholder='Password'
-                />{" "}
+                />
                 <button
                   type='button'
                   onClick={(e) => {
-                    e.preventDefault(), togglePasswordVisibility();
+                    e.preventDefault();
+                    togglePasswordVisibility();
                   }}
                   className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
                 >
@@ -233,7 +304,7 @@ export default function ProfileScreen() {
               )}
             </div>
 
-            <div className='mb-4'>
+            <div className='mb-6'>
               <label
                 className='block mb-1 text-sm font-semibold text-gray-600'
                 htmlFor='confirmPassword'
@@ -249,7 +320,9 @@ export default function ProfileScreen() {
                   placeholder='Confirm Password'
                   {...register("confirmPassword", {
                     required: "Please enter confirm password",
-                    validate: (value) => value === getValues("password"),
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "Passwords do not match",
                     minLength: {
                       value: 8,
                       message: "Confirm password must be at least 8 characters",
@@ -259,7 +332,8 @@ export default function ProfileScreen() {
                 <button
                   type='button'
                   onClick={(e) => {
-                    e.preventDefault(), togglePasswordVisibility();
+                    e.preventDefault();
+                    togglePasswordVisibility();
                   }}
                   className='absolute inset-y-0 right-0 px-3 py-2 text-gray-700'
                 >
@@ -270,9 +344,6 @@ export default function ProfileScreen() {
                 <p className='text-red-500 text-sm'>
                   {errors.confirmPassword.message}
                 </p>
-              )}
-              {errors.confirmPassword?.type === "validate" && (
-                <p className='text-red-500 text-sm'>Passwords do not match</p>
               )}
             </div>
 
@@ -286,9 +357,7 @@ export default function ProfileScreen() {
             </div>
           </form>
         </div>
-      )}
-
-      {!showModifyForm && (
+      ) : (
         <div className='text-center mt-6 my-9'>
           <button
             onClick={toggleModifyForm}

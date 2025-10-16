@@ -14,6 +14,8 @@ const wpUserSchema = new mongoose.Schema(
     restricted: { type: Boolean, required: true, default: false },
     customerId: { type: String, required: false },
     approvalEmailSent: { type: Boolean, required: false, default: false },
+    avatarUrl: { type: String, required: false },
+    preferredLocale: { type: String, required: false },
     resetCode: {
       code: { type: String, required: false },
       expireDate: { type: Date, required: false },
