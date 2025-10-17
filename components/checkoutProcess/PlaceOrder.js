@@ -205,12 +205,12 @@ export default function PlaceOrder({
       title: "Are you sure?",
       body:
         order?.paymentMethod === "Stripe" &&
-        order.shippingPreferences.paymentMethod === "Bill Me"
+        order?.shippingPreferences?.paymentMethod === "Bill Me"
           ? `You selected the "Bill Me" option for the Shipping Payment. You are about to place an order. Please confirm that all the information is correct.`
           : "You are about to place an order. Please confirm that all the information is correct.",
       warning:
         order?.paymentMethod === "Stripe"
-          ? order.shippingPreferences.paymentMethod === "Bill Me"
+          ? order?.shippingPreferences?.paymentMethod === "Bill Me"
             ? "⚠ You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment. ⚠"
             : "⚠ After the payment, any change will need to be processed by your Stat Rep. ⚠"
           : "⚠ You will have 2 hours to make any changes, after that time, the order will be processed. ⚠",
@@ -220,28 +220,47 @@ export default function PlaceOrder({
       if (!confirmed) return;
       try {
         startLoading();
-        const orderToPlace = { ...order, status: "Completed" };
+
+        // 1) Place/complete the order
+        const orderToPlace = { ...(order ?? {}), status: "Completed" };
         await axios.post("/api/orders", { order: orderToPlace });
+
+        // 2) Run your shared work
         await baseAction();
-        await axios.patch(`/api/users/${session.user._id}/cart`, {
-          action: "clear",
-        });
-        await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
-          customer,
-        });
 
+        // 3) Clear cart
+        const userId = session?.user?._id;
+        if (userId) {
+          await axios.patch(`/api/users/${userId}/cart`, { action: "clear" });
+        }
+
+        // 4) Update customer addresses ONLY if we have a customerId
+        const customerId = customer?._id ?? user?.customer?._id ?? null; // fallback if you store it on user
+
+        if (customerId) {
+          // Send only what your API expects; customer shape is fine if your handler spreads it
+          await axios.put(`/api/customer/${customerId}/updateAddresses`, {
+            customer,
+          });
+        } else {
+          console.warn(
+            "[placeOrderAction] No customerId (customer._id). Skipping address update."
+          );
+        }
+
+        // 5) Refresh user (cart, etc.)
         const updatedUser = await fetchUserData();
-        setUser((u) => ({ ...u, cart: updatedUser.userData.cart }));
+        setUser((u) => ({ ...u, cart: updatedUser?.userData?.cart ?? [] }));
 
-        // payment-method branch
+        // 6) Payment routing
         if (
-          order.paymentMethod !== "Stripe" ||
-          order.shippingPreferences.paymentMethod === "Bill Me"
+          order?.paymentMethod !== "Stripe" ||
+          order?.shippingPreferences?.paymentMethod === "Bill Me"
         ) {
-          router.push(`/order/${order._id}`);
+          router.push(`/order/${order?._id}`);
           Cookies.remove("orderId");
           setOrder((o) => ({
-            ...o,
+            ...(o ?? {}),
             orderItems: [],
             itemsPrice: 0,
             totalPrice: 0,
@@ -256,17 +275,19 @@ export default function PlaceOrder({
           const {
             data: { id: sessionId },
           } = await axios.post("/api/checkout_sessions", {
-            totalPrice: Number(order.totalPrice),
-            orderId: order._id,
+            totalPrice: Number(order?.totalPrice || 0),
+            orderId: order?._id,
           });
+
           Cookies.remove("orderId");
           setOrder((o) => ({
-            ...o,
+            ...(o ?? {}),
             orderItems: [],
             itemsPrice: 0,
             totalPrice: 0,
           }));
           sendConfirmationEmail();
+
           const result = await stripe.redirectToCheckout({ sessionId });
           if (result.error) {
             showStatusMessage("error", result.error.message);
@@ -276,7 +297,7 @@ export default function PlaceOrder({
         console.error("Error placing order:", err);
         showStatusMessage(
           "error",
-          err.message || "An error occurred while placing the order."
+          err?.message || "An error occurred while placing the order."
         );
         stopLoading();
       }
@@ -295,37 +316,51 @@ export default function PlaceOrder({
   };
 
   const handleInputChange = (type, field, value, secondField) => {
-    if (type === "billing") {
+    if (type !== "billing") return;
+
+    // --- Order.billingAddress (safe) ---
+    setOrder((prev) => {
+      const safePrev = prev ?? {};
+      const prevBilling = safePrev.billingAddress ?? {};
+      const prevContact = prevBilling.contactInfo ?? {};
+
       if (field === "contactInfo") {
-        setOrder((prev) => ({
-          ...prev,
+        return {
+          ...safePrev,
           billingAddress: {
-            ...prev.billingAddress,
+            ...prevBilling,
             contactInfo: {
-              ...prev.billingAddress.contactInfo,
+              ...prevContact,
               [secondField]: value,
             },
           },
-        }));
-      } else {
-        setOrder((prev) => ({
-          ...prev,
-          billingAddress: {
-            ...prev.billingAddress,
-            [field]: value,
-            country: "USA",
-          },
-        }));
+        };
       }
-      setCustomer((prev) => ({
-        ...prev,
-        billAddr: {
-          ...prev.billAddr,
+
+      return {
+        ...safePrev,
+        billingAddress: {
+          ...prevBilling,
           [field]: value,
           country: "USA",
         },
-      }));
-    }
+      };
+    });
+
+    // --- Customer.billAddr (safe) ---
+    setCustomer((prev) => {
+      const safePrev = prev ?? {}; // prev might be null
+      const prevBill = safePrev.billAddr ?? {}; // billAddr might be missing
+
+      return {
+        ...safePrev,
+        billAddr: {
+          ...prevBill,
+          [field]: value,
+          country: "USA",
+        },
+      };
+    });
   };
 
   // inside your PlaceOrder component

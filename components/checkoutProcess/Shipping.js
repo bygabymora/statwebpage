@@ -133,69 +133,85 @@ export default function Shipping({
 
   const submitHandler = async () => {
     try {
-      const response = await axios.get(`api/users/${session.user._id}`);
-      const userData = response.data.wpUser;
-      const customerData = response.data.customer;
-      if (!customerData.location?.address) {
-        const customerToSave = {
-          ...customer,
-          location: {
-            ...customer.location,
-            address: order.shippingAddress?.address,
-            state: order.shippingAddress?.state,
-            city: order.shippingAddress?.city,
-            postalCode: order.shippingAddress?.postalCode,
-            suiteNumber: order.shippingAddress?.suiteNumber,
-          },
-          billAddr: {
-            ...customer.billAddr,
-            address: order.billingAddress?.address,
-            state: order.billingAddress?.state,
-            city: order.billingAddress?.city,
-            postalCode: order.billingAddress?.postalCode,
-          },
-
-          purchaseExecutive: [
-            ...customer.purchaseExecutive.map((executive) => {
-              if (executive.email === user.email) {
-                return {
-                  ...executive,
-                  phone: order.shippingAddress?.phone,
-                };
-              }
-              return executive;
-            }),
-          ],
-        };
-        setCustomer(customerToSave);
-        const updatedCustomer = await axios.put(
-          `/api/customer/${customerData._id}/updateAddresses`,
-          {
-            customer: customerToSave,
-          }
-        );
-
-        setCustomer(updatedCustomer.data.customer);
+      // 0) Basic guard: session must exist
+      const userId = session?.user?._id;
+      if (!userId) {
+        showStatusMessage("error", "Session expired. Please sign in again.");
+        return;
       }
 
-      const orderToSave = {
-        ...order,
-        status: "In Process",
-      };
-      const { data } = await axios.post("/api/orders", {
-        order: orderToSave,
-      });
+      // 1) Fetch user + customer
+      const { data: resp = {} } = await axios.get(`/api/users/${userId}`);
+      const userData = resp?.wpUser ?? null;
+      const customerData = resp?.customer ?? null;
 
-      setOrder(data.order);
       if (!userData) {
         showStatusMessage("error", "User not found, please try to login again");
         return;
       }
 
+      // 2) If we have a customer doc and it has no location.address, update it
+      if (customerData && !customerData?.location?.address) {
+        const customerToSave = {
+          ...(customer || {}),
+          location: {
+            ...(customer?.location || {}),
+            address: order?.shippingAddress?.address || "",
+            state: order?.shippingAddress?.state || "",
+            city: order?.shippingAddress?.city || "",
+            postalCode: order?.shippingAddress?.postalCode || "",
+            suiteNumber: order?.shippingAddress?.suiteNumber || "",
+          },
+          billAddr: {
+            ...(customer?.billAddr || {}),
+            address: order?.billingAddress?.address || "",
+            state: order?.billingAddress?.state || "",
+            city: order?.billingAddress?.city || "",
+            postalCode: order?.billingAddress?.postalCode || "",
+          },
+          purchaseExecutive: [
+            {
+              email: userData?.email || "",
+              phone: order?.shippingAddress?.phone || "",
+            },
+          ],
+        };
+
+        setCustomer(customerToSave);
+
+        // Only attempt the PUT if we truly have an _id to update
+        if (customerData?._id) {
+          const updatedCustomer = await axios.put(
+            `/api/customer/${customerData._id}/updateAddresses`,
+            { customer: customerToSave }
+          );
+          setCustomer(updatedCustomer?.data?.customer || customerToSave);
+        } else {
+          console.warn(
+            "[submitHandler] Missing customer._id; skipping addresses update."
+          );
+        }
+      } else if (!customerData) {
+        // Optional: let the user know we couldn't find a customer record
+        console.warn(
+          "[submitHandler] No customer document returned for this user."
+        );
+      }
+
+      // 3) Create/advance the order
+      const orderToSave = {
+        ...(order || {}),
+        status: "In Process",
+      };
+
+      const { data } = await axios.post("/api/orders", { order: orderToSave });
+      setOrder(data?.order || orderToSave);
+
+      // 4) Advance step
       setActiveStep(2);
     } catch (error) {
-      toast.error("An error occurred while fetching user data.");
       console.error(error);
+      toast.error("An error occurred while fetching user data.");
     }
   };
 
@@ -204,15 +220,10 @@ export default function Shipping({
       setCustomer((prev) => ({
         ...prev,
         purchaseExecutive: [
-          ...prev.purchaseExecutive.map((executive) => {
-            if (executive.email === user.email) {
-              return {
-                ...executive,
-                phone: value,
-              };
-            }
-            return executive;
-          }),
+          {
+            email: user.email,
+            phone: value,
+          },
         ],
       }));
     }
@@ -241,11 +252,7 @@ export default function Shipping({
       }
       setCustomer((prev) => ({
         ...prev,
-        location: {
-          ...prev.location,
-          [field]: value,
-          country: "USA",
-        },
+        location: {},
       }));
     }
   };

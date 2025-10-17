@@ -186,7 +186,7 @@ export default function PaymentMethod({
                   </label>
                 ))}
 
-                {customer.defaultTerm && (
+                {Boolean(customer?.defaultTerm) && (
                   <label
                     htmlFor='PO Number'
                     className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
