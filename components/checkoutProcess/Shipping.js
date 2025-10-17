@@ -425,7 +425,6 @@ export default function Shipping({
                 <div>
                   <label className='block font-medium'>Email*</label>
                   <input
-                    autoComplete='off'
                     className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
                     type='text'
                     onChange={(e) =>
