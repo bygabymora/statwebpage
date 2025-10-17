@@ -100,7 +100,12 @@ function OrderScreen() {
       setOrder(data.order);
       setEstimate(data.estimate);
       setInvoice(data.invoice);
-      setAccountOwner(data.accountOwner);
+      setAccountOwner(
+        data.accountOwner ||
+          data.order?.accountOwner ||
+          data.estimate?.accountOwner ||
+          {}
+      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
       dispatch({ type: "FETCH_FAIL", payload: getError(error) });
@@ -310,10 +315,10 @@ function OrderScreen() {
   useEffect(() => {
     if (processedOnceRef.current) return;
 
-    // necesitas ambos listos
+    // both need to be ready
     if (!orderId || !order?._id) return;
 
-    // si ya está pagada, no intentes procesar
+    // if already paid, do not attempt to process
     if (order?.isPaid) return;
 
     if (typeof window === "undefined" || !window.location?.search) return;
@@ -338,7 +343,7 @@ function OrderScreen() {
           dispatch({ type: "PAY_SUCCESS" });
           toast.success("Order is paid successfully");
 
-          // limpia la URL para que no se vuelva a procesar
+          // clear the URL so it is not processed again
           urlParams.delete("paymentSuccess");
           urlParams.delete("session_id");
           urlParams.delete("payment_intent");
@@ -349,7 +354,7 @@ function OrderScreen() {
             window.location.pathname + (newQuery ? "?" + newQuery : "")
           );
 
-          await fetchOrder(); // refresca datos sin recargar toda la página
+          await fetchOrder(); // refresh order data
         } catch (error) {
           dispatch({ type: "PAY_FAIL", payload: getError(error) });
           toast.error(getError(error));
