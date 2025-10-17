@@ -529,7 +529,9 @@ export default function PlaceOrder({
                               )
                             }
                             value={
-                              order.billingAddress?.contactInfo?.firstName || ""
+                              order?.billingAddress?.contactInfo?.firstName ||
+                              order?.shippingAddress?.firstName ||
+                              ""
                             }
                           />
                         </div>
@@ -551,7 +553,9 @@ export default function PlaceOrder({
                               )
                             }
                             value={
-                              order.billingAddress?.contactInfo?.lastName || ""
+                              order?.billingAddress?.contactInfo?.lastName ||
+                              order?.shippingAddress?.lastName ||
+                              ""
                             }
                           />
                         </div>
@@ -560,7 +564,7 @@ export default function PlaceOrder({
                     <div>
                       <label className='block font-medium'>Company*</label>
                       <input
-                        autoComplete='off'
+                        autoComplete='on'
                         className='w-full contact__form-input'
                         type='text'
                         onChange={(e) =>
@@ -570,7 +574,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.companyName || ""}
+                        value={
+                          order?.billingAddress?.companyName ||
+                          order?.shippingAddress?.companyName ||
+                          ""
+                        }
                         placeholder="Company's Name"
                         autoCapitalize='true'
                       />
@@ -578,7 +586,7 @@ export default function PlaceOrder({
                     <div>
                       <label className='block font-medium'>Phone Number*</label>
                       <input
-                        autoComplete='off'
+                        autoComplete='on'
                         className='w-full contact__form-input'
                         type='text'
                         onChange={(e) => {
@@ -588,7 +596,9 @@ export default function PlaceOrder({
                           e.target.value = formattedDisplayValue;
                         }}
                         value={
-                          formatPhoneNumber(order.billingAddress?.phone) || ""
+                          formatPhoneNumber(order?.billingAddress?.phone) ||
+                          order?.shippingAddress?.phone ||
+                          ""
                         }
                         placeholder='Enter Phone Number'
                         autoCapitalize='true'
@@ -603,11 +613,12 @@ export default function PlaceOrder({
                         onChange={(e) =>
                           handleInputChange(
                             "billing",
-                            "contactInfo.email",
-                            e.target.value
+                            "contactInfo",
+                            e.target.value,
+                            "email"
                           )
                         }
-                        value={order.billingAddress?.contactInfo?.email || ""}
+                        value={order?.billingAddress?.contactInfo?.email || ""}
                       />
                     </div>
                     <div>
@@ -625,7 +636,7 @@ export default function PlaceOrder({
                           )
                         }
                         value={
-                          order.billingAddress?.contactInfo?.secondEmail || ""
+                          order?.billingAddress?.contactInfo?.secondEmail || ""
                         }
                         placeholder='Enter Another email'
                         autoCapitalize='true'
@@ -644,7 +655,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.address || ""}
+                        value={
+                          order?.billingAddress?.address ||
+                          order?.shippingAddress?.address ||
+                          ""
+                        }
                         placeholder='Address'
                         autoCapitalize='true'
                       />
@@ -662,7 +677,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.suiteNumber || ""}
+                        value={
+                          order?.billingAddress?.suiteNumber ||
+                          order?.shippingAddress?.suiteNumber ||
+                          ""
+                        }
                         placeholder='Suite Number'
                         autoCapitalize='true'
                       />
@@ -677,7 +696,11 @@ export default function PlaceOrder({
                           onChange={(e) =>
                             handleInputChange("billing", "city", e.target.value)
                           }
-                          value={order.billingAddress?.city || ""}
+                          value={
+                            order?.billingAddress?.city ||
+                            order?.shippingAddress?.city ||
+                            ""
+                          }
                           placeholder='City'
                           autoCapitalize='true'
                         />
@@ -695,7 +718,11 @@ export default function PlaceOrder({
                               e.target.value
                             )
                           }
-                          value={order.billingAddress?.state || ""}
+                          value={
+                            order?.billingAddress?.state ||
+                            order?.shippingAddress?.state ||
+                            ""
+                          }
                           className='w-full contact__form-input'
                         >
                           <option value='' className='text-gray-400'>
@@ -722,7 +749,11 @@ export default function PlaceOrder({
                               e.target.value
                             )
                           }
-                          value={order.billingAddress?.postalCode || ""}
+                          value={
+                            order?.billingAddress?.postalCode ||
+                            order?.shippingAddress?.postalCode ||
+                            ""
+                          }
                           placeholder='Zip'
                           autoCapitalize='true'
                         />
