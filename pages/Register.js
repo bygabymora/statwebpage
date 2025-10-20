@@ -111,7 +111,13 @@ export default function RegisterScreen() {
       });
       setIsModalOpen(true);
       setShouldRedirect(true);
-      const contactToEmail = { name: firstName, email: normalizedEmail };
+      const contactToEmail = {
+        name: `${firstName} ${lastName}`.trim(),
+        email: normalizedEmail,
+        companyName: companyName || "Not provided",
+        companyEinCode: companyEinCode || "Not provided",
+      };
+
       const emailmessage = messageManagement(contactToEmail, "Register");
       handleSendEmails(emailmessage, contactToEmail);
     } catch (err) {
