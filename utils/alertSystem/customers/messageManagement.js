@@ -14,7 +14,7 @@ export const messageManagement = (
     case "Register":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.firstName}, You are now registered on our Web Page.`,
+        subject: `${contact.name}, You are now registered on our Web Page.`,
         p1: `
       <div style="font-weight: light; font-size: 17px; color: #333333;">
         Thank you for trusting us and considering our services. 
@@ -33,7 +33,7 @@ export const messageManagement = (
         <table style="border-collapse: collapse; margin-top: 10px;">
           <tr>
             <td style="padding: 4px 8px;"><strong>Full Name:</strong></td>
-            <td style="padding: 4px 8px;">${contact.firstName} ${contact.lastName}</td>
+            <td style="padding: 4px 8px;">${contact.name}</td>
           </tr>
           <tr>
             <td style="padding: 4px 8px;"><strong>Email:</strong></td>
