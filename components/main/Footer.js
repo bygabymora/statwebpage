@@ -18,6 +18,7 @@ export default function Footer() {
   const { showStatusMessage, user } = useModalContext();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const alertMessage = {
@@ -36,6 +37,13 @@ export default function Footer() {
   const sendEmail = (e) => {
     e.preventDefault();
 
+    // Honeypot: if it has text, it's spam
+    if (honeypot) {
+      console.warn("Spam detected - honeypot field filled");
+      showStatusMessage("error", "Suspicious activity detected");
+      return;
+    }
+
     if (!email) {
       showStatusMessage("error", "Please enter your email");
       return;
@@ -50,9 +58,8 @@ export default function Footer() {
     handleSendEmails(emailmessage, contactToEmail);
 
     setEmail("");
-    if (!user?.isApproved) setName(""); // Clear name only if user is not authenticated
+    if (!user?.isApproved) setName("");
   };
-
   return (
     <footer
       className='relative flex flex-col items-center shadow-inner min-h-[400px] footer w-full justify-between px-4 py-8 md:min-h-[560px] lg:min-h-[480px]'
@@ -132,6 +139,22 @@ export default function Footer() {
             ref={formRef}
             onSubmit={sendEmail}
           >
+            <input
+              type='text'
+              name='company' // generic name to trick bots
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex='-1'
+              autoComplete='off'
+              style={{
+                position: "absolute",
+                left: "-9999px",
+                opacity: 0,
+                height: 0,
+                width: 0,
+              }}
+            />
+
             <input
               autoComplete='off'
               type='text'
