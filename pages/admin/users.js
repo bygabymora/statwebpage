@@ -8,6 +8,7 @@ import { BiSolidEdit } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { BsTrash3 } from "react-icons/bs";
 import { FaUser, FaSearch } from "react-icons/fa";
+import { IoCheckmarkSharp, IoCloseOutline } from "react-icons/io5";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -126,7 +127,25 @@ function AdminUsersScreen() {
         </ul>
       </div>
       <div className='max-w-7xl mx-auto p-6'>
-        <h1 className='text-3xl font-bold text-[#0e355e] mb-8'>Users</h1>
+        <div className='max-w-7xl mx-auto p-6'>
+          <h1 className='text-3xl font-bold text-[#0e355e] mb-2'>Users</h1>
+          <div className='flex items-center gap-4 text-lg'>
+            <p className='text-gray-600'>
+              Total Users:{" "}
+              <span className='font-semibold text-[#0e355e]'>
+                {users.length}
+              </span>
+            </p>
+            {searchTerm && (
+              <p className='text-gray-600'>
+                • Showing:{" "}
+                <span className='font-semibold text-[#0e355e]'>
+                  {filteredAndSortedUsers.length}
+                </span>
+              </p>
+            )}
+          </div>
+        </div>
 
         {/* Search Bar */}
         <div className='mb-6'>
@@ -220,22 +239,36 @@ function AdminUsersScreen() {
                       <div className='text-xs font-medium text-gray-600 mb-1'>
                         Active
                       </div>
-                      <div className='text-lg'>{user.active ? "✅" : "❌"}</div>
+                      <div className='text-lg flex justify-center'>
+                        {user.active ? (
+                          <IoCheckmarkSharp className='text-green-600' />
+                        ) : (
+                          <IoCloseOutline className='text-red-600' />
+                        )}
+                      </div>
                     </div>
                     <div className='text-center border-l border-r border-gray-200'>
                       <div className='text-xs font-medium text-gray-600 mb-1'>
                         Approved
                       </div>
-                      <div className='text-lg'>
-                        {user.approved ? "✅" : "❌"}
+                      <div className='text-lg flex justify-center'>
+                        {user.approved ? (
+                          <IoCheckmarkSharp className='text-green-600' />
+                        ) : (
+                          <IoCloseOutline className='text-red-600' />
+                        )}
                       </div>
                     </div>
                     <div className='text-center'>
                       <div className='text-xs font-medium text-gray-600 mb-1'>
                         Admin
                       </div>
-                      <div className='text-lg'>
-                        {user.isAdmin ? "✅" : "❌"}
+                      <div className='text-lg flex justify-center'>
+                        {user.isAdmin ? (
+                          <IoCheckmarkSharp className='text-green-600' />
+                        ) : (
+                          <IoCloseOutline className='text-red-600' />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -247,8 +280,12 @@ function AdminUsersScreen() {
                     <span className='text-sm font-medium text-gray-600'>
                       Restricted:
                     </span>
-                    <span className='text-sm'>
-                      {user.restricted ? "✅" : "❌"}
+                    <span className='text-sm flex items-center'>
+                      {user.restricted ? (
+                        <IoCheckmarkSharp className='text-green-600' />
+                      ) : (
+                        <IoCloseOutline className='text-red-600' />
+                      )}
                     </span>
                   </div>
                   <div className='flex space-x-2'>
