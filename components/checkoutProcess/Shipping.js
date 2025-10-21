@@ -16,6 +16,55 @@ export default function Shipping({
   const { data: session } = useSession();
   const { fetchUserData, user, showStatusMessage } = useModalContext();
 
+  // State for validation errors
+  const [validationErrors, setValidationErrors] = React.useState({});
+
+  // Validation function
+  const validateForm = () => {
+    const errors = {};
+    const shippingAddress = order.shippingAddress || {};
+    const contactInfo = shippingAddress.contactInfo || {};
+
+    // Required field validations
+    if (!contactInfo.firstName?.trim()) {
+      errors.firstName = "First name is required";
+    }
+    if (!contactInfo.lastName?.trim()) {
+      errors.lastName = "Last name is required";
+    }
+    if (!shippingAddress.companyName?.trim()) {
+      errors.companyName = "Company name is required";
+    }
+    if (!shippingAddress.phone?.trim()) {
+      errors.phone = "Phone number is required";
+    }
+    if (!contactInfo.email?.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!shippingAddress.address?.trim()) {
+      errors.address = "Address is required";
+    }
+    if (!shippingAddress.suiteNumber?.trim()) {
+      errors.suiteNumber = "Suite number is required";
+    }
+    if (!shippingAddress.city?.trim()) {
+      errors.city = "City is required";
+    }
+    if (!shippingAddress.state?.trim()) {
+      errors.state = "State is required";
+    }
+    if (!shippingAddress.postalCode?.trim()) {
+      errors.postalCode = "Zip code is required";
+    } else if (!/^\d{5}(-\d{4})?$/.test(shippingAddress.postalCode)) {
+      errors.postalCode = "Please enter a valid zip code";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const fetchOrderData = async () => {
     const { userData, customerData } = await fetchUserData();
     if (userData) {
@@ -133,6 +182,15 @@ export default function Shipping({
 
   const submitHandler = async () => {
     try {
+      // Validate form before submission
+      if (!validateForm()) {
+        showStatusMessage(
+          "error",
+          "Please fill in all required fields correctly."
+        );
+        return;
+      }
+
       // 0) Basic guard: session must exist
       const userId = session?.user?._id;
       if (!userId) {
@@ -362,6 +420,11 @@ export default function Shipping({
                           order.shippingAddress?.contactInfo?.firstName || ""
                         }
                       />
+                      {validationErrors.firstName && (
+                        <p className='text-xs text-red-500 mt-1'>
+                          {validationErrors.firstName}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className='block font-medium'>Last Name*</label>
@@ -382,6 +445,11 @@ export default function Shipping({
                           order.shippingAddress?.contactInfo?.lastName || ""
                         }
                       />
+                      {validationErrors.lastName && (
+                        <p className='text-xs text-red-500 mt-1'>
+                          {validationErrors.lastName}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -402,6 +470,11 @@ export default function Shipping({
                     placeholder="Company's Name"
                     autoCapitalize='true'
                   />
+                  {validationErrors.companyName && (
+                    <p className='text-xs text-red-500 mt-1'>
+                      {validationErrors.companyName}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className='block font-medium'>Phone Number*</label>
@@ -421,6 +494,11 @@ export default function Shipping({
                     placeholder='Enter Phone Number'
                     autoCapitalize='true'
                   />
+                  {validationErrors.phone && (
+                    <p className='text-xs text-red-500 mt-1'>
+                      {validationErrors.phone}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className='block font-medium'>Email*</label>
@@ -438,6 +516,11 @@ export default function Shipping({
                     value={order.shippingAddress?.contactInfo?.email || ""}
                     readOnly
                   />
+                  {validationErrors.email && (
+                    <p className='text-xs text-red-500 mt-1'>
+                      {validationErrors.email}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className='block font-medium'>Second Email</label>
@@ -473,6 +556,11 @@ export default function Shipping({
                     placeholder='Address'
                     autoCapitalize='true'
                   />
+                  {validationErrors.address && (
+                    <p className='text-xs text-red-500 mt-1'>
+                      {validationErrors.address}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className='block font-medium'>Suite Number*</label>
@@ -491,6 +579,11 @@ export default function Shipping({
                     placeholder='Suite Number'
                     autoCapitalize='true'
                   />
+                  {validationErrors.suiteNumber && (
+                    <p className='text-xs text-red-500 mt-1'>
+                      {validationErrors.suiteNumber}
+                    </p>
+                  )}
                 </div>
                 <div className='col-span-1 sm:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4'>
                   <div>
@@ -506,6 +599,11 @@ export default function Shipping({
                       placeholder='City'
                       autoCapitalize='true'
                     />
+                    {validationErrors.city && (
+                      <p className='text-xs text-red-500 mt-1'>
+                        {validationErrors.city}
+                      </p>
+                    )}
                   </div>
                   <div className='relative w-full max-w-sm'>
                     <label htmlFor='state' className='block font-medium'>
@@ -528,6 +626,11 @@ export default function Shipping({
                         </option>
                       ))}
                     </select>
+                    {validationErrors.state && (
+                      <p className='text-xs text-red-500 mt-1'>
+                        {validationErrors.state}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className='block font-medium'>Zip Code*</label>
@@ -546,6 +649,11 @@ export default function Shipping({
                       placeholder='Zip'
                       autoCapitalize='true'
                     />
+                    {validationErrors.postalCode && (
+                      <p className='text-xs text-red-500 mt-1'>
+                        {validationErrors.postalCode}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
