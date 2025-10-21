@@ -7,7 +7,7 @@ import { getError } from "../../utils/error";
 import { BiSolidEdit } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { BsTrash3 } from "react-icons/bs";
-import { FaUser, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { IoCheckmarkSharp, IoCloseOutline } from "react-icons/io5";
 
 function reducer(state, action) {
@@ -79,6 +79,49 @@ function AdminUsersScreen() {
     setShowModal(false);
   };
 
+  // Helper function to check if user is new (within 48 hours)
+  const isNewUser = (user) => {
+    if (!user.createdAt) return false;
+    const userCreatedAt = new Date(user.createdAt);
+    const now = new Date();
+    const hoursDiff = (now - userCreatedAt) / (1000 * 60 * 60);
+    return hoursDiff <= 48;
+  };
+
+  // Helper function to get user status colors and info
+  const getUserStatusInfo = (user) => {
+    if (user.isAdmin) {
+      return {
+        color: "#07783e",
+        label: "Admin",
+        bgColor: "bg-green-50",
+        headerBgColor: "rgba(7, 120, 62, 0.05)", // Very soft green tint
+      };
+    }
+    if (isNewUser(user)) {
+      return {
+        color: "#8B5CF6",
+        label: "New User",
+        bgColor: "bg-purple-50",
+        headerBgColor: "rgba(139, 92, 246, 0.05)", // Very soft purple tint
+      };
+    }
+    if (user.restricted) {
+      return {
+        color: "#ffd700",
+        label: "Restricted",
+        bgColor: "bg-yellow-50",
+        headerBgColor: "rgba(255, 215, 0, 0.08)", // Very soft yellow tint
+      };
+    }
+    return {
+      color: "transparent",
+      label: "",
+      bgColor: "",
+      headerBgColor: "transparent",
+    };
+  };
+
   // Filter and sort users
   const filteredAndSortedUsers = users
     .filter((user) => {
@@ -127,7 +170,7 @@ function AdminUsersScreen() {
         </ul>
       </div>
       <div className='max-w-7xl mx-auto p-6'>
-        <div className='max-w-7xl mx-auto p-6'>
+        <div className='mb-8'>
           <h1 className='text-3xl font-bold text-[#0e355e] mb-2'>Users</h1>
           <div className='flex items-center gap-4 text-lg'>
             <p className='text-gray-600'>
@@ -169,6 +212,36 @@ function AdminUsersScreen() {
           )}
         </div>
 
+        {/* Status Legend */}
+        <div className='mb-6 bg-gray-50 rounded-lg p-4'>
+          <h3 className='text-sm font-semibold text-gray-700 mb-3'>
+            Status Indicators:
+          </h3>
+          <div className='flex flex-wrap gap-4 text-sm'>
+            <div className='flex items-center gap-2'>
+              <div
+                className='w-4 h-1 rounded'
+                style={{ backgroundColor: "#07783e" }}
+              ></div>
+              <span className='text-gray-600'>Admin User</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <div
+                className='w-4 h-1 rounded'
+                style={{ backgroundColor: "#8B5CF6" }}
+              ></div>
+              <span className='text-gray-600'>New User (48h)</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <div
+                className='w-4 h-1 rounded'
+                style={{ backgroundColor: "#ffd700" }}
+              ></div>
+              <span className='text-gray-600'>Restricted Access</span>
+            </div>
+          </div>
+        </div>
+
         {loadingDelete && (
           <div className='text-center py-4'>
             <div className='inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg'>
@@ -198,117 +271,137 @@ function AdminUsersScreen() {
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {filteredAndSortedUsers.map((user) => (
-              <div
-                key={user._id}
-                className='bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-100'
-              >
-                {/* Card Header */}
-                <div className='p-6 pb-4'>
-                  <div className='flex items-start space-x-4'>
-                    {/* Avatar */}
-                    <div className='flex-shrink-0'>
-                      <div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center'>
-                        <FaUser className='w-6 h-6 text-gray-400' />
-                      </div>
+            {filteredAndSortedUsers.map((user) => {
+              const statusInfo = getUserStatusInfo(user);
+              return (
+                <div
+                  key={user._id}
+                  className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-100 ${statusInfo.bgColor}`}
+                  style={{
+                    borderTop:
+                      statusInfo.color !== "transparent"
+                        ? `4px solid ${statusInfo.color}`
+                        : undefined,
+                  }}
+                >
+                  {/* Status Badge */}
+                  {statusInfo.label && (
+                    <div className='px-6 pt-3 pb-1'>
+                      <span
+                        className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white'
+                        style={{ backgroundColor: statusInfo.color }}
+                      >
+                        {statusInfo.label}
+                      </span>
                     </div>
-                    {/* User Info */}
-                    <div className='flex-1 min-w-0'>
-                      <h3 className='text-lg font-semibold text-gray-900 truncate'>
-                        {user.firstName} {user.lastName}
-                      </h3>
-                      <p className='text-sm text-gray-600 truncate'>
-                        {user.email}
-                      </p>
-                      {user.companyName && (
-                        <p className='text-sm text-gray-500 truncate mt-1'>
-                          {user.companyName}
+                  )}
+
+                  {/* Card Header */}
+                  <div
+                    className={`p-6 ${statusInfo.label ? "pt-3" : ""} pb-4`}
+                    style={{
+                      backgroundColor: statusInfo.headerBgColor,
+                    }}
+                  >
+                    <div className='flex items-start space-x-4'>
+                      {/* User Info */}
+                      <div className='flex-1 min-w-0'>
+                        <h3 className='text-lg font-semibold text-gray-900 truncate'>
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <p className='text-sm text-gray-600 truncate'>
+                          {user.email}
                         </p>
-                      )}
-                      <p className='text-xs text-gray-400 mt-1 font-mono'>
-                        ID: {user._id.slice(-6)}
-                      </p>
+                        {user.companyName && (
+                          <p className='text-sm text-gray-500 truncate mt-1'>
+                            {user.companyName}
+                          </p>
+                        )}
+                        <p className='text-xs text-gray-400 mt-1 font-mono'>
+                          ID: {user._id.slice(-6)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Status Grid */}
-                <div className='bg-gray-50 px-6 py-4'>
-                  <div className='grid grid-cols-3 gap-4'>
-                    <div className='text-center'>
-                      <div className='text-xs font-medium text-gray-600 mb-1'>
-                        Active
+                  {/* Status Grid */}
+                  <div className='bg-gray-50 px-6 py-4'>
+                    <div className='grid grid-cols-3 gap-4'>
+                      <div className='text-center'>
+                        <div className='text-xs font-medium text-gray-600 mb-1'>
+                          Active
+                        </div>
+                        <div className='text-lg flex justify-center'>
+                          {user.active ? (
+                            <IoCheckmarkSharp className='text-green-600' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600' />
+                          )}
+                        </div>
                       </div>
-                      <div className='text-lg flex justify-center'>
-                        {user.active ? (
-                          <IoCheckmarkSharp className='text-green-600' />
-                        ) : (
-                          <IoCloseOutline className='text-red-600' />
-                        )}
+                      <div className='text-center border-l border-r border-gray-200'>
+                        <div className='text-xs font-medium text-gray-600 mb-1'>
+                          Approved
+                        </div>
+                        <div className='text-lg flex justify-center'>
+                          {user.approved ? (
+                            <IoCheckmarkSharp className='text-green-600' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600' />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className='text-center border-l border-r border-gray-200'>
-                      <div className='text-xs font-medium text-gray-600 mb-1'>
-                        Approved
-                      </div>
-                      <div className='text-lg flex justify-center'>
-                        {user.approved ? (
-                          <IoCheckmarkSharp className='text-green-600' />
-                        ) : (
-                          <IoCloseOutline className='text-red-600' />
-                        )}
-                      </div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='text-xs font-medium text-gray-600 mb-1'>
-                        Admin
-                      </div>
-                      <div className='text-lg flex justify-center'>
-                        {user.isAdmin ? (
-                          <IoCheckmarkSharp className='text-green-600' />
-                        ) : (
-                          <IoCloseOutline className='text-red-600' />
-                        )}
+                      <div className='text-center'>
+                        <div className='text-xs font-medium text-gray-600 mb-1'>
+                          Admin
+                        </div>
+                        <div className='text-lg flex justify-center'>
+                          {user.isAdmin ? (
+                            <IoCheckmarkSharp className='text-green-600' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600' />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Card Footer */}
-                <div className='px-6 py-4 flex items-center justify-between bg-white border-t border-gray-50'>
-                  <div className='flex items-center space-x-2'>
-                    <span className='text-sm font-medium text-gray-600'>
-                      Restricted:
-                    </span>
-                    <span className='text-sm flex items-center'>
-                      {user.restricted ? (
-                        <IoCheckmarkSharp className='text-green-600' />
-                      ) : (
-                        <IoCloseOutline className='text-red-600' />
-                      )}
-                    </span>
-                  </div>
-                  <div className='flex space-x-2'>
-                    <button
-                      onClick={() => router.push(`/admin/user/${user._id}`)}
-                      className='px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
-                      title='Edit User'
-                    >
-                      <BiSolidEdit size={14} />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(user._id)}
-                      className='px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
-                      title='Delete User'
-                    >
-                      <BsTrash3 size={14} />
-                      <span>Delete</span>
-                    </button>
+                  {/* Card Footer */}
+                  <div className='px-6 py-4 flex items-center justify-between bg-white border-t border-gray-50'>
+                    <div className='flex items-center space-x-2'>
+                      <span className='text-sm font-medium text-gray-600'>
+                        Restricted:
+                      </span>
+                      <span className='text-sm flex items-center'>
+                        {user.restricted ? (
+                          <IoCheckmarkSharp className='text-green-600' />
+                        ) : (
+                          <IoCloseOutline className='text-red-600' />
+                        )}
+                      </span>
+                    </div>
+                    <div className='flex space-x-2'>
+                      <button
+                        onClick={() => router.push(`/admin/user/${user._id}`)}
+                        className='px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
+                        title='Edit User'
+                      >
+                        <BiSolidEdit size={14} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(user._id)}
+                        className='px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
+                        title='Delete User'
+                      >
+                        <BsTrash3 size={14} />
+                        <span>Delete</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         {showModal && (
