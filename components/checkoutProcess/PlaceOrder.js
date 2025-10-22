@@ -618,7 +618,7 @@ export default function PlaceOrder({
                             "email"
                           )
                         }
-                        value={order?.billingAddress?.contactInfo?.email || ""}
+                        value={order?.shippingAddress?.contactInfo?.email || ""}
                       />
                     </div>
                     <div>
