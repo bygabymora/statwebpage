@@ -7,7 +7,7 @@ import db from "../../utils/db";
 import News from "../../models/News";
 import Image from "next/image";
 
-export default function Newscreen({ news }) {
+export default function Newscreen({ news, showProductsButton = false }) {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -171,12 +171,22 @@ export default function Newscreen({ news }) {
         )}
 
         <div className='text-center mt-12'>
-          <Link
-            href='/news'
-            className='px-6 py-2 bg-[#0e355e] text-white rounded-full font-semibold hover:bg-[#0e3260] transition'
-          >
-            Explore More News
-          </Link>
+          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
+            <Link
+              href='/news'
+              className='px-6 py-2 bg-[#0e355e] text-white rounded-full font-semibold hover:bg-[#0e3260] transition'
+            >
+              Explore More News
+            </Link>
+            {showProductsButton && (
+              <Link
+                href='/products'
+                className='px-6 py-2 bg-white border-2 border-[#0e355e] text-[#0e355e] rounded-full font-semibold hover:bg-[#0e355e] hover:text-white transition'
+              >
+                View Products
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </Layout>
@@ -195,6 +205,12 @@ export async function getServerSideProps(context) {
     _id: s._id.toString(),
   }));
 
+  // Optional: Show products button based on content/category/tags
+  // Examples:
+  // const showProductsButton = doc.category === 'product-related';
+  // const showProductsButton = doc.tags?.includes('products');
+  // const showProductsButton = doc.content.toLowerCase().includes('product');
+
   return {
     props: {
       news: {
@@ -205,6 +221,8 @@ export async function getServerSideProps(context) {
         updatedAt: doc.updatedAt.toISOString(),
         sources: formattedSources,
       },
+      // Uncomment and customize the line below to enable the products button
+      showProductsButton: true,
     },
   };
 }
