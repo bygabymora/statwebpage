@@ -62,7 +62,7 @@ function generateProductJSONLD(product) {
     "@type": "Product",
     ...(keywords ? { keywords } : {}),
     name: `${product.name}`,
-    image: product.image,
+    image: [product.image],
     brand: {
       "@type": "Brand",
       name: product.manufacturer,
