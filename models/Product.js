@@ -26,6 +26,11 @@ const productSchema = new mongoose.Schema(
       index: true,
       required: false,
     },
+    information: {
+      type: String,
+      required: false,
+      default: "",
+    },
     each: {
       description: { type: String, required: false },
       price: { type: Number, default: 0, required: false },
