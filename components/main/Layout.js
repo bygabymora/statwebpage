@@ -191,6 +191,7 @@ export default function Layout({
                 rel='canonical'
                 href={`https://www.statsurgicalsupply.com/products/${product.name}`}
               />
+              <link rel='image_src' href={image} />
 
               <script
                 type='application/ld+json'

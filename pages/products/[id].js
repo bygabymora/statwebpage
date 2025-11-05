@@ -267,6 +267,7 @@ export default function ProductScreen({ product }) {
       title={getProductTitle(product)}
       product={product}
       schema={generateProductJSONLD(product)}
+      image={product.image}
     >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
