@@ -305,35 +305,37 @@ export default function ProductScreen({ product }) {
             className='relative '
           >
             <Image
-              alt={currentDescription}
+              alt={`${product.manufacturer} ${product.name} - Medical supply product image`}
               src={product.image}
               title={`${product.manufacturer} ${product.name} ${
                 product.each?.description?.slice(0, 43) || ""
               }`}
-              width={350}
-              height={350}
-              className='rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300' // <-- Added no-drag class here
-              onContextMenu={(e) => e.preventDefault()} // <-- Prevent right-click
-              onDragStart={(e) => e.preventDefault()} // <-- Prevent dragging
+              width={400}
+              height={400}
+              className='rounded-lg hover:cursor-zoom-in no-drag shadow-md hover:scale-105 transition-transform duration-300'
+              onContextMenu={(e) => e.preventDefault()}
+              onDragStart={(e) => e.preventDefault()}
+              priority
             />
             {isHovered && (
               <div
                 className='absolute hidden md:block rounded-full border border-gray-400 bg-cover transform scale-125'
                 style={{
-                  width: "100px",
-                  height: "100px",
+                  width: "120px",
+                  height: "120px",
                   borderRadius: "50%",
                   position: "absolute",
-                  top: cursorPos.y - 40,
-                  left: cursorPos.x - 40,
+                  top: cursorPos.y - 60,
+                  left: cursorPos.x - 60,
                   backgroundImage: `url(${product.image})`,
-                  backgroundPosition: `-${(cursorPos.x - 40) * 2}px -${
-                    (cursorPos.y - 40) * 2
+                  backgroundPosition: `-${(cursorPos.x - 60) * 2}px -${
+                    (cursorPos.y - 60) * 2
                   }px`,
-                  backgroundSize: "600px 600px",
-                  border: "2px solid gray",
+                  backgroundSize: "800px 800px",
+                  border: "3px solid #0e355e",
                   transform: "scale(1.5)",
                   pointerEvents: "none",
+                  zIndex: 10,
                 }}
               ></div>
             )}
