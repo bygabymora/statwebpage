@@ -227,11 +227,7 @@ export default function Layout({
               />
               <meta
                 property='og:image'
-                content={
-                  product.image?.startsWith("http")
-                    ? product.image
-                    : "https://www.statsurgicalsupply.com/images/assets/product.png"
-                }
+                content={image || news.imageUrl || defaultOgImage}
               />
               <meta
                 property='og:url'
