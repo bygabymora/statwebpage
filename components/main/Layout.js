@@ -143,7 +143,14 @@ export default function Layout({
               ? `${title} | Stat Surgical Supply`
               : "Stat Surgical Supply | Buy Healthcare Products"}
           </title>
+          <meta name='googlebot' content='index, follow' />
+          <meta
+            name='googlebot'
+            content='index,follow,max-image-preview:large'
+          />
+          <meta name='bingbot' content='index, follow' />
           <meta name='robots' content='index, follow' />
+          <meta name='robots' content='index,follow,max-image-preview:large' />
           <meta name='author' content='Stat Surgical Supply' />
           <meta name='publisher' content='Stat Surgical Supply' />
           <link rel='icon' href='/favicon.ico' />
