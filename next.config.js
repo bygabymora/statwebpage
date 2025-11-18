@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
+
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -22,6 +23,18 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+  },
+
+  async redirects() {
+    return [
+      {
+        // Remove the trailing slash from any path
+        // e.g. /news/my-article/ -> /news/my-article
+        source: "/:path*/",
+        destination: "/:path*",
+        permanent: true,
+      },
+    ];
   },
 };
 
