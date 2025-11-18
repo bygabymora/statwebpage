@@ -205,12 +205,12 @@ export default function PlaceOrder({
       title: "Are you sure?",
       body:
         order?.paymentMethod === "Stripe" &&
-        order.shippingPreferences.paymentMethod === "Bill Me"
+        order?.shippingPreferences?.paymentMethod === "Bill Me"
           ? `You selected the "Bill Me" option for the Shipping Payment. You are about to place an order. Please confirm that all the information is correct.`
           : "You are about to place an order. Please confirm that all the information is correct.",
       warning:
         order?.paymentMethod === "Stripe"
-          ? order.shippingPreferences.paymentMethod === "Bill Me"
+          ? order?.shippingPreferences?.paymentMethod === "Bill Me"
             ? "⚠ You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment. ⚠"
             : "⚠ After the payment, any change will need to be processed by your Stat Rep. ⚠"
           : "⚠ You will have 2 hours to make any changes, after that time, the order will be processed. ⚠",
@@ -220,28 +220,47 @@ export default function PlaceOrder({
       if (!confirmed) return;
       try {
         startLoading();
-        const orderToPlace = { ...order, status: "Completed" };
+
+        // 1) Place/complete the order
+        const orderToPlace = { ...(order ?? {}), status: "Completed" };
         await axios.post("/api/orders", { order: orderToPlace });
+
+        // 2) Run your shared work
         await baseAction();
-        await axios.patch(`/api/users/${session.user._id}/cart`, {
-          action: "clear",
-        });
-        await axios.put(`/api/customer/${customer._id}/updateAddresses`, {
-          customer,
-        });
 
+        // 3) Clear cart
+        const userId = session?.user?._id;
+        if (userId) {
+          await axios.patch(`/api/users/${userId}/cart`, { action: "clear" });
+        }
+
+        // 4) Update customer addresses ONLY if we have a customerId
+        const customerId = customer?._id ?? user?.customer?._id ?? null; // fallback if you store it on user
+
+        if (customerId) {
+          // Send only what your API expects; customer shape is fine if your handler spreads it
+          await axios.put(`/api/customer/${customerId}/updateAddresses`, {
+            customer,
+          });
+        } else {
+          console.warn(
+            "[placeOrderAction] No customerId (customer._id). Skipping address update."
+          );
+        }
+
+        // 5) Refresh user (cart, etc.)
         const updatedUser = await fetchUserData();
-        setUser((u) => ({ ...u, cart: updatedUser.userData.cart }));
+        setUser((u) => ({ ...u, cart: updatedUser?.userData?.cart ?? [] }));
 
-        // payment-method branch
+        // 6) Payment routing
         if (
-          order.paymentMethod !== "Stripe" ||
-          order.shippingPreferences.paymentMethod === "Bill Me"
+          order?.paymentMethod !== "Stripe" ||
+          order?.shippingPreferences?.paymentMethod === "Bill Me"
         ) {
-          router.push(`/order/${order._id}`);
+          router.push(`/order/${order?._id}`);
           Cookies.remove("orderId");
           setOrder((o) => ({
-            ...o,
+            ...(o ?? {}),
             orderItems: [],
             itemsPrice: 0,
             totalPrice: 0,
@@ -256,17 +275,19 @@ export default function PlaceOrder({
           const {
             data: { id: sessionId },
           } = await axios.post("/api/checkout_sessions", {
-            totalPrice: Number(order.totalPrice),
-            orderId: order._id,
+            totalPrice: Number(order?.totalPrice || 0),
+            orderId: order?._id,
           });
+
           Cookies.remove("orderId");
           setOrder((o) => ({
-            ...o,
+            ...(o ?? {}),
             orderItems: [],
             itemsPrice: 0,
             totalPrice: 0,
           }));
           sendConfirmationEmail();
+
           const result = await stripe.redirectToCheckout({ sessionId });
           if (result.error) {
             showStatusMessage("error", result.error.message);
@@ -276,7 +297,7 @@ export default function PlaceOrder({
         console.error("Error placing order:", err);
         showStatusMessage(
           "error",
-          err.message || "An error occurred while placing the order."
+          err?.message || "An error occurred while placing the order."
         );
         stopLoading();
       }
@@ -295,37 +316,51 @@ export default function PlaceOrder({
   };
 
   const handleInputChange = (type, field, value, secondField) => {
-    if (type === "billing") {
+    if (type !== "billing") return;
+
+    // --- Order.billingAddress (safe) ---
+    setOrder((prev) => {
+      const safePrev = prev ?? {};
+      const prevBilling = safePrev.billingAddress ?? {};
+      const prevContact = prevBilling.contactInfo ?? {};
+
       if (field === "contactInfo") {
-        setOrder((prev) => ({
-          ...prev,
+        return {
+          ...safePrev,
           billingAddress: {
-            ...prev.billingAddress,
+            ...prevBilling,
             contactInfo: {
-              ...prev.billingAddress.contactInfo,
+              ...prevContact,
               [secondField]: value,
             },
           },
-        }));
-      } else {
-        setOrder((prev) => ({
-          ...prev,
-          billingAddress: {
-            ...prev.billingAddress,
-            [field]: value,
-            country: "USA",
-          },
-        }));
+        };
       }
-      setCustomer((prev) => ({
-        ...prev,
-        billAddr: {
-          ...prev.billAddr,
+
+      return {
+        ...safePrev,
+        billingAddress: {
+          ...prevBilling,
           [field]: value,
           country: "USA",
         },
-      }));
-    }
+      };
+    });
+
+    // --- Customer.billAddr (safe) ---
+    setCustomer((prev) => {
+      const safePrev = prev ?? {}; // prev might be null
+      const prevBill = safePrev.billAddr ?? {}; // billAddr might be missing
+
+      return {
+        ...safePrev,
+        billAddr: {
+          ...prevBill,
+          [field]: value,
+          country: "USA",
+        },
+      };
+    });
   };
 
   // inside your PlaceOrder component
@@ -494,7 +529,9 @@ export default function PlaceOrder({
                               )
                             }
                             value={
-                              order.billingAddress?.contactInfo?.firstName || ""
+                              order?.billingAddress?.contactInfo?.firstName ||
+                              order?.shippingAddress?.firstName ||
+                              ""
                             }
                           />
                         </div>
@@ -516,7 +553,9 @@ export default function PlaceOrder({
                               )
                             }
                             value={
-                              order.billingAddress?.contactInfo?.lastName || ""
+                              order?.billingAddress?.contactInfo?.lastName ||
+                              order?.shippingAddress?.lastName ||
+                              ""
                             }
                           />
                         </div>
@@ -525,7 +564,7 @@ export default function PlaceOrder({
                     <div>
                       <label className='block font-medium'>Company*</label>
                       <input
-                        autoComplete='off'
+                        autoComplete='on'
                         className='w-full contact__form-input'
                         type='text'
                         onChange={(e) =>
@@ -535,7 +574,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.companyName || ""}
+                        value={
+                          order?.billingAddress?.companyName ||
+                          order?.shippingAddress?.companyName ||
+                          ""
+                        }
                         placeholder="Company's Name"
                         autoCapitalize='true'
                       />
@@ -543,7 +586,7 @@ export default function PlaceOrder({
                     <div>
                       <label className='block font-medium'>Phone Number*</label>
                       <input
-                        autoComplete='off'
+                        autoComplete='on'
                         className='w-full contact__form-input'
                         type='text'
                         onChange={(e) => {
@@ -553,7 +596,9 @@ export default function PlaceOrder({
                           e.target.value = formattedDisplayValue;
                         }}
                         value={
-                          formatPhoneNumber(order.billingAddress?.phone) || ""
+                          formatPhoneNumber(order?.billingAddress?.phone) ||
+                          order?.shippingAddress?.phone ||
+                          ""
                         }
                         placeholder='Enter Phone Number'
                         autoCapitalize='true'
@@ -568,11 +613,12 @@ export default function PlaceOrder({
                         onChange={(e) =>
                           handleInputChange(
                             "billing",
-                            "contactInfo.email",
-                            e.target.value
+                            "contactInfo",
+                            e.target.value,
+                            "email"
                           )
                         }
-                        value={order.billingAddress?.contactInfo?.email || ""}
+                        value={order?.shippingAddress?.contactInfo?.email || ""}
                       />
                     </div>
                     <div>
@@ -590,7 +636,7 @@ export default function PlaceOrder({
                           )
                         }
                         value={
-                          order.billingAddress?.contactInfo?.secondEmail || ""
+                          order?.billingAddress?.contactInfo?.secondEmail || ""
                         }
                         placeholder='Enter Another email'
                         autoCapitalize='true'
@@ -609,7 +655,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.address || ""}
+                        value={
+                          order?.billingAddress?.address ||
+                          order?.shippingAddress?.address ||
+                          ""
+                        }
                         placeholder='Address'
                         autoCapitalize='true'
                       />
@@ -627,7 +677,11 @@ export default function PlaceOrder({
                             e.target.value
                           )
                         }
-                        value={order.billingAddress?.suiteNumber || ""}
+                        value={
+                          order?.billingAddress?.suiteNumber ||
+                          order?.shippingAddress?.suiteNumber ||
+                          ""
+                        }
                         placeholder='Suite Number'
                         autoCapitalize='true'
                       />
@@ -642,7 +696,11 @@ export default function PlaceOrder({
                           onChange={(e) =>
                             handleInputChange("billing", "city", e.target.value)
                           }
-                          value={order.billingAddress?.city || ""}
+                          value={
+                            order?.billingAddress?.city ||
+                            order?.shippingAddress?.city ||
+                            ""
+                          }
                           placeholder='City'
                           autoCapitalize='true'
                         />
@@ -660,7 +718,11 @@ export default function PlaceOrder({
                               e.target.value
                             )
                           }
-                          value={order.billingAddress?.state || ""}
+                          value={
+                            order?.billingAddress?.state ||
+                            order?.shippingAddress?.state ||
+                            ""
+                          }
                           className='w-full contact__form-input'
                         >
                           <option value='' className='text-gray-400'>
@@ -687,7 +749,11 @@ export default function PlaceOrder({
                               e.target.value
                             )
                           }
-                          value={order.billingAddress?.postalCode || ""}
+                          value={
+                            order?.billingAddress?.postalCode ||
+                            order?.shippingAddress?.postalCode ||
+                            ""
+                          }
                           placeholder='Zip'
                           autoCapitalize='true'
                         />

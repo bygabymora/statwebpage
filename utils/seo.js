@@ -68,6 +68,7 @@ function generateProductJSONLD(product) {
       name: product.manufacturer,
     },
     description: product?.each?.description || product?.box?.description || "",
+    information: product?.information || "",
     sku: product._id,
     mpn: product._id,
     aggregateRating: {

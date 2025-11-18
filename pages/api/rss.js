@@ -21,6 +21,7 @@ export default async function handler(req, res) {
         const description = escapeXml(
           (item.summary || item.content || "").slice(0, 300)
         );
+        const information = escapeXml(item.information || "");
         const author = escapeXml(item.author || "Stat Surgical Supply");
         const slug = item.slug;
         const keywords = escapeXml(
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
           <link>${siteUrl}/news/${slug}</link>
           <guid isPermaLink="true">${siteUrl}/news/${slug}</guid>
           <description>${description}</description>
+          <information>${information}</information>
           <pubDate>${pubDate}</pubDate>
           <author>${author}</author>
           <news:news>
