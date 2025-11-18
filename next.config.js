@@ -23,6 +23,17 @@ const nextConfig = {
       },
     ],
   },
+
+  async redirects() {
+    return [
+      // Redirect from /news/ to /news to avoid duplicate content issues
+      {
+        source: "/news/",
+        destination: "/news",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
