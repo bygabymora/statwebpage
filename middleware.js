@@ -5,41 +5,58 @@ export function middleware(request) {
   const url = request.nextUrl.clone();
   const { pathname, searchParams } = url;
 
-  // We are only interested in /products/*
+  // We are only interested in routes /products/*
   if (!pathname.startsWith("/products/")) {
     return NextResponse.next();
   }
 
-  // Example pathname: /products/BARD-0115311
-  const slugRaw = pathname.slice("/products/".length); // "BARD-0115311"
-  const slugPart = slugRaw.split("/")[0]; // "BARD-0115311"
+  // Ej: /products/BARD-1200710?pId=...
+  const slugRaw = pathname.slice("/products/".length); // "BARD-1200710"
+  const slugPart = slugRaw.split("/")[0]; // "BARD-1200710"
 
-  const hasPid = searchParams.has("pId"); // /products/xxx?pId=...
-  const hasDash = slugPart.includes("-"); // BARD-0115311
+  const hasPid = searchParams.has("pId");
 
-  // If there is no pId and no dashes, the URL is already "pretty": /products/0115311
-  if (!hasPid && !hasDash) {
-    return NextResponse.next();
-  }
+  // List of manufacturers you historically used in the BARD-1200710 type slugs
+  // You can add more if you see others in Search Console.
+  const manufacturerPrefixes = [
+    "BARD",
+    "HOLOGIC",
+    "COVIDIEN",
+    "MEDTRONIC",
+    "ETHICON",
+    "ARTHREX",
+  ];
 
-  // We calculate the target slug:
-  // - if it has dashes, we take the last part: BARD-0115311 -> 0115311
   let targetSlug = slugPart;
-  if (hasDash) {
-    const pieces = slugPart.split("-");
-    targetSlug = pieces[pieces.length - 1];
+  let manufacturerStripped = false;
+
+  // If the slug starts with a known manufacturer, we remove it:
+  for (const prefix of manufacturerPrefixes) {
+    const withDash = `${prefix}-`;
+    if (slugPart.startsWith(withDash)) {
+      targetSlug = slugPart.slice(withDash.length); // BARD-1200710 -> 1200710
+      manufacturerStripped = true;
+      break;
+    }
   }
 
-  const targetPath = `/products/${targetSlug}`;
-
-  // If for some reason we are already on the target path without query, do not redirect
-  if (targetPath === pathname && !hasPid) {
+  // If there is NO pId and we did NOT remove manufacturer, the URL is already "pretty":
+  // /products/10-401FC, /products/AR-2922D-24-3, /products/0115311, etc.
+  if (!hasPid && !manufacturerStripped) {
     return NextResponse.next();
   }
 
-  // 301 redirect to the canonical URL without query
-  url.pathname = targetPath;
-  url.search = "";
+  // From here on, we WILL redirect:
+  url.pathname = `/products/${targetSlug}`;
+
+  // We always remove pId from the query if it exists
+  if (hasPid) {
+    searchParams.delete("pId");
+    url.search = searchParams.toString();
+  } else {
+    url.search = "";
+  }
+
   return NextResponse.redirect(url, 301);
 }
 
