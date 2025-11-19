@@ -373,9 +373,7 @@ export default function ProductScreen({ product }) {
             </li>
             {product.information && (
               <h2>
-                <p className='text-sm text-[#788b9b]'>
-                  {product.name} {product.information}
-                </p>
+                <p className='text-sm text-[#788b9b]'>{product.information}</p>
               </h2>
             )}
             {product.sentOverNight && (
