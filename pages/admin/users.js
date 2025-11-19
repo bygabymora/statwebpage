@@ -155,7 +155,7 @@ function AdminUsersScreen() {
     <Layout title='Admin Users'>
       {/* Enhanced Navigation */}
       <div className='bg-white shadow-sm border-b'>
-        <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
+        <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
               <Link
@@ -174,7 +174,7 @@ function AdminUsersScreen() {
         </div>
       </div>
       {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-1 sm:px-2 md:px-4 lg:px-8 py-2 sm:py-4 md:py-6'>
+      <div className='mx-auto px-1 sm:px-2 md:px-4 lg:px-8 xl:px-12 py-2 sm:py-4 md:py-6'>
         {/* Header Section */}
         <div className='mb-3 sm:mb-6 md:mb-8'>
           <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
@@ -291,10 +291,151 @@ function AdminUsersScreen() {
           </div>
         ) : (
           <>
+            {/* Mobile Card Layout */}
+            <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
+              {filteredAndSortedUsers.map((user) => {
+                const statusInfo = getUserStatusInfo(user);
+                return (
+                  <div
+                    key={user._id}
+                    className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
+                    style={{
+                      backgroundColor: statusInfo.headerBgColor || "white",
+                    }}
+                  >
+                    {/* Mobile Card Header */}
+                    <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
+                      <div className='flex-shrink-0 relative'>
+                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
+                          {user.firstName?.[0]?.toUpperCase()}
+                          {user.lastName?.[0]?.toUpperCase()}
+                        </div>
+                        {statusInfo.label && (
+                          <div
+                            className={`absolute -top-0.5 -right-0.5 lg:-top-1 lg:-right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 lg:w-3 lg:h-3 rounded-full border-2 border-white`}
+                            style={{
+                              backgroundColor: statusInfo.color,
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                      <div className='min-w-0 flex-1'>
+                        <h3 className='font-bold text-gray-900 text-xs sm:text-sm md:text-lg leading-tight mb-1'>
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
+                          {user.email}
+                        </p>
+                        <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
+                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
+                            #{user._id.slice(-6)}
+                          </span>
+                          {user.companyName && (
+                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 truncate max-w-[120px] sm:max-w-[150px]'>
+                              {user.companyName}
+                            </span>
+                          )}
+                          {statusInfo.label && (
+                            <span
+                              className={`inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} border`}
+                              style={{
+                                color: statusInfo.color,
+                                borderColor: statusInfo.color + "40",
+                              }}
+                            >
+                              {statusInfo.label}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status Grid */}
+                    <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Active
+                        </div>
+                        <div className='flex justify-center'>
+                          {user.active ? (
+                            <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          )}
+                        </div>
+                      </div>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Approved
+                        </div>
+                        <div className='flex justify-center'>
+                          {user.approved ? (
+                            <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          )}
+                        </div>
+                      </div>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Admin
+                        </div>
+                        <div className='flex justify-center'>
+                          {user.isAdmin ? (
+                            <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          )}
+                        </div>
+                      </div>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Restricted
+                        </div>
+                        <div className='flex justify-center'>
+                          {user.restricted ? (
+                            <IoCheckmarkSharp className='text-yellow-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <IoCloseOutline className='text-gray-600 text-xs sm:text-sm md:text-lg' />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
+                      <button
+                        onClick={() => router.push(`/admin/user/${user._id}`)}
+                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r primary-button text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
+                      >
+                        <BiSolidEdit
+                          size={10}
+                          className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
+                        />
+                        <span className='hidden xs:inline sm:inline'>
+                          Edit User
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(user._id)}
+                        className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r primary-button text-white font-medium rounded sm:rounded-md md:rounded-lg transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
+                        title='Delete User'
+                      >
+                        <BsTrash3
+                          size={10}
+                          className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
+                        />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Desktop Table Layout */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto overflow-y-auto max-h-[80vh] custom-scrollbar'>
-                <table className='min-w-full' style={{ minWidth: "600px" }}>
+              <div className='overflow-x-auto overflow-y-auto max-h-[85vh] custom-scrollbar'>
+                <table className='w-full' style={{ minWidth: "600px" }}>
                   <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <tr>
                       <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[160px] sm:min-w-[200px]'>
