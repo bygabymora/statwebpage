@@ -259,7 +259,9 @@ export default function ProductScreen({ product }) {
 
   const getProductTitle = (product) => {
     const base = `${product.manufacturer}: ${product.name}`;
-    return `${base} | Fast Delivery & Best Price`;
+    return `${base} ${
+      product.each?.description?.slice(0, 33) || ""
+    } | Fast Delivery & Best Price`;
   };
 
   return (
