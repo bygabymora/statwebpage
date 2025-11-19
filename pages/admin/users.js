@@ -152,277 +152,332 @@ function AdminUsersScreen() {
   ];
 
   return (
-    <Layout title='Users'>
-      <div className='flex justify-center'>
-        <ul className='flex space-x-4 my-3 lg:text-lg w-full'>
-          {links.map(({ href, label, isBold }) => (
-            <li key={href} className='w-full'>
+    <Layout title='Admin Users'>
+      {/* Enhanced Navigation */}
+      <div className='bg-white shadow-sm border-b'>
+        <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
+          <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
+            {links.map(({ href, label, isBold }) => (
               <Link
+                key={href}
                 href={href}
-                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition ${
-                  isBold ? "font-semibold" : ""
+                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                  isBold
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
+                    : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                 }`}
               >
                 {label}
               </Link>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </nav>
+        </div>
       </div>
-      <div className='max-w-7xl mx-auto p-6'>
-        <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-[#0e355e] mb-2'>Users</h1>
-          <div className='flex items-center gap-4 text-lg'>
-            <p className='text-gray-600'>
-              Total Users:{" "}
-              <span className='font-semibold text-[#0e355e]'>
-                {users.length}
-              </span>
-            </p>
-            {searchTerm && (
-              <p className='text-gray-600'>
-                • Showing:{" "}
-                <span className='font-semibold text-[#0e355e]'>
-                  {filteredAndSortedUsers.length}
-                </span>
+      {/* Main Content */}
+      <div className='max-w-7xl mx-auto px-1 sm:px-2 md:px-4 lg:px-8 py-2 sm:py-4 md:py-6'>
+        {/* Header Section */}
+        <div className='mb-3 sm:mb-6 md:mb-8'>
+          <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
+            <div>
+              <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
+                User Management
+              </h1>
+              <p className='text-sm sm:text-base text-gray-600 mt-1'>
+                Manage user accounts and permissions
               </p>
+            </div>
+            <div className='flex flex-wrap gap-2 sm:gap-3'>
+              <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
+                Total:{" "}
+                <span className='font-semibold text-gray-700'>
+                  {users.length}
+                </span>
+              </div>
+              {searchTerm && (
+                <div className='text-xs sm:text-sm text-gray-500 bg-blue-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
+                  Found:{" "}
+                  <span className='font-semibold text-blue-700'>
+                    {filteredAndSortedUsers.length}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Search Section */}
+        <div className='mb-6 sm:mb-8'>
+          <div className='flex flex-col gap-3 sm:gap-4'>
+            <div className='relative'>
+              <FaSearch className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm' />
+              <input
+                type='text'
+                placeholder='Search users...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className='w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
+              />
+            </div>
+            {searchTerm && (
+              <div className='flex items-center justify-between text-xs sm:text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg'>
+                <span>
+                  Found {filteredAndSortedUsers.length} user
+                  {filteredAndSortedUsers.length !== 1 ? "s" : ""}
+                </span>
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className='text-gray-400 hover:text-gray-600 transition-colors font-bold text-lg'
+                  title='Clear search'
+                >
+                  ×
+                </button>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className='mb-6'>
-          <div className='relative max-w-md'>
-            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-              <FaSearch className='h-4 w-4 text-gray-400' />
-            </div>
-            <input
-              type='text'
-              placeholder='Search by name, email, or company...'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className='block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500'
-            />
-          </div>
-          {searchTerm && (
-            <p className='mt-2 text-sm text-gray-600'>
-              Found {filteredAndSortedUsers.length} user
-              {filteredAndSortedUsers.length !== 1 ? "s" : ""}
-            </p>
-          )}
-        </div>
-
         {/* Status Legend */}
-        <div className='mb-6 bg-gray-50 rounded-lg p-4'>
-          <h3 className='text-sm font-semibold text-gray-700 mb-3'>
-            Status Indicators:
+        <div className='hidden sm:block mb-3 sm:mb-6 md:mb-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-5 border border-gray-200'>
+          <h3 className='text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2'>
+            <div className='w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full'></div>
+            Status Indicators
           </h3>
-          <div className='flex flex-wrap gap-4 text-sm'>
-            <div className='flex items-center gap-2'>
-              <div
-                className='w-4 h-1 rounded'
-                style={{ backgroundColor: "#07783e" }}
-              ></div>
-              <span className='text-gray-600'>Admin User</span>
+          <div className='grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4 text-xs sm:text-sm'>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500 flex-shrink-0'></div>
+              <span className='text-gray-700 font-medium'>Admin User</span>
             </div>
-            <div className='flex items-center gap-2'>
-              <div
-                className='w-4 h-1 rounded'
-                style={{ backgroundColor: "#8B5CF6" }}
-              ></div>
-              <span className='text-gray-600'>New User (48h)</span>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-purple-500 flex-shrink-0'></div>
+              <span className='text-gray-700 font-medium'>New User (48h)</span>
             </div>
-            <div className='flex items-center gap-2'>
-              <div
-                className='w-4 h-1 rounded'
-                style={{ backgroundColor: "#ffd700" }}
-              ></div>
-              <span className='text-gray-600'>Restricted Access</span>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-yellow-500 flex-shrink-0'></div>
+              <span className='text-gray-700 font-medium'>Restricted</span>
             </div>
           </div>
         </div>
 
         {loadingDelete && (
-          <div className='text-center py-4'>
-            <div className='inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg'>
+          <div className='flex items-center justify-center py-6 mb-6'>
+            <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg shadow-sm'>
+              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3'></div>
               Deleting user...
             </div>
           </div>
         )}
         {loading ? (
-          <div className='text-center py-12'>
-            <div className='inline-flex items-center px-6 py-3 bg-gray-50 text-gray-600 rounded-lg text-lg'>
-              Loading users...
-            </div>
+          <div className='flex items-center justify-center py-12'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
+            <span className='ml-3 text-gray-600'>Loading users...</span>
           </div>
         ) : error ? (
-          <div className='text-center py-12'>
-            <div className='inline-flex items-center px-6 py-3 bg-red-50 text-red-600 rounded-lg text-lg'>
-              {error}
+          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
+            <div className='flex items-center'>
+              <div className='text-red-600 font-medium'>
+                Error loading users:
+              </div>
             </div>
+            <div className='text-red-500 mt-1'>{error}</div>
           </div>
         ) : filteredAndSortedUsers.length === 0 ? (
           <div className='text-center py-12'>
-            <div className='inline-flex items-center px-6 py-3 bg-gray-50 text-gray-600 rounded-lg text-lg'>
+            <div className='text-gray-500 mb-2'>No users found</div>
+            <div className='text-sm text-gray-400'>
               {searchTerm
-                ? `No users found matching "${searchTerm}"`
+                ? `Try adjusting your search criteria`
                 : "No users available"}
             </div>
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {filteredAndSortedUsers.map((user) => {
-              const statusInfo = getUserStatusInfo(user);
-              return (
-                <div
-                  key={user._id}
-                  className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-100 ${statusInfo.bgColor}`}
-                  style={{
-                    borderTop:
-                      statusInfo.color !== "transparent"
-                        ? `4px solid ${statusInfo.color}`
-                        : undefined,
-                  }}
-                >
-                  {/* Status Badge */}
-                  {statusInfo.label && (
-                    <div className='px-6 pt-3 pb-1'>
-                      <span
-                        className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white'
-                        style={{ backgroundColor: statusInfo.color }}
-                      >
-                        {statusInfo.label}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Card Header */}
-                  <div
-                    className={`p-6 ${statusInfo.label ? "pt-3" : ""} pb-4`}
-                    style={{
-                      backgroundColor: statusInfo.headerBgColor,
-                    }}
-                  >
-                    <div className='flex items-start space-x-4'>
-                      {/* User Info */}
-                      <div className='flex-1 min-w-0'>
-                        <h3 className='text-lg font-semibold text-gray-900 truncate'>
-                          {user.firstName} {user.lastName}
-                        </h3>
-                        <p className='text-sm text-gray-600 truncate'>
-                          {user.email}
-                        </p>
-                        {user.companyName && (
-                          <p className='text-sm text-gray-500 truncate mt-1'>
-                            {user.companyName}
-                          </p>
-                        )}
-                        <p className='text-xs text-gray-400 mt-1 font-mono'>
-                          ID: {user._id.slice(-6)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Status Grid */}
-                  <div className='bg-gray-50 px-6 py-4'>
-                    <div className='grid grid-cols-3 gap-4'>
-                      <div className='text-center'>
-                        <div className='text-xs font-medium text-gray-600 mb-1'>
-                          Active
-                        </div>
-                        <div className='text-lg flex justify-center'>
-                          {user.active ? (
-                            <IoCheckmarkSharp className='text-green-600' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600' />
-                          )}
-                        </div>
-                      </div>
-                      <div className='text-center border-l border-r border-gray-200'>
-                        <div className='text-xs font-medium text-gray-600 mb-1'>
-                          Approved
-                        </div>
-                        <div className='text-lg flex justify-center'>
-                          {user.approved ? (
-                            <IoCheckmarkSharp className='text-green-600' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600' />
-                          )}
-                        </div>
-                      </div>
-                      <div className='text-center'>
-                        <div className='text-xs font-medium text-gray-600 mb-1'>
-                          Admin
-                        </div>
-                        <div className='text-lg flex justify-center'>
-                          {user.isAdmin ? (
-                            <IoCheckmarkSharp className='text-green-600' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600' />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Footer */}
-                  <div className='px-6 py-4 flex items-center justify-between bg-white border-t border-gray-50'>
-                    <div className='flex items-center space-x-2'>
-                      <span className='text-sm font-medium text-gray-600'>
-                        Restricted:
-                      </span>
-                      <span className='text-sm flex items-center'>
-                        {user.restricted ? (
-                          <IoCheckmarkSharp className='text-green-600' />
-                        ) : (
-                          <IoCloseOutline className='text-red-600' />
-                        )}
-                      </span>
-                    </div>
-                    <div className='flex space-x-2'>
-                      <button
-                        onClick={() => router.push(`/admin/user/${user._id}`)}
-                        className='px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
-                        title='Edit User'
-                      >
-                        <BiSolidEdit size={14} />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => confirmDelete(user._id)}
-                        className='px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-1'
-                        title='Delete User'
-                      >
-                        <BsTrash3 size={14} />
-                        <span>Delete</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <>
+            {/* Desktop Table Layout */}
+            <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
+              <div className='overflow-x-auto overflow-y-auto max-h-[80vh] custom-scrollbar'>
+                <table className='min-w-full' style={{ minWidth: "600px" }}>
+                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <tr>
+                      <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[160px] sm:min-w-[200px]'>
+                        User Information
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[120px]'>
+                        Company
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[60px] sm:min-w-[80px]'>
+                        Active
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[70px] sm:min-w-[90px]'>
+                        Approved
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[60px] sm:min-w-[80px]'>
+                        Admin
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[70px] sm:min-w-[90px]'>
+                        Restricted
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[90px] sm:min-w-[120px]'>
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className='divide-y divide-gray-200'>
+                    {filteredAndSortedUsers.map((user, index) => {
+                      const statusInfo = getUserStatusInfo(user);
+                      return (
+                        <tr
+                          key={user._id}
+                          className={`hover:bg-gray-50 transition-colors ${
+                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                          }`}
+                        >
+                          <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
+                            <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
+                              <div className='flex-shrink-0 relative'>
+                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
+                                  {user.firstName?.[0]?.toUpperCase()}
+                                  {user.lastName?.[0]?.toUpperCase()}
+                                </div>
+                                {statusInfo.label && (
+                                  <div
+                                    className={`absolute -top-0.5 -right-0.5 lg:-top-1 lg:-right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 lg:w-3 lg:h-3 rounded-full border-2 border-white`}
+                                    style={{
+                                      backgroundColor: statusInfo.color,
+                                    }}
+                                  ></div>
+                                )}
+                              </div>
+                              <div className='min-w-0 flex-1'>
+                                <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1'>
+                                  {user.firstName} {user.lastName}
+                                </div>
+                                <div className='text-gray-600 text-xs sm:text-xs lg:text-sm truncate'>
+                                  {user.email}
+                                </div>
+                                <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
+                                  #{user._id.slice(-6)}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[60px] sm:max-w-[100px] lg:max-w-none'>
+                              {user.companyName || "—"}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                            <div className='flex justify-center'>
+                              {user.active ? (
+                                <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              ) : (
+                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                            <div className='flex justify-center'>
+                              {user.approved ? (
+                                <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              ) : (
+                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                            <div className='flex justify-center'>
+                              {user.isAdmin ? (
+                                <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              ) : (
+                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                            <div className='flex justify-center'>
+                              {user.restricted ? (
+                                <div className='bg-yellow-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCheckmarkSharp className='text-yellow-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              ) : (
+                                <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCloseOutline className='text-gray-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
+                              <button
+                                onClick={() =>
+                                  router.push(`/admin/user/${user._id}`)
+                                }
+                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
+                                title='Edit User'
+                              >
+                                <BiSolidEdit
+                                  size={12}
+                                  className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
+                                />
+                                <span className='hidden md:inline text-xs'>
+                                  Edit
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(user._id)}
+                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-gradient-to-r primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
+                                title='Delete User'
+                              >
+                                <BsTrash3
+                                  size={10}
+                                  className='sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5'
+                                />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
         {showModal && (
-          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
-            <div className='bg-white p-8 rounded-xl shadow-2xl max-w-md w-full mx-4 text-center'>
-              <h2 className='text-xl font-bold text-gray-900 mb-2'>
-                ⚠️ Confirm Deletion
-              </h2>
-              <p className='text-gray-600 mb-6'>
-                Are you sure you want to delete this user? This action cannot be
-                undone.
-              </p>
-              <div className='flex justify-center gap-3'>
+          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-[9999] backdrop-blur-sm'>
+            <div className='bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-center border border-gray-200'>
+              <div className='mb-4'>
+                <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <BsTrash3 className='text-red-600 text-2xl' />
+                </div>
+                <h2 className='text-xl font-bold text-gray-900 mb-2'>
+                  Confirm User Deletion
+                </h2>
+                <p className='text-gray-600'>
+                  Are you sure you want to delete this user? This action cannot
+                  be undone and will permanently remove all user data.
+                </p>
+              </div>
+              <div className='flex gap-3'>
                 <button
-                  className='px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors duration-200'
+                  className='flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
                   onClick={deleteUser}
                 >
                   Delete User
                 </button>
                 <button
-                  className='px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors duration-200'
+                  className='flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
