@@ -163,8 +163,8 @@ function AdminUsersScreen() {
                 href={href}
                 className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
-                    : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
