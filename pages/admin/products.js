@@ -153,7 +153,7 @@ export default function AdminProductsScreen() {
                 Product Management
               </h1>
               <p className='text-gray-600 mt-1'>
-                Manage your product inventory and pricing
+                Look at the product inventory and pricing
               </p>
             </div>
             <div className='text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg'>
