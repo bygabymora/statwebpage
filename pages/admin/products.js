@@ -193,7 +193,7 @@ export default function AdminProductsScreen() {
 
         {loading ? (
           <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
             <span className='ml-3 text-gray-600'>Loading products...</span>
           </div>
         ) : error ? (
@@ -295,7 +295,7 @@ export default function AdminProductsScreen() {
                     {/* Action Button */}
                     <Link
                       href={`/admin/product/${product._id}`}
-                      className='block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg'
+                      className='block w-full text-center px-4 py-3 bg-gradient-to-r bg-[#0e355e] text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg'
                     >
                       Edit Product Info
                     </Link>

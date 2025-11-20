@@ -260,8 +260,8 @@ function AdminUsersScreen() {
 
         {loadingDelete && (
           <div className='flex items-center justify-center py-6 mb-6'>
-            <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg shadow-sm'>
-              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3'></div>
+            <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-sm'>
+              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-3'></div>
               Deleting user...
             </div>
           </div>
