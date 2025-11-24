@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import dynamic from "next/dynamic";
 
-// Cargamos el componente de reCAPTCHA solo en el cliente (sin SSR)
+// We load the reCAPTCHA component only on the client (without SSR)
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
   ssr: false,
 });
@@ -11,16 +11,15 @@ const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
  * ReCaptcha v2 checkbox (visible)
  *
  * Props:
- *  - id: string (solo para identificar, no es obligatorio)
+ *  - id: string (only for identification, optional)
  *  - onChange: function(token | null)
  */
-export default function ReCaptchaV2Checkbox({ id, onChange }) {
+export default function ReCaptchaV2Checkbox({ id = "recaptcha-v2", onChange }) {
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_V2_SITE_KEY;
 
   const handleChange = useCallback(
     (token) => {
-      // token puede ser string o null
-      onChange?.(token || null);
+      onChange?.(token || null); // string or null
     },
     [onChange]
   );
@@ -36,8 +35,11 @@ export default function ReCaptchaV2Checkbox({ id, onChange }) {
   }
 
   return (
-    <div className='mt-4'>
-      <ReCAPTCHA sitekey={siteKey} onChange={handleChange} id={id} />
+    <div className='mt-4 flex justify-center'>
+      {/* wrapper to scale the widget on mobile devices */}
+      <div id={id} className='recaptcha-wrapper'>
+        <ReCAPTCHA sitekey={siteKey} onChange={handleChange} />
+      </div>
     </div>
   );
 }

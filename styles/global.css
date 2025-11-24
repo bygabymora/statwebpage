@@ -897,6 +897,26 @@ main {
   font-size: 1rem;
 }
 
+.recaptcha-wrapper {
+  display: inline-block;
+}
+
+/* small cell phones */
+@media (max-width: 480px) {
+  .recaptcha-wrapper {
+    transform: scale(0.82); /* adjust the scale to your liking (0.8–0.9) */
+    transform-origin: 0 0; /* scale from the top left corner */
+  }
+}
+
+/* Tablets / large mobile devices in portrait */
+@media (min-width: 481px) and (max-width: 768px) {
+  .recaptcha-wrapper {
+    transform: scale(0.9);
+    transform-origin: 0 0;
+  }
+}
+
 /*=============== BREAKPOINTS ===============*/
 
 /* For large devices */
