@@ -1,3 +1,4 @@
+// pages/Register.js
 import Link from "next/link";
 import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
@@ -10,11 +11,14 @@ import axios from "axios";
 import CustomAlertModal from "../components/main/CustomAlertModal";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
+import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
+
+const RECAPTCHA_ACTION = "register_submit";
 
 export default function RegisterScreen() {
   const { data: session } = useSession();
   const router = useRouter();
-  // Query params to prefill (sent from NextAuth signIn callback)
+
   const {
     redirect,
     prefillEmail = "",
@@ -22,16 +26,20 @@ export default function RegisterScreen() {
     picture = "",
     from = "",
   } = router.query || {};
+
   const [showPassword, setShowPassword] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ title: "", body: "" });
   const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  // Nuevo: token de reCAPTCHA v2
+  const [captchaToken, setCaptchaToken] = useState(null);
+
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   }, []);
 
-  // If already logged in, redirect away
   useEffect(() => {
     if (session?.user) router.push(redirect || "/");
   }, [session?.user, redirect, router]);
@@ -40,13 +48,11 @@ export default function RegisterScreen() {
     handleSubmit,
     register,
     getValues,
-    setValue, // needed to prefill
+    setValue,
     formState: { errors },
   } = useForm();
 
-  // Prefill from query params (Google → name/email/picture)
   useEffect(() => {
-    // Email
     if (typeof prefillEmail === "string" && prefillEmail) {
       const normalized = prefillEmail.trim().toLowerCase();
       setValue("email", normalized, {
@@ -54,7 +60,6 @@ export default function RegisterScreen() {
         shouldDirty: true,
       });
     }
-    // Name → separate first/last
     if (typeof prefillName === "string" && prefillName) {
       const parts = prefillName.trim().split(/\s+/);
       const first = parts[0] || "";
@@ -77,13 +82,81 @@ export default function RegisterScreen() {
     companyName,
     companyEinCode,
   }) => {
+    setSubmitting(true);
     try {
-      setSubmitting(true);
+      // 1) Validar reCAPTCHA marcado
+      if (!captchaToken) {
+        setAlertMessage({
+          title: "reCAPTCHA required",
+          body: "Please confirm you are not a robot by ticking the checkbox.",
+        });
+        setIsModalOpen(true);
+        setShouldRedirect(false);
+        return;
+      }
 
-      // Normalize email for security
+      // 2) Verificar token con el backend
+      let verifyData = null;
+      try {
+        const verifyRes = await fetch("/api/recaptcha/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: captchaToken,
+            action: RECAPTCHA_ACTION,
+            version: "v2",
+          }),
+        });
+        verifyData = await verifyRes.json();
+      } catch (err) {
+        console.error("[reCAPTCHA verify] network/fetch error:", err);
+        setAlertMessage({
+          title: "Network error",
+          body: "We could not verify the reCAPTCHA. Please check your connection and try again.",
+        });
+        setIsModalOpen(true);
+        setShouldRedirect(false);
+        return;
+      }
+
+      if (!verifyData?.success) {
+        console.warn("[reCAPTCHA verify] failed:", verifyData);
+        const reason = verifyData?.reason;
+
+        let bodyMessage = "reCAPTCHA verification failed. Please try again.";
+
+        if (reason === "server_misconfig") {
+          bodyMessage =
+            "There is a server configuration issue with reCAPTCHA. Please try again later.";
+        } else if (reason === "missing_token") {
+          bodyMessage =
+            "reCAPTCHA token is missing. Please reload the page and try again.";
+        } else if (reason === "wrong_action") {
+          bodyMessage =
+            "There was a validation mismatch. Please reload the page and try again.";
+        } else if (reason === "low_score") {
+          bodyMessage =
+            "We could not verify you are human. Please try again or contact support.";
+        } else if (reason === "google_not_success") {
+          bodyMessage =
+            "reCAPTCHA could not be validated with Google. Please try again.";
+        } else if (reason === "google_parse_error") {
+          bodyMessage =
+            "Unexpected response from Google reCAPTCHA. Please try again.";
+        }
+
+        setAlertMessage({
+          title: "reCAPTCHA error",
+          body: bodyMessage,
+        });
+        setIsModalOpen(true);
+        setShouldRedirect(false);
+        return;
+      }
+
+      // 3) Si el reCAPTCHA está ok → seguimos con la lógica de registro
       const normalizedEmail = (email || "").trim().toLowerCase();
 
-      // Create the user
       await axios.post("/api/auth/signup", {
         firstName,
         lastName,
@@ -95,14 +168,13 @@ export default function RegisterScreen() {
         approved: false,
       });
 
-      // Non-blocking marketing event (only after success)
       try {
         window.gtag?.("event", "ads_conversion_Sign_Up_1", {
           register_attempt: true,
           userName: firstName,
         });
       } catch {
-        /* no-op if gtag is not present */
+        /* no-op */
       }
 
       setAlertMessage({
@@ -111,6 +183,7 @@ export default function RegisterScreen() {
       });
       setIsModalOpen(true);
       setShouldRedirect(true);
+
       const contactToEmail = {
         name: `${firstName} ${lastName}`.trim(),
         email: normalizedEmail,
@@ -120,6 +193,12 @@ export default function RegisterScreen() {
 
       const emailmessage = messageManagement(contactToEmail, "Register");
       handleSendEmails(emailmessage, contactToEmail);
+
+      // Opcional: reset del widget v2
+      if (typeof window !== "undefined" && window.grecaptcha) {
+        window.grecaptcha.reset();
+      }
+      setCaptchaToken(null);
     } catch (err) {
       setAlertMessage({
         title: "Error",
@@ -139,7 +218,6 @@ export default function RegisterScreen() {
 
   return (
     <Layout title='Create Account'>
-      {/* Contextual notice if coming from Google */}
       {from === "google" && (
         <div className='mx-auto max-w-md mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-sm -mt-2'>
           We found your Google account. Please complete the missing fields to
@@ -159,7 +237,6 @@ export default function RegisterScreen() {
           Please fill in the fields below to register your organization.
         </p>
 
-        {/* Avatar (if from Google) */}
         {picture && (
           <div className='flex items-center justify-center mb-6'>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -176,7 +253,6 @@ export default function RegisterScreen() {
         )}
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
-          {/* First Name */}
           <div>
             <label
               htmlFor='firstName'
@@ -201,7 +277,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Last Name */}
           <div>
             <label
               htmlFor='lastName'
@@ -224,7 +299,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Email */}
           <div className='md:col-span-2'>
             <label
               htmlFor='email'
@@ -255,7 +329,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Company Name */}
           <div>
             <label
               htmlFor='companyName'
@@ -280,7 +353,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Company EIN */}
           <div>
             <label
               htmlFor='companyEinCode'
@@ -305,7 +377,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label
               htmlFor='password'
@@ -347,7 +418,6 @@ export default function RegisterScreen() {
             )}
           </div>
 
-          {/* Confirm Password */}
           <div>
             <label
               htmlFor='confirmPassword'
@@ -387,7 +457,7 @@ export default function RegisterScreen() {
         </div>
 
         {/* Terms */}
-        <div className='mt-6 mb-6'>
+        <div className='mt-6 mb-4'>
           <label className='flex items-start text-sm text-gray-700'>
             <input
               type='checkbox'
@@ -405,11 +475,18 @@ export default function RegisterScreen() {
           </label>
         </div>
 
-        {/* Actions */}
+        {/* reCAPTCHA v2 visible */}
+        <div className='mb-4'>
+          <ReCaptchaV2Checkbox
+            id='recaptcha-v2-register'
+            onChange={setCaptchaToken}
+          />
+        </div>
+
         <button
           type='submit'
           disabled={submitting}
-          className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors'
+          className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors disabled:opacity-70 disabled:cursor-not-allowed'
         >
           {submitting ? "Registering..." : "Register"}
         </button>
@@ -424,6 +501,7 @@ export default function RegisterScreen() {
           </Link>
         </div>
       </form>
+
       <CustomAlertModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

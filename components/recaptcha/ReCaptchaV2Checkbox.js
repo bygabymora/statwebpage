@@ -1,32 +1,29 @@
 // components/recaptcha/ReCaptchaV2Checkbox.js
-import React, { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import React, { useCallback } from "react";
+import dynamic from "next/dynamic";
 
-export default function ReCaptchaV2Checkbox({ onChange }) {
+// Cargamos el componente de reCAPTCHA solo en el cliente (sin SSR)
+const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
+  ssr: false,
+});
+
+/**
+ * ReCaptcha v2 checkbox (visible)
+ *
+ * Props:
+ *  - id: string (solo para identificar, no es obligatorio)
+ *  - onChange: function(token | null)
+ */
+export default function ReCaptchaV2Checkbox({ id, onChange }) {
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_V2_SITE_KEY;
-  const widgetIdRef = useRef(null);
-  const [apiLoaded, setApiLoaded] = useState(false);
 
-  useEffect(() => {
-    if (!siteKey || !apiLoaded) return;
-    if (typeof window === "undefined") return;
-    if (!window.grecaptcha || !window.grecaptcha.render) return;
-    if (widgetIdRef.current !== null) return;
-
-    widgetIdRef.current = window.grecaptcha.render("recaptcha-v2-container", {
-      sitekey: siteKey,
-      callback: (token) => {
-        // Triggered when the user checks the checkbox correctly
-        onChange?.(token || null);
-      },
-      "expired-callback": () => {
-        onChange?.(null);
-      },
-      "error-callback": () => {
-        onChange?.(null);
-      },
-    });
-  }, [apiLoaded, siteKey, onChange]);
+  const handleChange = useCallback(
+    (token) => {
+      // token puede ser string o null
+      onChange?.(token || null);
+    },
+    [onChange]
+  );
 
   if (!siteKey || siteKey.trim() === "") {
     if (process.env.NODE_ENV !== "production") {
@@ -39,13 +36,8 @@ export default function ReCaptchaV2Checkbox({ onChange }) {
   }
 
   return (
-    <>
-      <Script
-        src='https://www.google.com/recaptcha/api.js?render=explicit'
-        strategy='lazyOnload'
-        onLoad={() => setApiLoaded(true)}
-      />
-      <div id='recaptcha-v2-container' className='mt-4' />
-    </>
+    <div className='mt-4'>
+      <ReCAPTCHA sitekey={siteKey} onChange={handleChange} id={id} />
+    </div>
   );
 }

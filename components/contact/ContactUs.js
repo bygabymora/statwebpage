@@ -205,7 +205,10 @@ const ContactUs = () => {
 
         {/* Here the visible reCAPTCHA v2 checkbox is shown */}
         <div className='contact__form-div'>
-          <ReCaptchaV2Checkbox onChange={setCaptchaToken} />
+          <ReCaptchaV2Checkbox
+            id='recaptcha-v2-contact'
+            onChange={setCaptchaToken}
+          />
         </div>
 
         <motion.button
