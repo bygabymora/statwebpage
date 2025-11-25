@@ -14,7 +14,7 @@ export default function facs() {
   };
   return (
     <>
-      <Layout title='Terms of use'>
+      <Layout title='Terms of use | Stat Surgical Supply'>
         <div className='card p-5 mb-10'>
           <h1 className='section__title'>Terms of Use</h1>
           <br />

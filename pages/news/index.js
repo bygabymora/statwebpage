@@ -13,7 +13,7 @@ export default function News({ news }) {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "News" }];
 
   return (
-    <Layout title='News Of Health' news={news}>
+    <Layout title='News Of Health | Stat Surgical Supply' news={news}>
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-6'>
           {breadcrumbs.map((breadcrumb, index) => (

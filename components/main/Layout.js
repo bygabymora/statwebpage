@@ -140,7 +140,7 @@ export default function Layout({
         <Head>
           <title>
             {title
-              ? `${title} | Stat Surgical Supply`
+              ? `${title}`
               : "Stat Surgical Supply | Buy Healthcare Products"}
           </title>
           <meta name='googlebot' content='index, follow' />

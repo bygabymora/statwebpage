@@ -115,7 +115,7 @@ export default function Products({ products }) {
   const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
 
   return (
-    <Layout title='Products'>
+    <Layout title='Products | Stat Surgical Supply'>
       <nav className='text-sm text-gray-700 mt-0 md:mt-2'>
         <div className='flex justify-between items-center my-0 md:my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>

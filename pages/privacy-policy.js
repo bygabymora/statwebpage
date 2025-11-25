@@ -12,7 +12,7 @@ export default function facs() {
   };
   return (
     <>
-      <Layout title='Privacy policy'>
+      <Layout title='Privacy policy | Stat Surgical Supply'>
         <div className='card p-5 my-10'>
           <h1 className='section__title'>Privacy Policy</h1>
           <br />
