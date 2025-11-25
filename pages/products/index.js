@@ -9,6 +9,7 @@ import SearchForm from "../../components/products/SearchForm";
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import { enrichAndSortForPublic } from "../../utils/productSort";
+import { generateProductsPageJSONLD } from "../../utils/seo";
 
 export async function getStaticProps() {
   await db.connect(true);
@@ -44,7 +45,6 @@ export async function getStaticProps() {
 export default function Products({ products }) {
   const router = useRouter();
   const { manufacturer, query } = router.query;
-
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
   const [page, setPage] = useState(1);
@@ -115,7 +115,11 @@ export default function Products({ products }) {
   const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
 
   return (
-    <Layout title='Products | Stat Surgical Supply'>
+    <Layout
+      title='Products | Stat Surgical Supply'
+      products={products}
+      schema={generateProductsPageJSONLD(products)}
+    >
       <nav className='text-sm text-gray-700 mt-0 md:mt-2'>
         <div className='flex justify-between items-center my-0 md:my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>

@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { generateServicePageJSONLD } from "../utils/seo";
 
 const benefits = [
   {
@@ -52,7 +53,7 @@ const variants = {
 
 export default function BenefitsSection() {
   return (
-    <section className='w-full my-16'>
+    <section className='w-full my-16' schema={generateServicePageJSONLD()}>
       <h2 className='text-3xl font-bold text-center text-[#0e355e]'>
         Our Key Benefits
       </h2>
