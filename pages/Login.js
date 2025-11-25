@@ -11,6 +11,7 @@ import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import CustomAlertModal from "../components/main/CustomAlertModal";
 import GoogleLoginButton from "../components/auth/GoogleLoginButton";
+import { BsChevronRight } from "react-icons/bs";
 
 export default function Login() {
   const { data: session } = useSession();
@@ -76,8 +77,31 @@ export default function Login() {
     }
   };
 
+  const breadcrumbs = [{ href: "/", name: "Home" }, { name: "Login" }];
+
   return (
     <Layout title='Login'>
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className='flex items-center'>
+              {breadcrumb.href ? (
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#0e355e]'
+                >
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className='mx-2 text-gray-500' />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <form
         onSubmit={handleSubmit(submitHandler)}
         className='max-w-md mx-auto -mt-3 bg-white shadow-lg rounded-2xl p-8 border border-gray-100 my-5'

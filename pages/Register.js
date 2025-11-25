@@ -12,6 +12,7 @@ import CustomAlertModal from "../components/main/CustomAlertModal";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
+import { BsChevronRight } from "react-icons/bs";
 
 const RECAPTCHA_ACTION = "register_submit";
 
@@ -84,7 +85,7 @@ export default function RegisterScreen() {
   }) => {
     setSubmitting(true);
     try {
-      // 1) Validar reCAPTCHA marcado
+      // 1) Validate reCAPTCHA checked
       if (!captchaToken) {
         setAlertMessage({
           title: "reCAPTCHA required",
@@ -95,7 +96,7 @@ export default function RegisterScreen() {
         return;
       }
 
-      // 2) Verificar token con el backend
+      // 2) Verify token with the backend
       let verifyData = null;
       try {
         const verifyRes = await fetch("/api/recaptcha/verify", {
@@ -154,7 +155,7 @@ export default function RegisterScreen() {
         return;
       }
 
-      // 3) Si el reCAPTCHA está ok → seguimos con la lógica de registro
+      // 3) If reCAPTCHA is ok → continue with the registration logic
       const normalizedEmail = (email || "").trim().toLowerCase();
 
       await axios.post("/api/auth/signup", {
@@ -194,7 +195,7 @@ export default function RegisterScreen() {
       const emailmessage = messageManagement(contactToEmail, "Register");
       handleSendEmails(emailmessage, contactToEmail);
 
-      // Opcional: reset del widget v2
+      // Optional: reset the v2 widget
       if (typeof window !== "undefined" && window.grecaptcha) {
         window.grecaptcha.reset();
       }
@@ -216,6 +217,11 @@ export default function RegisterScreen() {
     setIsModalOpen(false);
   };
 
+  const breadcrumbs = [
+    { href: "/Login", name: "Login" },
+    { name: "Create Account" },
+  ];
+
   return (
     <Layout title='Create Account'>
       {from === "google" && (
@@ -224,7 +230,27 @@ export default function RegisterScreen() {
           finish your registration.
         </div>
       )}
-
+      <nav className='text-sm text-gray-700'>
+        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <li key={index} className='flex items-center'>
+              {breadcrumb.href ? (
+                <Link
+                  href={breadcrumb.href}
+                  className='hover:underline text-[#0e355e]'
+                >
+                  {breadcrumb.name}
+                </Link>
+              ) : (
+                <span>{breadcrumb.name}</span>
+              )}
+              {index < breadcrumbs.length - 1 && (
+                <BsChevronRight className='mx-2 text-gray-500' />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <form
         onSubmit={handleSubmit(submitHandler)}
         noValidate
