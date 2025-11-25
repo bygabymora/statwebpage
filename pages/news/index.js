@@ -5,6 +5,7 @@ import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
 import { BsChevronRight } from "react-icons/bs";
+import { generateNewsPageJSONLD } from "../../utils/seo";
 
 export default function News({ news }) {
   // Sort the news array by createdAt in descending order (latest first)
@@ -13,7 +14,11 @@ export default function News({ news }) {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "News" }];
 
   return (
-    <Layout title='News Of Health' news={news}>
+    <Layout
+      title='News Of Health | Stat Surgical Supply'
+      news={news}
+      schema={generateNewsPageJSONLD(news)}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-6'>
           {breadcrumbs.map((breadcrumb, index) => (
