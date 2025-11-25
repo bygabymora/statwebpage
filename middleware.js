@@ -81,6 +81,11 @@ const manufacturerPrefixes = [
   "MEDTRONIC",
   "ETHICON",
   "ARTHREX",
+  "SMITH & NEPHEW",
+  "JOHNSON & JOHNSON",
+  "BOSTON SCIENTIFIC",
+  "COOK",
+  "APPLIED MEDICAL",
 ];
 
 function handleProducts(url) {
