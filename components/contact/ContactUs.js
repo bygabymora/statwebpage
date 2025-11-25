@@ -1,10 +1,11 @@
+// components/contact/ContactUs.js
 import React, { useEffect, useRef, useState } from "react";
 import { BiMessageAdd } from "react-icons/bi";
 import { motion } from "framer-motion";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../context/ModalContext";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import ReCaptchaV2Checkbox from "../recaptcha/ReCaptchaV2Checkbox";
 
 const ACTION = "contact_submit";
 
@@ -15,7 +16,8 @@ const ContactUs = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  // New: reCAPTCHA v2 token (checkbox)
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const sendEmail = async (e) => {
     e.preventDefault();
@@ -32,32 +34,26 @@ const ContactUs = () => {
       return;
     }
 
-    if (!executeRecaptcha) {
-      showStatusMessage("error", "reCAPTCHA not ready. Please try again.");
+    // Validate that the checkbox has been checked
+    if (!captchaToken) {
+      showStatusMessage(
+        "error",
+        "Please confirm you are not a robot by ticking the checkbox."
+      );
       return;
     }
 
-    let token;
-    try {
-      token = await executeRecaptcha(ACTION);
-    } catch (err) {
-      console.error("[reCAPTCHA v3] execute error:", err);
-      showStatusMessage("error", "Unable to run reCAPTCHA. Try again.");
-      return;
-    }
-
-    if (!token) {
-      showStatusMessage("error", "reCAPTCHA token missing. Try again.");
-      return;
-    }
-
-    // Verificar token en el servidor (ahora siempre 200 con 'reason')
+    // Verify token on the server
     let verifyData = null;
     try {
       const verifyRes = await fetch("/api/recaptcha/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, action: ACTION }),
+        body: JSON.stringify({
+          token: captchaToken,
+          action: ACTION,
+          version: "v2", // important: we use the v2 secret
+        }),
       });
       verifyData = await verifyRes.json();
     } catch (err) {
@@ -67,7 +63,6 @@ const ContactUs = () => {
     }
 
     if (!verifyData?.success) {
-      // Mensajes por motivo; log para diagnóstico
       console.warn("[reCAPTCHA verify] failed:", verifyData);
       const reason = verifyData?.reason;
 
@@ -104,7 +99,7 @@ const ContactUs = () => {
       return;
     }
 
-    // OK → enviamos el correo
+    // OK → send the email
     const contactToEmail = { name, email: email.trim().toLowerCase() };
     const emailmessage = messageManagement(
       contactToEmail,
@@ -118,6 +113,13 @@ const ContactUs = () => {
       setName("");
       setEmail("");
       setMessage("");
+      setCaptchaToken(null);
+
+      // Optional: reset the v2 widget if you want
+      if (typeof window !== "undefined" && window.grecaptcha) {
+        // reset all widgets (simple and effective)
+        window.grecaptcha.reset();
+      }
     } catch (err) {
       console.error("[ContactUs] handleSendEmails error:", err);
       showStatusMessage("error", "There was a problem sending your message.");
@@ -198,6 +200,14 @@ const ContactUs = () => {
             value={message}
             id='message'
             required
+          />
+        </div>
+
+        {/* Here the visible reCAPTCHA v2 checkbox is shown */}
+        <div className='contact__form-div'>
+          <ReCaptchaV2Checkbox
+            id='recaptcha-v2-contact'
+            onChange={setCaptchaToken}
           />
         </div>
 

@@ -23,13 +23,12 @@ export default async function handler(req, res) {
       return `<url><loc>${loc}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`;
     });
 
-    const productUrls = products.flatMap(({ manufacturer, name, _id }) => {
+    const productUrls = products.flatMap(({ manufacturer, name }) => {
       const slug = `${manufacturer}-${name}`;
       const encSlug = encodeURIComponent(slug);
       const encName = encodeURIComponent(name);
 
       return [
-        `<url><loc>${BASE_URL}/products/${encSlug}?pId=${_id}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
         `<url><loc>${BASE_URL}/products/${encSlug}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
         `<url><loc>${BASE_URL}/products/${encName}</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>`,
       ];

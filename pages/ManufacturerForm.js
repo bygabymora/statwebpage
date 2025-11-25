@@ -7,6 +7,7 @@ import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
+import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
 
 export default function ManufacturerForm() {
   const form = useRef();
@@ -15,6 +16,7 @@ export default function ManufacturerForm() {
   const [email, setEmail] = useState("");
   const [productName, setProductName] = useState("");
   const [emailManufacturer, setEmailManufacturer] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -22,6 +24,14 @@ export default function ManufacturerForm() {
 
     if (!name || !email || !emailManufacturer || !productName) {
       showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
+
+    if (!captchaToken) {
+      showStatusMessage(
+        "error",
+        "Please confirm you are not a robot by ticking the checkbox."
+      );
       return;
     }
 
@@ -116,6 +126,12 @@ export default function ManufacturerForm() {
               onChange={(e) => setEmailManufacturer(e.target.value)}
               required
               className='w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]'
+            />
+          </div>
+          <div className='mb-4'>
+            <ReCaptchaV2Checkbox
+              id='recaptcha-v2-manufacturer-form'
+              onChange={setCaptchaToken}
             />
           </div>
           <button

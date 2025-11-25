@@ -1,3 +1,5 @@
+// pages/api/recaptcha/verify.js
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     // Keep 405 for unsupported methods
@@ -10,16 +12,23 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   try {
-    const { token, action } = req.body || {};
+    const { token, action, version = "v3" } = req.body || {};
     if (!token) {
       // 200 with clear reason: avoid falling into the front catch
       return res.status(200).json({ success: false, reason: "missing_token" });
     }
 
-    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    // We choose secret according to the version
+    const secret =
+      version === "v2"
+        ? process.env.RECAPTCHA_V2_SECRET_KEY
+        : process.env.RECAPTCHA_SECRET_KEY;
+
     if (!secret) {
-      // If the secret is missing in PROD, don't throw 500 at the end user
-      console.error("[reCAPTCHA] Missing RECAPTCHA_SECRET_KEY in environment");
+      console.error(
+        "[reCAPTCHA] Missing secret key in environment for version:",
+        version
+      );
       return res
         .status(200)
         .json({ success: false, reason: "server_misconfig" });
@@ -60,7 +69,7 @@ export default async function handler(req, res) {
         .json({ success: false, reason: "google_parse_error" });
     }
 
-    // data: { success, score, action, hostname, challenge_ts, "error-codes": [] }
+    // data: { success, score?, action?, hostname, challenge_ts, "error-codes": [] }
     if (!data?.success) {
       console.error("[reCAPTCHA] google_not_success:", data);
       return res.status(200).json({
@@ -71,7 +80,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate action (defense against reuse of the token for other actions)
+    // Validate action (only relevant for v3; v2 does not have 'action')
     if (data?.action && data.action !== expectedAction) {
       console.warn("[reCAPTCHA] wrong_action:", {
         got: data.action,
@@ -84,6 +93,7 @@ export default async function handler(req, res) {
       });
     }
 
+    // For v2 there is usually no score, so this block does not run
     if (typeof data?.score === "number" && data.score < minScore) {
       console.warn("[reCAPTCHA] low_score:", { score: data.score, minScore });
       return res.status(200).json({

@@ -695,453 +695,453 @@ export default function ProductScreen({ product }) {
               <p className='text-lg text-gray-700 leading-relaxed'>
                 {currentDescription}
               </p>
-              {product.information && (
-                <p className='text-sm text-gray-600 mt-2'>
-                  {product.information}
-                </p>
-              )}
             </div>
-
-            {product.sentOverNight && (
-              <div className='bg-orange-50 border-l-4 border-orange-400 p-4 rounded'>
-                <div className='flex'>
-                  <div className='ml-3'>
-                    <h3 className='text-sm font-medium text-orange-800'>
-                      Special Shipping Requirements
-                    </h3>
-                    <p className='mt-1 text-sm text-orange-700'>
-                      It is recommended that this product ships overnight due to
-                      temperature sensitivity. Stat Surgical Supply is not
-                      responsible for product damage or failure if the customer
-                      chooses another shipping method.
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {product.information && (
+              <h2>
+                <p className='text-sm text-[#788b9b]'>
+                  {product.name} {product.information}
+                </p>
+              </h2>
             )}
-            {/* Purchase Options Card */}
-            <div className='bg-white shadow-lg rounded-xl p-6'>
-              {!isOutOfStock &&
-                !isOutOfStockBox &&
-                !isOutOfStockClearance &&
-                active &&
-                currentCountInStock > 0 &&
-                hasPrice && (
-                  <div className='mb-2 flex items-center justify-center'>
-                    <div className='font-bold mt-4'>Quantity &nbsp;</div>
-                    <div className='flex items-center flex-row'>
+            {product.sentOverNight && (
+              <li className='space-y-2'>
+                <br />
+                <br />
+                <br />
+                <br />
+                <div className='text-lg font-semibold text-[#0e355e]'>
+                  Shipping recomendations:
+                </div>
+                <p className='text-sm text-[#788b9b]'>
+                  It is recommended that this product ships overnight due to
+                  temperature sensitivity. Stat Surgical Supply is not
+                  responsible for product damage or failure if the customer
+                  chooses another shipping method.
+                </p>
+              </li>
+            )}
+            <div className='flex flex-col items-center justify-center'>
+              <div className='card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md'>
+                {!isOutOfStock &&
+                  !isOutOfStockBox &&
+                  !isOutOfStockClearance &&
+                  active &&
+                  currentCountInStock > 0 &&
+                  hasPrice && (
+                    <div className='mb-2 flex items-center justify-center'>
+                      <div className='font-bold mt-4'>Quantity &nbsp;</div>
+                      <div className='flex items-center flex-row'>
+                        <button
+                          className='border px-2 py-1 card'
+                          onClick={() => setQty(Math.max(1, qty - 1))}
+                          disabled={qty <= 1}
+                        >
+                          -
+                        </button>
+                        <span className='px-1 mt-4'>{qty}</span>
+                        <button
+                          className='border px-2 py-1 card'
+                          onClick={() => {
+                            if (qty < currentCountInStock) {
+                              setQty(qty + 1);
+                            } else {
+                              setShowModal(true);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                {(isOutOfStock ||
+                  isOutOfStockBox ||
+                  isOutOfStockClearance ||
+                  currentCountInStock <= 0) &&
+                  active && (
+                    <div className='mb-2 justify-center gap-10 text-center items-center mt-2'>
+                      <div className='font-bold'>Status</div>
+                      <div className=''>Out of Stock</div>
+                    </div>
+                  )}
+                {showModal && (
+                  <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+                    <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
+                      <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
+                      <span className='font-bold text-[#0e355e]'>
+                        {product.manufacturer} - {product.name} -{" "}
+                        {typeOfPurchase}
+                      </span>{" "}
+                      {user?.cart?.length > 0 &&
+                        handleMatchProduct(product._id) > 0 && (
+                          <p className='mt-2 font-semibold'>
+                            You have{" "}
+                            {handleMatchProduct(product._id) > 1
+                              ? handleMatchProduct(product._id) +
+                                "units of this item in your cart, that are available for purchase"
+                              : "1 unit of this item in your cart, that is available for purchase"}
+                            .
+                          </p>
+                        )}
+                      <p className='text-[#788b9b]'>
+                        We do not have any additional units at this moment.
+                        Please contact us for more information.
+                      </p>
                       <button
-                        className='border px-2 py-1 card'
-                        onClick={() => setQty(Math.max(1, qty - 1))}
-                        disabled={qty <= 1}
+                        className='mt-4 px-4 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition'
+                        onClick={() => setShowModal(false)}
                       >
-                        -
-                      </button>
-                      <span className='px-1 mt-4'>{qty}</span>
-                      <button
-                        className='border px-2 py-1 card'
-                        onClick={() => {
-                          if (qty < currentCountInStock) {
-                            setQty(qty + 1);
-                          } else {
-                            setShowModal(true);
-                          }
-                        }}
-                      >
-                        +
+                        Close
                       </button>
                     </div>
                   </div>
                 )}
-              {(isOutOfStock ||
-                isOutOfStockBox ||
-                isOutOfStockClearance ||
-                currentCountInStock <= 0) &&
-                active && (
-                  <div className='mb-2 justify-center gap-10 text-center items-center mt-2'>
-                    <div className='font-bold'>Status</div>
-                    <div className=''>Out of Stock</div>
-                  </div>
-                )}
-              {showModal && (
-                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
-                  <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
-                    <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
-                    <span className='font-bold text-[#0e355e]'>
-                      {product.manufacturer} - {product.name} - {typeOfPurchase}
-                    </span>{" "}
-                    {user?.cart?.length > 0 &&
-                      handleMatchProduct(product._id) > 0 && (
-                        <p className='mt-2 font-semibold'>
-                          You have{" "}
-                          {handleMatchProduct(product._id) > 1
-                            ? handleMatchProduct(product._id) +
-                              "units of this item in your cart, that are available for purchase"
-                            : "1 unit of this item in your cart, that is available for purchase"}
-                          .
-                        </p>
-                      )}
-                    <p className='text-[#788b9b]'>
-                      We do not have any additional units at this moment. Please
-                      contact us for more information.
-                    </p>
-                    <button
-                      className='mt-4 px-4 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition'
-                      onClick={() => setShowModal(false)}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
-              <div>
-                {!isOutOfStock &&
-                  !isOutOfStockBox &&
-                  !isOutOfStockClearance && (
-                    <div>
-                      {product.each?.countInStock > 0 ||
-                      product.box?.countInStock > 0 ? (
-                        typeOfPurchase === "Each" ||
-                        typeOfPurchase === "Box" ? (
-                          <div>
-                            {active === "loading"
-                              ? "Loading"
-                              : active && (
-                                  <div className='mb-2 flex justify-between'>
-                                    <div className='font-bold'>U o M</div>
-                                    <Listbox
-                                      value={typeOfPurchase}
-                                      onChange={(value) => {
-                                        setTypeOfPurchase(value);
-                                        if (value === "Each" && product.each) {
-                                          setCurrentPrice(
-                                            product.each?.wpPrice || 0
-                                          );
-                                          setCurrentDescription(
-                                            product.each?.description || ""
-                                          );
-                                          setCurrentCountInStock(
-                                            product.each?.countInStock || 0
-                                          );
-                                        } else if (
-                                          value === "Box" &&
-                                          product.box
-                                        ) {
-                                          setCurrentPrice(
-                                            product.box?.wpPrice || 0
-                                          );
-                                          setCurrentDescription(
-                                            product.box?.description || ""
-                                          );
-                                          setCurrentCountInStock(
-                                            product.box?.countInStock || 0
-                                          );
-                                        } else if (
-                                          value === "Clearance" &&
-                                          product.clearance
-                                        ) {
-                                          setCurrentPrice(
-                                            product.clearance?.price || 0
-                                          );
-                                          setCurrentDescription(
-                                            product.clearance?.description || ""
-                                          );
-                                          setCurrentCountInStock(
+                <div>
+                  {!isOutOfStock &&
+                    !isOutOfStockBox &&
+                    !isOutOfStockClearance && (
+                      <div>
+                        {product.each?.countInStock > 0 ||
+                        product.box?.countInStock > 0 ? (
+                          typeOfPurchase === "Each" ||
+                          typeOfPurchase === "Box" ? (
+                            <div>
+                              {active === "loading"
+                                ? "Loading"
+                                : active && (
+                                    <div className='mb-2 flex justify-between'>
+                                      <div className='font-bold'>U o M</div>
+                                      <Listbox
+                                        value={typeOfPurchase}
+                                        onChange={(value) => {
+                                          setTypeOfPurchase(value);
+                                          if (
+                                            value === "Each" &&
                                             product.each
-                                              ?.clearanceCountInStock > 0 ||
-                                              product.box
-                                                ?.clearanceCountInStock > 0
-                                          );
-                                        }
-                                      }}
-                                    >
-                                      <div className='relative'>
-                                        <Listbox.Button
-                                          className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
-                                        >
-                                          {typeOfPurchase || "Select"}
-                                        </Listbox.Button>
-                                        <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                                        <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
-                                          {availableTypes.map((option) => (
-                                            <Listbox.Option
-                                              key={option}
-                                              value={option}
-                                              className={({ active }) =>
-                                                `cursor-pointer select-none px-4 py-2 ${
-                                                  active
-                                                    ? "bg-blue-100 text-[#0e355e]"
-                                                    : "text-gray-900"
-                                                }`
-                                              }
-                                            >
-                                              {({ selected }) => (
-                                                <span className='flex items-center justify-between'>
-                                                  {option}
-                                                  {selected && (
-                                                    <BiCheck className='w-4 h-4 text-[#0e355e]' />
-                                                  )}
-                                                </span>
-                                              )}
-                                            </Listbox.Option>
-                                          ))}
-                                        </Listbox.Options>
-                                      </div>
-                                    </Listbox>
-                                  </div>
-                                )}
-                            {active === "loading"
-                              ? "Loading"
-                              : active && (
-                                  <div className='mb-2 flex justify-between'>
-                                    <div className='font-bold'>Price</div>
-                                    {hasPrice
-                                      ? `$${currentPrice}`
-                                      : "Call for Price"}
-                                  </div>
-                                )}
-                          </div>
-                        ) : null
-                      ) : (
-                        // If you only have Clearance, show it once without an "Add to Cart" button
-                        product.each?.clearanceCountInStock > 0 && (
-                          <div className='my-5 text-center'>
-                            <div className='text-red-500 font-bold text-lg'>
-                              Clearance
+                                          ) {
+                                            setCurrentPrice(
+                                              product.each?.wpPrice || 0
+                                            );
+                                            setCurrentDescription(
+                                              product.each?.description || ""
+                                            );
+                                            setCurrentCountInStock(
+                                              product.each?.countInStock || 0
+                                            );
+                                          } else if (
+                                            value === "Box" &&
+                                            product.box
+                                          ) {
+                                            setCurrentPrice(
+                                              product.box?.wpPrice || 0
+                                            );
+                                            setCurrentDescription(
+                                              product.box?.description || ""
+                                            );
+                                            setCurrentCountInStock(
+                                              product.box?.countInStock || 0
+                                            );
+                                          } else if (
+                                            value === "Clearance" &&
+                                            product.clearance
+                                          ) {
+                                            setCurrentPrice(
+                                              product.clearance?.price || 0
+                                            );
+                                            setCurrentDescription(
+                                              product.clearance?.description ||
+                                                ""
+                                            );
+                                            setCurrentCountInStock(
+                                              product.each
+                                                ?.clearanceCountInStock > 0 ||
+                                                product.box
+                                                  ?.clearanceCountInStock > 0
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        <div className='relative'>
+                                          <Listbox.Button
+                                            className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                                          >
+                                            {typeOfPurchase || "Select"}
+                                          </Listbox.Button>
+                                          <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                                          <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                                            {availableTypes.map((option) => (
+                                              <Listbox.Option
+                                                key={option}
+                                                value={option}
+                                                className={({ active }) =>
+                                                  `cursor-pointer select-none px-4 py-2 ${
+                                                    active
+                                                      ? "bg-blue-100 text-[#0e355e]"
+                                                      : "text-gray-900"
+                                                  }`
+                                                }
+                                              >
+                                                {({ selected }) => (
+                                                  <span className='flex items-center justify-between'>
+                                                    {option}
+                                                    {selected && (
+                                                      <BiCheck className='w-4 h-4 text-[#0e355e]' />
+                                                    )}
+                                                  </span>
+                                                )}
+                                              </Listbox.Option>
+                                            ))}
+                                          </Listbox.Options>
+                                        </div>
+                                      </Listbox>
+                                    </div>
+                                  )}
+                              {active === "loading"
+                                ? "Loading"
+                                : active && (
+                                    <div className='mb-2 flex justify-between'>
+                                      <div className='font-bold'>Price</div>
+                                      {hasPrice
+                                        ? `$${currentPrice}`
+                                        : "Call for Price"}
+                                    </div>
+                                  )}
                             </div>
-                            {active === "loading" ? (
-                              "Loading"
-                            ) : active ? (
+                          ) : null
+                        ) : (
+                          // If you only have Clearance, show it once without an "Add to Cart" button
+                          product.each?.clearanceCountInStock > 0 && (
+                            <div className='my-5 text-center'>
+                              <div className='text-red-500 font-bold text-lg'>
+                                Clearance
+                              </div>
+                              {active === "loading" ? (
+                                "Loading"
+                              ) : active ? (
+                                <div className='mb-2 flex justify-between'>
+                                  <div className='font-bold'>Price:</div>
+                                  <div className='ml-2 text-[#788b9b]'>
+                                    ${" "}
+                                    {product.clearance?.price ||
+                                      "Call for Price"}
+                                  </div>
+                                </div>
+                              ) : null}
+                              <div className='text-[#414b53]'>
+                                {product.notes}
+                              </div>
+                            </div>
+                          )
+                        )}
+                        {(product.each?.countInStock > 0 ||
+                          product.box?.countInStock > 0) &&
+                          active && (
+                            <div>
+                              {console.log("session", session)}
                               <div className='mb-2 flex justify-between'>
-                                <div className='font-bold'>Price:</div>
-                                <div className='ml-2 text-[#788b9b]'>
-                                  ${" "}
-                                  {product.clearance?.price || "Call for Price"}
+                                <div className='font-bold'>Status</div>
+                                <div>
+                                  {(typeOfPurchase === "Each" &&
+                                    isOutOfStock) ||
+                                  (typeOfPurchase === "Box" &&
+                                    isOutOfStockBox) ||
+                                  (typeOfPurchase === "Clearance" &&
+                                    isOutOfStockClearance)
+                                    ? "Out of Stock"
+                                    : "In Stock"}
                                 </div>
                               </div>
-                            ) : null}
-                            <div className='text-[#414b53]'>
-                              {product.notes}
-                            </div>
-                          </div>
-                        )
-                      )}
-                      {(product.each?.countInStock > 0 ||
-                        product.box?.countInStock > 0) &&
-                        active && (
-                          <div>
-                            <div className='mb-2 flex justify-between'>
-                              <div className='font-bold'>Status</div>
-                              <div>
-                                {(typeOfPurchase === "Each" && isOutOfStock) ||
-                                (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                                (typeOfPurchase === "Clearance" &&
-                                  isOutOfStockClearance)
-                                  ? "Out of Stock"
-                                  : "In Stock"}
-                              </div>
-                            </div>
 
-                            {active === "loading"
-                              ? "Loading"
-                              : active && (
-                                  <>
-                                    {!hasPrice || currentPrice === 0 ? (
-                                      <Link href='/support'>
-                                        <button className='primary-button cart-button text-white'>
-                                          Call for Price
-                                        </button>
-                                      </Link>
-                                    ) : (
-                                      <button
-                                        className='primary-button cart-button my-2'
-                                        type='button'
-                                        onClick={addToCartHandler}
-                                        disabled={
-                                          (typeOfPurchase === "Each" &&
+                              {active === "loading"
+                                ? "Loading"
+                                : active && (
+                                    <>
+                                      {!hasPrice || currentPrice === 0 ? (
+                                        <Link href='/support'>
+                                          <button className='primary-button cart-button text-white'>
+                                            Call for Price
+                                          </button>
+                                        </Link>
+                                      ) : (
+                                        <button
+                                          className='primary-button cart-button my-2'
+                                          type='button'
+                                          onClick={addToCartHandler}
+                                          disabled={
+                                            (typeOfPurchase === "Each" &&
+                                              isOutOfStock) ||
+                                            (typeOfPurchase === "Box" &&
+                                              isOutOfStockBox) ||
+                                            (typeOfPurchase === "Clearance" &&
+                                              isOutOfStockClearance)
+                                          }
+                                        >
+                                          {(typeOfPurchase === "Each" &&
                                             isOutOfStock) ||
                                           (typeOfPurchase === "Box" &&
                                             isOutOfStockBox) ||
                                           (typeOfPurchase === "Clearance" &&
                                             isOutOfStockClearance)
-                                        }
-                                      >
-                                        {(typeOfPurchase === "Each" &&
-                                          isOutOfStock) ||
-                                        (typeOfPurchase === "Box" &&
-                                          isOutOfStockBox) ||
-                                        (typeOfPurchase === "Clearance" &&
-                                          isOutOfStockClearance)
-                                          ? "Out of Stock"
-                                          : "Add to Cart"}
-                                      </button>
-                                    )}
-                                  </>
-                                )}
-                          </div>
-                        )}
-                    </div>
-                  )}
-                {showPopup && (
-                  <div className='popup'>
-                    <div className='popup-content'>
-                      <p>Items added to cart.</p>
-                      <br />
-                      <div className='flex gap-1 justify-evenly'>
-                        <button
-                          className='primary-button w-1/2 text-xs text-left'
-                          onClick={continueShoppingHandler}
-                        >
-                          Continue Shopping
-                        </button>
-                        <button
-                          className=' flex primary-button w-1/2 text-xs text-left items-center'
-                          onClick={goToCartHandler}
-                        >
-                          <p>Go to Cart</p> &nbsp;
-                          <BsCart2 className='text-2xl' />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {((typeOfPurchase === "Each" &&
-                  (isOutOfStock || currentCountInStock <= 0)) ||
-                  (typeOfPurchase === "Box" &&
-                    (isOutOfStockBox || currentCountInStock <= 0)) ||
-                  (typeOfPurchase === "Clearance" && isOutOfStockClearance)) &&
-                  active && (
-                    <form
-                      className='text-center p-2'
-                      ref={form}
-                      onSubmit={sendEmail}
-                    >
-                      <label className='mt-3 font-bold'>
-                        Join Our Wait List
-                      </label>
-                      <input
-                        type='text'
-                        name='user_name'
-                        className='contact__form-input'
-                        onChange={(e) => setName(e.target.value)}
-                        value={name}
-                        placeholder='Name'
-                        required
-                      />
-                      <input
-                        type='email'
-                        name='user_email'
-                        className='contact__form-input mt-2'
-                        onChange={(e) => setEmail(e.target.value)}
-                        value={email}
-                        placeholder='Email'
-                        required
-                      />
-                      <input
-                        type='text'
-                        name='emailManufacturer'
-                        className='contact__form-input'
-                        onChange={(e) => setEmailManufacturer(e.target.value)}
-                        value={emailManufacturer}
-                        hidden
-                        required
-                      />
-                      <button
-                        className='primary-button mt-3'
-                        type='submit'
-                        onClick={sendEmail}
-                      >
-                        Submit
-                      </button>
-                    </form>
-                  )}
-                {session?.user && !active ? (
-                  <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
-                    <div className='font-semibold'>
-                      You will be able to see this product info soon.
-                    </div>
-                  </div>
-                ) : !session?.user ? (
-                  <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
-                    {(product.each?.wpPrice &&
-                      product.each?.wpPrice !== "Call for price") ||
-                    (product.box?.wpPrice &&
-                      product.box?.wpPrice !== "Call for price") ? (
-                      <div className=''>
-                        <span className='font-semibold'>
-                          Web price: $
-                          {product.each?.wpPrice || product.box?.wpPrice} per{" "}
-                          {product.each?.wpPrice ? "Unit" : "Box"}.
-                        </span>{" "}
-                        <br />
-                        Contact us or register for custom pricing.
-                      </div>
-                    ) : (
-                      <div className=''>
-                        Sign in to see availability and purchase this product at
-                        a custom price.
+                                            ? "Out of Stock"
+                                            : "Add to Cart"}
+                                        </button>
+                                      )}
+                                    </>
+                                  )}
+                            </div>
+                          )}
                       </div>
                     )}
-                    <div className='flex gap-5'>
-                      <Link href='/Login'>
-                        <button className='primary-button align-middle text-white'>
-                          Login
-                        </button>
-                      </Link>
-                      <Link href='/Register'>
-                        <button className='primary-button align-middle text-white'>
-                          Register
-                        </button>
-                      </Link>
+                  {showPopup && (
+                    <div className='popup'>
+                      <div className='popup-content'>
+                        <p>Items added to cart.</p>
+                        <br />
+                        <div className='flex gap-1 justify-evenly'>
+                          <button
+                            className='primary-button w-1/2 text-xs text-left'
+                            onClick={continueShoppingHandler}
+                          >
+                            Continue Shopping
+                          </button>
+                          <button
+                            className=' flex primary-button w-1/2 text-xs text-left items-center'
+                            onClick={goToCartHandler}
+                          >
+                            <p>Go to Cart</p> &nbsp;
+                            <BsCart2 className='text-2xl' />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ) : null}
+                  )}
+                  {((typeOfPurchase === "Each" &&
+                    (isOutOfStock || currentCountInStock <= 0)) ||
+                    (typeOfPurchase === "Box" &&
+                      (isOutOfStockBox || currentCountInStock <= 0)) ||
+                    (typeOfPurchase === "Clearance" &&
+                      isOutOfStockClearance)) &&
+                    active && (
+                      <form
+                        className='text-center p-2'
+                        ref={form}
+                        onSubmit={sendEmail}
+                      >
+                        <label className='mt-3 font-bold'>
+                          Join Our Wait List
+                        </label>
+                        <input
+                          type='text'
+                          name='user_name'
+                          className='contact__form-input'
+                          onChange={(e) => setName(e.target.value)}
+                          value={name}
+                          placeholder='Name'
+                          required
+                        />
+                        <input
+                          type='email'
+                          name='user_email'
+                          className='contact__form-input mt-2'
+                          onChange={(e) => setEmail(e.target.value)}
+                          value={email}
+                          placeholder='Email'
+                          required
+                        />
+                        <input
+                          type='text'
+                          name='emailManufacturer'
+                          className='contact__form-input'
+                          onChange={(e) => setEmailManufacturer(e.target.value)}
+                          value={emailManufacturer}
+                          hidden
+                          required
+                        />
+                        <button
+                          className='primary-button mt-3'
+                          type='submit'
+                          onClick={sendEmail}
+                        >
+                          Submit
+                        </button>
+                      </form>
+                    )}
+                  {session?.user && !active ? (
+                    <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
+                      <div className='font-semibold'>
+                        You will be able to see this product info soon.
+                      </div>
+                    </div>
+                  ) : !session?.user ? (
+                    <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
+                      {(product.each?.wpPrice &&
+                        product.each?.wpPrice !== "Call for price") ||
+                      (product.box?.wpPrice &&
+                        product.box?.wpPrice !== "Call for price") ? (
+                        <div className=''>
+                          <span className='font-semibold'>
+                            Web price: $
+                            {product.each?.wpPrice || product.box?.wpPrice} per{" "}
+                            {product.each?.wpPrice ? "Unit" : "Box"}.
+                          </span>{" "}
+                          <br />
+                          Contact us or register for custom pricing.
+                        </div>
+                      ) : (
+                        <div className=''>
+                          Sign in to see availability and purchase this product
+                          at a custom price.
+                        </div>
+                      )}
+                      <div className='flex gap-5'>
+                        <Link href='/Login'>
+                          <button className='primary-button align-middle text-white'>
+                            Login
+                          </button>
+                        </Link>
+                        <Link href='/Register'>
+                          <button className='primary-button align-middle text-white'>
+                            Register
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Tabbed Interface Section */}
-        <div className='bg-white shadow-lg rounded-xl overflow-hidden mb-8'>
-          {/* Tab Navigation */}
-          <div className='border-b border-gray-200'>
-            <nav className='flex flex-wrap'>
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
-                      activeTab === tab.id
-                        ? "border-[#144e8b] text-[#144e8b] bg-blue-50"
-                        : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
-                    }`}
-                  >
-                    <Icon className='w-4 h-4 mr-2' />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Tab Content */}
-          <div className='p-6'>{renderTabContent()}</div>
-        </div>
       </div>
 
-      {/* Additional CSS Styles */}
-      <style jsx global>{`
-        .no-drag {
-          -webkit-user-drag: none;
-          user-drag: none;
-          -webkit-user-select: none;
-          user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-        }
-      `}</style>
+      {/* Tabbed Interface Section */}
+      <div className='bg-white shadow-lg rounded-xl overflow-hidden mb-8'>
+        {/* Tab Navigation */}
+        <div className='border-b border-gray-200'>
+          <nav className='flex flex-wrap'>
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
+                    activeTab === tab.id
+                      ? "border-[#144e8b] text-[#144e8b] bg-blue-50"
+                      : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
+                  }`}
+                >
+                  <Icon className='w-4 h-4 mr-2' />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className='p-6'>{renderTabContent()}</div>
+      </div>
     </Layout>
   );
 }

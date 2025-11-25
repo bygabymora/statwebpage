@@ -3,6 +3,13 @@ import Link from "next/link";
 import React, { useEffect, useReducer, useCallback } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
+import {
+  FaEye,
+  FaCreditCard,
+  FaFileInvoice,
+  FaTruck,
+  FaBox,
+} from "react-icons/fa";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -78,142 +85,371 @@ export default function AdminOrderScreen() {
   ];
 
   return (
-    <Layout title='Admin Dashboard'>
-      <div className='flex justify-center'>
-        <ul className='flex space-x-4 my-3 lg:text-lg w-full'>
-          {links.map(({ href, label, isBold }) => (
-            <li key={href} className='w-full'>
+    <Layout title='Admin Orders'>
+      {/* Enhanced Navigation */}
+      <div className='bg-white shadow-sm border-b'>
+        <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
+          <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
+            {links.map(({ href, label, isBold }) => (
               <Link
+                key={href}
                 href={href}
-                className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition ${
-                  isBold ? "font-semibold" : ""
+                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                  isBold
+                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
               </Link>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </nav>
+        </div>
       </div>
-      <div className='md:col-span-3 p-4'>
-        <div className='flex items-center justify-between mb-4'>
-          <h1 className='text-2xl font-bold'>Admin Orders</h1>
-          <button
-            onClick={fetchData}
-            className='px-3 py-2 rounded-xl bg-white shadow hover:bg-gray-100'
-          >
-            Refresh
-          </button>
+      {/* Main Content */}
+      <div className='mx-auto px-1 sm:px-2 md:px-4 lg:px-8 xl:px-12 py-2 sm:py-4 md:py-6'>
+        {/* Header Section */}
+        <div className='mb-3 sm:mb-6 md:mb-8'>
+          <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+              <div>
+                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
+                  Order Management
+                </h1>
+                <p className='text-sm sm:text-base text-gray-600 mt-1'>
+                  Manage customer orders and track deliveries
+                </p>
+              </div>
+              <button
+                onClick={fetchData}
+                className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm sm:text-base'
+              >
+                Refresh Orders
+              </button>
+            </div>
+            <div className='flex flex-wrap gap-2 sm:gap-3'>
+              <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
+                Total:{" "}
+                <span className='font-semibold text-gray-700'>
+                  {orders.length}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {loading ? (
-          <div>Loading...</div>
+          <div className='flex items-center justify-center py-12'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
+            <span className='ml-3 text-gray-600'>Loading orders...</span>
+          </div>
         ) : error ? (
-          <div className='text-red-500'>{error}</div>
+          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
+            <div className='flex items-center'>
+              <div className='text-red-600 font-medium'>
+                Error loading orders:
+              </div>
+            </div>
+            <div className='text-red-500 mt-1'>{error}</div>
+          </div>
+        ) : orders.length === 0 ? (
+          <div className='text-center py-12'>
+            <div className='text-gray-500 mb-2'>No orders found</div>
+            <div className='text-sm text-gray-400'>
+              Orders will appear here once customers place them
+            </div>
+          </div>
         ) : (
-          <div className='overflow-x-auto'>
-            <table className='min-w-full bg-white shadow-md rounded-lg overflow-hidden'>
-              <thead className='bg-gray-100 border border-collapse'>
-                <tr>
-                  {[
-                    "ID",
-                    "User",
-                    "Date",
-                    "Total",
-                    "Payment Status",
-                    "Processed",
-                    "Delivered",
-                    "Actions",
-                  ].map((header) => (
-                    <th
-                      key={header}
-                      className='p-4 text-left uppercase border border-collapse'
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => {
-                  const createdAt = formatYMD(order?.createdAt);
-                  const paidAt = formatYMD(order?.paidAt);
-                  const deliveredAt = formatYMD(order?.deliveredAt);
-                  const atCustomersAt = formatYMD(order?.atCostumersDate);
+          <>
+            {/* Mobile Card Layout */}
+            <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
+              {orders.map((order) => {
+                const createdAt = formatYMD(order?.createdAt);
+                const paidAt = formatYMD(order?.paidAt);
 
-                  // === Igualamos la lógica del cliente ===
-                  const invoiceStatus = paymentAmountStatus(order?.invoice);
-                  const isPaidByFlag = !!order?.isPaid;
-                  const paidStatus = isPaidByFlag
-                    ? paidAt
-                      ? `Paid (${paidAt})`
-                      : "Paid"
-                    : invoiceStatus;
+                const invoiceStatus = paymentAmountStatus(order?.invoice);
+                const isPaidByFlag = !!order?.isPaid;
+                const paidStatus = isPaidByFlag
+                  ? paidAt
+                    ? `Paid (${paidAt})`
+                    : "Paid"
+                  : invoiceStatus;
 
-                  return (
-                    <tr key={order?._id} className='border-b hover:bg-gray-100'>
-                      <td className='border border-collapse p-5'>
-                        {order?._id ? String(order._id).slice(-4) : "No ID"}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        {order?.wpUser?.firstName || "DELETED USER"}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        {createdAt || "No Date"}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        $
-                        {new Intl.NumberFormat("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }).format(order?.totalPrice ?? 0)}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        <div className='font-semibold'>{paidStatus}</div>
-                        {/* Info de método/terms como en cliente */}
-                        <div className='text-sm text-gray-600'>
+                return (
+                  <div
+                    key={order?._id}
+                    className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
+                  >
+                    {/* Mobile Card Header */}
+                    <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
+                      <div className='flex-shrink-0 relative'>
+                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-[#0e355e] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
+                          <FaBox />
+                        </div>
+                      </div>
+                      <div className='min-w-0 flex-1'>
+                        <h3 className='font-bold text-gray-900 text-xs sm:text-sm md:text-lg leading-tight mb-1'>
+                          Order #
+                          {order?._id ? String(order._id).slice(-6) : "No ID"}
+                        </h3>
+                        <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
+                          {order?.wpUser?.firstName || "DELETED USER"}
+                        </p>
+                        <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
+                          <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
+                            {createdAt || "No Date"}
+                          </span>
+                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
+                            $
+                            {new Intl.NumberFormat("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).format(order?.totalPrice ?? 0)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Payment Status */}
+                    <div className='mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
+                      <div className='bg-gray-50 rounded p-1.5 sm:p-2 md:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1'>
+                          Payment Status
+                        </div>
+                        <div className='font-semibold text-xs sm:text-sm text-gray-900'>
+                          {paidStatus}
+                        </div>
+                        <div className='text-xs text-gray-600 mt-1'>
                           {order?.paymentMethod === "Stripe" ? (
-                            <div>
-                              Credit Card <br />
-                              (Powered by Stripe)
+                            <div className='flex items-center gap-1'>
+                              <FaCreditCard className='w-3 h-3' />
+                              Credit Card (Stripe)
                             </div>
                           ) : (
-                            <div>{order?.paymentMethod || "—"}</div>
+                            <div className='flex items-center gap-1'>
+                              <FaFileInvoice className='w-3 h-3' />
+                              {order?.paymentMethod || "—"}
+                            </div>
                           )}
-                          {order?.paymentMethod === "PO Number" &&
-                            order?.defaultTerm && (
-                              <div>
-                                <span className='font-semibold'>Terms: </span>
-                                {order.defaultTerm}
-                              </div>
-                            )}
                         </div>
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        {order?.isDelivered
-                          ? deliveredAt || "Processed"
-                          : "Not Processed"}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        {order?.isAtCostumers
-                          ? atCustomersAt || "Delivered"
-                          : "not delivered"}
-                      </td>
-                      <td className='border border-collapse p-5'>
-                        <Link
-                          className='underline font-bold'
-                          href={`/order/${order?._id}`}
-                          passHref
-                        >
-                          Details
-                        </Link>
-                      </td>
+                      </div>
+                    </div>
+
+                    {/* Status Grid */}
+                    <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Processed
+                        </div>
+                        <div className='flex justify-center'>
+                          {order?.isDelivered ? (
+                            <FaTruck className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <span className='text-gray-400 text-xs'>
+                              Pending
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Delivered
+                        </div>
+                        <div className='flex justify-center'>
+                          {order?.isAtCostumers ? (
+                            <FaBox className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          ) : (
+                            <span className='text-gray-400 text-xs'>
+                              Pending
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
+                      <Link
+                        href={`/order/${order?._id}`}
+                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
+                      >
+                        <FaEye
+                          size={10}
+                          className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
+                        />
+                        <span className='hidden xs:inline sm:inline'>
+                          View Details
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table Layout */}
+            <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
+              <div className='overflow-x-auto overflow-y-auto max-h-[85vh] custom-scrollbar'>
+                <table className='w-full' style={{ minWidth: "700px" }}>
+                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <tr>
+                      <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px] sm:min-w-[150px]'>
+                        Order Info
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[100px] sm:min-w-[120px]'>
+                        Customer
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                        Date
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                        Total
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px] sm:min-w-[150px]'>
+                        Payment
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                        Status
+                      </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[90px] sm:min-w-[120px]'>
+                        Actions
+                      </th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody className='divide-y divide-gray-200'>
+                    {orders.map((order, index) => {
+                      const createdAt = formatYMD(order?.createdAt);
+                      const paidAt = formatYMD(order?.paidAt);
+
+                      const invoiceStatus = paymentAmountStatus(order?.invoice);
+                      const isPaidByFlag = !!order?.isPaid;
+                      const paidStatus = isPaidByFlag
+                        ? paidAt
+                          ? `Paid (${paidAt})`
+                          : "Paid"
+                        : invoiceStatus;
+
+                      return (
+                        <tr
+                          key={order?._id}
+                          className={`hover:bg-gray-50 transition-colors ${
+                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                          }`}
+                        >
+                          <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
+                            <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
+                              <div className='flex-shrink-0 relative'>
+                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
+                                  <FaBox />
+                                </div>
+                              </div>
+                              <div className='min-w-0 flex-1'>
+                                <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1'>
+                                  #
+                                  {order?._id
+                                    ? String(order._id).slice(-6)
+                                    : "No ID"}
+                                </div>
+                                <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
+                                  {order?._id
+                                    ? String(order._id).slice(-12)
+                                    : "No ID"}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[80px] sm:max-w-[100px] lg:max-w-none'>
+                              {order?.wpUser?.firstName || "DELETED USER"}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900'>
+                              {createdAt || "No Date"}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='font-semibold text-xs sm:text-xs lg:text-sm text-gray-900'>
+                              $
+                              {new Intl.NumberFormat("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }).format(order?.totalPrice ?? 0)}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='text-xs sm:text-xs lg:text-sm'>
+                              <div className='font-semibold text-gray-900 mb-1'>
+                                {paidStatus}
+                              </div>
+                              <div className='text-gray-600 flex items-center gap-1'>
+                                {order?.paymentMethod === "Stripe" ? (
+                                  <>
+                                    <FaCreditCard className='w-3 h-3' />
+                                    <span>Card</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <FaFileInvoice className='w-3 h-3' />
+                                    <span>{order?.paymentMethod || "—"}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                            <div className='flex flex-col gap-1'>
+                              <div className='flex justify-center'>
+                                {order?.isDelivered ? (
+                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                    <FaTruck className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                  </div>
+                                ) : (
+                                  <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                    <span className='text-gray-400 text-xs'>
+                                      P
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className='flex justify-center'>
+                                {order?.isAtCostumers ? (
+                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                    <FaBox className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                  </div>
+                                ) : (
+                                  <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                    <span className='text-gray-400 text-xs'>
+                                      D
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <Link
+                              href={`/order/${order?._id}`}
+                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
+                              title='View Order Details'
+                            >
+                              <FaEye
+                                size={12}
+                                className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
+                              />
+                              <span className='hidden md:inline text-xs'>
+                                Details
+                              </span>
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </Layout>

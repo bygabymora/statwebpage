@@ -1,3 +1,5 @@
+// next.config.js
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -22,6 +24,17 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+  },
+
+  async redirects() {
+    return [
+      // Redirect from /news/ to /news to avoid duplicate content issues
+      {
+        source: "/news/",
+        destination: "/news",
+        permanent: true,
+      },
+    ];
   },
 };
 
