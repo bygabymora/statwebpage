@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
@@ -73,7 +74,7 @@ const fadeInUp = {
   }),
 };
 
-// Client-only carousel (your original, kept intact)
+// Enhanced carousel component with SEO optimization
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleItems, setVisibleItems] = useState(3);
@@ -150,19 +151,32 @@ function Carousel({ products }) {
   };
 
   return (
-    <motion.div
+    <motion.section
       className='carousel-container'
       initial='hidden'
       whileInView='show'
       viewport={{ once: true, amount: 0.2 }}
+      aria-label='Featured surgical supplies and medical equipment carousel'
+      role='region'
     >
-      <button
-        onClick={prevSlide}
-        disabled={currentSlide === 0}
-        className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
+      <nav
+        className='flex justify-center mb-4'
+        role='navigation'
+        aria-label='Product carousel navigation'
       >
-        <BiSkipPreviousCircle className='text-lg' /> Prev
-      </button>
+        <button
+          onClick={prevSlide}
+          disabled={currentSlide === 0}
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50 disabled:cursor-not-allowed'
+          aria-label={`Go to previous page of products (currently showing page ${
+            currentSlide + 1
+          } of ${totalSlides})`}
+          title='Previous products'
+        >
+          <BiSkipPreviousCircle className='text-lg' aria-hidden='true' />{" "}
+          Previous
+        </button>
+      </nav>
 
       <div
         className='carousel-items flex transition-transform duration-500'
@@ -177,6 +191,8 @@ function Carousel({ products }) {
         onMouseUp={handleMouseUp}
         onMouseEnter={handleInteractionStart}
         onMouseLeave={handleMouseUp}
+        role='list'
+        aria-label='Featured medical products'
       >
         {products.map((p, i) => (
           <motion.div
@@ -184,63 +200,182 @@ function Carousel({ products }) {
             className='carousel-item px-3 lg:px-0'
             variants={fadeInUp}
             custom={i}
+            role='listitem'
           >
             <ProductItem product={p} />
           </motion.div>
         ))}
       </div>
 
-      <button
-        onClick={nextSlide}
-        disabled={currentSlide >= totalSlides - 1}
-        className='w-full mt-3 flex items-center justify-center text-[#0e355e]'
+      <nav
+        className='flex justify-center mt-4'
+        role='navigation'
+        aria-label='Product carousel navigation'
       >
-        Next <BiSkipNextCircle className='text-lg' />
-      </button>
-    </motion.div>
+        <button
+          onClick={nextSlide}
+          disabled={currentSlide >= totalSlides - 1}
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50 disabled:cursor-not-allowed'
+          aria-label={`Go to next page of products (currently showing page ${
+            currentSlide + 1
+          } of ${totalSlides})`}
+          title='Next products'
+        >
+          Next <BiSkipNextCircle className='text-lg' aria-hidden='true' />
+        </button>
+      </nav>
+    </motion.section>
   );
 }
 
 export default function Home({ products }) {
-  // No client fetch; products already in the initial HTML (good for LCP/TTFB)
+  // Enhanced schema markup for homepage SEO
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "STAT Surgical Supply",
+    url: "https://www.statsurgicalsupply.com",
+    description:
+      "Premium surgical supplies and medical equipment for healthcare professionals. Trusted by 150+ facilities nationwide.",
+    publisher: {
+      "@type": "Organization",
+      name: "STAT Surgical Supply",
+      url: "https://www.statsurgicalsupply.com",
+      logo: "https://www.statsurgicalsupply.com/images/assets/logo.png",
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target:
+        "https://www.statsurgicalsupply.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const collectionPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Featured Surgical Supplies & Medical Equipment",
+    description:
+      "Discover our most popular surgical disposables, medical instruments, and healthcare equipment trusted by medical professionals nationwide.",
+    url: "https://www.statsurgicalsupply.com",
+    mainEntity: {
+      "@type": "ItemList",
+      name: "Featured Medical Products",
+      numberOfItems: products.length,
+      itemListElement: products.slice(0, 6).map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: `${product.manufacturer} ${product.name}`,
+          description:
+            product.each?.description || product.box?.description || "",
+          image: product.image,
+          brand: {
+            "@type": "Brand",
+            name: product.manufacturer,
+          },
+          url: `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
+            product.name
+          )}`,
+        },
+      })),
+    },
+  };
+
   return (
-    <Layout>
-      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
-        <Banner />
-      </motion.div>
-
-      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
-        <StaticBanner />
-      </motion.div>
-
-      <motion.div initial='hidden' whileInView='show' viewport={{ once: true }}>
-        <Benefits className='mt-2' />
-      </motion.div>
-
-      <motion.h2
-        className='section__title text-center mt-10'
-        variants={fadeInUp}
-        initial='hidden'
-        whileInView='show'
-        viewport={{ once: true }}
+    <>
+      <Head>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(collectionPageSchema),
+          }}
+        />
+      </Head>
+      <Layout
+        title='Premium Surgical Supplies & Medical Equipment | STAT Surgical Supply'
+        description='Discover premium surgical supplies and medical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide.'
       >
-        Featured Products
-      </motion.h2>
+        <main role='main'>
+          <motion.div
+            initial='hidden'
+            whileInView='show'
+            viewport={{ once: true }}
+          >
+            <Banner />
+          </motion.div>
 
-      {products.length > 0 ? (
-        <Carousel products={products} />
-      ) : (
-        <p className='text-center mt-10'>No products available.</p>
-      )}
+          <motion.div
+            initial='hidden'
+            whileInView='show'
+            viewport={{ once: true }}
+          >
+            <StaticBanner />
+          </motion.div>
 
-      <motion.div
-        className='min-h-[534px] w-full'
-        initial='hidden'
-        whileInView='show'
-        viewport={{ once: true }}
-      >
-        <Contact className='mt-2' />
-      </motion.div>
-    </Layout>
+          <motion.div
+            initial='hidden'
+            whileInView='show'
+            viewport={{ once: true }}
+          >
+            <Benefits className='mt-2' />
+          </motion.div>
+
+          <section
+            aria-labelledby='featured-products-heading'
+            className='mt-10'
+          >
+            <motion.header
+              className='text-center mb-8'
+              variants={fadeInUp}
+              initial='hidden'
+              whileInView='show'
+              viewport={{ once: true }}
+            >
+              <h2
+                id='featured-products-heading'
+                className='section__title text-center text-3xl font-bold text-[#0e355e]'
+              >
+                Featured Premium Surgical Supplies & Medical Equipment
+              </h2>
+              <p className='text-[#414b53de] text-base font-normal mt-4 max-w-3xl mx-auto'>
+                Explore our most trusted surgical disposables and medical
+                instruments, carefully selected for their quality and
+                reliability by healthcare professionals nationwide.
+              </p>
+            </motion.header>
+
+            {products.length > 0 ? (
+              <Carousel products={products} />
+            ) : (
+              <div className='text-center mt-10 p-8 bg-gray-50 rounded-lg'>
+                <p className='text-gray-600 text-lg'>
+                  No featured products are currently available.
+                </p>
+                <p className='text-gray-500 text-sm mt-2'>
+                  Please check back later or browse our full catalog.
+                </p>
+              </div>
+            )}
+          </section>
+
+          <motion.div
+            className='min-h-[534px] w-full'
+            initial='hidden'
+            whileInView='show'
+            viewport={{ once: true }}
+          >
+            <Contact className='mt-2' />
+          </motion.div>
+        </main>
+      </Layout>
+    </>
   );
 }
