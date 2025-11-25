@@ -12,6 +12,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import CustomAlertModal from "./CustomAlertModal";
+import ReCaptchaV2Checkbox from "../recaptcha/ReCaptchaV2Checkbox";
 
 export default function Footer() {
   const formRef = useRef();
@@ -20,6 +21,9 @@ export default function Footer() {
   const [name, setName] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showRecaptcha, setShowRecaptcha] = useState(false);
 
   const alertMessage = {
     title: "We're not hiring right now",
@@ -34,12 +38,24 @@ export default function Footer() {
     }
   }, [user]);
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
 
+    // Debug log to help identify issues (remove after testing)
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Form submission debug:", {
+        honeypot: `"${honeypot}"`,
+        honeypotLength: honeypot.length,
+        email,
+        name,
+        showRecaptcha,
+        recaptchaToken: !!recaptchaToken,
+      });
+    }
+
     // Honeypot: if it has text, it's spam
-    if (honeypot) {
-      console.warn("Spam detected - honeypot field filled");
+    if (honeypot && honeypot.trim() !== "") {
+      console.warn("Spam detected - honeypot field filled:", honeypot);
       showStatusMessage("error", "Suspicious activity detected");
       return;
     }
@@ -49,16 +65,71 @@ export default function Footer() {
       return;
     }
 
-    const contactToEmail = { name, email };
-    const emailmessage = messageManagement(
-      contactToEmail,
-      "Newsletter Subscription"
-    );
+    // If reCAPTCHA is not shown yet, show it first
+    if (!showRecaptcha) {
+      setShowRecaptcha(true);
+      showStatusMessage(
+        "info",
+        "Please complete the reCAPTCHA verification below"
+      );
+      return;
+    }
 
-    handleSendEmails(emailmessage, contactToEmail);
+    // If reCAPTCHA is shown but not completed
+    if (!recaptchaToken) {
+      showStatusMessage("error", "Please complete the reCAPTCHA verification");
+      return;
+    }
 
-    setEmail("");
-    if (!user?.isApproved) setName("");
+    setIsSubmitting(true);
+
+    try {
+      // Verify reCAPTCHA token
+      const recaptchaResponse = await fetch("/api/recaptcha/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: recaptchaToken,
+          version: "v2",
+          action: "newsletter_subscription",
+        }),
+      });
+
+      const recaptchaResult = await recaptchaResponse.json();
+
+      if (!recaptchaResult.success) {
+        showStatusMessage(
+          "error",
+          "reCAPTCHA verification failed. Please try again."
+        );
+        setRecaptchaToken(null);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Proceed with email subscription
+      const contactToEmail = { name, email };
+      const emailmessage = messageManagement(
+        contactToEmail,
+        "Newsletter Subscription"
+      );
+
+      await handleSendEmails(emailmessage, contactToEmail);
+
+      showStatusMessage(
+        "success",
+        "Successfully subscribed to our newsletter!"
+      );
+      setEmail("");
+      if (!user?.isApproved) setName("");
+      setRecaptchaToken(null);
+      setShowRecaptcha(false);
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      showStatusMessage("error", "An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <footer
@@ -141,17 +212,19 @@ export default function Footer() {
           >
             <input
               type='text'
-              name='company' // generic name to trick bots
+              name='website' // generic name to trick bots
               value={honeypot}
               onChange={(e) => setHoneypot(e.target.value)}
               tabIndex='-1'
-              autoComplete='off'
+              autoComplete='new-password'
+              aria-hidden='true'
               style={{
                 position: "absolute",
                 left: "-9999px",
                 opacity: 0,
                 height: 0,
                 width: 0,
+                pointerEvents: "none",
               }}
             />
 
@@ -175,11 +248,29 @@ export default function Footer() {
             />
             <button
               type='submit'
-              className='px-6 py-2 bg-[#03793d] text-white font-medium rounded-lg hover:bg-[#025e2d] transition'
+              disabled={isSubmitting}
+              className='px-6 py-2 bg-[#03793d] text-white font-medium rounded-lg hover:bg-[#025e2d] transition disabled:bg-gray-400 disabled:cursor-not-allowed'
             >
-              Subscribe
+              {isSubmitting
+                ? "Subscribing..."
+                : showRecaptcha && !recaptchaToken
+                ? "Complete reCAPTCHA"
+                : "Subscribe"}
             </button>
           </form>
+
+          {/* reCAPTCHA v2 Checkbox - Only shown after first submit */}
+          {showRecaptcha && (
+            <div className='mt-4 flex flex-col items-center'>
+              <p className='text-sm text-[#0e355e] mb-2'>
+                Please verify you&apos;re not a robot:
+              </p>
+              <ReCaptchaV2Checkbox
+                id='newsletter-recaptcha'
+                onChange={(token) => setRecaptchaToken(token)}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full max-w-5xl mt-6'>
