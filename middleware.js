@@ -40,7 +40,6 @@ function handleNews(url) {
 
   // Everything after /news/
   const rest = pathname.slice("/news/".length);
-
   if (!rest) {
     return NextResponse.next();
   }
@@ -72,8 +71,10 @@ function handleNews(url) {
   return NextResponse.redirect(url, 301);
 }
 
-// ------------ HELPERS FOR PRODUCTS (EXISTING LOGIC) ------------
+// ------------ HELPERS FOR PRODUCTS ------------
 
+// IMPORTANT: use the *slug* form of the manufacturer,
+// exactly as it appears at the start of /products/<slug>
 const manufacturerPrefixes = [
   "BARD",
   "HOLOGIC",
@@ -81,6 +82,12 @@ const manufacturerPrefixes = [
   "MEDTRONIC",
   "ETHICON",
   "ARTHREX",
+  "APPLIED-MEDICAL", // <- this matches /products/APPLIED-MEDICAL-C8XX2
+  "SMITH-NEPHEW", // adjust to your real slug if needed
+  "JOHNSON-JOHNSON", // adjust if your slug is different
+  "SMITH-&-NEPHEW",
+  "BOSTON-SCIENTIFIC",
+  "COOK",
 ];
 
 function handleProducts(url) {
@@ -103,14 +110,15 @@ function handleProducts(url) {
   for (const prefix of manufacturerPrefixes) {
     const withDash = `${prefix}-`;
     if (slugPart.startsWith(withDash)) {
-      targetSlug = slugPart.slice(withDash.length); // BARD-1200710 -> 1200710
+      // BARD-1200710 -> 1200710, APPLIED-MEDICAL-C8XX2 -> C8XX2
+      targetSlug = slugPart.slice(withDash.length);
       manufacturerStripped = true;
       break;
     }
   }
 
-  // If there is NO pId and we did NOT remove manufacturer, URL is already "pretty"
-  // /products/10-401FC, /products/AR-2922D-24-3, /products/0115311, etc.
+  // If there is NO pId and we did NOT remove manufacturer, URL is already "pretty":
+  // /products/10-401FC, /products/AR-2922D-24-3, etc.
   if (!hasPid && !manufacturerStripped) {
     return NextResponse.next();
   }
