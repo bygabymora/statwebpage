@@ -236,6 +236,7 @@ export default function Footer() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={!!user?.isApproved}
+              required
             />
             <input
               autoComplete='off'
