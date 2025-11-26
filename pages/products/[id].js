@@ -337,7 +337,6 @@ export default function ProductScreen({ product }) {
             )}
           </ul>
         </div>
-        <div></div>
         <div>
           <h4 className='font-medium text-gray-800 mb-3'>
             Shipping & Handling
@@ -353,6 +352,9 @@ export default function ProductScreen({ product }) {
               <span className='font-medium'>Stock Status:</span>{" "}
               {currentCountInStock > 0 ? "In Stock" : "Out of Stock"}
             </li>
+            <h4 className='font-medium text-gray-800 mt-4 mb-2'>
+              Shipping Cutoff
+            </h4>
             <li>
               {nowTampa.isBefore(cutoff) ? (
                 (() => {
