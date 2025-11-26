@@ -36,8 +36,8 @@ export default function ManufacturerForm() {
     }
 
     const emailMessage = messageManagement(
-      contactToEmail,
-      "Product Manufacturer"
+      "Product Manufacturer",
+      contactToEmail
     );
     handleSendEmails(emailMessage, contactToEmail);
 
