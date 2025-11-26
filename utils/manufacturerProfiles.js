@@ -76,12 +76,11 @@ export const manufacturerProfiles = {
       "cr bard",
       "becton dickinson bard",
     ],
-    website:
-      "https://www.bd.com/en-us/products-and-solutions/products-solutions-landing/surgical-specialties",
+    website: "https://www.bd.com/en-us",
     description:
       "BD Bard specializes in vascular, urology, oncology, and surgical specialty products. Part of BD (Becton, Dickinson and Company), they provide innovative medical technologies.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customersupport@bd.com",
+    supportEmail: "customer_support@bd.com",
     specialties: [
       "Vascular Access",
       "Urology",
