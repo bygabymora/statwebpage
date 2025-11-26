@@ -16,10 +16,14 @@ const Benefits = dynamic(() => import("./slider"), { ssr: false });
 const Contact = dynamic(() => import("../components/contact/Contact"), {
   ssr: true,
 });
+const NewsSection = dynamic(() => import("../components/NewsSection"), {
+  ssr: true,
+});
 
 // ----- Server-side (ISR) -----
 import db from "../utils/db";
 import Product from "../models/Product";
+import News from "../models/News";
 import { enrichAndSortForPublic } from "../utils/productSort";
 
 export async function getStaticProps() {
@@ -58,8 +62,27 @@ export async function getStaticProps() {
   const HOME_COUNT = 9;
   const products = featured.slice(0, HOME_COUNT);
 
+  // Fetch recent news for homepage integration
+  const recentNews = await News.find()
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .select("title slug content imageUrl author createdAt category tags")
+    .lean();
+
+  const newsWithExcerpts = recentNews.map((news) => ({
+    ...news,
+    _id: news._id.toString(),
+    createdAt: news.createdAt.toISOString(),
+    excerpt: news.content
+      ? news.content.replace(/<[^>]*>/g, "").slice(0, 150) + "..."
+      : "",
+  }));
+
   return {
-    props: { products: JSON.parse(JSON.stringify(products)) },
+    props: {
+      products: JSON.parse(JSON.stringify(products)),
+      news: newsWithExcerpts,
+    },
     revalidate: 300, // ISR every 5 minutes
   };
 }
@@ -228,7 +251,7 @@ function Carousel({ products }) {
   );
 }
 
-export default function Home({ products }) {
+export default function Home({ products, news = [] }) {
   // Enhanced schema markup for homepage SEO
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -283,6 +306,35 @@ export default function Home({ products }) {
     },
   };
 
+  // News schema for SEO enhancement
+  const newsSchema =
+    news.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Latest Healthcare News",
+          description:
+            "Recent healthcare and medical industry news and insights",
+          numberOfItems: news.length,
+          itemListElement: news.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "NewsArticle",
+              headline: item.title,
+              description: item.excerpt,
+              image: item.imageUrl,
+              datePublished: item.createdAt,
+              author: {
+                "@type": "Person",
+                name: item.author,
+              },
+              url: `https://www.statsurgicalsupply.com/news/${item.slug}`,
+            },
+          })),
+        }
+      : null;
+
   return (
     <>
       <Head>
@@ -298,10 +350,18 @@ export default function Home({ products }) {
             __html: JSON.stringify(collectionPageSchema),
           }}
         />
+        {newsSchema && (
+          <script
+            type='application/ld+json'
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(newsSchema),
+            }}
+          />
+        )}
       </Head>
       <Layout
         title='Premium Surgical Supplies & Medical Equipment | STAT Surgical Supply'
-        description='Discover premium surgical supplies and medical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide.'
+        description='Discover premium surgical supplies and medical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide. Stay updated with the latest healthcare news and industry insights.'
       >
         <main role='main'>
           <motion.div
@@ -327,6 +387,16 @@ export default function Home({ products }) {
           >
             <Benefits className='mt-2' />
           </motion.div>
+
+          {news && news.length > 0 && (
+            <motion.div
+              initial='hidden'
+              whileInView='show'
+              viewport={{ once: true }}
+            >
+              <NewsSection news={news} />
+            </motion.div>
+          )}
 
           <section
             aria-labelledby='featured-products-heading'
