@@ -85,6 +85,7 @@ const manufacturerPrefixes = [
   "APPLIED-MEDICAL", // <- this matches /products/APPLIED-MEDICAL-C8XX2
   "SMITH-NEPHEW", // adjust to your real slug if needed
   "JOHNSON-JOHNSON", // adjust if your slug is different
+  "SMITH-&-NEPHEW",
   "BOSTON-SCIENTIFIC",
   "COOK",
 ];
