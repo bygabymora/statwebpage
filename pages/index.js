@@ -190,7 +190,7 @@ function Carousel({ products }) {
         <button
           onClick={prevSlide}
           disabled={currentSlide === 0}
-          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50 disabled:cursor-not-allowed'
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50'
           aria-label={`Go to previous page of products (currently showing page ${
             currentSlide + 1
           } of ${totalSlides})`}
@@ -238,7 +238,7 @@ function Carousel({ products }) {
         <button
           onClick={nextSlide}
           disabled={currentSlide >= totalSlides - 1}
-          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50 disabled:cursor-not-allowed'
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50'
           aria-label={`Go to next page of products (currently showing page ${
             currentSlide + 1
           } of ${totalSlides})`}
