@@ -32,7 +32,6 @@ const NewsSection = ({ news = [] }) => {
 
   return (
     <motion.section
-      className='py-12'
       variants={containerVariants}
       initial='hidden'
       whileInView='show'
@@ -69,7 +68,7 @@ const NewsSection = ({ news = [] }) => {
         <motion.div className='text-center' variants={itemVariants}>
           <Link
             href='/news'
-            className='inline-flex items-center px-6 py-3 text-[#0e355e] font-medium hover:text-[#03793d] transition-colors duration-200'
+            className='inline-flex items-center px-6 text-[#0e355e] font-medium hover:text-[#03793d] transition-colors duration-200'
             aria-label='View all healthcare news and industry insights'
             title='Explore more healthcare news and surgical supply updates'
           >
