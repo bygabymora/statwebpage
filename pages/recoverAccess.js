@@ -70,7 +70,11 @@ export default function ForgotPassword() {
   };
 
   return (
-    <Layout title='Forgot Password'>
+    <Layout
+      title='Forgot Password | STAT Surgical Supply'
+      description='Recover access to your STAT Surgical Supply account by requesting a password reset code. Enter your registered email to receive instructions for resetting your password securely.'
+      schema={[]}
+    >
       <div className='max-w-md mx-auto p-6 border rounded shadow mt-10'>
         <h1 className='text-2xl font-bold mb-4'>Reset Your Password</h1>
         <p className='mb-2'>Enter your email to receive reset instructions:</p>

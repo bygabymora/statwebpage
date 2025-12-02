@@ -53,7 +53,11 @@ export default function ManufacturerForm() {
   ];
 
   return (
-    <Layout title='Manufacturer Form'>
+    <Layout
+      title='Manufacturer Form | STAT Surgical Supply'
+      description='Fill out the Manufacturer Form to provide detailed information about your products for an accurate quote from STAT Surgical Supply.'
+      schema={[]}
+    >
       <nav className='text-sm text-gray-700 ml-auto'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (

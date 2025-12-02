@@ -11,7 +11,11 @@ export default function GuaranteedSavings({ isInClearance }) {
   ];
 
   return (
-    <Layout title={"Guaranteed Savings"}>
+    <Layout
+      title='Guaranteed Savings | STAT Surgical Supply'
+      description='Discover guaranteed savings on surgical supplies, medical equipment, and healthcare products. Access exclusive discounts and flexible pricing options trusted by clinics and hospitals.'
+      schema={[]}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-5'>
           {breadcrumbs.map((breadcrumb, index) => (

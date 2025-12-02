@@ -4,7 +4,11 @@ import Layout from "../components/main/Layout";
 export default function facs() {
   return (
     <>
-      <Layout title='Return policy'>
+      <Layout
+        title='Return policy | STAT Surgical Supply'
+        description='Read STAT Surgical Supply return policy for medical supplies and equipment. Learn about our return process, conditions, and exceptions to ensure a smooth return experience.'
+        schema={[]}
+      >
         <div className='card p-5 mb-10'>
           <h1 className='section__title'>Return Policy</h1>
           <br />

@@ -12,7 +12,11 @@ import Link from "next/link";
 export default function Support() {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "Support" }];
   return (
-    <Layout title='Customer Support'>
+    <Layout
+      title='Customer Support | STAT Surgical Supply'
+      description='Get in touch with STAT Surgical Supply customer support for assistance with surgical and medical supplies. Contact us via phone, email, or visit our location for expert help and answers to your questions.'
+      schema={[]}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (

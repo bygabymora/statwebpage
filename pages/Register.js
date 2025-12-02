@@ -223,7 +223,11 @@ export default function RegisterScreen() {
   ];
 
   return (
-    <Layout title='Create Account'>
+    <Layout
+      title='Create Account | STAT Surgical Supply'
+      description='Register your organization with STAT Surgical Supply to access exclusive medical supplies and equipment discounts. Complete the registration form to create your account today.'
+      schema={[]}
+    >
       {from === "google" && (
         <div className='mx-auto max-w-md mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-sm -mt-2'>
           We found your Google account. Please complete the missing fields to
