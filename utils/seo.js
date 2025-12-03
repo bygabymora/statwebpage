@@ -68,7 +68,7 @@ function generateProductJSONLD(product) {
       name: product.manufacturer,
     },
     description: product?.each?.description || product?.box?.description || "",
-    // information: product?.information || "", // ❌ NOT a valid Product property → removed
+    // information: product?.information || "", // NOT a valid Product property → removed
     sku: product._id,
     mpn: product._id,
     offers: {

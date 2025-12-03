@@ -42,11 +42,11 @@ export default function News({ news }) {
       </nav>
       <div className='text-center mt-5'>
         <h1 className='section__title' id='news'>
-          What you might have missed
+          Health & Medical Device News - Latest FDA Alerts and Industry Updates
         </h1>
-        <h2 className='text-center my-2 text-base font-normal text-[#2c3339]'>
+        <p className='text-lg'>
           Here are some of the latest news from the world of health.
-        </h2>
+        </p>
       </div>
       <div className='text-center my-9 border-t border-gray-200'>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5'>
