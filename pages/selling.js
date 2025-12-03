@@ -64,7 +64,11 @@ export default function SecureBuyingSelling() {
   ];
 
   return (
-    <Layout title={"Secure Buying & Selling"}>
+    <Layout
+      title='Secure Buying & Selling | STAT Surgical Supply'
+      description='We guarantee a safe and hassle-free transaction process, ensuring trust and transparency in every purchase and sale at STAT Surgical Supply.'
+      schema={[]}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-5'>
           {breadcrumbs.map((breadcrumb, index) => (

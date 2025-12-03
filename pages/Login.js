@@ -80,7 +80,11 @@ export default function Login() {
   const breadcrumbs = [{ href: "/", name: "Home" }, { name: "Login" }];
 
   return (
-    <Layout title='Login'>
+    <Layout
+      title='Login - Secure Account Access | STAT Surgical Supply'
+      description='Secure login portal for healthcare professionals and medical facilities. Access your STAT Surgical Supply account to manage orders, view pricing, track deliveries, and purchase medical supplies with exclusive healthcare discounts.'
+      schema={[]}
+    >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (

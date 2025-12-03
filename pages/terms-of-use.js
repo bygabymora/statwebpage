@@ -14,7 +14,11 @@ export default function facs() {
   };
   return (
     <>
-      <Layout title='Terms of use | Stat Surgical Supply'>
+      <Layout
+        title='Terms of use | Stat Surgical Supply'
+        description='Read the Terms of Use for STAT Surgical Supply. Understand the legal agreement for using our website and services, including purchases, payments, and user responsibilities.'
+        schema={[]}
+      >
         <div className='card p-5 mb-10'>
           <h1 className='section__title'>Terms of Use</h1>
           <br />

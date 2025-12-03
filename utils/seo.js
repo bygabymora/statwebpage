@@ -68,7 +68,7 @@ function generateProductJSONLD(product) {
       name: product.manufacturer,
     },
     description: product?.each?.description || product?.box?.description || "",
-    information: product?.information || "",
+    // information: product?.information || "", // ❌ NOT a valid Product property → removed
     sku: product._id,
     mpn: product._id,
     offers: {
@@ -165,6 +165,8 @@ function generateOrganizationJSONLD() {
       "Leading provider of premium surgical supplies and medical equipment serving healthcare facilities nationwide with cost-effective solutions.",
     foundingDate: "2020",
     industry: "Medical Equipment Supply",
+    // Use NAICS instead (valid in Schema.org & Google)
+    naics: "423450",
     numberOfEmployees: {
       "@type": "QuantitativeValue",
       minValue: 10,
@@ -274,39 +276,29 @@ function generateProductsPageJSONLD(
   currentPage = 1,
   totalProducts = 0
 ) {
+  const baseUrl = "https://www.statsurgicalsupply.com/products";
+  const pageUrl = currentPage > 1 ? `${baseUrl}?page=${currentPage}` : baseUrl;
+
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "@id": `https://www.statsurgicalsupply.com/products${
-      currentPage > 1 ? `?page=${currentPage}` : ""
-    }`,
+    "@id": pageUrl,
     name: "Surgical Supplies & Medical Equipment Catalog",
     description:
       "Browse our comprehensive catalog of premium surgical disposables, medical instruments, and healthcare equipment from leading manufacturers.",
-    url: `https://www.statsurgicalsupply.com/products${
-      currentPage > 1 ? `?page=${currentPage}` : ""
-    }`,
+    url: pageUrl,
     mainEntity: {
       "@type": "ItemList",
       name: "Medical Products Catalog",
       numberOfItems: totalProducts,
+      // IMPORTANT: avoid nested Product here to prevent "Product snippet" errors on listing pages
       itemListElement: products.slice(0, 10).map((product, index) => ({
         "@type": "ListItem",
         position: (currentPage - 1) * 10 + index + 1,
-        item: {
-          "@type": "Product",
-          name: `${product.manufacturer} ${product.name}`,
-          description:
-            product.each?.description || product.box?.description || "",
-          image: product.image,
-          brand: {
-            "@type": "Brand",
-            name: product.manufacturer,
-          },
-          url: `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
-            product.name
-          )}`,
-        },
+        name: `${product.manufacturer} ${product.name}`,
+        url: `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
+          product.name
+        )}`,
       })),
     },
     breadcrumb: {
@@ -478,16 +470,13 @@ function generateLocalBusinessJSONLD() {
     description:
       "Leading supplier of surgical equipment and medical disposables serving healthcare facilities nationwide.",
     url: "https://www.statsurgicalsupply.com",
-    telephone: "+1-813-252-0727", // Replace with actual phone
+    telephone: "+1-813-252-0727",
     address: {
       "@type": "PostalAddress",
       addressCountry: "US",
       addressRegion: "United States",
     },
-    geo: {
-      "@type": "GeoCoordinates",
-      // Add actual coordinates if you have a physical location
-    },
+    // geo removed until real coordinates are available (lat/long are required if you include geo)
     openingHours: "Mo-Fr 09:00-17:00",
     priceRange: "$$",
     currenciesAccepted: "USD",

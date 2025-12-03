@@ -12,7 +12,11 @@ export default function facs() {
   };
   return (
     <>
-      <Layout title='Privacy policy | Stat Surgical Supply'>
+      <Layout
+        title='Privacy policy | Stat Surgical Supply'
+        description='Read STAT Surgical Supply Privacy Policy to understand how we collect, use, and protect your personal information when you use our website and services. Learn about your privacy rights and our data practices.'
+        schema={[]}
+      >
         <div className='card p-5 my-10'>
           <h1 className='section__title'>Privacy Policy</h1>
           <br />
