@@ -41,10 +41,16 @@ export default function News({ news }) {
         </ul>
       </nav>
       <div className='text-center mt-5'>
-        <h1 className='section__title' id='news'>
-          Health & Medical Device News - Latest FDA Alerts and Industry Updates
+        <h1
+          id='news'
+          className='section__title text-4xl md:text-5xl font-bold tracking-tight'
+        >
+          Health & Medical Device News <br />
+          <span className='text-[#0e355e]'>
+            Latest FDA Alerts and Industry Updates
+          </span>
         </h1>
-        <p className='text-lg'>
+        <p className='text-lg my-5'>
           Here are some of the latest news from the world of health.
         </p>
       </div>
