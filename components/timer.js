@@ -40,7 +40,7 @@ export default function ShippingCutoffTimer() {
 
   return (
     <motion.section
-      className='w-full bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg'
+      className='w-full bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg -mt-2'
       initial={{ opacity: 0, y: -20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

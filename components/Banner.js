@@ -111,7 +111,7 @@ const Banner = () => {
             className='text-left -mt-6'
             variants={containerVariants}
           >
-            <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e]'>
+            <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e] my-10'>
               Premium Surgical Supplies & Medical Equipment | STAT Surgical
               Supply
             </h1>

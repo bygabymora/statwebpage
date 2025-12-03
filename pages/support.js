@@ -62,18 +62,12 @@ export default function Support() {
   ];
 
   return (
-<<<<<<< HEAD
-    <Layout title='Customer Support - Professional Medical Supply Assistance | Stat Surgical Supply'>
-      {/* Breadcrumb Navigation */}
-      <nav className='text-sm text-gray-700 mb-8'>
-=======
     <Layout
       title='Customer Support | STAT Surgical Supply'
       description='Get in touch with STAT Surgical Supply customer support for assistance with surgical and medical supplies. Contact us via phone, email, or visit our location for expert help and answers to your questions.'
       schema={[]}
     >
       <nav className='text-sm text-gray-700'>
->>>>>>> 1cb79382e07990d5bdbe7e214228098bdc799518
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
