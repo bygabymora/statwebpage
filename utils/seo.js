@@ -164,7 +164,6 @@ function generateOrganizationJSONLD() {
     description:
       "Leading provider of premium surgical supplies and medical equipment serving healthcare facilities nationwide with cost-effective solutions.",
     foundingDate: "2020",
-    industry: "Medical Equipment Supply",
     // Use NAICS instead (valid in Schema.org & Google)
     naics: "423450",
     numberOfEmployees: {
