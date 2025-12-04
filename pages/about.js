@@ -69,9 +69,9 @@ export default function AboutScreen() {
           className='block lg:hidden text-center'
           style={contentAnimation}
         >
-          <h1 className='text-3xl font-bold text-[#0e355e] mb-4 -mt-10'>
+          <h2 className='text-3xl font-bold text-[#0e355e] mb-4 -mt-10'>
             About STAT Surgical Supply
-          </h1>
+          </h2>
           <p className='text-lg text-[#414b53de] mt-2'>
             Your trusted partner in premium surgical equipment and medical
             supplies
