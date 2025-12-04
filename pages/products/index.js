@@ -9,7 +9,6 @@ import SearchForm from "../../components/products/SearchForm";
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import { enrichAndSortForPublic } from "../../utils/productSort";
-import { generateProductsPageJSONLD } from "../../utils/seo";
 
 export async function getStaticProps() {
   await db.connect(true);
@@ -115,11 +114,7 @@ export default function Products({ products }) {
   const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
 
   return (
-    <Layout
-      title='Products | Stat Surgical Supply'
-      products={products}
-      schema={generateProductsPageJSONLD(products)}
-    >
+    <Layout title='Products | Stat Surgical Supply' products={products}>
       <nav className='text-sm text-gray-700 mt-0 md:mt-2'>
         <div className='flex justify-between items-center my-0 md:my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
