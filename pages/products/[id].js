@@ -357,24 +357,24 @@ export default function ProductScreen({ product }) {
         <div className='w-full max-w-lg flex flex-col items-center lg:items-start'>
           <ul className='space-y-2'>
             <li>
-              <h2 className='text-xl font-bold text-[#0e355e]'>
+              <h1 className='text-xl font-bold text-[#0e355e]'>
                 {product.name}
-              </h2>
-            </li>
-            <li>
-              <h2 className='text-xl font-bold text-[#0e355e]'>
-                {product.manufacturer}
-              </h2>
+              </h1>
             </li>
             <li>
               <h1 className='text-xl font-bold text-[#0e355e]'>
-                {currentDescription}
+                {product.manufacturer}
               </h1>
             </li>
-            {product.information && (
-              <h2>
-                <p className='text-sm text-[#788b9b]'>{product.information}</p>
+            <li>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
+                {currentDescription}
               </h2>
+            </li>
+            {product.information && (
+              <h3>
+                <p className='text-sm text-[#788b9b]'>{product.information}</p>
+              </h3>
             )}
             {product.sentOverNight && (
               <li className='space-y-2'>
