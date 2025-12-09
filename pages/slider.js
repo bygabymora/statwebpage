@@ -1,4 +1,6 @@
 // pages/slider.js
+
+import React from "react";
 import {
   FaBoxOpen,
   FaDollarSign,
@@ -7,7 +9,6 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { generateServicePageJSONLD } from "../utils/seo";
 
 const benefits = [
@@ -105,113 +106,121 @@ const variants = {
   }),
 };
 
-const serviceJsonLd = generateServicePageJSONLD(
-  "Healthcare Supply Services Overview",
-  "services",
-  "Overview of how STAT Surgical Supply supports healthcare facilities with secondary sourcing, savings and contingency inventory."
-);
-
 export default function BenefitsSection() {
+  // Generate comprehensive schema markup
+  const servicesPageSchema = generateServicePageJSONLD(
+    "Healthcare Supply Services Overview",
+    "slider",
+    "Discover why over 150+ healthcare professionals choose STAT Surgical Supply for premium surgical disposables, medical equipment, and exceptional healthcare solutions with guaranteed savings and expert support."
+  );
+
   return (
-    <>
-      <Head>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
-        />
-      </Head>
-
-      <section
-        className='w-full my-16'
-        aria-labelledby='benefits-heading'
-        role='region'
-      >
-        <header className='text-center mb-10'>
-          <h2
-            id='benefits-heading'
-            className='text-3xl font-bold text-center text-[#0e355e]'
-          >
-            Why Healthcare Professionals Choose STAT Surgical Supply
-          </h2>
-          <p className='sr-only'>
-            STAT Surgical Supply operates as a secondary and contingency medical
-            supplier, supporting hospitals and surgical centers when primary
-            distributors are unable to meet urgency, availability, or cost
-            requirements.
-          </p>
-          <p className='text-[#414b53de] text-base font-normal text-center mt-2 max-w-3xl mx-auto'>
-            Discover why over 150+ clinics, hospitals, and medical professionals
-            trust STAT Surgical Supply for premium surgical disposables, medical
-            equipment, and exceptional healthcare solutions nationwide.
-          </p>
-        </header>
-
-        <div
-          className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10'
-          role='list'
-          aria-label='Key benefits of STAT Surgical Supply services'
+    <div
+      title='Why Choose STAT Surgical Supply | Healthcare Benefits & Services'
+      description='Discover why over 150+ healthcare professionals choose STAT Surgical Supply for guaranteed savings, in-stock medical products with next-day shipping, secure trading processes, and expert support for all surgical supply needs.'
+      schema={[servicesPageSchema]}
+    >
+      <main className='w-full bg-white my-5 px-6'>
+        <section
+          className='max-w-6xl mx-auto'
+          aria-labelledby='benefits-heading'
+          role='region'
         >
-          {benefits.map((benefit, index) => (
-            <motion.article
-              key={benefit.title}
-              className='flex items-start p-6 bg-white border-l-4 border-[#03793d] rounded-lg shadow-md group'
-              initial='hidden'
-              whileInView='show'
-              viewport={{ once: true, amount: 0.2 }}
-              custom={index}
-              variants={variants}
-              role='listitem'
-              itemScope
-              itemType='https://schema.org/Service'
+          <header className='text-center mb-12'>
+            <h1
+              id='benefits-heading'
+              className='text-4xl font-bold text-[#0e355e] leading-tight'
+              itemProp='headline'
             >
-              <div
-                className='text-4xl text-[#03793d] p-4 bg-gray-100 rounded-full transform transition-transform duration-300 group-hover:-rotate-12 shrink-0'
-                aria-hidden='true'
-                role='presentation'
+              Why Healthcare Professionals Choose STAT Surgical Supply
+            </h1>
+            <p className='sr-only'>
+              STAT Surgical Supply operates as a secondary and contingency
+              medical supplier, supporting hospitals and surgical centers when
+              primary distributors are unable to meet urgency, availability, or
+              cost requirements.
+            </p>
+            <p
+              className='text-[#414b53] text-base font-normal mt-4 max-w-3xl mx-auto'
+              itemProp='description'
+            >
+              Discover why over 150+ clinics, hospitals, and medical
+              professionals trust STAT Surgical Supply for premium surgical
+              disposables, medical equipment, and exceptional healthcare
+              solutions nationwide.
+            </p>
+          </header>
+
+          <section
+            className='grid grid-cols-1 md:grid-cols-2 gap-8 mt-12'
+            role='list'
+            aria-label='Key benefits of STAT Surgical Supply services'
+          >
+            {benefits.map((benefit, index) => (
+              <motion.article
+                key={benefit.title}
+                className='p-6 bg-white rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105 group'
+                initial='hidden'
+                whileInView='show'
+                viewport={{ once: true, amount: 0.2 }}
+                custom={index}
+                variants={variants}
+                role='listitem'
+                itemScope
+                itemType='https://schema.org/Service'
               >
-                {benefit.icon}
-              </div>
-
-              <div className='ml-5 flex-1'>
-                <h3
-                  className='text-xl font-semibold text-[#0e355e]'
-                  itemProp='name'
+                <div
+                  className='text-5xl text-[#07783e] mb-4 transform transition-transform duration-300 group-hover:scale-110'
+                  aria-hidden='true'
+                  role='presentation'
                 >
-                  {benefit.title}
-                </h3>
+                  {benefit.icon}
+                </div>
 
-                <p className='text-gray-600 mt-1' itemProp='description'>
-                  {benefit.description}
-                </p>
+                <div className='text-center flex-1'>
+                  <h2
+                    className='text-xl font-bold text-[#0e355e] mb-3'
+                    itemProp='name'
+                  >
+                    {benefit.title}
+                  </h2>
 
-                {benefit.extra && (
-                  <div className='benefit-extra mt-3 hidden md:block'>
-                    <p className='text-sm font-semibold text-[#0e355e]'>
-                      {benefit.extra.heading}
-                    </p>
-                    <ul className='mt-1 list-disc list-inside text-sm text-gray-500 space-y-0.5'>
-                      {benefit.extra.bullets.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  <p
+                    className='text-[#414b53] text-sm mb-4 leading-relaxed'
+                    itemProp='description'
+                  >
+                    {benefit.description}
+                  </p>
 
-                <Link
-                  href={benefit.link}
-                  className='inline-block mt-3 text-[#03793d] font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-[#03793d] focus:ring-opacity-50 rounded'
-                  aria-label={benefit.ariaLabel}
-                  title={`Learn more about ${benefit.title.toLowerCase()}`}
-                  itemProp='url'
-                >
-                  Learn More →
-                </Link>
-                <meta itemProp='keywords' content={benefit.keywords} />
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      </section>
-    </>
+                  {benefit.extra && (
+                    <div className='benefit-extra mt-4 text-left'>
+                      <p className='text-sm font-bold text-[#0e355e] mb-2'>
+                        {benefit.extra.heading}
+                      </p>
+                      <ul className='list-disc list-inside text-sm text-[#414b53] space-y-1'>
+                        {benefit.extra.bullets.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <Link
+                    href={benefit.link}
+                    className='inline-block mt-4 px-6 py-2 bg-[#07783e] text-white font-bold rounded-lg shadow-md hover:bg-[#065f2d] transition-all duration-300'
+                    aria-label={benefit.ariaLabel}
+                    title={`Learn more about ${benefit.title.toLowerCase()}`}
+                    itemProp='url'
+                  >
+                    Learn More →
+                  </Link>
+                  <meta itemProp='keywords' content={benefit.keywords} />
+                </div>
+              </motion.article>
+            ))}
+          </section>
+        </section>
+      </main>
+    </div>
   );
 }
