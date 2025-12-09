@@ -311,17 +311,24 @@ export default function ProductScreen({ product }) {
           </h4>
           <ul className='space-y-2 text-sm text-gray-600'>
             <li>
-              <span className='font-medium'>Name:</span> {product.name}
+              <h1 className='text-xl font-bold text-[#0e355e]'>
+                {product.name}
+              </h1>
             </li>
             <li>
-              <span className='font-medium'>Manufacturer:</span>{" "}
-              {product.manufacturer}
+              <h1 className='text-xl font-bold text-[#0e355e]'>
+                {product.manufacturer}
+              </h1>
+            </li>
+            <li>
+              <h2 className='text-xl font-bold text-[#0e355e]'>
+                {currentDescription}
+              </h2>
             </li>
             {product.information && (
-              <li>
-                <span className='font-medium'>Details:</span>{" "}
-                {product.information}
-              </li>
+              <h3>
+                <p className='text-sm text-[#788b9b]'>{product.information}</p>
+              </h3>
             )}
             {product.each?.description && (
               <li>

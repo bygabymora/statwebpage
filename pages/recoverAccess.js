@@ -106,7 +106,6 @@ export default function ForgotPassword() {
       <div className='flex items-center justify-center'>
         <div className='w-full max-w-sm sm:max-w-md lg:max-w-lg'>
           <div className='bg-white shadow-lg rounded-2xl p-6 sm:p-8 border border-gray-100'>
-            {/* Header */}
             <div className='text-center mb-6 sm:mb-8'>
               <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e] mb-3 sm:mb-4'>
                 Reset Your Password
@@ -117,7 +116,6 @@ export default function ForgotPassword() {
               </p>
             </div>
 
-            {/* Form */}
             <div className='space-y-4 sm:space-y-6'>
               <div>
                 <label
@@ -146,7 +144,6 @@ export default function ForgotPassword() {
               </button>
             </div>
 
-            {/* Footer */}
             <div className='mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-100 text-center'>
               <p className='text-xs sm:text-sm text-gray-500'>
                 Remember your password?{" "}
@@ -160,7 +157,6 @@ export default function ForgotPassword() {
             </div>
           </div>
 
-          {/* Additional Help */}
           <div className='mt-4 sm:mt-6 text-center my-5'>
             <p className='text-xs sm:text-sm text-gray-400'>
               Need help? Contact our support team at{" "}

@@ -1,3 +1,4 @@
+// pages/news/[slug].js
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/main/Layout";
 import Link from "next/link";
@@ -23,6 +24,8 @@ export default function Newscreen({ news, showProductsButton = false }) {
   }, []);
 
   if (!news) return <p className='p-8 text-center'>News not found</p>;
+
+  const pageTitle = `${news.title.slice(0, 40)} | STAT Surgical Supply`;
 
   const contentWithImages = news.content.split("\n").map((para, idx) => {
     const imageRegex = /\[(https?:\/\/[^\s\]]+)\]/;
@@ -68,7 +71,7 @@ export default function Newscreen({ news, showProductsButton = false }) {
 
   return (
     <Layout
-      title={news.title}
+      title={pageTitle} // Use the constructed page title
       news={news}
       description={news.content?.slice(0, 160)}
       image={news.imageUrl}
@@ -205,12 +208,6 @@ export async function getServerSideProps(context) {
     _id: s._id.toString(),
   }));
 
-  // Optional: Show products button based on content/category/tags
-  // Examples:
-  // const showProductsButton = doc.category === 'product-related';
-  // const showProductsButton = doc.tags?.includes('products');
-  // const showProductsButton = doc.content.toLowerCase().includes('product');
-
   return {
     props: {
       news: {
@@ -221,7 +218,6 @@ export async function getServerSideProps(context) {
         updatedAt: doc.updatedAt.toISOString(),
         sources: formattedSources,
       },
-      // Uncomment and customize the line below to enable the products button
       showProductsButton: true,
     },
   };

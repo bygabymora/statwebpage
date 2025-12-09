@@ -68,7 +68,7 @@ function generateProductJSONLD(product) {
       name: product.manufacturer,
     },
     description: product?.each?.description || product?.box?.description || "",
-    // information: product?.information || "", // ❌ NOT a valid Product property → removed
+    // information: product?.information || "", // NOT a valid Product property → removed
     sku: product._id,
     mpn: product._id,
     offers: {
@@ -164,7 +164,6 @@ function generateOrganizationJSONLD() {
     description:
       "Leading provider of premium surgical supplies and medical equipment serving healthcare facilities nationwide with cost-effective solutions.",
     foundingDate: "2020",
-    industry: "Medical Equipment Supply",
     // Use NAICS instead (valid in Schema.org & Google)
     naics: "423450",
     numberOfEmployees: {
