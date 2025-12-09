@@ -123,7 +123,6 @@ export default async function handler(req, res) {
         quickBooksItemIdProduction:
           info.quickBooksItemIdProduction ?? prod.quickBooksItemIdProduction,
         minSalePrice: info.minSalePrice ?? info.price ?? prod.minSalePrice,
-        countInStock: info.countInStock,
         description: info.description ?? prod.description,
         price: info.wpPrice ?? info.price ?? prod.price,
         countInStock: info.countInStock ?? prod.countInStock,
@@ -182,7 +181,6 @@ export default async function handler(req, res) {
         minSalePrice: it.minSalePrice,
         countInStock: it.countInStock,
         description: it.description,
-        countInStock: it.countInStock,
         updatedAt: it.updatedAt,
         status: "In Process",
       })),
