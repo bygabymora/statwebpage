@@ -120,7 +120,7 @@ export default function BenefitsSection() {
       description='Discover why over 150+ healthcare professionals choose STAT Surgical Supply for guaranteed savings, in-stock medical products with next-day shipping, secure trading processes, and expert support for all surgical supply needs.'
       schema={[servicesPageSchema]}
     >
-      <main className='w-full bg-white my-5 px-6'>
+      <div className='w-full bg-white my-5 px-6'>
         <section
           className='max-w-6xl mx-auto'
           aria-labelledby='benefits-heading'
@@ -220,7 +220,7 @@ export default function BenefitsSection() {
             ))}
           </section>
         </section>
-      </main>
+      </div>
     </div>
   );
 }
