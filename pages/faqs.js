@@ -159,7 +159,7 @@ export default function FAQs() {
           ))}
         </ul>
       </nav>
-      <main className='max-w-4xl mx-auto px-4 py-10 -mt-8' role='main'>
+      <div className='max-w-4xl mx-auto px-4 py-10 -mt-8'>
         <header className='text-center mb-10'>
           <h1 className='text-4xl font-bold text-[#0e355e] mb-4'>
             Frequently Asked Questions About Surgical Supplies
@@ -255,7 +255,7 @@ export default function FAQs() {
             Available Monday-Friday, 9 AM - 5 PM EST
           </p>
         </footer>
-      </main>
+      </div>
       {/* Custom animation */}
       <style jsx>{`
         @keyframes fadeInDown {

@@ -61,10 +61,7 @@ export default function AboutScreen() {
           ))}
         </ul>
       </nav>
-      <main
-        className='flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto px-4 my-20 gap-10'
-        role='main'
-      >
+      <div className='flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto px-4 my-20 gap-10'>
         <animated.header
           className='block lg:hidden text-center'
           style={contentAnimation}
@@ -145,7 +142,7 @@ export default function AboutScreen() {
 
             <p className='text-[#0e355e] font-semibold text-lg'>
               At STAT Surgical Supply, our customers are &quot;priority
-              one&quot; – always.
+              one&quot; - always.
             </p>
           </section>
 
@@ -164,7 +161,7 @@ export default function AboutScreen() {
             </Link>
           </footer>
         </animated.article>
-      </main>
+      </div>
     </Layout>
   );
 }

@@ -258,7 +258,7 @@ export default function Home({ products, news = [] }) {
         title='Premium Surgical Supplies & Medical Equipment | STAT Surgical Supply'
         description='Discover premium surgical supplies and medical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide. Stay updated with the latest healthcare news and industry insights.'
       >
-        <main role='main'>
+        <div>
           <div className='my-5 -mt-2'>
             <ShippingCutoffTimer />
           </div>
@@ -342,7 +342,7 @@ export default function Home({ products, news = [] }) {
           >
             <Contact className='mt-2' />
           </motion.div>
-        </main>
+        </div>
       </Layout>
     </>
   );
