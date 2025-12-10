@@ -391,7 +391,7 @@ export default function Layout({
         <div className='flex min-h-screen flex-col justify-between'>
           <Header />
           <main
-            className='main m-auto mt-0 md:mt-[11rem] max-w-[1400px] px-4 pt-3 md:pt-10 min-h-[30vh] w-full'
+            className='main m-auto mt-0 md:mt-[8rem] lg:mt-[17rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-10 min-h-[30vh] w-full'
             key={router.asPath}
           >
             {children}

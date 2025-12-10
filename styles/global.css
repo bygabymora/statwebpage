@@ -940,6 +940,29 @@ main {
   .card {
     @apply mt-3 rounded-lg border-gray-200 shadow-md mx-3;
   }
+  .container {
+    padding-top: 0;
+  }
+  .section {
+    padding: 1rem 0 2rem;
+  }
+  main {
+    margin-top: 0;
+  }
+}
+
+/* iPad Mini specific - reduce white space */
+@media screen and (min-width: 768px) and (max-width: 810px) {
+  .main {
+    margin-top: 8rem !important;
+  }
+}
+
+/* iPad Air and larger tablets - more spacing for header clearance */
+@media screen and (min-width: 811px) and (max-width: 1023px) {
+  .main {
+    margin-top: 15rem !important;
+  }
 }
 
 @media screen and (max-width: 576px) {
