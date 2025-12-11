@@ -9,7 +9,6 @@ import {
   BsInfoCircle,
   BsBuilding,
   BsGrid,
-  BsClipboardData,
 } from "react-icons/bs";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -74,7 +73,6 @@ export default function ProductScreen({ product }) {
   const tabs = [
     { id: "related", label: "RELATED ITEMS", icon: BsGrid },
     { id: "details", label: "ADDITIONAL DETAILS", icon: BsInfoCircle },
-    { id: "accessgudid", label: "ACCESSGUDID INFO", icon: BsClipboardData },
     { id: "manufacturer", label: "MANUFACTURER", icon: BsBuilding },
   ];
 
@@ -390,24 +388,6 @@ export default function ProductScreen({ product }) {
     </div>
   );
 
-  const AccessGudidTab = () => (
-    <div className='bg-gray-50 p-6 rounded-lg'>
-      <h3 className='text-lg font-semibold text-[#144e8b] mb-4'>
-        FDA AccessGUDID Information
-      </h3>
-      <p className='text-gray-600 mb-4'>
-        Global Unique Device Identification Database information for this
-        medical device.
-      </p>
-      <div className='bg-white p-4 rounded border'>
-        <p className='text-sm text-gray-500'>
-          AccessGUDID data integration will be implemented here to show FDA
-          device information, UDI details, and regulatory compliance data.
-        </p>
-      </div>
-    </div>
-  );
-
   const ManufacturerTab = () => {
     const profile = findManufacturerProfile(product.manufacturer);
 
@@ -592,8 +572,6 @@ export default function ProductScreen({ product }) {
         return <RelatedItemsTab />;
       case "details":
         return <AdditionalDetailsTab />;
-      case "accessgudid":
-        return <AccessGudidTab />;
       case "manufacturer":
         return <ManufacturerTab />;
       default:
