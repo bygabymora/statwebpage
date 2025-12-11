@@ -9,6 +9,7 @@ export const NewsItem = ({ news }) => {
   const handleVideoPlay = () => {
     if (videoRef.current && isHovered) {
       videoRef.current.currentTime = 0;
+      videoRef.current.volume = 0.7; // Set volume to 70%
       videoRef.current.play().catch(console.error);
     }
   };
@@ -34,7 +35,7 @@ export const NewsItem = ({ news }) => {
     <div className='flex flex-col border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 w-full h-full'>
       <Link
         href={`/news/${news.slug}`}
-        className='w-full aspect-[6/4] relative group'
+        className='w-full aspect-[18/11] relative group'
         title={news.title}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -52,8 +53,8 @@ export const NewsItem = ({ news }) => {
         />
         {news.hasVideo && (
           <>
-            <div className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded z-10'>
-              VIDEO
+            <div className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded z-10 flex items-center gap-1'>
+              🔊 VIDEO
             </div>
             <div className='absolute inset-0 w-full h-full overflow-hidden'>
               <video
@@ -62,7 +63,6 @@ export const NewsItem = ({ news }) => {
                 className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
                   isHovered ? "opacity-100" : "opacity-0"
                 }`}
-                muted
                 loop
                 playsInline
                 preload='auto'
