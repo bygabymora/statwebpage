@@ -27,6 +27,9 @@ const postHandler = async (req, res) => {
     tags: ["tag1", "tag2"],
     imageUrl:
       "https://res.cloudinary.com/dcjahs0jp/image/upload/v1694037866/arpshiwxqjzhv7edkhuy.png",
+    videoUrl: null,
+    hasVideo: false,
+    videoType: null,
     author: "Sample Author",
     sources: [
       {

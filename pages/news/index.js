@@ -94,6 +94,9 @@ export async function getServerSideProps() {
       updatedAt: updatedAt ? updatedAt.toISOString() : null,
       sources: sourcesWithModifiedFields,
       excerpt, // we add only a short summary
+      videoUrl: newsItem.videoUrl || null,
+      hasVideo: newsItem.hasVideo || false,
+      videoType: newsItem.videoType || null,
     };
   });
 

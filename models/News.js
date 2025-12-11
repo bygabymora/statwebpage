@@ -8,6 +8,9 @@ const newsSchema = new mongoose.Schema(
     category: { type: String, required: true },
     tags: [{ type: String }],
     imageUrl: { type: String, required: true },
+    videoUrl: { type: String },
+    hasVideo: { type: Boolean, default: false },
+    videoType: { type: String, enum: ["mp4", "webm", "youtube", "vimeo"] },
     author: { type: String, required: true },
     sources: [
       {

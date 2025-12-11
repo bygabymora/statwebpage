@@ -53,6 +53,9 @@ export default function AdminNewsEditScreen() {
     tags: "",
     imageUrl: "",
     embeddedImageUrl: "",
+    videoUrl: "",
+    hasVideo: false,
+    videoType: "mp4",
     author: "",
   });
   const [links, setLinks] = useState([]);
@@ -72,6 +75,9 @@ export default function AdminNewsEditScreen() {
         tags: (data.tags || []).join(", "),
         imageUrl: data.imageUrl || "",
         embeddedImageUrl: data.embeddedImageUrl || "",
+        videoUrl: data.videoUrl || "",
+        hasVideo: data.hasVideo || false,
+        videoType: data.videoType || "mp4",
         author: data.author || "",
       });
       setLinks(data.sources || []);
@@ -93,6 +99,9 @@ export default function AdminNewsEditScreen() {
     if (!fields.tags.trim()) errs.tags = "Tags are required";
     if (!fields.imageUrl.trim()) errs.imageUrl = "Image URL is required";
     if (!fields.author.trim()) errs.author = "Author is required";
+    if (fields.hasVideo && !fields.videoUrl.trim()) {
+      errs.videoUrl = "Video URL is required when video is enabled";
+    }
     return errs;
   }
 
@@ -142,6 +151,9 @@ export default function AdminNewsEditScreen() {
         ...newsData,
         tags: newsData.tags.split(",").map((t) => t.trim()),
         sources,
+        videoUrl: newsData.hasVideo ? newsData.videoUrl : null,
+        hasVideo: newsData.hasVideo,
+        videoType: newsData.hasVideo ? newsData.videoType : null,
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("News updated successfully");
@@ -259,6 +271,77 @@ export default function AdminNewsEditScreen() {
                   className='w-full'
                 />
                 {loadingUpload && <p>Uploading…</p>}
+              </div>
+
+              {/* Video Section */}
+              <div className='mb-6 border-t pt-4'>
+                <h3 className='text-lg font-semibold mb-4'>Video Settings</h3>
+
+                {/* Has Video Toggle */}
+                <div className='mb-4'>
+                  <label className='flex items-center'>
+                    <input
+                      type='checkbox'
+                      checked={newsData.hasVideo}
+                      onChange={(e) =>
+                        setNewsData((prev) => ({
+                          ...prev,
+                          hasVideo: e.target.checked,
+                        }))
+                      }
+                      className='mr-2'
+                    />
+                    This news item has a video
+                  </label>
+                </div>
+
+                {newsData.hasVideo && (
+                  <>
+                    {/* Video URL */}
+                    <div className='mb-4'>
+                      <label htmlFor='videoUrl'>Video URL</label>
+                      <input
+                        id='videoUrl'
+                        value={newsData.videoUrl}
+                        onChange={handleChange}
+                        placeholder='https://example.com/video.mp4'
+                        className='w-full px-3 py-2 border rounded'
+                      />
+                      {fieldErrors.videoUrl && (
+                        <p className='text-red-500'>{fieldErrors.videoUrl}</p>
+                      )}
+                    </div>
+
+                    {/* Upload Video */}
+                    <div className='mb-4'>
+                      <label htmlFor='videoFile'>Upload Video</label>
+                      <input
+                        id='videoFile'
+                        type='file'
+                        accept='video/*'
+                        onChange={(e) => uploadHandler(e, "videoUrl")}
+                        className='w-full'
+                      />
+                      {loadingUpload && <p>Uploading…</p>}
+                    </div>
+
+                    {/* Video Type */}
+                    <div className='mb-4'>
+                      <label htmlFor='videoType'>Video Type</label>
+                      <select
+                        id='videoType'
+                        value={newsData.videoType}
+                        onChange={handleChange}
+                        className='w-full px-3 py-2 border rounded'
+                      >
+                        <option value='mp4'>MP4</option>
+                        <option value='webm'>WebM</option>
+                        <option value='youtube'>YouTube</option>
+                        <option value='vimeo'>Vimeo</option>
+                      </select>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Category */}
