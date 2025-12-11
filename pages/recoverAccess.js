@@ -138,7 +138,7 @@ export default function ForgotPassword() {
               <button
                 onClick={handleRequestCode}
                 disabled={!email.trim()}
-                className='w-full py-3 sm:py-3.5 px-4 bg-[#03793d] hover:bg-[#026a35] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm sm:text-base font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#03793d]/40 focus:ring-offset-2'
+                className='w-full py-3 sm:py-3.5 px-4 bg-[#03793d] hover:bg-[#026a35] disabled:bg-gray-300 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#03793d]/40 focus:ring-offset-2'
               >
                 Send Reset Instructions
               </button>
