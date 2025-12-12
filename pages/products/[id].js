@@ -260,8 +260,8 @@ export default function ProductScreen({ product }) {
   const getProductTitle = (product) => {
     const base = `${product.manufacturer}: ${product.name}`;
     return `${base} ${
-      product.each?.description?.slice(0, 33) || ""
-    } | Fast Delivery & Best Price`;
+      product.each?.description?.slice(0, 30) || ""
+    }... | Fast Delivery & Best Price`;
   };
 
   return (
