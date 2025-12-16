@@ -949,7 +949,7 @@ export default function ProductScreen({ product }) {
                     }`}
                   >
                     {inventoryJustUpdated
-                      ? "✨ Just updated!"
+                      ? "Just updated!"
                       : inventoryLastUpdated
                       ? moment(inventoryLastUpdated).format("h:mm A")
                       : "No data"}
@@ -1041,7 +1041,7 @@ export default function ProductScreen({ product }) {
                   }`}
                 >
                   {inventoryJustUpdated
-                    ? "✨ Just updated!"
+                    ? "Just updated!"
                     : inventoryLastUpdated
                     ? moment(inventoryLastUpdated).format("h:mm A")
                     : "No data"}
