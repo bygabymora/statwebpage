@@ -29,13 +29,13 @@ export default function facs() {
           </p>
           <br />
           <h2>RETURN PROCESS</h2>
-          <p>
+          <h5>
             To return an item, please email customer service at
             sales@statsurgicalsupply.com for approval and a Return Merchandise
             Authorization (RMA) number. After receiving an RMA number, place the
             item securely in its original packaging and ship your return to the
             following address:
-          </p>
+          </h5>
           <br />
           <p className='text-gray-500 font-bold ml-5'>
             Stat Surgical Supply LLC
@@ -57,13 +57,13 @@ export default function facs() {
           </p>
           <br />
           <h2>RETURN PROCESSING</h2>
-          <p>
+          <h5>
             {" "}
             After receiving your return and inspecting the condition of your
             item(s), we will process your return. Please allow at least two (2)
             days from receiving your item to process your return. We will notify
             you by email when your return has been processed.
-          </p>
+          </h5>
           <br />
           <p>
             Please Note Items must be in the same condition they were in when
@@ -75,11 +75,11 @@ export default function facs() {
           </p>
           <br />
           <h2>EXCEPTIONS</h2>
-          <p>
+          <h5>
             {" "}
             Certain items are not returnable due to their high temperature and
             humidity sensitivity:
-          </p>
+          </h5>
           <p className='text-gray-500 font-bold ml-5 mb-10'>
             <br />
             Integra Duraseal
@@ -92,10 +92,10 @@ export default function facs() {
 
           <br />
           <h2>QUESTIONS</h2>
-          <p>
+          <h5>
             If you have any questions concerning our return policy, please get
             in touch with us at:
-          </p>
+          </h5>
           <p className='text-gray-500 font-bold ml-5 mb-10'>
             <br />
             813-252-0727

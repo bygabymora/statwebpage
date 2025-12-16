@@ -110,10 +110,10 @@ export default function ForgotPassword() {
               <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e] mb-3 sm:mb-4'>
                 Reset Your Password
               </h1>
-              <p className='text-sm sm:text-base text-gray-500 leading-relaxed'>
+              <h5 className='text-sm sm:text-base text-gray-500 leading-relaxed'>
                 Enter your email address and we ll send you instructions to
                 reset your password securely
-              </p>
+              </h5>
             </div>
 
             <div className='space-y-4 sm:space-y-6'>
@@ -158,7 +158,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className='mt-4 sm:mt-6 text-center my-5'>
-            <p className='text-xs sm:text-sm text-gray-400'>
+            <h6 className='text-xs sm:text-sm text-gray-400'>
               Need help? Contact our support team at{" "}
               <a
                 href='mailto:sales@statsurgicalsupply.com'
@@ -166,7 +166,7 @@ export default function ForgotPassword() {
               >
                 sales@statsurgicalsupply.com
               </a>
-            </p>
+            </h6>
           </div>
         </div>
       </div>

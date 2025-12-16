@@ -20,7 +20,9 @@ export default function facs() {
         schema={[]}
       >
         <div className='card p-5 mb-10'>
-          <h1 className='section__title'>Terms of Use</h1>
+          <h1 className='section__title'>
+            Terms of use | Stat Surgical Supply
+          </h1>
           <br />
           <h2 className='section__subtitle'>Last updated October 23, 2023</h2>
           <p>
@@ -92,7 +94,7 @@ export default function facs() {
           <br />
           <h2>REFUND AND RETURN</h2>
           <p>
-            For more information on our return and refund policy, please visit{" "}
+            For more information on our return and refund policy, please visit.{" "}
             <Link
               href='/return-policy'
               className='font-bold underline'

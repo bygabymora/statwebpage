@@ -67,6 +67,8 @@ export default async function handler(req, res) {
         sentOvernight: product.sentOvernight,
         keywords: product.keywords || product.name || [],
         information: product.information || "",
+        updatedAt: product.updatedAt,
+        createdAt: product.createdAt,
         each: {
           description: product.each?.description || null,
           minSalePrice: product.each?.minSalePrice || null,
