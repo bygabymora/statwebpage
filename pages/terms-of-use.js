@@ -94,7 +94,7 @@ export default function facs() {
           <br />
           <h2>REFUND AND RETURN</h2>
           <p>
-            For more information on our return and refund policy, please visit{" "}
+            For more information on our return and refund policy, please visit.{" "}
             <Link
               href='/return-policy'
               className='font-bold underline'
