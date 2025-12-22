@@ -90,6 +90,13 @@ const manufacturerPrefixes = [
   "COOK",
 ];
 
+function normalizeProductSlug(slug) {
+  return (slug || "")
+    .trim()
+    .replace(/-+/g, "-") // collapse multiple scripts
+    .replace(/^-+|-+$/g, ""); // remove hyphens at the beginning and end
+}
+
 function handleProducts(url) {
   const { pathname, searchParams } = url;
 
@@ -97,36 +104,32 @@ function handleProducts(url) {
     return NextResponse.next();
   }
 
-  // Example: /products/BARD-1200710?pId=...
-  const slugRaw = pathname.slice("/products/".length); // "BARD-1200710"
-  const slugPart = slugRaw.split("/")[0]; // "BARD-1200710"
+  const slugRaw = pathname.slice("/products/".length);
+  const slugPart = slugRaw.split("/")[0];
 
   const hasPid = searchParams.has("pId");
 
   let targetSlug = slugPart;
   let manufacturerStripped = false;
 
-  // If the slug starts with a known manufacturer, remove it
   for (const prefix of manufacturerPrefixes) {
     const withDash = `${prefix}-`;
     if (slugPart.startsWith(withDash)) {
-      // BARD-1200710 -> 1200710, APPLIED-MEDICAL-C8XX2 -> C8XX2
       targetSlug = slugPart.slice(withDash.length);
       manufacturerStripped = true;
       break;
     }
   }
+  // Normalize the product slug by lowercasing and removing unwanted characters
+  const cleanSlug = normalizeProductSlug(targetSlug);
 
-  // If there is NO pId and we did NOT remove manufacturer, URL is already "pretty":
-  // /products/10-401FC, /products/AR-2922D-24-3, etc.
-  if (!hasPid && !manufacturerStripped) {
+  // If there is no pId, no manufacturer was removed and the slug is already clean → no redirect
+  if (!hasPid && !manufacturerStripped && slugPart === cleanSlug) {
     return NextResponse.next();
   }
 
-  // From here on, we WILL redirect
-  url.pathname = `/products/${targetSlug}`;
+  url.pathname = `/products/${cleanSlug}`;
 
-  // Always remove pId if present
   if (hasPid) {
     searchParams.delete("pId");
     url.search = searchParams.toString();
