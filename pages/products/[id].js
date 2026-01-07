@@ -44,6 +44,10 @@ export default function ProductScreen({ product }) {
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.each?.countInStock || null
   );
+  const [inventoryLastUpdated, setInventoryLastUpdated] = useState(
+    product?.updatedAt || product?.createdAt || new Date().toISOString()
+  );
+  const [inventoryJustUpdated, setInventoryJustUpdated] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -75,6 +79,12 @@ export default function ProductScreen({ product }) {
     { id: "details", label: "ADDITIONAL DETAILS", icon: BsInfoCircle },
     { id: "manufacturer", label: "MANUFACTURER", icon: BsBuilding },
   ];
+
+  React.useEffect(() => {
+    console.warn("Product updatedAt:", product?.updatedAt);
+    console.warn("Product createdAt:", product?.createdAt);
+    console.warn("inventoryLastUpdated state:", inventoryLastUpdated);
+  }, [product, inventoryLastUpdated]);
 
   useEffect(() => {
     if (product.countInStock || 0) {
@@ -260,13 +270,71 @@ export default function ProductScreen({ product }) {
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setNowLocal(moment()); // your browser’s clock
-      setNowTampa(moment.tz("America/New_York")); // Tampa/Eastern
-    }, 60_000); // tick every minute
+    const checkInventoryUpdates = async () => {
+      try {
+        const response = await fetch(`/api/products/${product._id}`);
+        if (response.ok) {
+          const updatedProduct = await response.json();
+          console.warn(
+            "Fetched updated product updatedAt:",
+            updatedProduct.updatedAt
+          );
 
-    return () => clearInterval(timer);
-  }, []);
+          // Ensure we have a valid updatedAt field
+          const updatedAtValue =
+            updatedProduct.updatedAt ||
+            updatedProduct.createdAt ||
+            new Date().toISOString();
+          const lastUpdated = new Date(updatedAtValue).getTime();
+          const currentLastUpdated = new Date(inventoryLastUpdated).getTime();
+
+          if (lastUpdated > currentLastUpdated) {
+            // Inventory has been updated, refresh the product data
+            setInventoryLastUpdated(updatedAtValue);
+            setInventoryJustUpdated(true);
+
+            // Update current stock count and price based on typeOfPurchase
+            if (typeOfPurchase === "Each") {
+              setCurrentCountInStock(updatedProduct.each?.countInStock || 0);
+              setCurrentPrice(
+                updatedProduct.each?.wpPrice ||
+                  updatedProduct.each?.customerPrice ||
+                  0
+              );
+              setCurrentDescription(updatedProduct.each?.description || "");
+            } else if (typeOfPurchase === "Box") {
+              setCurrentCountInStock(updatedProduct.box?.countInStock || 0);
+              setCurrentPrice(
+                updatedProduct.box?.wpPrice ||
+                  updatedProduct.box?.customerPrice ||
+                  0
+              );
+              setCurrentDescription(updatedProduct.box?.description || "");
+            }
+
+            // Update stock status
+            setIsOutOfStock((updatedProduct.each?.countInStock || 0) <= 0);
+            setIsOutOfStockBox((updatedProduct.box?.countInStock || 0) <= 0);
+            setIsOutOfStockClearance(
+              (updatedProduct.each?.clearanceCountInStock || 0) <= 0 &&
+                (updatedProduct.box?.clearanceCountInStock || 0) <= 0
+            );
+
+            // Show notification for 3 seconds
+            setTimeout(() => setInventoryJustUpdated(false), 3000);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking inventory updates:", error);
+      }
+    };
+
+    // Only check for updates if user is active
+    if (active) {
+      const inventoryTimer = setInterval(checkInventoryUpdates, 30000); // Check every 30 seconds
+      return () => clearInterval(inventoryTimer);
+    }
+  }, [product._id, inventoryLastUpdated, typeOfPurchase, active]);
 
   // compute Tampa cutoff (today at 15:30 Tampa time)
   const cutoff = nowTampa.clone().hour(15).minute(30).second(0);
@@ -356,6 +424,51 @@ export default function ProductScreen({ product }) {
             <li>
               <span className='font-medium'>Stock Status:</span>{" "}
               {currentCountInStock > 0 ? "In Stock" : "Out of Stock"}
+            </li>
+            <li className='mt-2'>
+              <div
+                className={`text-sm flex items-center gap-2 transition-all duration-300 ${
+                  inventoryJustUpdated
+                    ? "text-green-600 font-semibold animate-pulse"
+                    : "text-[#788b9b]"
+                }`}
+              >
+                {inventoryJustUpdated ? (
+                  <svg
+                    className='w-4 h-4 text-green-600'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className='w-4 h-4'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                )}
+                {inventoryJustUpdated ? (
+                  <span>Inventory just updated!</span>
+                ) : inventoryLastUpdated ? (
+                  <span>
+                    Inventory updated:{" "}
+                    {moment(inventoryLastUpdated).format("MMM DD, YYYY h:mm A")}
+                  </span>
+                ) : (
+                  <span>Inventory status: Loading...</span>
+                )}
+              </div>
             </li>
             <h4 className='font-medium text-gray-800 mt-4 mb-2'>
               Shipping Cutoff
