@@ -56,7 +56,7 @@ export default function ShippingCutoffTimer() {
             </div>
             <div>
               <h3 className='text-lg font-bold mb-1'>
-                ⚡ Next-Day Delivery Available!
+                Next-Day Delivery Available!
               </h3>
               <p className='text-sm opacity-90'>
                 Get your medical supplies by tomorrow

@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { NewsItem } from "./NewsItem";
 import { motion } from "framer-motion";
+import { AiOutlineRight } from "react-icons/ai";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -73,20 +74,7 @@ const NewsSection = ({ news = [] }) => {
             title='Explore more healthcare news and surgical supply updates'
           >
             View All News & Insights
-            <svg
-              className='ml-2 w-4 h-4'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              aria-hidden='true'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M9 5l7 7-7 7'
-              />
-            </svg>
+            <AiOutlineRight className='ml-2 w-4 h-4' />
           </Link>
         </motion.div>
       </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import { AiOutlineSend } from "react-icons/ai";
+import { AiOutlineSend, AiOutlineArrowRight } from "react-icons/ai";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -82,7 +82,7 @@ const StaticBanner = () => {
               className='flex w-fit items-center gap-3 bg-[#0e355e] px-10 py-3 rounded-full backdrop-blur-md bg-white/30 text-[#0e355e] font-semibold shadow-lg transition-all duration-300 hover:scale-105'
             >
               <span>Send us your list</span>
-              <AiOutlineSend className='text-2xl' />
+              <AiOutlineArrowRight className='w-5 h-5' />
             </Link>
           </motion.div>
         </div>
