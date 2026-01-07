@@ -69,6 +69,32 @@ export default function Newscreen({ news, showProductsButton = false }) {
     );
   });
 
+  const newsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
+    },
+    headline: news.title,
+    image: [news.imageUrl],
+    datePublished: news.createdAt,
+    dateModified: news.updatedAt || news.createdAt,
+    author: {
+      "@type": "Person",
+      name: news.author || "Stat Surgical Supply Editorial Team",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Stat Surgical Supply",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.statsurgicalsupply.com/logo.png",
+      },
+    },
+    description: news.content?.slice(0, 160),
+  };
+
   return (
     <Layout
       title={pageTitle} // Use the constructed page title
@@ -77,6 +103,10 @@ export default function Newscreen({ news, showProductsButton = false }) {
       image={news.imageUrl}
       url={`https://www.statsurgicalsupply.com/news/${news.slug}`}
     >
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsJsonLd) }}
+      />
       <div
         className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
         style={{ width: `${scrollProgress}%` }}

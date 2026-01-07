@@ -1,4 +1,4 @@
-// pages/api/news-sitemap.js
+// pages/api/sitemap-news.js
 import db from "../../utils/db";
 import News from "../../models/News";
 
@@ -8,48 +8,46 @@ export default async function handler(req, res) {
   try {
     await db.connect(true);
 
-    // We fetch only what is necessary
-    const newsArticles = await News.find()
-      .select("slug updatedAt createdAt")
+    // Google News only accepts news from the last 2 days
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+    const news = await News.find({
+      createdAt: { $gte: twoDaysAgo },
+    })
+      .sort({ createdAt: -1 })
       .lean();
 
-    const newsUrls = newsArticles
-      .filter((item) => item.slug) // for security
-      .map(({ slug, updatedAt, createdAt }) => {
-        const loc = `${BASE_URL}/news/${encodeURIComponent(slug)}`;
-        const lastmodDate = updatedAt || createdAt;
-        const lastmod = lastmodDate
-          ? new Date(lastmodDate).toISOString()
-          : null;
+    const urls = news
+      .map((item) => {
+        const url = `${BASE_URL}/news/${item.slug}`;
+        const pubDate = new Date(item.createdAt).toISOString();
+
         return `
   <url>
-    <loc>${loc}</loc>
-    ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>${url}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Stat Surgical Supply</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>${pubDate}</news:publication_date>
+      <news:title><![CDATA[${item.title}]]></news:title>
+    </news:news>
   </url>`;
       })
       .join("");
 
-    const xml =
-      `<?xml version="1.0" encoding="UTF-8"?>` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
-      newsUrls +
-      `</urlset>`;
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+${urls}
+</urlset>`;
 
     res.setHeader("Content-Type", "application/xml");
-    // optional: cache at the edge/CDN
-    // res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=600");
-
-    return res.status(200).send(xml);
-  } catch (err) {
-    console.error("Error generating NEWS sitemap:", err);
-
-    const empty =
-      `<?xml version="1.0" encoding="UTF-8"?>` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`;
-
-    res.setHeader("Content-Type", "application/xml");
-    return res.status(200).send(empty);
+    res.status(200).send(xml);
+  } catch (error) {
+    console.error("Error generating Google News sitemap:", error);
+    res.status(500).end();
   }
 }
