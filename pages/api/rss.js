@@ -1,3 +1,5 @@
+// pages/api/rss.js
+
 import db from "../../utils/db";
 import News from "../../models/News";
 
@@ -67,7 +69,7 @@ export default async function handler(req, res) {
     res.setHeader("Content-Type", "application/rss+xml");
     res.status(200).send(xml);
   } catch (error) {
-    console.error("❌ Error generating Google News RSS:", error);
+    console.error("Error generating Google News RSS:", error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 }
