@@ -120,9 +120,9 @@ const Banner = () => {
               <p className='mb-4'>
                 <strong>Your trusted source for surgical supplies</strong> -
                 serving over 150+ healthcare facilities nationwide. We provide
-                high-quality surgical disposables, implants, and instruments at
-                unmatched competitive prices. Explore our comprehensive range of
-                premium medical equipment featuring industry-leading brands. Our
+                high-quality surgical disposables and instruments at unmatched
+                competitive prices. Explore our comprehensive range of premium
+                medical equipment featuring industry-leading brands. Our
                 cost-saving solutions are specifically tailored to meet your
                 healthcare facility&apos;s unique needs with fast, reliable
                 delivery and exceptional customer service.
