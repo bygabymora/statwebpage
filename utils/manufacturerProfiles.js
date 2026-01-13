@@ -1,179 +1,46 @@
 // utils/manufacturerProfiles.js
-
-// Comprehensive manufacturer profiles database
-// This file centralizes all manufacturer information for easy maintenance and updates
+// Aligned 100% with real catalog manufacturers
+// SEO-safe, Google Merchant safe, legally coherent
 
 export const manufacturerProfiles = {
-  // Major medical device manufacturers
+  // =========================
+  // MAJOR HOLDINGS
+  // =========================
+
   medtronic: {
     name: "Medtronic",
-    aliases: ["medtronic", "covidien", "puritan bennett"],
+    aliases: ["medtronic", "covidien"],
     website: "https://www.medtronic.com/",
     description:
-      "Medtronic is a global leader in medical technology, offering innovative devices and therapies that transform healthcare. With over 70 years of experience, they provide solutions for cardiovascular, diabetes, neurological, and surgical conditions.",
+      "Medtronic is a global leader in medical technology, including surgical, cardiovascular, neurological and diabetes solutions. Covidien is now part of Medtronic.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "support@medtronic.com",
-    specialties: ["Cardiovascular", "Diabetes", "Neurological", "Surgical"],
+    supportEmail: null,
+    specialties: ["Surgical", "Cardiovascular", "Neurology", "Diabetes"],
     foundedYear: 1949,
-  },
-
-  "intuitive surgical": {
-    name: "Intuitive Surgical",
-    aliases: ["intuitive", "intuitive surgical", "da vinci"],
-    website: "https://www.intuitive.com/",
-    description:
-      "Intuitive Surgical pioneers minimally invasive robotic surgery with the da Vinci Surgical System, enabling surgeons to operate with enhanced precision and control.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
-    supportEmail: "support@intuitive.com",
-    specialties: [
-      "Robotic Surgery",
-      "Minimally Invasive Surgery",
-      "Surgical Robotics",
-    ],
-    foundedYear: 1995,
-  },
-
-  stryker: {
-    name: "Stryker Corporation",
-    aliases: ["stryker", "stryker corp", "stryker corporation"],
-    website: "https://www.stryker.com/",
-    description:
-      "Stryker is a leading medical technology company offering innovative products and services in orthopedics, medical and surgical, and neurotechnology and spine.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customersupport@stryker.com",
-    specialties: [
-      "Orthopedics",
-      "Medical & Surgical",
-      "Neurotechnology",
-      "Spine",
-    ],
-    foundedYear: 1941,
-  },
-
-  ethicon: {
-    name: "Ethicon (Johnson & Johnson)",
-    aliases: ["ethicon", "j&j", "johnson & johnson", "johnson and johnson"],
-    website: "https://www.ethicon.com/",
-    description:
-      "Ethicon, part of Johnson & Johnson, develops surgical solutions including sutures, surgical meshes, energy devices, and surgical staplers for healthcare professionals worldwide.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customersupport@ethicon.com",
-    specialties: [
-      "Surgical Sutures",
-      "Wound Closure",
-      "Energy Devices",
-      "Surgical Staplers",
-    ],
-    foundedYear: 1886,
-  },
-
-  bard: {
-    name: "BD Bard (Becton Dickinson)",
-    aliases: [
-      "bard",
-      "bd bard",
-      "c.r. bard",
-      "cr bard",
-      "becton dickinson bard",
-    ],
-    website: "https://www.bd.com/en-us",
-    description:
-      "BD Bard specializes in vascular, urology, oncology, and surgical specialty products. Part of BD (Becton, Dickinson and Company), they provide innovative medical technologies.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customer_support@bd.com",
-    specialties: [
-      "Vascular Access",
-      "Urology",
-      "Oncology",
-      "Surgical Specialties",
-    ],
-    foundedYear: 1907,
   },
 
   bd: {
     name: "BD (Becton, Dickinson and Company)",
-    aliases: ["bd", "becton dickinson", "becton, dickinson and company"],
+    aliases: ["bd", "becton dickinson", "bard", "c.r. bard", "cr bard"],
     website: "https://www.bd.com/",
     description:
-      "BD is a global medical technology company that manufactures and sells medical devices, instrument systems and reagents used by healthcare institutions, physicians, and researchers.",
+      "BD is a global medical technology company. In 2017, it acquired C.R. Bard, whose products are now part of BD's portfolio.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customersupport@bd.com",
-    specialties: [
-      "Medical Devices",
-      "Laboratory Equipment",
-      "Diagnostics",
-      "Pharmaceutical",
-    ],
+    supportEmail: "customer_support@bd.com",
+    specialties: ["Medical Devices", "Interventional", "Urology", "Vascular"],
     foundedYear: 1897,
   },
 
-  // Additional major manufacturers
-  "boston scientific": {
-    name: "Boston Scientific",
-    aliases: ["boston scientific", "bsc"],
-    website: "https://www.bostonscientific.com/",
+  "johnson & johnson": {
+    name: "Johnson & Johnson (Ethicon / DePuy)",
+    aliases: ["johnson & johnson", "j&j", "ethicon", "depuy"],
+    website: "https://www.jnjmedtech.com/",
     description:
-      "Boston Scientific develops medical devices used in interventional medical specialties, including interventional cardiology, peripheral interventions, neuromodulation, and more.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
-    supportEmail: "customerservice@bsci.com",
-    specialties: [
-      "Interventional Cardiology",
-      "Peripheral Interventions",
-      "Neuromodulation",
-      "Endoscopy",
-    ],
-    foundedYear: 1979,
-  },
-
-  "abbott laboratories": {
-    name: "Abbott Laboratories",
-    aliases: ["abbott", "abbott laboratories", "abbott labs"],
-    website: "https://www.abbott.com/",
-    description:
-      "Abbott is a global healthcare leader that helps people live more fully at all stages of life through life-changing products that span the breadth of healthcare.",
+      "Johnson & Johnson MedTech is a global leader in surgical, orthopedic and interventional solutions through brands like Ethicon and DePuy.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "support@abbott.com",
-    specialties: [
-      "Diagnostics",
-      "Medical Devices",
-      "Nutritionals",
-      "Pharmaceuticals",
-    ],
-    foundedYear: 1888,
-  },
-
-  "3m health care": {
-    name: "3M Health Care",
-    aliases: ["3m", "3m health care", "3m healthcare", "3m medical"],
-    website: "https://www.3m.com/3M/en_US/health-care-us/",
-    description:
-      "3M Health Care applies science to improve lives through innovative medical solutions including surgical supplies, infection prevention, and skin & wound care products.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "healthcare@3m.com",
-    specialties: [
-      "Surgical Supplies",
-      "Infection Prevention",
-      "Wound Care",
-      "Dental",
-    ],
-    foundedYear: 1902,
-  },
-
-  "cardinal health": {
-    name: "Cardinal Health",
-    aliases: ["cardinal", "cardinal health"],
-    website: "https://www.cardinalhealth.com/",
-    description:
-      "Cardinal Health is a distributor of pharmaceuticals and medical products, and a manufacturer of medical and surgical products including gloves, surgical apparel, and fluid management products.",
-    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
-    supportEmail: "customerservice@cardinalhealth.com",
-    specialties: [
-      "Medical Distribution",
-      "Surgical Products",
-      "Pharmaceutical Services",
-      "Fluid Management",
-    ],
-    foundedYear: 1971,
+    supportEmail: null,
+    specialties: ["Surgery", "Orthopedics", "Wound Closure", "Energy Devices"],
+    foundedYear: 1886,
   },
 
   "zimmer biomet": {
@@ -181,16 +48,23 @@ export const manufacturerProfiles = {
     aliases: ["zimmer", "biomet", "zimmer biomet"],
     website: "https://www.zimmerbiomet.com/",
     description:
-      "Zimmer Biomet is a global leader in musculoskeletal healthcare, designing, manufacturing and marketing orthopedic reconstructive products, sports medicine, biologics, and more.",
+      "Zimmer Biomet is a global leader in musculoskeletal healthcare and orthopedic reconstruction.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customersupport@zimmerbiomet.com",
-    specialties: [
-      "Orthopedic Reconstruction",
-      "Sports Medicine",
-      "Biologics",
-      "Spine",
-    ],
+    supportEmail: null,
+    specialties: ["Orthopedics", "Sports Medicine", "Biologics"],
     foundedYear: 1927,
+  },
+
+  stryker: {
+    name: "Stryker",
+    aliases: ["stryker"],
+    website: "https://www.stryker.com/",
+    description:
+      "Stryker is a leading medical technology company offering innovative surgical, orthopedic and neurotechnology products.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
+    supportEmail: null,
+    specialties: ["Orthopedics", "Surgical", "Neurotechnology"],
+    foundedYear: 1941,
   },
 
   "smith & nephew": {
@@ -198,89 +72,203 @@ export const manufacturerProfiles = {
     aliases: ["smith & nephew", "smith and nephew", "s&n"],
     website: "https://www.smith-nephew.com/",
     description:
-      "Smith & Nephew is a global medical technology company specializing in orthopedics, sports medicine, and wound management solutions.",
+      "Smith & Nephew is a global medical technology company focused on orthopedics, sports medicine and wound management.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
-    supportEmail: "customer.service@smith-nephew.com",
-    specialties: [
-      "Orthopedics",
-      "Sports Medicine",
-      "Wound Management",
-      "Advanced Surgical Devices",
-    ],
+    supportEmail: null,
+    specialties: ["Orthopedics", "Sports Medicine", "Wound Care"],
     foundedYear: 1856,
   },
 
-  // Generic/smaller manufacturers fallback
+  baxter: {
+    name: "Baxter",
+    aliases: ["baxter"],
+    website: "https://www.baxter.com/",
+    description:
+      "Baxter is a global healthcare company focused on critical care, infusion systems and hospital products.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Infusion", "Critical Care", "Hospital Products"],
+    foundedYear: 1931,
+  },
+
+  teleflex: {
+    name: "Teleflex",
+    aliases: ["teleflex"],
+    website: "https://www.teleflex.com/",
+    description:
+      "Teleflex is a global provider of medical technologies focused on anesthesia, surgery, urology and vascular access.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Anesthesia", "Urology", "Vascular", "Surgery"],
+    foundedYear: 1943,
+  },
+
+  integra: {
+    name: "Integra LifeSciences",
+    aliases: ["integra", "integra lifesciences"],
+    website: "https://www.integralife.com/",
+    description:
+      "Integra LifeSciences develops medical technologies for neurosurgery, reconstructive surgery and wound care.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Neurosurgery", "Reconstruction", "Wound Care"],
+    foundedYear: 1989,
+  },
+
+  arthrex: {
+    name: "Arthrex",
+    aliases: ["arthrex"],
+    website: "https://www.arthrex.com/",
+    description:
+      "Arthrex is a global medical device company specializing in minimally invasive orthopedic surgery.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Sports Medicine", "Arthroscopy", "Orthopedics"],
+    foundedYear: 1981,
+  },
+
+  hologics: {
+    name: "Hologic",
+    aliases: ["hologic"],
+    website: "https://www.hologic.com/",
+    description:
+      "Hologic is focused on women's health including diagnostics, surgical and medical imaging systems.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Diagnostics", "Imaging", "Surgical"],
+    foundedYear: 1985,
+  },
+
+  // =========================
+  // BRAND-LEVEL MANUFACTURERS (PRODUCT BRANDS)
+  // =========================
+
+  acclariant: {
+    name: "Acclarent",
+    aliases: ["acclarent"],
+    website: "https://products.integralife.com/",
+    description:
+      "Acclarent develops ENT surgical technologies and is part of Johnson & Johnson MedTech.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["ENT Surgery"],
+    foundedYear: 2004,
+  },
+
+  applied: {
+    name: "Applied Medical",
+    aliases: ["applied medical"],
+    website: "https://www.appliedmedical.com/",
+    description:
+      "Applied Medical develops advanced surgical instruments and access devices.",
+    certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Laparoscopy", "General Surgery"],
+    foundedYear: 1987,
+  },
+
+  urolift: {
+    name: "UroLift (Teleflex)",
+    aliases: ["urolift"],
+    website: "https://www.urolift.com/",
+    description:
+      "UroLift is a minimally invasive treatment for BPH developed by Teleflex.",
+    certifications: ["FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["Urology"],
+    foundedYear: null,
+  },
+
+  vivaer: {
+    name: "Vivaer (Aerin Medical)",
+    aliases: ["vivaer"],
+    website: "https://aerinmedical.com/",
+    description:
+      "Vivaer is a non-invasive nasal airway remodeling technology by Aerin Medical.",
+    certifications: ["FDA Registered", "CE Mark"],
+    supportEmail: null,
+    specialties: ["ENT"],
+    foundedYear: null,
+  },
+
+  bulkamid: {
+    name: "Bulkamid (Axonics / Contura)",
+    aliases: ["bulkamid"],
+    website: "https://www.bulkamid.com/",
+    description:
+      "Bulkamid is a bulking agent for the treatment of stress urinary incontinence.",
+    certifications: ["CE Mark", "FDA Registered"],
+    supportEmail: null,
+    specialties: ["Urology"],
+    foundedYear: null,
+  },
+
+  // =========================
+  // FALLBACK
+  // =========================
+
   generic: {
     name: "Medical Device Manufacturer",
     aliases: ["medical", "surgical", "healthcare", "devices", "instruments"],
     website: null,
     description:
-      "Trusted medical supply manufacturer providing high-quality healthcare products and medical devices to healthcare facilities worldwide.",
+      "Trusted medical device manufacturer providing high-quality healthcare products and surgical solutions.",
     certifications: ["ISO 13485", "FDA Registered"],
     supportEmail: null,
-    specialties: [
-      "Medical Devices",
-      "Surgical Instruments",
-      "Healthcare Products",
-    ],
+    specialties: ["Medical Devices", "Surgical Instruments"],
     foundedYear: null,
   },
 };
 
-// Smart manufacturer matching function
+// ==============================
+// MATCHING ENGINE (unchanged)
+// ==============================
+
 export const findManufacturerProfile = (manufacturerName) => {
   if (!manufacturerName) return null;
 
   const searchTerm = manufacturerName.toLowerCase().trim();
 
-  // First try exact match
   if (manufacturerProfiles[searchTerm]) {
     return manufacturerProfiles[searchTerm];
   }
 
-  // Then try alias matching
   for (const profile of Object.values(manufacturerProfiles)) {
     if (profile.aliases) {
       for (const alias of profile.aliases) {
-        if (
-          searchTerm.includes(alias.toLowerCase()) ||
-          alias.toLowerCase().includes(searchTerm)
-        ) {
+        const a = alias.toLowerCase();
+        if (searchTerm.includes(a) || a.includes(searchTerm)) {
           return profile;
         }
       }
     }
   }
 
-  // Finally try partial matching on profile names
   for (const profile of Object.values(manufacturerProfiles)) {
-    const profileName = profile.name.toLowerCase();
-    if (searchTerm.includes(profileName) || profileName.includes(searchTerm)) {
+    const n = profile.name.toLowerCase();
+    if (searchTerm.includes(n) || n.includes(searchTerm)) {
       return profile;
     }
   }
 
-  return null; // No match found, will use fallback
+  return null;
 };
 
-// Helper function to get all manufacturer names for autocomplete/search
 export const getAllManufacturerNames = () => {
   return Object.values(manufacturerProfiles)
-    .filter((profile) => profile !== manufacturerProfiles.generic)
-    .map((profile) => profile.name)
+    .filter((p) => p !== manufacturerProfiles.generic)
+    .map((p) => p.name)
     .sort();
 };
 
-// Helper function to get manufacturers by specialty
 export const getManufacturersBySpecialty = (specialty) => {
   return Object.values(manufacturerProfiles)
     .filter(
-      (profile) =>
-        profile.specialties &&
-        profile.specialties.some((s) =>
+      (p) =>
+        p.specialties &&
+        p.specialties.some((s) =>
           s.toLowerCase().includes(specialty.toLowerCase())
         )
     )
-    .map((profile) => profile.name);
+    .map((p) => p.name);
 };
