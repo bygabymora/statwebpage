@@ -19,17 +19,39 @@ const ContactUs = () => {
   // New: reCAPTCHA v2 token (checkbox)
   const [captchaToken, setCaptchaToken] = useState(null);
 
+  // Sync React state with actual form values (handles autofill)
+  const syncFormValues = () => {
+    if (form.current) {
+      const formData = new FormData(form.current);
+      const actualName = formData.get("user_name")?.trim() || "";
+      const actualEmail =
+        formData.get("user_email")?.trim().toLowerCase() || "";
+      const actualMessage = formData.get("message")?.trim() || "";
+
+      // Only update if values are different to avoid unnecessary re-renders
+      if (actualName !== name) setName(actualName);
+      if (actualEmail !== email) setEmail(actualEmail);
+      if (actualMessage !== message) setMessage(actualMessage);
+    }
+  };
+
   const sendEmail = async (e) => {
     e.preventDefault();
 
+    // Get actual form data from DOM (handles autofill that bypasses onChange)
+    const formData = new FormData(e.currentTarget);
+    const actualName = formData.get("user_name")?.trim() || "";
+    const actualEmail = formData.get("user_email")?.trim().toLowerCase() || "";
+    const actualMessage = formData.get("message")?.trim() || "";
+
     // Honeypot
-    const botField = e.target.bot_field?.value;
+    const botField = formData.get("bot_field");
     if (botField) {
       console.warn("Bot submission blocked 🚫");
       return;
     }
 
-    if (!name || !email || !message) {
+    if (!actualName || !actualEmail || !actualMessage) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
@@ -100,16 +122,21 @@ const ContactUs = () => {
     }
 
     // OK → send the email
-    const contactToEmail = { name, email: email.trim().toLowerCase() };
+    const contactToEmail = { name: actualName, email: actualEmail };
     const emailmessage = messageManagement(
       contactToEmail,
       "Contact Us",
-      message
+      actualMessage
     );
 
     try {
       await handleSendEmails(emailmessage, contactToEmail);
       showStatusMessage("success", "Message sent successfully!");
+
+      // Clear the form using form ref (e.currentTarget becomes null after async)
+      if (form.current) {
+        form.current.reset();
+      }
       setName("");
       setEmail("");
       setMessage("");
@@ -132,6 +159,12 @@ const ContactUs = () => {
       setEmail((contact.email || "").toLowerCase());
     }
   }, [contact]);
+
+  // Optional: Periodic check for autofill (handles delayed autofill)
+  useEffect(() => {
+    const interval = setInterval(syncFormValues, 1000);
+    return () => clearInterval(interval);
+  }, [name, email, message]); // Only run when state might be out of sync
 
   const tab = <>&nbsp;&nbsp;</>;
 
@@ -167,6 +200,7 @@ const ContactUs = () => {
             name='user_name'
             className='contact__form-input'
             onChange={(e) => setName(e.target.value)}
+            onBlur={syncFormValues}
             value={name}
             id='user_name'
             required
@@ -183,6 +217,7 @@ const ContactUs = () => {
             name='user_email'
             className='contact__form-input'
             onChange={(e) => setEmail(e.target.value.toLowerCase())}
+            onBlur={syncFormValues}
             value={email}
             id='user_email'
             required
@@ -197,6 +232,7 @@ const ContactUs = () => {
             name='message'
             className='contact__form-input contact__message'
             onChange={(e) => setMessage(e.target.value)}
+            onBlur={syncFormValues}
             value={message}
             id='message'
             required
