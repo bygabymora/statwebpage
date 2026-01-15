@@ -14,7 +14,7 @@ export default function LCPProductImage({
   aspectRatio = "4 / 5",
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 800px",
 
-  // puedes pasar lcp o priority desde fuera
+  // you can pass lcp or priority from outside
   lcp = false,
   priority = false,
   title,

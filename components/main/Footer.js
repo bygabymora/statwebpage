@@ -131,6 +131,7 @@ export default function Footer() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <footer
       className='relative flex flex-col items-center shadow-inner min-h-[400px] footer w-full justify-between px-4 py-8 md:min-h-[560px] lg:min-h-[480px]'
