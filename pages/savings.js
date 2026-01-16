@@ -26,9 +26,9 @@ export default function GuaranteedSavings({ isInClearance }) {
 
   const faqData = [
     {
-      question: "Are products new and OEM-grade?",
+      question: "Are products new and factory-sealed?",
       answer:
-        "Yes. STAT only works with unused, factory-sealed OEM products sourced from verified U.S. healthcare facilities and trusted channels. No gray-market, refurbished, or reprocessed items.",
+        "Yes. STAT only works with new, unused, factory-sealed products from original manufacturers, sourced from verified U.S. healthcare facilities and trusted channels. No gray-market, refurbished, or reprocessed items.",
     },
     {
       question: "Can we use STAT alongside our primary distributor?",
@@ -78,7 +78,7 @@ export default function GuaranteedSavings({ isInClearance }) {
   return (
     <Layout
       title='Guaranteed Savings | STAT Surgical Supply'
-      description='STAT Surgical Supply helps hospitals and surgery centers save up to 50% on surgical supplies through out-of-contract procurement, discontinued OEM SKUs, and urgent backup coverage when primary distributors cannot fulfill orders.'
+      description='STAT Surgical Supply helps hospitals and surgery centers save up to 50% on surgical supplies through out-of-contract procurement and urgent backup coverage when primary distributors cannot fulfill orders.'
       schema={[schemaData]}
     >
       <nav className='text-sm text-gray-700'>
@@ -125,9 +125,9 @@ export default function GuaranteedSavings({ isInClearance }) {
                 <strong className='text-[#0e355e]'>
                   cost-resilience partner
                 </strong>{" "}
-                for hospitals, surgery centers, and healthcare providers. Access
-                discontinued OEM SKUs, out-of-contract purchasing, and urgent
-                backup coverage when primary distributors cannot deliver.
+                for hospitals, surgery centers, and healthcare providers.
+                Out-of-contract purchasing, and urgent backup coverage when
+                primary distributors cannot deliver.
               </p>
 
               {/* Statistics */}
@@ -141,8 +141,8 @@ export default function GuaranteedSavings({ isInClearance }) {
                   <div className='text-sm text-black mt-1'>Urgent Coverage</div>
                 </div>
                 <div className='text-center'>
-                  <div className='text-4xl font-bold text-[#0e355e]'>OEM</div>
-                  <div className='text-sm text-black mt-1'>Grade Quality</div>
+                  <div className='text-4xl font-bold text-[#0e355e]'>New</div>
+                  <div className='text-sm text-black mt-1'>Factory-Sealed</div>
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ export default function GuaranteedSavings({ isInClearance }) {
                 </p>
                 <div className='flex items-center text-xs text-[#07783e] font-semibold'>
                   <FaCheckCircle className='mr-2' />
-                  Verified OEM Quality
+                  Verified Factory-Sealed Products
                 </div>
               </article>
 
@@ -228,10 +228,10 @@ export default function GuaranteedSavings({ isInClearance }) {
                 <p className='text-[#414b53] text-sm leading-relaxed mb-4'>
                   We focus on{" "}
                   <strong className='text-[#07783e]'>
-                    OEM-grade, unused, U.S.-sourced inventory
+                    New, unused, U.S.-sourced inventory
                   </strong>{" "}
-                  with strong dating and sealed OEM packaging, supporting supply
-                  chain resilience instead of one-time opportunistic deals.
+                  with strong dating and factory-sealed original manufacturer
+                  packaging
                 </p>
                 <div className='flex items-center text-xs text-[#07783e] font-semibold'>
                   <HiTrendingUp className='mr-2' />
@@ -252,14 +252,16 @@ export default function GuaranteedSavings({ isInClearance }) {
                 </p>
                 <ul className='list-disc list-inside text-sm text-[#414b53] space-y-2'>
                   <li>Out-of-contract hospital or ASC purchasing</li>
-                  <li>Discontinued, constrained, or hard-to-source OEM SKUs</li>
+                  <li>
+                    Discontinued, constrained, or hard-to-source brand-name SKUs
+                  </li>
                   <li>
                     Backorders and supply interruptions that put cases or
                     surgeons at risk
                   </li>
                   <li>
                     Cost-reduction initiatives that require measurable savings
-                    without sacrificing OEM quality
+                    without sacrificing product quality or safety
                   </li>
                   <li>
                     Short-term projects, expansions, or temporary volume spikes
@@ -281,9 +283,13 @@ export default function GuaranteedSavings({ isInClearance }) {
                     are driving cost pressure.
                   </li>
                   <li>
-                    Our team sources{" "}
-                    <strong>unused, sealed OEM inventory</strong> from vetted
-                    U.S. healthcare facilities and approved channels.
+                    Our team sources new{" "}
+                    <strong>
+                      unused, factory-sealed inventory from original
+                      manufacturers
+                    </strong>{" "}
+                    from vetted U.S. healthcare facilities and approved
+                    channels.
                   </li>
                   <li>
                     We present <strong>side-by-side pricing and dating</strong>{" "}
