@@ -8,7 +8,11 @@ import db from "../../utils/db";
 import News from "../../models/News";
 import Image from "next/image";
 
-export default function Newscreen({ news, showProductsButton = false }) {
+export default function Newscreen({
+  news,
+  relatedNews,
+  showProductsButton = false,
+}) {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -173,6 +177,77 @@ export default function Newscreen({ news, showProductsButton = false }) {
           </section>
         )}
 
+        {relatedNews && relatedNews.length > 0 && (
+          <section className='border-t border-gray-200 pt-8 mb-8'>
+            <h3 className='text-2xl font-bold text-[#0e355e] mb-6 text-center'>
+              Related News
+            </h3>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+              {relatedNews.map((article) => (
+                <div
+                  key={article._id}
+                  className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden'
+                >
+                  <Link href={`/news/${article.slug}`}>
+                    <div className='cursor-pointer'>
+                      <div className='relative h-48 w-full'>
+                        <Image
+                          src={article.imageUrl}
+                          alt={article.title}
+                          title={article.title}
+                          layout='fill'
+                          objectFit='cover'
+                          className='transition-transform duration-300 hover:scale-105'
+                        />
+                      </div>
+                      <div className='p-4'>
+                        <h4
+                          className='text-lg font-semibold text-[#0e355e] mb-2 hover:text-[#144e8b] transition-colors'
+                          style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {article.title}
+                        </h4>
+                        <p
+                          className='text-gray-600 text-sm mb-3'
+                          style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {article.content
+                            .replace(/\[(https?:\/\/[^\s\]]+)\]/g, "")
+                            .slice(0, 120)}
+                          ...
+                        </p>
+                        <div className='flex items-center justify-between text-xs text-gray-500'>
+                          <span>By {article.author}</span>
+                          <time dateTime={article.createdAt}>
+                            {new Date(article.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
+                          </time>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <div className='text-center mt-12'>
           <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
             <Link
@@ -203,6 +278,37 @@ export async function getServerSideProps(context) {
   const doc = await News.findOne({ slug }).lean();
   if (!doc) return { notFound: true };
 
+  // Get related news based on category and tags
+  let relatedNews = [];
+  try {
+    const relatedQuery = {
+      slug: { $ne: slug }, // Exclude current article
+      $or: [{ category: doc.category }, { tags: { $in: doc.tags || [] } }],
+    };
+
+    relatedNews = await News.find(relatedQuery)
+      .select("title slug content imageUrl author category createdAt")
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .lean();
+
+    // If we don't have enough related news based on category/tags, fill with latest news
+    if (relatedNews.length < 4) {
+      const additionalNews = await News.find({
+        slug: { $ne: slug },
+        _id: { $nin: relatedNews.map((r) => r._id) },
+      })
+        .select("title slug content imageUrl author category createdAt")
+        .sort({ createdAt: -1 })
+        .limit(4 - relatedNews.length)
+        .lean();
+
+      relatedNews = [...relatedNews, ...additionalNews];
+    }
+  } catch (error) {
+    console.error("Error fetching related news:", error);
+  }
+
   const formattedSources = (doc.sources || []).map((s) => ({
     ...s,
     _id: s._id.toString(),
@@ -221,6 +327,11 @@ export async function getServerSideProps(context) {
         updatedAt: doc.updatedAt.toISOString(),
         sources: formattedSources,
       },
+      relatedNews: relatedNews.map((article) => ({
+        ...article,
+        _id: article._id.toString(),
+        createdAt: article.createdAt.toISOString(),
+      })),
       showProductsButton: true,
     },
   };
