@@ -129,7 +129,7 @@ export default function FAQs() {
     <Layout
       title='Surgical Supply FAQs - Common Questions About Medical Equipment'
       description='Get expert answers to frequently asked questions about surgical supplies, medical equipment ordering, sterilization procedures, bulk pricing, and healthcare procurement from STAT Surgical Supply.'
-      schema={[faqSchema, breadcrumbSchema, webPageSchema]}
+      schema={[breadcrumbSchema, webPageSchema]}
     >
       <nav className='text-sm text-gray-700' aria-label='Breadcrumb navigation'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-4'>
