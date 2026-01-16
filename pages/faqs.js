@@ -4,7 +4,7 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { IoChevronDown } from "react-icons/io5";
 import Link from "next/link";
 import { BsChevronRight } from "react-icons/bs";
-import { generateFAQPageJSONLD, generateBreadcrumbJSONLD } from "../utils/seo";
+import { generateBreadcrumbJSONLD } from "../utils/seo";
 
 const faqData = [
   {
@@ -97,7 +97,6 @@ export default function FAQs() {
 
   // Enhanced schema generation using utility functions
   const breadcrumbSchema = generateBreadcrumbJSONLD(breadcrumbs);
-  const faqSchema = generateFAQPageJSONLD(faqData);
 
   // Additional WebPage schema for better SEO
   const webPageSchema = {

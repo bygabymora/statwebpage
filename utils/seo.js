@@ -320,44 +320,6 @@ function generateProductsPageJSONLD(
   };
 }
 
-// FAQ Page Schema
-function generateFAQPageJSONLD(faqs = []) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": "https://www.statsurgicalsupply.com/faqs",
-    name: "Frequently Asked Questions - Surgical Supplies",
-    description:
-      "Find answers to common questions about our surgical supplies, ordering process, shipping, and medical equipment services.",
-    url: "https://www.statsurgicalsupply.com/faqs",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "FAQs",
-          item: "https://www.statsurgicalsupply.com/faqs",
-        },
-      ],
-    },
-  };
-}
-
 // Service Pages Schema (Support, Savings, etc.)
 function generateServicePageJSONLD(pageName, pageSlug, serviceDescription) {
   return {
@@ -499,7 +461,6 @@ export {
   generateAboutPageJSONLD,
   generateContactPageJSONLD,
   generateProductsPageJSONLD,
-  generateFAQPageJSONLD,
   generateServicePageJSONLD,
   generateNewsPageJSONLD,
   generateBreadcrumbJSONLD,
