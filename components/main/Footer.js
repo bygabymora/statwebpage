@@ -253,11 +253,11 @@ export default function Footer() {
               disabled={isSubmitting}
               className='px-6 py-2 bg-[#03793d] text-white font-medium rounded-lg hover:bg-[#025e2d] transition disabled:bg-gray-400 disabled:cursor-not-allowed'
             >
-              {isSubmitting
-                ? "Subscribing..."
-                : showRecaptcha && !recaptchaToken
-                ? "Complete reCAPTCHA"
-                : "Subscribe"}
+              {isSubmitting ?
+                "Subscribing..."
+              : showRecaptcha && !recaptchaToken ?
+                "Complete reCAPTCHA"
+              : "Subscribe"}
             </button>
           </form>
 
@@ -289,6 +289,9 @@ export default function Footer() {
           width={300}
           height={69}
           loading='lazy'
+          quality={75}
+          placeholder='blur'
+          blurDataURL='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
         />
         <div className='flex space-x-4 mt-4 sm:mt-0'>
           <Link
