@@ -38,13 +38,8 @@ const RelatedProducts = ({ currentProduct, limit = 4 }) => {
             }
           );
 
-          // Filter out the current product from the related products
-          const filteredProducts = response.data.filter(
-            (product) => product._id !== currentProduct._id
-          );
-
           // Limit the results to the specified number
-          const limitedProducts = filteredProducts.slice(0, limit);
+          const limitedProducts = response.data.slice(0, limit);
           setRelatedProducts(limitedProducts);
         } catch (err) {
           console.error("Error fetching related products:", err);
