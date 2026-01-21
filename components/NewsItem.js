@@ -46,9 +46,9 @@ export const NewsItem = ({ news }) => {
           title={news.title}
           fill
           className={`object-cover transition-all duration-300 ${
-            news.hasVideo && isHovered
-              ? "opacity-0 scale-105"
-              : "group-hover:scale-105 opacity-100"
+            news.hasVideo && isHovered ?
+              "opacity-0 scale-105"
+            : "group-hover:scale-105 opacity-100"
           }`}
         />
         {news.hasVideo && (
@@ -77,9 +77,9 @@ export const NewsItem = ({ news }) => {
       <div className='flex flex-col justify-between p-4 h-full'>
         <div>
           <Link href={`/news/${news.slug}`}>
-            <h4 className='text-lg font-semibold text-[#0e355e] hover:underline my-1'>
+            <h1 className='text-lg font-semibold text-[#0e355e] hover:underline my-1'>
               {news.title}
-            </h4>
+            </h1>
           </Link>
           <p className='text-gray-600 text-sm mt-1 line-clamp-3'>
             {news.excerpt}
