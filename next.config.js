@@ -26,6 +26,38 @@ const nextConfig = {
     ],
   },
 
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // Cache static assets for 1 year
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+        has: [
+          {
+            type: 'header',
+            key: 'accept',
+            value: '(.*image.*|.*font.*)',
+          },
+        ],
+      },
+      {
+        // Cache external CDN resources (Google reCAPTCHA, etc.)
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400', // 24 hours
+          },
+        ],
+      },
+    ];
+  },
+
   async redirects() {
     return [
       // Redirect from /news/ to /news to avoid duplicate content issues
