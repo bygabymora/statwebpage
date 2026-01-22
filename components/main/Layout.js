@@ -1,15 +1,31 @@
 import Head from "next/head";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Header from "./Header";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Footer from "./Footer";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Script from "next/script";
-import ReCaptchaProvider from "../providers/ReCaptchaProvider";
+import dynamic from "next/dynamic";
+
+// Dynamic imports to reduce initial bundle size
+const Header = dynamic(() => import("./Header"), { ssr: true });
+const Footer = dynamic(() => import("./Footer"), { ssr: true });
+const ToastContainer = dynamic(
+  () =>
+    import("react-toastify").then((mod) => ({ default: mod.ToastContainer })),
+  { ssr: false },
+);
+const ReCaptchaProvider = dynamic(
+  () => import("../providers/ReCaptchaProvider"),
+  {
+    ssr: false,
+  },
+);
+
+// Import CSS only when needed
+if (typeof window !== "undefined") {
+  import("react-toastify/dist/ReactToastify.css");
+}
 
 export default function Layout({
   children,
@@ -35,7 +51,7 @@ export default function Layout({
       warning:
         "If it takes longer than expected, please contact us for more information. Thank you for choosing us!",
     }),
-    []
+    [],
   );
 
   const disabledMessage = useMemo(
@@ -45,7 +61,7 @@ export default function Layout({
       warning:
         "If you believe this is an error, please reach out to customer service immediately.",
     }),
-    []
+    [],
   );
 
   const redirectHandler = useCallback(async () => {
@@ -92,37 +108,35 @@ export default function Layout({
     }
   }, [session?.user?.approved]);
 
-  const getProductDescription = (product) => {
+  // Memoize expensive product computations
+  const productDescription = useMemo(() => {
+    if (!product) return null;
+
     const base = `${product.manufacturer} ${
       product.name
     }: ${product.each?.description?.slice(0, 43)}`;
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
-    if (manufacturer.includes("medtronic")) {
-      return `${base} - Medtronic surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & reliable quality.`;
-    }
+    const manufacturerDescriptions = {
+      medtronic: `${base} - Medtronic surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & reliable quality.`,
+      intuitive: `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`,
+      stryker: `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`,
+      ethicon: `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`,
+      bard: `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`,
+    };
 
-    if (manufacturer.includes("intuitive")) {
-      return `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`;
-    }
+    const matchingKey = Object.keys(manufacturerDescriptions).find((key) =>
+      manufacturer.includes(key),
+    );
 
-    if (manufacturer.includes("stryker")) {
-      return `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`;
-    }
+    return matchingKey ?
+        manufacturerDescriptions[matchingKey]
+      : `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
+  }, [product]);
 
-    if (manufacturer.includes("ethicon")) {
-      return `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`;
-    }
+  const productKeywords = useMemo(() => {
+    if (!product) return null;
 
-    if (manufacturer.includes("bard")) {
-      return `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`;
-    }
-
-    // Generic for other manufacturers
-    return `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
-  };
-
-  const getProductKeywords = (product) => {
     const manufacturer = product.manufacturer || "surgical supplies";
     return [
       `${manufacturer} surgical supplies`,
@@ -132,16 +146,16 @@ export default function Layout({
       "hospital-grade products",
       "bulk pricing surgical supplies",
     ].join(", ");
-  };
+  }, [product]);
 
   return (
     <ReCaptchaProvider>
       <div className='w-full' lang='en-US'>
         <Head>
           <title>
-            {title
-              ? `${title}`
-              : "Stat Surgical Supply | Buy Healthcare Products"}
+            {title ?
+              `${title}`
+            : "Stat Surgical Supply | Buy Healthcare Products"}
           </title>
           <meta name='googlebot' content='index, follow' />
           <meta name='googlebot' content='index,follow' />
@@ -152,13 +166,10 @@ export default function Layout({
           <meta name='publisher' content='Stat Surgical Supply' />
           <link rel='icon' href='/favicon.ico' />
 
-          {product ? (
+          {product ?
             <>
-              <meta
-                name='description'
-                content={`${getProductDescription(product)}`}
-              />
-              <meta name='keywords' content={getProductKeywords(product)} />
+              <meta name='description' content={productDescription} />
+              <meta name='keywords' content={productKeywords} />
               <meta property='og:type' content='product' />
               <meta
                 property='og:title'
@@ -201,12 +212,12 @@ export default function Layout({
                 type='application/ld+json'
                 dangerouslySetInnerHTML={{
                   __html: JSON.stringify(
-                    schema || generateProductJSONLD(product)
+                    schema || generateProductJSONLD(product),
                   ),
                 }}
               />
             </>
-          ) : news ? (
+          : news ?
             <>
               <meta
                 name='description'
@@ -260,11 +271,10 @@ export default function Layout({
               <link
                 rel='canonical'
                 href={
-                  url && url.trim() !== ""
-                    ? url
-                    : news?.slug
-                    ? `https://www.statsurgicalsupply.com/news/${news.slug}`
-                    : "https://www.statsurgicalsupply.com/news"
+                  url && url.trim() !== "" ? url
+                  : news?.slug ?
+                    `https://www.statsurgicalsupply.com/news/${news.slug}`
+                  : "https://www.statsurgicalsupply.com/news"
                 }
               />
 
@@ -275,7 +285,7 @@ export default function Layout({
                 }}
               />
             </>
-          ) : schema ? (
+          : schema ?
             <>
               <meta
                 name='description'
@@ -333,8 +343,7 @@ export default function Layout({
                 />
               ))}
             </>
-          ) : (
-            <>
+          : <>
               {/* Default (homepage, or fallback) */}
               <meta
                 name='description'
@@ -370,24 +379,25 @@ export default function Layout({
               />
               <meta name='twitter:image' content={defaultOgImage} />
             </>
-          )}
+          }
         </Head>
 
         <Script
-          async
           src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
-          strategy='lazyOnload'
-        />
-        <Script id='gtag-init' strategy='afterInteractive'>
-          {`
+          strategy='worker'
+          onLoad={() => {
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-11333627655');
-          `}
-        </Script>
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "AW-11333627655");
+          }}
+        />
 
-        <ToastContainer position='bottom-center' limit={1} />
+        {typeof window !== "undefined" && (
+          <ToastContainer position='bottom-center' limit={1} />
+        )}
         <div className='flex min-h-screen flex-col justify-between'>
           <Header />
           <main

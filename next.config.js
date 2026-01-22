@@ -4,11 +4,53 @@
 const nextConfig = {
   reactStrictMode: false,
   productionBrowserSourceMaps: true,
+  swcMinify: true, // Use SWC for faster minification
+
+  // Experimental features for performance
+  experimental: {
+    optimizeCss: true,
+    legacyBrowsers: false,
+    browsersListForSwc: true,
+  },
+
+  // Compiler optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: false,
     };
+
+    // Optimize bundle splitting
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Vendor chunk
+          vendor: {
+            name: "vendor",
+            chunks: "all",
+            test: /node_modules/,
+            priority: 20,
+          },
+          // Common chunk
+          common: {
+            name: "common",
+            minChunks: 2,
+            chunks: "all",
+            priority: 10,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+        },
+      },
+    };
+
     return config;
   },
 
@@ -29,29 +71,29 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           // Cache static assets for 1 year
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
         has: [
           {
-            type: 'header',
-            key: 'accept',
-            value: '(.*image.*|.*font.*)',
+            type: "header",
+            key: "accept",
+            value: "(.*image.*|.*font.*)",
           },
         ],
       },
       {
         // Cache external CDN resources (Google reCAPTCHA, etc.)
-        source: '/api/(.*)',
+        source: "/api/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=86400', // 24 hours
+            key: "Cache-Control",
+            value: "public, max-age=86400", // 24 hours
           },
         ],
       },
