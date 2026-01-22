@@ -11,21 +11,11 @@ const nextConfig = {
     optimizeCss: true,
     legacyBrowsers: false,
     browsersListForSwc: true,
-    swcTraceProfiling: false,
   },
-
-  // SWC configuration for modern browsers
-  swcMinify: true,
-  transpilePackages: [],
-
-  // Ensure we use modern JavaScript features
-  target: "serverless",
 
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
-    // Remove React dev tools in production
-    reactRemoveProperties: process.env.NODE_ENV === "production",
   },
   webpack(config) {
     config.resolve.fallback = {
@@ -33,16 +23,11 @@ const nextConfig = {
       buffer: false,
     };
 
-    // Optimize for modern JavaScript
-    config.target = ["web", "es2020"];
-
     // Optimize bundle splitting
     config.optimization = {
       ...config.optimization,
       splitChunks: {
         chunks: "all",
-        minSize: 20000,
-        maxSize: 244000,
         cacheGroups: {
           default: false,
           vendors: false,
