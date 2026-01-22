@@ -1,0 +1,65 @@
+{
+  "jsc": {
+    "target": "es2020",
+    "parser": {
+      "syntax": "ecmascript",
+      "jsx": true,
+      "dynamicImport": true,
+      "privateMethod": true,
+      "functionBind": false,
+      "exportDefaultFrom": true,
+      "exportNamespaceFrom": false,
+      "decorators": false,
+      "decoratorsBeforeExport": false,
+      "topLevelAwait": true,
+      "importMeta": true
+    },
+    "transform": {
+      "react": {
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false,
+        "refresh": false
+      },
+      "optimizer": {
+        "globals": {
+          "vars": {
+            "__DEBUG__": "true"
+          }
+        }
+      }
+    },
+    "experimental": {
+      "plugins": []
+    }
+  },
+  "module": {
+    "type": "es6",
+    "strict": false,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  },
+  "minify": true,
+  "env": {
+    "targets": {
+      "chrome": "85",
+      "edge": "85",
+      "firefox": "85",
+      "safari": "14",
+      "ios": "14"
+    },
+    "mode": "usage",
+    "debug": false,
+    "dynamicImport": true,
+    "loose": false,
+    "skip": ["transform-async-to-generator", "transform-parameters"],
+    "include": [],
+    "exclude": ["transform-typeof-symbol"],
+    "coreJs": false,
+    "shippedProposals": true,
+    "forceAllTransforms": false
+  }
+}
