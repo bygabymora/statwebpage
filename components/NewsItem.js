@@ -77,9 +77,9 @@ export const NewsItem = ({ news }) => {
       <div className='flex flex-col justify-between p-4 h-full'>
         <div>
           <Link href={`/news/${news.slug}`}>
-            <h1 className='text-lg font-semibold text-[#0e355e] hover:underline my-1'>
+            <h2 className='text-lg font-semibold text-[#0e355e] hover:underline my-1'>
               {news.title}
-            </h1>
+            </h2>
           </Link>
           <p className='text-gray-600 text-sm mt-1 line-clamp-3'>
             {news.excerpt}

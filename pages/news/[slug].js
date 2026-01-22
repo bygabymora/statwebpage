@@ -235,7 +235,7 @@ export default function Newscreen({
                                 month: "short",
                                 day: "numeric",
                                 year: "numeric",
-                              }
+                              },
                             )}
                           </time>
                         </div>
