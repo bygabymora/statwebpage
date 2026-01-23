@@ -162,9 +162,9 @@ function AdminUsersScreen() {
                 key={href}
                 href={href}
                 className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
-                  isBold
-                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                  isBold ?
+                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
@@ -266,12 +266,12 @@ function AdminUsersScreen() {
             </div>
           </div>
         )}
-        {loading ? (
+        {loading ?
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
             <span className='ml-3 text-gray-600'>Loading users...</span>
           </div>
-        ) : error ? (
+        : error ?
           <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
             <div className='flex items-center'>
               <div className='text-red-600 font-medium'>
@@ -280,17 +280,16 @@ function AdminUsersScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        ) : filteredAndSortedUsers.length === 0 ? (
+        : filteredAndSortedUsers.length === 0 ?
           <div className='text-center py-12'>
             <div className='text-gray-500 mb-2'>No users found</div>
             <div className='text-sm text-gray-400'>
-              {searchTerm
-                ? `Try adjusting your search criteria`
-                : "No users available"}
+              {searchTerm ?
+                `Try adjusting your search criteria`
+              : "No users available"}
             </div>
           </div>
-        ) : (
-          <>
+        : <>
             {/* Mobile Card Layout */}
             <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
               {filteredAndSortedUsers.map((user) => {
@@ -306,7 +305,7 @@ function AdminUsersScreen() {
                     {/* Mobile Card Header */}
                     <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
                       <div className='flex-shrink-0 relative'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
+                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
                           {user.firstName?.[0]?.toUpperCase()}
                           {user.lastName?.[0]?.toUpperCase()}
                         </div>
@@ -357,11 +356,10 @@ function AdminUsersScreen() {
                           Active
                         </div>
                         <div className='flex justify-center'>
-                          {user.active ? (
+                          {user.active ?
                             <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
-                          )}
+                          : <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          }
                         </div>
                       </div>
                       <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
@@ -369,11 +367,10 @@ function AdminUsersScreen() {
                           Approved
                         </div>
                         <div className='flex justify-center'>
-                          {user.approved ? (
+                          {user.approved ?
                             <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
-                          )}
+                          : <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          }
                         </div>
                       </div>
                       <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
@@ -381,11 +378,10 @@ function AdminUsersScreen() {
                           Admin
                         </div>
                         <div className='flex justify-center'>
-                          {user.isAdmin ? (
+                          {user.isAdmin ?
                             <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          ) : (
-                            <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
-                          )}
+                          : <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          }
                         </div>
                       </div>
                       <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
@@ -393,11 +389,10 @@ function AdminUsersScreen() {
                           Restricted
                         </div>
                         <div className='flex justify-center'>
-                          {user.restricted ? (
+                          {user.restricted ?
                             <IoCheckmarkSharp className='text-yellow-600 text-xs sm:text-sm md:text-lg' />
-                          ) : (
-                            <IoCloseOutline className='text-gray-600 text-xs sm:text-sm md:text-lg' />
-                          )}
+                          : <IoCloseOutline className='text-gray-600 text-xs sm:text-sm md:text-lg' />
+                          }
                         </div>
                       </div>
                     </div>
@@ -474,7 +469,7 @@ function AdminUsersScreen() {
                           <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
                             <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
                               <div className='flex-shrink-0 relative'>
-                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
+                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
                                   {user.firstName?.[0]?.toUpperCase()}
                                   {user.lastName?.[0]?.toUpperCase()}
                                 </div>
@@ -507,54 +502,50 @@ function AdminUsersScreen() {
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
                             <div className='flex justify-center'>
-                              {user.active ? (
+                              {user.active ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              ) : (
-                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                              : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              )}
+                              }
                             </div>
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
                             <div className='flex justify-center'>
-                              {user.approved ? (
+                              {user.approved ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              ) : (
-                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                              : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              )}
+                              }
                             </div>
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
                             <div className='flex justify-center'>
-                              {user.isAdmin ? (
+                              {user.isAdmin ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              ) : (
-                                <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                              : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              )}
+                              }
                             </div>
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
                             <div className='flex justify-center'>
-                              {user.restricted ? (
+                              {user.restricted ?
                                 <div className='bg-yellow-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCheckmarkSharp className='text-yellow-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              ) : (
-                                <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                              : <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
                                   <IoCloseOutline className='text-gray-600 text-xs sm:text-sm lg:text-lg' />
                                 </div>
-                              )}
+                              }
                             </div>
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
@@ -594,7 +585,7 @@ function AdminUsersScreen() {
               </div>
             </div>
           </>
-        )}
+        }
         {showModal && (
           <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-[9999] backdrop-blur-sm'>
             <div className='bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-center border border-gray-200'>
