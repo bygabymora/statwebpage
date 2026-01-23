@@ -7,8 +7,6 @@ import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../context/ModalContext";
 import ReCaptchaV2Checkbox from "../recaptcha/ReCaptchaV2Checkbox";
 
-const ACTION = "contact_submit";
-
 const ContactUs = () => {
   const form = useRef();
   const { contact, showStatusMessage } = useModalContext();
@@ -60,7 +58,7 @@ const ContactUs = () => {
     if (!captchaToken) {
       showStatusMessage(
         "error",
-        "Please confirm you are not a robot by ticking the checkbox."
+        "Please confirm you are not a robot by ticking the checkbox.",
       );
       return;
     }
@@ -73,8 +71,6 @@ const ContactUs = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: captchaToken,
-          action: ACTION,
-          version: "v2", // important: we use the v2 secret
         }),
       });
       verifyData = await verifyRes.json();
@@ -91,29 +87,19 @@ const ContactUs = () => {
       if (reason === "server_misconfig") {
         showStatusMessage(
           "error",
-          "Server configuration error. Please try later."
+          "Server configuration error. Please try later.",
         );
       } else if (reason === "missing_token") {
         showStatusMessage(
           "error",
-          "reCAPTCHA error. Please reload and try again."
-        );
-      } else if (reason === "wrong_action") {
-        showStatusMessage(
-          "error",
-          "Validation error. Please reload and try again."
-        );
-      } else if (reason === "low_score") {
-        showStatusMessage(
-          "error",
-          "Could not verify you are human. Please try again."
+          "reCAPTCHA error. Please reload and try again.",
         );
       } else if (reason === "google_not_success") {
         showStatusMessage("error", "reCAPTCHA failed with Google. Try again.");
       } else if (reason === "google_parse_error") {
         showStatusMessage(
           "error",
-          "Unexpected response from Google. Try again."
+          "Unexpected response from Google. Try again.",
         );
       } else {
         showStatusMessage("error", "reCAPTCHA verification failed.");
@@ -126,7 +112,7 @@ const ContactUs = () => {
     const emailmessage = messageManagement(
       contactToEmail,
       "Contact Us",
-      actualMessage
+      actualMessage,
     );
 
     try {
