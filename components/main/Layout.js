@@ -1,17 +1,10 @@
 import Head from "next/head";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Header from "./Header";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Footer from "./Footer";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
 import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
 import Script from "next/script";
-<<<<<<< HEAD
-import ReCaptchaProvider from "../providers/ReCaptchaProvider";
-=======
 import dynamic from "next/dynamic";
 
 // Dynamic imports to reduce initial bundle size
@@ -27,7 +20,6 @@ const ToastContainer = dynamic(
 if (typeof window !== "undefined") {
   import("react-toastify/dist/ReactToastify.css");
 }
->>>>>>> 2843872ff01817df3634af7f37c453c7d4cc2270
 
 export default function Layout({
   children,
@@ -110,37 +102,35 @@ export default function Layout({
     }
   }, [session?.user?.approved]);
 
-  const getProductDescription = (product) => {
+  // Memoize expensive product computations
+  const productDescription = useMemo(() => {
+    if (!product) return null;
+
     const base = `${product.manufacturer} ${
       product.name
     }: ${product.each?.description?.slice(0, 43)}`;
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
-    if (manufacturer.includes("medtronic")) {
-      return `${base} - Medtronic surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & reliable quality.`;
-    }
+    const manufacturerDescriptions = {
+      medtronic: `${base} - Medtronic surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & reliable quality.`,
+      intuitive: `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`,
+      stryker: `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`,
+      ethicon: `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`,
+      bard: `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`,
+    };
 
-    if (manufacturer.includes("intuitive")) {
-      return `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`;
-    }
+    const matchingKey = Object.keys(manufacturerDescriptions).find((key) =>
+      manufacturer.includes(key),
+    );
 
-    if (manufacturer.includes("stryker")) {
-      return `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`;
-    }
+    return matchingKey ?
+        manufacturerDescriptions[matchingKey]
+      : `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
+  }, [product]);
 
-    if (manufacturer.includes("ethicon")) {
-      return `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`;
-    }
+  const productKeywords = useMemo(() => {
+    if (!product) return null;
 
-    if (manufacturer.includes("bard")) {
-      return `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`;
-    }
-
-    // Generic for other manufacturers
-    return `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
-  };
-
-  const getProductKeywords = (product) => {
     const manufacturer = product.manufacturer || "surgical supplies";
     return [
       `${manufacturer} surgical supplies`,
@@ -150,7 +140,7 @@ export default function Layout({
       "hospital-grade products",
       "bulk pricing surgical supplies",
     ].join(", ");
-  };
+  }, [product]);
 
   return (
     <div className='w-full' lang='en-US'>
@@ -169,32 +159,6 @@ export default function Layout({
         <meta name='publisher' content='Stat Surgical Supply' />
         <link rel='icon' href='/favicon.ico' />
 
-<<<<<<< HEAD
-          {product ?
-            <>
-              <meta
-                name='description'
-                content={`${getProductDescription(product)}`}
-              />
-              <meta name='keywords' content={getProductKeywords(product)} />
-              <meta property='og:type' content='product' />
-              <meta
-                property='og:title'
-                content={`${product.manufacturer} - ${product.name}`}
-              />
-              <meta
-                property='og:description'
-                content={product.each?.description?.slice(0, 200)}
-              />
-              <meta
-                property='og:image'
-                content={product.image || defaultOgImage}
-              />
-              <meta
-                property='og:url'
-                content={`https://www.statsurgicalsupply.com/products/${product.name}`}
-              />
-=======
         {product ?
           <>
             <meta name='description' content={productDescription} />
@@ -216,7 +180,6 @@ export default function Layout({
               property='og:url'
               content={`https://www.statsurgicalsupply.com/products/${product.name}`}
             />
->>>>>>> 2843872ff01817df3634af7f37c453c7d4cc2270
 
             <meta name='twitter:card' content='summary_large_image' />
             <meta
@@ -425,33 +388,6 @@ export default function Layout({
         }}
       />
 
-<<<<<<< HEAD
-        <Script
-          async
-          src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
-          strategy='lazyOnload'
-        />
-        <Script id='gtag-init' strategy='afterInteractive'>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-11333627655');
-          `}
-        </Script>
-
-        <ToastContainer position='bottom-center' limit={1} />
-        <div className='flex min-h-screen flex-col justify-between'>
-          <Header />
-          <main
-            className='main m-auto mt-0 md:mt-[8rem] lg:mt-[12rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
-            key={router.asPath}
-          >
-            {children}
-          </main>
-          <Footer />
-        </div>
-=======
       {typeof window !== "undefined" && (
         <ToastContainer position='bottom-center' limit={1} />
       )}
@@ -464,7 +400,6 @@ export default function Layout({
           {children}
         </main>
         <Footer />
->>>>>>> 2843872ff01817df3634af7f37c453c7d4cc2270
       </div>
     </div>
   );
