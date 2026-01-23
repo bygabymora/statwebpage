@@ -12,35 +12,29 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   try {
-    const { token, action, version = "v3" } = req.body || {};
+    const { token } = req.body || {};
     if (!token) {
       // 200 with clear reason: avoid falling into the front catch
       return res.status(200).json({ success: false, reason: "missing_token" });
     }
 
-    // We choose secret according to the version
-    const secret =
-      version === "v2"
-        ? process.env.RECAPTCHA_V2_SECRET_KEY
-        : process.env.RECAPTCHA_SECRET_KEY;
+    // v2-only secret key
+    const secret = process.env.RECAPTCHA_V2_SECRET_KEY;
 
     if (!secret) {
       console.error(
-        "[reCAPTCHA] Missing secret key in environment for version:",
-        version
+        "[reCAPTCHA] Missing RECAPTCHA_V2_SECRET_KEY in environment.",
       );
       return res
         .status(200)
         .json({ success: false, reason: "server_misconfig" });
     }
 
-    const expectedAction = action || "contact_submit";
-    const minScore = Number(process.env.RECAPTCHA_MIN_SCORE || "0.5");
-
     // IP (optional): helps Google rank better
     const ipHeader = req.headers["x-forwarded-for"];
-    const remoteip = Array.isArray(ipHeader)
-      ? ipHeader[0]
+    const remoteip =
+      Array.isArray(ipHeader) ?
+        ipHeader[0]
       : (ipHeader || "").split(",")[0]?.trim() ||
         req.socket?.remoteAddress ||
         "";
@@ -56,7 +50,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params.toString(),
-      }
+      },
     );
 
     let data = null;
@@ -80,34 +74,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate action (only relevant for v3; v2 does not have 'action')
-    if (data?.action && data.action !== expectedAction) {
-      console.warn("[reCAPTCHA] wrong_action:", {
-        got: data.action,
-        expected: expectedAction,
-      });
-      return res.status(200).json({
-        success: false,
-        reason: "wrong_action",
-        action: data.action,
-      });
-    }
-
-    // For v2 there is usually no score, so this block does not run
-    if (typeof data?.score === "number" && data.score < minScore) {
-      console.warn("[reCAPTCHA] low_score:", { score: data.score, minScore });
-      return res.status(200).json({
-        success: false,
-        reason: "low_score",
-        score: data.score,
-      });
-    }
-
     // OK
     return res.status(200).json({
       success: true,
-      score: data?.score ?? null,
-      action: data?.action ?? null,
       hostname: data?.hostname ?? null,
     });
   } catch (err) {

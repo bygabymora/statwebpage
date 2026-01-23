@@ -14,8 +14,6 @@ import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
 import { BsChevronRight } from "react-icons/bs";
 
-const RECAPTCHA_ACTION = "register_submit";
-
 export default function RegisterScreen() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -104,8 +102,6 @@ export default function RegisterScreen() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             token: captchaToken,
-            action: RECAPTCHA_ACTION,
-            version: "v2",
           }),
         });
         verifyData = await verifyRes.json();
@@ -132,12 +128,6 @@ export default function RegisterScreen() {
         } else if (reason === "missing_token") {
           bodyMessage =
             "reCAPTCHA token is missing. Please reload the page and try again.";
-        } else if (reason === "wrong_action") {
-          bodyMessage =
-            "There was a validation mismatch. Please reload the page and try again.";
-        } else if (reason === "low_score") {
-          bodyMessage =
-            "We could not verify you are human. Please try again or contact support.";
         } else if (reason === "google_not_success") {
           bodyMessage =
             "reCAPTCHA could not be validated with Google. Please try again.";
@@ -238,16 +228,14 @@ export default function RegisterScreen() {
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span>{breadcrumb.name}</span>
-              )}
+              : <span>{breadcrumb.name}</span>}
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight className='mx-2 text-gray-500' />
               )}
@@ -438,7 +426,9 @@ export default function RegisterScreen() {
                 }}
                 className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-[#03793d]'
               >
-                {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                {showPassword ?
+                  <RiEyeCloseLine />
+                : <RiEye2Line />}
               </button>
             </div>
             {errors.password && (
@@ -475,7 +465,9 @@ export default function RegisterScreen() {
                 }}
                 className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-[#03793d]'
               >
-                {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                {showPassword ?
+                  <RiEyeCloseLine />
+                : <RiEye2Line />}
               </button>
             </div>
             {errors.confirmPassword && (
