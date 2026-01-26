@@ -4,7 +4,7 @@ export const messageManagement = (
   message,
   order,
   item,
-  accountOwner
+  accountOwner,
 ) => {
   let emailMessage = {};
 
@@ -151,9 +151,11 @@ export const messageManagement = (
               margin-bottom: ;
             ">
               ${
-                order.paymentMethod === "Stripe" &&
-                order.shippingPreferences.paymentMethod === "Bill Me"
-                  ? `<div style="
+                (
+                  order.paymentMethod === "Stripe" &&
+                  order.shippingPreferences.paymentMethod === "Bill Me"
+                ) ?
+                  `<div style="
                       background-color: #fff3cd;
                       color: #856404;
                       padding: 12px;
@@ -163,7 +165,7 @@ export const messageManagement = (
                     ">
                       You selected the “Bill Me” option for Shipping Payment. You will receive an email when your order is ready to ship, including the shipment cost so you can complete payment, and we can ship it.
                     </div>`
-                  : ""
+                : ""
               }
       
               <table width="100%" style="border-collapse: collapse; font-size: 16px; color: #333;">
@@ -189,17 +191,17 @@ export const messageManagement = (
                   <th align="left" style="padding: 8px 0; font-weight: 600;">Shipping</th>
                   <td align="right" style="padding: 8px 0;">
                     ${order.shippingPreferences.shippingMethod} via ${
-          order.shippingPreferences.carrier
-        }
+                      order.shippingPreferences.carrier
+                    }
                   </td>
                 </tr>
                 ${
-                  order.shippingPreferences.account
-                    ? `<tr style="border-top: 1px solid #ddd;">
+                  order.shippingPreferences.account ?
+                    `<tr style="border-top: 1px solid #ddd;">
                          <th align="left" style="padding: 8px 0; font-weight: 600;">Acct #</th>
                          <td align="right" style="padding: 8px 0;">${order.shippingPreferences.account}</td>
                        </tr>`
-                    : ""
+                  : ""
                 }
                 <tr style="border-top: 1px solid #ddd;">
                   <th align="left" style="padding: 8px 0; font-weight: 600;">Terms</th>
@@ -229,7 +231,7 @@ export const messageManagement = (
                         <td style="padding: 6px 0;">${item.name}</td>
                         <td style="padding: 6px 0; text-align: right;">$${item.totalPrice}</td>
                       </tr>
-                    `
+                    `,
                       )
                       .join("")}
                   </tbody>
@@ -275,7 +277,7 @@ export const messageManagement = (
                  <strong>Email:</strong> ${contact.email}
                </div>`,
         p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">
-                 I'm <strong>${accountOwner.name}</strong> and I’ll be the one in charge of any request or support you may need. <br>
+                 I'm <strong>${accountOwner?.name || "Stat Surgical Supply"}</strong> and I’ll be the one in charge of any request or support you may need. <br>
                  Please feel free to reach out at any time. <br><br>
                  <a href="https://statsurgicalsupply.com/" target="_blank" 
                     style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
