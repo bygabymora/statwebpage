@@ -92,10 +92,14 @@ export default function AdminUserEditScreen() {
   };
 
   const sendApprovalEmail = async () => {
-    console.log("Account Owner in sendEmail Front", wpAccountOwner);
     try {
+      if (!wpUser?.email) {
+        showStatusMessage("error", "User email is missing.");
+        return;
+      }
+
       const contactToEmail = {
-        name: wpUser.firstName,
+        name: wpUser.firstName || "Customer",
         email: wpUser.email,
       };
       const emailmessage = messageManagement(
@@ -104,10 +108,22 @@ export default function AdminUserEditScreen() {
         null,
         null,
         null,
-        wpAccountOwner
+        wpAccountOwner,
       );
 
-      handleSendEmails(emailmessage, contactToEmail, wpAccountOwner);
+      const emailResponse = await handleSendEmails(
+        emailmessage,
+        contactToEmail,
+        wpAccountOwner,
+      );
+
+      if (!emailResponse?.ok) {
+        const errorPayload = await emailResponse?.json?.();
+        throw new Error(
+          errorPayload?.error || errorPayload?.message || "Email send failed",
+        );
+      }
+
       const updatedWpUser = {
         ...wpUser,
         approvalEmailSent: true,
@@ -116,11 +132,12 @@ export default function AdminUserEditScreen() {
         user: updatedWpUser,
         customer: wpCustomer,
       });
+      showStatusMessage("success", "Approval email sent.");
     } catch (error) {
       console.error("Error sending approval email:", error);
       showStatusMessage(
         "error",
-        "Error sending approval email. Please try again."
+        error?.message || "Error sending approval email. Please try again.",
       );
     }
   };
@@ -167,7 +184,7 @@ export default function AdminUserEditScreen() {
               <button
                 type='button'
                 onClick={(e) => {
-                  e.preventDefault;
+                  e.preventDefault();
                   sendApprovalEmail();
                 }}
                 className='primary-button mr-2'

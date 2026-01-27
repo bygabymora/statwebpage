@@ -21,8 +21,9 @@ const handleSendEmails = async (message, contact, accountOwner) => {
         [headersToSend]: true,
       },
     };
-    console.log("Account Owner in sendEmail", accountOwner);
-    if (accountOwner) {
+    const accountOwnerEmail = accountOwner?.email;
+    const accountOwnerName = accountOwner?.name;
+    if (accountOwnerEmail && accountOwnerName) {
       const signature = SignatureTemplate({ userInfo: accountOwner });
       const finalHtml = ContactTemplate({
         message: templateHtml,
@@ -30,7 +31,7 @@ const handleSendEmails = async (message, contact, accountOwner) => {
       });
       payload = {
         toEmail: contact.email,
-        fromEmail: accountOwner.email,
+        fromEmail: accountOwnerEmail,
         subject: message.subject,
         htmlContent: finalHtml,
         headers: {
@@ -50,6 +51,7 @@ const handleSendEmails = async (message, contact, accountOwner) => {
     return response;
   } catch (error) {
     console.error("Error sending emails:", error);
+    throw error;
   }
 };
 

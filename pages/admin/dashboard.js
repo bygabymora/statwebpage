@@ -21,7 +21,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export const options = {
@@ -83,8 +83,9 @@ function AdminDashboardScreen() {
             {
               label: "Quantity of orders per month",
               backgroundColor: "rgba(162, 222, 208, 1)",
-              data: summary.salesData
-                ? summary.salesData.map((x) => x.orderCount)
+              data:
+                summary.salesData ?
+                  summary.salesData.map((x) => x.orderCount)
                 : [],
             },
           ],
@@ -150,9 +151,9 @@ function AdminDashboardScreen() {
                 key={href}
                 href={href}
                 className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
-                  isBold
-                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                  isBold ?
+                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
@@ -176,14 +177,14 @@ function AdminDashboardScreen() {
             </div>
           </div>
         </div>
-        {loading ? (
+        {loading ?
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
             <span className='ml-3 text-gray-600'>
               Loading dashboard data...
             </span>
           </div>
-        ) : error ? (
+        : error ?
           <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
             <div className='flex items-center'>
               <div className='text-red-600 font-medium'>
@@ -192,8 +193,7 @@ function AdminDashboardScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        ) : (
-          <div>
+        : <div>
             {/* Stats Cards Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6 md:mb-8'>
               {/* Sales Card */}
@@ -202,9 +202,9 @@ function AdminDashboardScreen() {
                   <button
                     onClick={() => setActiveChart("sales")}
                     className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                      activeChart === "sales"
-                        ? "bg-green-100 text-green-700 ring-2 ring-green-200"
-                        : "bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600"
+                      activeChart === "sales" ?
+                        "bg-green-100 text-green-700 ring-2 ring-green-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600"
                     }`}
                   >
                     View Chart
@@ -228,9 +228,9 @@ function AdminDashboardScreen() {
                   <button
                     onClick={() => setActiveChart("orders")}
                     className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                      activeChart === "orders"
-                        ? "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
-                        : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      activeChart === "orders" ?
+                        "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                     }`}
                   >
                     View Chart
@@ -250,9 +250,9 @@ function AdminDashboardScreen() {
                   <button
                     onClick={() => setActiveChart("products")}
                     className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                      activeChart === "products"
-                        ? "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
-                        : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      activeChart === "products" ?
+                        "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                     }`}
                   >
                     View Chart
@@ -272,9 +272,9 @@ function AdminDashboardScreen() {
                   <button
                     onClick={() => setActiveChart("users")}
                     className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                      activeChart === "users"
-                        ? "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
-                        : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                      activeChart === "users" ?
+                        "bg-blue-100 text-blue-700 ring-2 ring-blue-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                     }`}
                   >
                     View Chart
@@ -344,7 +344,7 @@ function AdminDashboardScreen() {
               </div>
             </div>
           </div>
-        )}
+        }
       </div>
     </Layout>
   );
