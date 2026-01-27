@@ -1,42 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/main/Layout";
+import CustomConfirmModal from "../components/main/CustomConfirmModal";
 
 export default function Unsubscribe() {
   const router = useRouter();
-  const [mailChimpId, setMailChimpId] = useState("");
-  const [mailChimpUniqueEmailId, setMailChimpUniqueEmailId] = useState("");
+  const [query, setQuery] = useState("");
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
+  const [match, setMatch] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
-    const { mailChimpId: mcId, mailChimpUniqueEmailId: mcUniqueId } =
-      router.query || {};
+    const { email: emailFromQuery, companyName } = router.query || {};
 
-    if (typeof mcId === "string") {
-      setMailChimpId(mcId.trim());
-    }
-    if (typeof mcUniqueId === "string") {
-      setMailChimpUniqueEmailId(mcUniqueId.trim());
+    if (typeof emailFromQuery === "string") {
+      setQuery(emailFromQuery.trim());
+    } else if (typeof companyName === "string") {
+      setQuery(companyName.trim());
     }
   }, [router.query]);
 
-  const handleUnsubscribe = async () => {
-    if (!mailChimpId || !mailChimpUniqueEmailId) {
+  const handleSearch = async () => {
+    if (!query.trim()) {
       setStatus("error");
-      setMessage(
-        "Missing unsubscribe identifiers. Please use the link from your email.",
-      );
+      setMessage("Enter an email or company name to search.");
       return;
     }
 
     try {
       setStatus("loading");
       setMessage("");
+      setMatch(null);
+
       const response = await fetch("/api/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mailChimpId, mailChimpUniqueEmailId }),
+        body: JSON.stringify({ action: "search", query: query.trim() }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.message || "No match found.");
+      }
+
+      setMatch(data?.match || null);
+      setStatus("idle");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error.message || "Unable to search.");
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    if (!match?._id) {
+      setStatus("error");
+      setMessage("Search for a customer before unsubscribing.");
+      return;
+    }
+
+    try {
+      setStatus("loading");
+      setMessage("");
+
+      const response = await fetch("/api/unsubscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unsubscribe", customerId: match._id }),
       });
 
       const data = await response.json();
@@ -44,14 +74,31 @@ export default function Unsubscribe() {
         throw new Error(data?.message || "Unable to unsubscribe.");
       }
 
+      setMatch((prev) => (prev ? { ...prev, opOutEmail: true } : prev));
       setStatus("success");
-      setMessage(
-        "You have been unsubscribed. You will no longer receive these emails.",
-      );
+      setMessage("Unsubscribed successfully.");
     } catch (error) {
       setStatus("error");
       setMessage(error.message || "Unable to unsubscribe.");
     }
+  };
+
+  const handleOpenConfirm = () => {
+    if (!match?._id) {
+      setStatus("error");
+      setMessage("Search for a customer before unsubscribing.");
+      return;
+    }
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
+    setIsConfirmOpen(false);
+    handleUnsubscribe();
+  };
+
+  const handleCancel = () => {
+    setIsConfirmOpen(false);
   };
 
   const isComplete = status === "success";
@@ -65,19 +112,49 @@ export default function Unsubscribe() {
       <div className='card p-6 my-10 max-w-2xl mx-auto text-center'>
         <h1 className='section__title'>Unsubscribe</h1>
         <p className='mt-4 text-gray-600'>
-          Are you sure you want to stop receiving our emails?
+          Search by email or company name to find the subscriber.
         </p>
 
-        <div className='mt-6'>
+        <div className='mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
+          <input
+            type='text'
+            className='w-full max-w-md border rounded px-3 py-2 text-sm'
+            placeholder='email@company.com or Company Name'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            disabled={status === "loading"}
+          />
           <button
-            className={`btn ${isComplete ? "opacity-60" : ""}`}
-            onClick={handleUnsubscribe}
-            disabled={status === "loading" || isComplete}
+            className={`btn ${!query.trim() ? "opacity-60" : ""}`}
+            onClick={handleSearch}
+            disabled={status === "loading" || !query.trim()}
             type='button'
           >
-            {status === "loading" ? "Processing..." : "Yes, unsubscribe me"}
+            {status === "loading" ? "Searching..." : "Search"}
           </button>
         </div>
+
+        {match && (
+          <div className='mt-6 border rounded p-4 text-left'>
+            <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+              <div>
+                <p className='text-sm text-gray-500'>Match found</p>
+                <p className='text-base font-semibold'>
+                  {match.companyName || "(No company name)"}
+                </p>
+                <p className='text-sm text-gray-600'>{match.email || ""}</p>
+              </div>
+              <button
+                className={`btn ${match.opOutEmail ? "opacity-60" : ""}`}
+                onClick={handleOpenConfirm}
+                disabled={status === "loading" || match.opOutEmail}
+                type='button'
+              >
+                {match.opOutEmail ? "Already unsubscribed" : "Unsubscribe"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {message && (
           <p
@@ -95,6 +172,15 @@ export default function Unsubscribe() {
           </p>
         )}
       </div>
+      <CustomConfirmModal
+        isOpen={isConfirmOpen}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+        message={{
+          title: "Confirm unsubscribe",
+          body: "Are you sure you want to stop receiving our emails?",
+        }}
+      />
     </Layout>
   );
 }

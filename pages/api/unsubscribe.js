@@ -7,48 +7,85 @@ const handler = async (req, res) => {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { mailChimpId, mailChimpUniqueEmailId } = req.body || {};
-  if (!mailChimpId || !mailChimpUniqueEmailId) {
-    return res.status(400).json({
-      message: "Missing mailChimpId or mailChimpUniqueEmailId",
-    });
-  }
+  const { action, query, customerId } = req.body || {};
 
   try {
     await db.connect(true);
 
-    const topLevelCustomer = await Customer.findOneAndUpdate(
-      { mailChimpId, mailChimpUniqueEmailId },
-      { $set: { opOutEmail: true } },
-      { new: true },
-    );
+    if (action === "search") {
+      if (!query || !String(query).trim()) {
+        return res.status(400).json({ message: "Missing search query" });
+      }
 
-    if (topLevelCustomer) {
+      const normalizedQuery = String(query).trim();
+      const escapedQuery = normalizedQuery.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&",
+      );
+      const isEmail = normalizedQuery.includes("@");
+
+      const emailMatch = { $regex: `^${escapedQuery}$`, $options: "i" };
+      const companyMatch = { $regex: escapedQuery, $options: "i" };
+
+      const customer = await Customer.findOne({
+        $or:
+          isEmail ?
+            [
+              { email: emailMatch },
+              { secondEmail: emailMatch },
+              { "user.email": emailMatch },
+              { "purchaseExecutive.email": emailMatch },
+            ]
+          : [
+              { companyName: companyMatch },
+              { email: emailMatch },
+              { secondEmail: emailMatch },
+              { "user.email": emailMatch },
+            ],
+      }).select("companyName email opOutEmail");
+
+      if (!customer) {
+        return res.status(404).json({ message: "Subscriber not found" });
+      }
+
       return res.status(200).json({
-        message: "Unsubscribed successfully",
-        customerId: topLevelCustomer._id,
-        scope: "customer",
+        match: {
+          _id: customer._id,
+          companyName: customer.companyName,
+          email: customer.email || customer?.user?.email,
+          opOutEmail: customer.opOutEmail,
+        },
       });
     }
 
-    const nestedCustomer = await Customer.findOneAndUpdate(
-      {
-        "purchaseExecutive.mailChimpId": mailChimpId,
-        "purchaseExecutive.mailChimpUniqueEmailId": mailChimpUniqueEmailId,
-      },
-      { $set: { "purchaseExecutive.$.opOutEmail": true } },
-      { new: true },
-    );
+    if (action === "unsubscribe") {
+      if (!customerId) {
+        return res.status(400).json({ message: "Missing customerId" });
+      }
 
-    if (!nestedCustomer) {
-      return res.status(404).json({ message: "Subscriber not found" });
+      const customer = await Customer.findById(customerId).select(
+        "companyName email opOutEmail",
+      );
+
+      if (!customer) {
+        return res.status(404).json({ message: "Subscriber not found" });
+      }
+
+      if (!customer.opOutEmail) {
+        customer.opOutEmail = true;
+        await customer.save();
+      }
+
+      return res.status(200).json({
+        message:
+          customer.opOutEmail ?
+            "Unsubscribed successfully"
+          : "Unsubscribe updated",
+        customerId: customer._id,
+      });
     }
 
-    return res.status(200).json({
-      message: "Unsubscribed successfully",
-      customerId: nestedCustomer._id,
-      scope: "purchaseExecutive",
-    });
+    return res.status(400).json({ message: "Invalid action" });
   } catch (error) {
     console.error("unsubscribe error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
