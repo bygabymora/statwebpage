@@ -33,9 +33,72 @@ export default function CartScreen() {
         data: { order: freshOrder, wpUser, warnings },
       } = await axios.get("/api/orders/fetchOrLatestInProcess");
 
+      const mergeAddress = (prevAddr, nextAddr) => {
+        const safePrev = prevAddr || {};
+        const safeNext = nextAddr || {};
+        const prevContact = safePrev.contactInfo || {};
+        const nextContact = safeNext.contactInfo || {};
+
+        return {
+          ...safeNext,
+          contactInfo: {
+            ...nextContact,
+            firstName: nextContact.firstName || prevContact.firstName || "",
+            lastName: nextContact.lastName || prevContact.lastName || "",
+            email: nextContact.email || prevContact.email || "",
+            secondEmail:
+              nextContact.secondEmail || prevContact.secondEmail || "",
+          },
+          companyName: safeNext.companyName || safePrev.companyName || "",
+          phone: safeNext.phone || safePrev.phone || "",
+          address: safeNext.address || safePrev.address || "",
+          state: safeNext.state || safePrev.state || "",
+          city: safeNext.city || safePrev.city || "",
+          postalCode: safeNext.postalCode || safePrev.postalCode || "",
+          suiteNumber: safeNext.suiteNumber || safePrev.suiteNumber || "",
+          notes: safeNext.notes || safePrev.notes || "",
+        };
+      };
+
+      const mergeOrder = (prev, next) => {
+        const merged = { ...next };
+        merged.shippingAddress = mergeAddress(
+          prev?.shippingAddress,
+          next?.shippingAddress,
+        );
+        merged.billingAddress = mergeAddress(
+          prev?.billingAddress,
+          next?.billingAddress,
+        );
+        merged.shippingPreferences = {
+          ...(next?.shippingPreferences || {}),
+          shippingMethod:
+            next?.shippingPreferences?.shippingMethod ||
+            prev?.shippingPreferences?.shippingMethod ||
+            "",
+          carrier:
+            next?.shippingPreferences?.carrier ||
+            prev?.shippingPreferences?.carrier ||
+            "",
+          account:
+            next?.shippingPreferences?.account ||
+            prev?.shippingPreferences?.account ||
+            "",
+          shippingCost:
+            next?.shippingPreferences?.shippingCost ||
+            prev?.shippingPreferences?.shippingCost ||
+            "",
+          paymentMethod:
+            next?.shippingPreferences?.paymentMethod ||
+            prev?.shippingPreferences?.paymentMethod ||
+            "",
+        };
+        return merged;
+      };
+
       // sync state
       setUser(wpUser);
-      setOrder(freshOrder);
+      setOrder((prev) => mergeOrder(prev, freshOrder));
 
       // if any stock warnings, bail out and show modal
       if (warnings.length) {
@@ -43,9 +106,9 @@ export default function CartScreen() {
         const details =
           warnings
             .map((w) =>
-              w.availableQuantity === 0
-                ? `${w.name} was removed (out of stock)`
-                : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}.`
+              w.availableQuantity === 0 ?
+                `${w.name} was removed (out of stock)`
+              : `${w.name}: wanted ${w.previousQuantity}, available ${w.availableQuantity}.`,
             )
             .join("\n") +
           "\n\n" +
@@ -60,8 +123,8 @@ export default function CartScreen() {
           () => {
             extraAction && extraAction();
             setUser(wpUser);
-            setOrder(freshOrder);
-          }
+            setOrder((prev) => mergeOrder(prev, freshOrder));
+          },
         );
         return false;
       }
@@ -99,9 +162,9 @@ export default function CartScreen() {
       />
 
       <CheckoutWizard activeStep={activeStep} />
-      {activeStep === 0 ? (
+      {activeStep === 0 ?
         <Cart setActiveStep={setActiveStep} order={order} setOrder={setOrder} />
-      ) : activeStep === 1 ? (
+      : activeStep === 1 ?
         <Shipping
           customer={customer}
           setCustomer={setCustomer}
@@ -111,7 +174,7 @@ export default function CartScreen() {
           setUser={setUser}
           user={user}
         />
-      ) : activeStep === 2 ? (
+      : activeStep === 2 ?
         <PaymentMethod
           setActiveStep={setActiveStep}
           order={order}
@@ -119,7 +182,7 @@ export default function CartScreen() {
           customer={customer}
           fetchOrder={fetchOrder}
         />
-      ) : activeStep === 3 ? (
+      : activeStep === 3 ?
         <PlaceOrder
           customer={customer}
           setCustomer={setCustomer}
@@ -132,7 +195,7 @@ export default function CartScreen() {
           paypalDispatch={paypalDispatch}
           isPending={isPending}
         />
-      ) : null}
+      : null}
     </Layout>
   );
 }
