@@ -82,95 +82,110 @@ export default function Shipping({
             lastName: userData?.lastName,
             email: userData?.email,
           },
-          companyName: order.shippingAddress?.companyName
-            ? order.shippingAddress?.companyName
+          companyName:
+            order.shippingAddress?.companyName ?
+              order.shippingAddress?.companyName
             : customerData?.companyName,
-          phone: order.shippingAddress?.phone
-            ? order.shippingAddress?.phone
+          phone:
+            order.shippingAddress?.phone ?
+              order.shippingAddress?.phone
             : customerData?.phone,
-          address: order.shippingAddress?.address
-            ? order.shippingAddress?.address
+          address:
+            order.shippingAddress?.address ?
+              order.shippingAddress?.address
             : customerData?.location?.address,
-          state: order.shippingAddress?.state
-            ? order.shippingAddress?.state
+          state:
+            order.shippingAddress?.state ?
+              order.shippingAddress?.state
             : customerData?.location?.state,
-          city: order.shippingAddress?.city
-            ? order.shippingAddress?.city
+          city:
+            order.shippingAddress?.city ?
+              order.shippingAddress?.city
             : customerData?.location?.city,
-          postalCode: order.shippingAddress?.postalCode
-            ? order.shippingAddress?.postalCode
+          postalCode:
+            order.shippingAddress?.postalCode ?
+              order.shippingAddress?.postalCode
             : customerData?.location?.postalCode,
-          suiteNumber: order.shippingAddress?.suiteNumber
-            ? order.shippingAddress?.suiteNumber
+          suiteNumber:
+            order.shippingAddress?.suiteNumber ?
+              order.shippingAddress?.suiteNumber
             : customerData?.location?.suiteNumber,
-          notes: order.shippingAddress?.notes
-            ? order.shippingAddress?.notes
-            : "",
+          notes:
+            order.shippingAddress?.notes ? order.shippingAddress?.notes : "",
         },
         billingAddress: {
           contactInfo: {
-            firstName: order.billingAddress?.contactInfo?.firstName
-              ? order.billingAddress?.contactInfo?.firstName
+            firstName:
+              order.billingAddress?.contactInfo?.firstName ?
+                order.billingAddress?.contactInfo?.firstName
               : userData?.firstName,
-            lastName: order.billingAddress?.contactInfo?.lastName
-              ? order.billingAddress?.contactInfo?.lastName
+            lastName:
+              order.billingAddress?.contactInfo?.lastName ?
+                order.billingAddress?.contactInfo?.lastName
               : userData?.lastName,
-            email: order.billingAddress?.contactInfo?.email
-              ? order.billingAddress?.contactInfo?.email
-              : customerData?.email
-              ? customerData?.email
+            email:
+              order.billingAddress?.contactInfo?.email ?
+                order.billingAddress?.contactInfo?.email
+              : customerData?.email ? customerData?.email
               : userData?.email,
           },
-          companyName: order.billingAddress?.companyName
-            ? order.billingAddress?.companyName
+          companyName:
+            order.billingAddress?.companyName ?
+              order.billingAddress?.companyName
             : customerData?.companyName,
-          phone: order.billingAddress?.phone
-            ? order.billingAddress?.phone
+          phone:
+            order.billingAddress?.phone ?
+              order.billingAddress?.phone
             : customerData?.companyName,
-          address: order.billingAddress?.address
-            ? order.billingAddress?.address
+          address:
+            order.billingAddress?.address ?
+              order.billingAddress?.address
             : customerData?.billAddr?.address,
           state: customerData?.billAddr?.state,
-          city: order.billingAddress?.city
-            ? order.billingAddress?.city
+          city:
+            order.billingAddress?.city ?
+              order.billingAddress?.city
             : customerData?.billAddr?.city,
-          postalCode: order.billingAddress?.postalCode
-            ? order.billingAddress?.postalCode
+          postalCode:
+            order.billingAddress?.postalCode ?
+              order.billingAddress?.postalCode
             : customerData?.billAddr?.postalCode,
         },
         customer: {
           ...customerData,
         },
-        defaultTerm: order.defaultTerm
-          ? order.defaultTerm
+        defaultTerm:
+          order.defaultTerm ?
+            order.defaultTerm
           : customerData?.defaultTerm || "Net. 30",
 
         shippingPreferences: {
-          paymentMethod: order.shippingPreferences?.paymentMethod
-            ? order.shippingPreferences?.paymentMethod
-            : customerData?.fedexAccountNumber || customerData?.upsAccountNumber
-            ? "Use My Account"
+          paymentMethod:
+            order.shippingPreferences?.paymentMethod ?
+              order.shippingPreferences?.paymentMethod
+            : (
+              customerData?.fedexAccountNumber || customerData?.upsAccountNumber
+            ) ?
+              "Use My Account"
             : "Bill Me",
-          carrier: order.shippingPreferences?.carrier
-            ? order.shippingPreferences?.carrier
-            : customerData?.fedexAccountNumber
-            ? "FedEx"
-            : customerData?.upsAccountNumber
-            ? "UPS"
+          carrier:
+            order.shippingPreferences?.carrier ?
+              order.shippingPreferences?.carrier
+            : customerData?.fedexAccountNumber ? "FedEx"
+            : customerData?.upsAccountNumber ? "UPS"
             : "FedEx",
-          account: order.shippingPreferences?.account
-            ? order.shippingPreferences?.account
-            : customerData?.fedexAccountNumber
-            ? customerData?.fedexAccountNumber
-            : customerData?.upsAccountNumber
-            ? customerData?.upsAccountNumber
+          account:
+            order.shippingPreferences?.account ?
+              order.shippingPreferences?.account
+            : customerData?.fedexAccountNumber ?
+              customerData?.fedexAccountNumber
+            : customerData?.upsAccountNumber ? customerData?.upsAccountNumber
             : "",
-          shippingMethod: order.shippingPreferences?.shippingMethod
-            ? order.shippingPreferences?.shippingMethod
-            : customerData?.fedexAccountNumber
-            ? "FedEx Ground"
-            : customerData?.upsAccountNumber
-            ? "UPS Ground"
+          shippingMethod:
+            order.shippingPreferences?.shippingMethod ?
+              order.shippingPreferences?.shippingMethod
+            : customerData?.fedexAccountNumber ? "FedEx Ground"
+            : customerData?.upsAccountNumber ? "UPS Ground"
             : "FedEx Ground",
         },
       }));
@@ -186,7 +201,7 @@ export default function Shipping({
       if (!validateForm()) {
         showStatusMessage(
           "error",
-          "Please fill in all required fields correctly."
+          "Please fill in all required fields correctly.",
         );
         return;
       }
@@ -241,18 +256,18 @@ export default function Shipping({
         if (customerData?._id) {
           const updatedCustomer = await axios.put(
             `/api/customer/${customerData._id}/updateAddresses`,
-            { customer: customerToSave }
+            { customer: customerToSave },
           );
           setCustomer(updatedCustomer?.data?.customer || customerToSave);
         } else {
           console.warn(
-            "[submitHandler] Missing customer._id; skipping addresses update."
+            "[submitHandler] Missing customer._id; skipping addresses update.",
           );
         }
       } else if (!customerData) {
         // Optional: let the user know we couldn't find a customer record
         console.warn(
-          "[submitHandler] No customer document returned for this user."
+          "[submitHandler] No customer document returned for this user.",
         );
       }
 
@@ -413,7 +428,7 @@ export default function Shipping({
                             "shipping",
                             "contactInfo",
                             e.target.value,
-                            "firstName"
+                            "firstName",
                           )
                         }
                         value={
@@ -438,7 +453,7 @@ export default function Shipping({
                             "shipping",
                             "contactInfo",
                             e.target.value,
-                            "lastName"
+                            "lastName",
                           )
                         }
                         value={
@@ -463,7 +478,7 @@ export default function Shipping({
                       handleInputChange(
                         "shipping",
                         "companyName",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     value={order.shippingAddress?.companyName || ""}
@@ -504,17 +519,17 @@ export default function Shipping({
                   <label className='block font-medium'>Email*</label>
                   <input
                     autoComplete='on'
-                    className='w-full contact__form-input bg-gray-100 text-gray-700 cursor-not-allowed'
+                    className='w-full contact__form-input'
                     type='text'
                     onChange={(e) =>
                       handleInputChange(
                         "shipping",
-                        "contactInfo.email",
-                        e.target.value
+                        "contactInfo",
+                        e.target.value,
+                        "email",
                       )
                     }
                     value={order.shippingAddress?.contactInfo?.email || ""}
-                    readOnly
                   />
                   {validationErrors.email && (
                     <p className='text-xs text-red-500 mt-1'>
@@ -533,7 +548,7 @@ export default function Shipping({
                         "shipping",
                         "contactInfo",
                         e.target.value,
-                        "secondEmail"
+                        "secondEmail",
                       )
                     }
                     value={
@@ -572,7 +587,7 @@ export default function Shipping({
                       handleInputChange(
                         "shipping",
                         "suiteNumber",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     value={order.shippingAddress?.suiteNumber || ""}
@@ -642,7 +657,7 @@ export default function Shipping({
                         handleInputChange(
                           "shipping",
                           "postalCode",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                       value={order.shippingAddress?.postalCode || ""}
@@ -675,7 +690,7 @@ export default function Shipping({
                     onChange={(e) =>
                       shippingPreferencesHandler(
                         "shippingMethod",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   >
@@ -722,7 +737,7 @@ export default function Shipping({
                       onChange={(e) =>
                         shippingPreferencesHandler(
                           "paymentMethod",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                     >
@@ -741,19 +756,19 @@ export default function Shipping({
                           onChange={(e) =>
                             shippingPreferencesHandler(
                               "account",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
-                        {order.shippingPreferences?.carrier === "FedEx" ? (
+                        {order.shippingPreferences?.carrier === "FedEx" ?
                           <p className='text-sm text-gray-500'>
                             FedEx Account Number
                           </p>
-                        ) : order.shippingPreferences?.carrier === "UPS" ? (
+                        : order.shippingPreferences?.carrier === "UPS" ?
                           <p className='text-sm text-gray-500'>
                             UPS Account Number
                           </p>
-                        ) : null}
+                        : null}
                       </div>
                     )}
                   </div>
