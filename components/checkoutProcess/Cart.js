@@ -45,7 +45,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
         const updatedOrderItems = updatedUser.userData?.cart || [];
         const itemsPrice = updatedOrderItems.reduce(
           (a, c) => a + c.quantity * c.price,
-          0
+          0,
         );
         setOrder((prev) => ({
           ...prev,
@@ -71,17 +71,15 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     }
 
     const { data: product } = await axios.get(
-      `/api/products/${item.productId}`
+      `/api/products/${item.productId}`,
     );
 
     const availableQty =
-      item.typeOfPurchase === "Each"
-        ? product.each?.countInStock ?? 0
-        : item.typeOfPurchase === "Box"
-        ? product.box?.countInStock ?? 0
-        : item.typeOfPurchase === "Clearance"
-        ? product.each?.clearanceCountInStock ?? 0
-        : 0;
+      item.typeOfPurchase === "Each" ? (product.each?.countInStock ?? 0)
+      : item.typeOfPurchase === "Box" ? (product.box?.countInStock ?? 0)
+      : item.typeOfPurchase === "Clearance" ?
+        (product.each?.clearanceCountInStock ?? 0)
+      : 0;
 
     if (quantity > availableQty) {
       alert("Sorry, we don't have enough of that item in stock.");
@@ -100,10 +98,12 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     setUser((prev) => ({
       ...prev,
       cart: user?.cart?.map((cItem) =>
-        cItem.productId === item.productId &&
-        cItem.typeOfPurchase === item.typeOfPurchase
-          ? { ...cItem, quantity }
-          : cItem
+        (
+          cItem.productId === item.productId &&
+          cItem.typeOfPurchase === item.typeOfPurchase
+        ) ?
+          { ...cItem, quantity }
+        : cItem,
       ),
     }));
 
@@ -111,13 +111,13 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     const updatedOrderItems = cart || [];
     const itemsPrice = updatedOrderItems.reduce(
       (a, c) => a + c.quantity * c.price,
-      0
+      0,
     );
 
     setOrder({
       ...order,
       orderItems: order?.orderItems?.map((oItem) =>
-        oItem.productId === item.productId ? { ...oItem, quantity } : oItem
+        oItem.productId === item.productId ? { ...oItem, quantity } : oItem,
       ),
       itemsPrice,
       totalPrice: itemsPrice,
@@ -132,7 +132,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
         Shopping Cart
       </h1>
 
-      {order.orderItems?.length === 0 ? (
+      {order.orderItems?.length === 0 ?
         <div className='p-6 flex flex-col items-center text-center space-y-4 my-5'>
           <BsCartX className='text-[#0e355e] text-4xl' />
           <p className='text-[#414b53] text-lg font-semibold'>Cart is empty.</p>
@@ -143,14 +143,13 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             Go shopping!
           </Link>
         </div>
-      ) : (
-        <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#07783e] rounded-lg mb-4 grid flex-1 sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
+      : <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#07783e] rounded-lg mb-4 grid flex-1 sm:grid-cols-2 md:grid-cols-4 md:gap-5 md:m-4'>
           <div className=' bg-white p-2 rounded-md gap-4 md:col-span-3 '>
             <div className=' '>
               <div className='w-full space-y-4'>
                 {order.orderItems?.map((item) => (
                   <div
-                    key={item._id}
+                    key={`${item.productId}-${item.typeOfPurchase}`}
                     className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center md:space-x-4 gap-2 w-full'
                   >
                     {/* Product */}
@@ -179,9 +178,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                         <div className='flex flex-1 items-center'>
                           <span className='font-semibold  mr-1'>U o M:</span>
                           <span className='text-gray-700'>
-                            {item.typeOfPurchase === "Box"
-                              ? "Box"
-                              : item.typeOfPurchase}
+                            {item.typeOfPurchase === "Box" ?
+                              "Box"
+                            : item.typeOfPurchase}
                           </span>
                         </div>
 
@@ -209,9 +208,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                                       value={x + 1}
                                       className={({ active }) =>
                                         `cursor-pointer select-none px-4 py-2 ${
-                                          active
-                                            ? "bg-blue-100 text-[#0e355e]"
-                                            : "text-gray-900"
+                                          active ?
+                                            "bg-blue-100 text-[#0e355e]"
+                                          : "text-gray-900"
                                         }`
                                       }
                                     >
@@ -224,7 +223,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                                         </span>
                                       )}
                                     </Listbox.Option>
-                                  )
+                                  ),
                                 )}
                               </Listbox.Options>
                             </Listbox>
@@ -283,8 +282,8 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                   }).format(
                     order.orderItems?.reduce(
                       (a, c) => a + c.quantity * c.price,
-                      0
-                    )
+                      0,
+                    ),
                   )}
                 </div>
               </li>
@@ -344,7 +343,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             </div>
           )}
         </div>
-      )}
+      }
     </div>
   );
 };
