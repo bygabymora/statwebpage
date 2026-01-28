@@ -109,68 +109,73 @@ export default function Unsubscribe() {
       description='Manage your email preferences for Stat Surgical Supply.'
       schema={[]}
     >
-      <div className='card p-6 my-10 max-w-2xl mx-auto text-center'>
-        <h1 className='section__title'>Unsubscribe</h1>
-        <p className='mt-4 text-gray-600'>
-          Search by email or company name to find the subscriber.
-        </p>
+      <div className='min-h-[50vh] flex items-center justify-center px-4'>
+        <div className='card w-full max-w-2xl p-8 text-center shadow-sm'>
+          <p className='text-xs uppercase tracking-widest text-gray-500'>
+            Email preferences
+          </p>
+          <h1 className='section__title mt-2'>Unsubscribe</h1>
+          <p className='mt-3 text-gray-600'>
+            Search by email or company name to find the subscriber.
+          </p>
 
-        <div className='mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
-          <input
-            type='text'
-            className='w-full max-w-md border rounded px-3 py-2 text-sm'
-            placeholder='email@company.com or Company Name'
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            disabled={status === "loading"}
-          />
-          <button
-            className={`btn ${!query.trim() ? "opacity-60" : ""}`}
-            onClick={handleSearch}
-            disabled={status === "loading" || !query.trim()}
-            type='button'
-          >
-            {status === "loading" ? "Searching..." : "Search"}
-          </button>
-        </div>
-
-        {match && (
-          <div className='mt-6 border rounded p-4 text-left'>
-            <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Match found</p>
-                <p className='text-base font-semibold'>
-                  {match.companyName || "(No company name)"}
-                </p>
-                <p className='text-sm text-gray-600'>{match.email || ""}</p>
-              </div>
-              <button
-                className={`btn ${match.opOutEmail ? "opacity-60" : ""}`}
-                onClick={handleOpenConfirm}
-                disabled={status === "loading" || match.opOutEmail}
-                type='button'
-              >
-                {match.opOutEmail ? "Already unsubscribed" : "Unsubscribe"}
-              </button>
-            </div>
+          <div className='mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
+            <input
+              type='text'
+              className='w-full max-w-md border rounded px-3 py-2 text-sm'
+              placeholder='email@company.com or Company Name'
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              disabled={status === "loading"}
+            />
+            <button
+              className={`btn ${!query.trim() ? "opacity-60" : ""}`}
+              onClick={handleSearch}
+              disabled={status === "loading" || !query.trim()}
+              type='button'
+            >
+              {status === "loading" ? "Searching..." : "Search"}
+            </button>
           </div>
-        )}
 
-        {message && (
-          <p
-            className={`mt-4 text-sm ${
-              status === "error" ? "text-red-600" : "text-green-600"
-            }`}
-          >
-            {message}
-          </p>
-        )}
+          {match && (
+            <div className='mt-6 border rounded p-4 text-left bg-white/60'>
+              <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+                <div>
+                  <p className='text-sm text-gray-500'>Match found</p>
+                  <p className='text-base font-semibold'>
+                    {match.companyName || "(No company name)"}
+                  </p>
+                  <p className='text-sm text-gray-600'>{match.email || ""}</p>
+                </div>
+                <button
+                  className={`btn ${match.opOutEmail ? "opacity-60" : ""}`}
+                  onClick={handleOpenConfirm}
+                  disabled={status === "loading" || match.opOutEmail}
+                  type='button'
+                >
+                  {match.opOutEmail ? "Already unsubscribed" : "Unsubscribe"}
+                </button>
+              </div>
+            </div>
+          )}
 
-        {status !== "success" && (
-          <p className='mt-6 text-xs text-gray-500'>
-            If you reached this page by mistake, you can close this window.
-          </p>
-        )}
+          {message && (
+            <p
+              className={`mt-4 text-sm ${
+                status === "error" ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
+
+          {status !== "success" && (
+            <p className='mt-6 text-xs text-gray-500'>
+              If you reached this page by mistake, you can close this window.
+            </p>
+          )}
+        </div>
       </div>
       <CustomConfirmModal
         isOpen={isConfirmOpen}
