@@ -109,7 +109,7 @@ export default function Unsubscribe() {
       description='Manage your email preferences for Stat Surgical Supply.'
       schema={[]}
     >
-      <div className='min-h-[50vh] flex items-center justify-center px-4'>
+      <div className='min-h-[50vh] flex items-center justify-center px-4 py-5'>
         <div className='card w-full max-w-2xl p-8 text-center shadow-sm'>
           <p className='text-xs uppercase tracking-widest text-gray-500'>
             Email preferences
