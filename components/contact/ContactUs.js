@@ -49,8 +49,43 @@ const ContactUs = () => {
       return;
     }
 
+    // Enhanced validation to prevent empty emails
     if (!actualName || !actualEmail || !actualMessage) {
       showStatusMessage("error", "Please fill all the fields");
+      return;
+    }
+
+    // Check for minimum meaningful content length
+    if (actualName.length < 2) {
+      showStatusMessage(
+        "error",
+        "Please enter a valid name (at least 2 characters)",
+      );
+      return;
+    }
+
+    if (actualMessage.length < 10) {
+      showStatusMessage(
+        "error",
+        "Please enter a more detailed message (at least 10 characters)",
+      );
+      return;
+    }
+
+    // Check message contains actual meaningful content (not just special characters/whitespace)
+    const messageContentCheck = actualMessage.replace(/[\s\W]/g, "");
+    if (messageContentCheck.length < 3) {
+      showStatusMessage(
+        "error",
+        "Please enter a meaningful message with actual content",
+      );
+      return;
+    }
+
+    // Basic email format validation (additional to HTML5 validation)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(actualEmail)) {
+      showStatusMessage("error", "Please enter a valid email address");
       return;
     }
 
@@ -189,6 +224,10 @@ const ContactUs = () => {
             onBlur={syncFormValues}
             value={name}
             id='user_name'
+            minLength={2}
+            maxLength={100}
+            pattern='[a-zA-ZÀ-ÿ\s]+'
+            title='Please enter a valid name (at least 2 characters, letters only)'
             required
           />
         </div>
@@ -206,13 +245,15 @@ const ContactUs = () => {
             onBlur={syncFormValues}
             value={email}
             id='user_email'
+            maxLength={254}
+            title='Please enter a valid email address'
             required
           />
         </div>
 
         <div className='contact__form-div'>
           <label className='contact__form-tag' htmlFor='message'>
-            Message*
+            Message* (minimum 10 characters)
           </label>
           <textarea
             name='message'
@@ -221,8 +262,18 @@ const ContactUs = () => {
             onBlur={syncFormValues}
             value={message}
             id='message'
+            minLength={10}
+            maxLength={2000}
+            rows={4}
+            placeholder='Please describe your inquiry in detail...'
+            title='Please enter a detailed message (at least 10 characters)'
             required
           />
+          {message.length > 0 && message.length < 10 && (
+            <small className='text-red-500 mt-1 block'>
+              Message too short. Please enter at least 10 characters.
+            </small>
+          )}
         </div>
 
         {/* Here the visible reCAPTCHA v2 checkbox is shown */}
