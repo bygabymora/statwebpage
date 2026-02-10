@@ -66,13 +66,23 @@ const getHandler = async (req, res) => {
 };
 
 const putHandler = async (req, res) => {
-  await db.connect(true);
   try {
+    await db.connect(true);
+
     const userInDB = await WpUser.findById(req.query.id);
     if (!userInDB) {
       return res.status(404).json({ type: "error", message: "User not found" });
     }
+
     const { user, customer } = req.body;
+
+    // Log the update attempt for debugging
+    console.log("Updating user:", {
+      userId: req.query.id,
+      previousApproved: userInDB.approved,
+      newApproved: user.approved,
+    });
+
     let customerInDB = null;
     if (customer) {
       customerInDB = await Customer.findById(customer._id);
@@ -84,30 +94,66 @@ const putHandler = async (req, res) => {
       customerInDB.purchaseExecutive = customer.purchaseExecutive;
       await customerInDB.save();
     }
-    userInDB.approvalEmailSent =
-      user.approvalEmailSent ?? user.approvalEmailSent;
-    userInDB.name = user.name ?? user.name;
-    userInDB.firstName = user.firstName ?? user.firstName;
-    userInDB.lastName = user.lastName ?? user.lastName;
-    userInDB.email = user.email ?? user.email;
-    userInDB.customerId = user.customerId ?? user.customerId;
-    userInDB.isAdmin =
-      user.isAdmin !== undefined ? Boolean(user.isAdmin) : user.isAdmin;
-    userInDB.active =
-      user.active !== undefined ? Boolean(user.active) : user.active;
-    userInDB.approved =
-      user.approved !== undefined ? Boolean(user.approved) : user.approved;
-    if (typeof user.restricted === "boolean") {
-      userInDB.restricted = user.restricted;
+
+    // Update user fields with explicit field checking
+    if ("approvalEmailSent" in user) {
+      userInDB.approvalEmailSent = user.approvalEmailSent;
+    }
+    if ("name" in user) {
+      userInDB.name = user.name;
+    }
+    if ("firstName" in user) {
+      userInDB.firstName = user.firstName;
+    }
+    if ("lastName" in user) {
+      userInDB.lastName = user.lastName;
+    }
+    if ("email" in user) {
+      userInDB.email = user.email;
+    }
+    if ("customerId" in user) {
+      userInDB.customerId = user.customerId;
+    }
+    if ("isAdmin" in user) {
+      userInDB.isAdmin = Boolean(user.isAdmin);
+    }
+    if ("active" in user) {
+      userInDB.active = Boolean(user.active);
+    }
+    if ("approved" in user) {
+      userInDB.approved = Boolean(user.approved);
+    }
+    if ("restricted" in user) {
+      userInDB.restricted = Boolean(user.restricted);
     }
 
-    await userInDB.save();
-    return res.json({ type: "success", message: "User updated successfully" });
+    const savedUser = await userInDB.save();
+
+    // Log successful save for debugging
+    console.log("User saved successfully:", {
+      userId: savedUser._id,
+      approved: savedUser.approved,
+      active: savedUser.active,
+    });
+
+    return res.status(200).json({
+      type: "success",
+      message: "User updated successfully",
+      user: {
+        _id: savedUser._id,
+        approved: savedUser.approved,
+        active: savedUser.active,
+        isAdmin: savedUser.isAdmin,
+        restricted: savedUser.restricted,
+      },
+    });
   } catch (error) {
     console.error("Error updating user:", error);
-    return res
-      .status(500)
-      .json({ type: "error", message: "Error updating user" });
+    return res.status(500).json({
+      type: "error",
+      message: "Error updating user",
+      details: error.message,
+    });
   }
 };
 
