@@ -122,7 +122,7 @@ export default function Unsubscribe() {
           <div className='mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
             <input
               type='text'
-              className='w-full max-w-md border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none'
+              className='w-full max-w-md border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-[#0e355e] focus:ring-2 focus:ring-[#144e8b] transition-all duration-300 outline-none'
               placeholder='email@company.com or Company Name'
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -132,11 +132,11 @@ export default function Unsubscribe() {
               className={`
                 relative overflow-hidden px-6 py-3 rounded-xl font-medium text-white text-sm 
                 transition-all duration-300 transform hover:scale-105 hover:shadow-lg 
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#144e8b]
                 ${
                   !query.trim() || status === "loading" ?
                     "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md"
+                  : "bg-gradient-to-r from-[#0e355e] to-[#144e8b] hover:from-[#144e8b] hover:to-[#0e355e] shadow-md"
                 }
               `}
               onClick={handleSearch}

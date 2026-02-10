@@ -1,5 +1,7 @@
 import Customer from "../../models/Customer";
 import db from "../../utils/db";
+import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 
 const handler = async (req, res) => {
   if (req.method !== "POST") {
@@ -74,6 +76,58 @@ const handler = async (req, res) => {
       if (!customer.opOutEmail) {
         customer.opOutEmail = true;
         await customer.save();
+
+        // Send confirmation email to the user
+        try {
+          const customerContact = {
+            name: customer.companyName || "",
+            companyName: customer.companyName || "",
+            email: customer.email,
+            _id: customer._id,
+          };
+
+          // Send confirmation email to customer
+          const confirmationMessage = messageManagement(
+            customerContact,
+            "Unsubscribe",
+            null,
+            null,
+            null,
+            null,
+          );
+
+          await handleSendEmails(confirmationMessage, customerContact);
+
+          // Send notification email to admins
+          const adminEmails = [
+            "sales@statsurgicalsupply.com",
+            "sofi@statsurgicalsupply.com",
+            "gaby@statsurgicalsupply.com",
+          ];
+
+          const notificationMessage = messageManagement(
+            customerContact, // Use customer data for the notification content
+            "Unsubscribe Notification",
+            null,
+            null,
+            null,
+            null,
+          );
+
+          // Send notification to each admin
+          for (const adminEmail of adminEmails) {
+            const adminContact = { email: adminEmail };
+            await handleSendEmails(notificationMessage, adminContact);
+          }
+
+          console.log(
+            "Unsubscribe emails sent successfully for:",
+            customer.email,
+          );
+        } catch (emailError) {
+          console.error("Failed to send unsubscribe emails:", emailError);
+          // Don't fail the unsubscribe process if email fails
+        }
       }
 
       return res.status(200).json({

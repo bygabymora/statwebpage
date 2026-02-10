@@ -260,8 +260,7 @@ export const messageManagement = (
             } target="_blank" 
                     style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
                   Check It Now
-                 </a><br><br>
-                 
+                 </a><br><br>   
                  </div>
           `,
       };
@@ -353,12 +352,54 @@ export const messageManagement = (
                <a href="https://statsurgicalsupply.com/authenticateCode?email=${contact.email}&code=${message}" target="_blank" 
                   style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
                  Follow the link to reset your password
-               </a><br><br>
-              
+               </a><br><br>   
              </div>`,
       };
       break;
-
+    case "Unsubscribe":
+      emailMessage = {
+        ...emailMessage,
+        subject: `${contact.name || contact.companyName || "User"}, You have successfully unsubscribed`,
+        p1: `<div style="font-size: 17px; color: #333333;">
+                 You have successfully unsubscribed from our email communications.
+               </div>`,
+        p2: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
+                 We're sorry to see you go! If you've unsubscribed by mistake or would like to 
+                 update your email preferences instead of completely unsubscribing, please 
+                 <a href="mailto:sales@statsurgicalsupply.com" style="color: #144e8b; text-decoration: none;">contact our support team</a>.
+               </div>`,
+        p3: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
+                 <strong>Unsubscribe Details:</strong><br>
+                 Company: ${contact.companyName || "Not provided"}<br>
+                 Email: ${contact.email}<br>
+                 Date: ${new Date().toLocaleDateString()}<br><br>
+                 Thank you for your past interest in our services.<br>
+                 <strong>Stat Surgical Supply</strong>
+               </div>`,
+      };
+      break;
+    case "Unsubscribe Notification":
+      emailMessage = {
+        ...emailMessage,
+        subject: `[ADMIN ALERT] User Unsubscribed - ${contact.companyName || contact.email}`,
+        p1: `<div style="font-size: 17px; color: #333333;">
+                 <strong>A user has unsubscribed from email communications.</strong>
+               </div>`,
+        p2: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
+                 <strong>Customer Details:</strong><br>
+                 Company Name: ${contact.companyName || "Not provided"}<br>
+                 Email: ${contact.email}<br>
+                 Customer ID: ${contact._id || "Not available"}<br>
+                 Date: ${new Date().toLocaleDateString()}<br>
+                 Time: ${new Date().toLocaleTimeString()}
+               </div>`,
+        p3: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
+                 Please review this unsubscription and update any relevant contact lists or 
+                 customer records as needed.<br><br>
+                 <strong>Stat Surgical Supply - Admin System</strong>
+               </div>`,
+      };
+      break;
     default:
       emailMessage = {
         ...emailMessage,
