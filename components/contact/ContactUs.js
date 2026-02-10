@@ -265,7 +265,7 @@ const ContactUs = () => {
             minLength={10}
             maxLength={2000}
             rows={4}
-            placeholder='Please describe your inquiry in detail...'
+            placeholder='Please describe your inquiry in detail.'
             title='Please enter a detailed message (at least 10 characters)'
             required
           />
