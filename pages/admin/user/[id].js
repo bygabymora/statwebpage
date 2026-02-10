@@ -47,11 +47,20 @@ export default function AdminUserEditScreen() {
       const userInDB = response.data.wpUser;
       const customerInDB = response.data.customer;
       const accountOwnerInDB = response.data.accountOwner;
+
+      // Add console logging to debug state synchronization issues
+      console.log("Fetched user data:", {
+        approved: userInDB?.approved,
+        active: userInDB?.active,
+        userId: userInDB?._id,
+      });
+
       dispatch({ type: "FETCH_SUCCESS" });
       setWpUser(userInDB);
       setWpCustomer(customerInDB);
       setWpAccountOwner(accountOwnerInDB);
     } catch (error) {
+      console.error("Fetch data error:", error);
       dispatch({ type: "FETCH_FAIL", payload: getError(error) });
     }
   };
@@ -66,14 +75,23 @@ export default function AdminUserEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      await axios.put(`/api/admin/users/${userId}`, {
+      const response = await axios.put(`/api/admin/users/${userId}`, {
         user: wpUser,
         customer: wpCustomer,
       });
 
+      // Ensure we wait for the database transaction to complete
+      if (response.data.type === "success") {
+        // Refresh data from the server to ensure frontend-database consistency
+        await fetchData();
+        showStatusMessage("success", "User updated successfully");
+      } else {
+        throw new Error(response.data.message || "Update failed");
+      }
+
       dispatch({ type: "UPDATE_SUCCESS" });
-      showStatusMessage("success", "User updated successfully");
     } catch (error) {
+      console.error("Submit error:", error);
       dispatch({ type: "UPDATE_FAIL", payload: getError(error) });
       showStatusMessage("error", getError(error) || "Error updating user");
     }
@@ -88,8 +106,22 @@ export default function AdminUserEditScreen() {
   ];
 
   const handleInputChange = (field, value) => {
+    console.log("Input change:", { field, value, currentUser: wpUser?._id });
     setWpUser({ ...wpUser, [field]: value });
   };
+
+  // Add effect to monitor state inconsistencies
+  useEffect(() => {
+    if (wpUser) {
+      console.log("Current wpUser state:", {
+        _id: wpUser._id,
+        approved: wpUser.approved,
+        active: wpUser.active,
+        firstName: wpUser.firstName,
+        lastName: wpUser.lastName,
+      });
+    }
+  }, [wpUser]);
 
   const sendApprovalEmail = async () => {
     try {
@@ -124,15 +156,25 @@ export default function AdminUserEditScreen() {
         );
       }
 
+      // Update user with approval email sent flag AND ensure approval status
       const updatedWpUser = {
         ...wpUser,
         approvalEmailSent: true,
+        approved: true, // Ensure user is also marked as approved
       };
-      await axios.put(`/api/admin/users/${userId}`, {
+
+      const response = await axios.put(`/api/admin/users/${userId}`, {
         user: updatedWpUser,
         customer: wpCustomer,
       });
-      showStatusMessage("success", "Approval email sent.");
+
+      if (response.data.type === "success") {
+        // Refresh data from server to ensure UI consistency
+        await fetchData();
+        showStatusMessage("success", "Approval email sent and user approved.");
+      } else {
+        throw new Error(response.data.message || "Update failed");
+      }
     } catch (error) {
       console.error("Error sending approval email:", error);
       showStatusMessage(
@@ -175,9 +217,19 @@ export default function AdminUserEditScreen() {
               </button>
               <button
                 onClick={() => router.push(`/admin/users`)}
-                className='primary-button'
+                className='primary-button mr-2'
               >
                 Back
+              </button>
+              <button
+                onClick={() => {
+                  console.log("Manual refresh triggered");
+                  fetchData();
+                }}
+                className='primary-button'
+                title='Refresh data from database'
+              >
+                Refresh
               </button>
             </div>
             <div className='flex flex-row my-5'>
