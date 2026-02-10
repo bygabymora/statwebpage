@@ -40,7 +40,14 @@ const handleSendEmails = async (message, contact, accountOwner) => {
       };
     }
 
-    response = await fetch("/api/emails/send-email", {
+    // Construct absolute URL for server-side fetch
+    const baseUrl =
+      process.env.NEXTAUTH_URL ||
+      process.env.VERCEL_URL ||
+      "https://www.statsurgicalsupply.com";
+    const emailUrl = `${baseUrl}/api/emails/send-email`;
+
+    response = await fetch(emailUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
