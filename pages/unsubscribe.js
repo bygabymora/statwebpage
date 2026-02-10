@@ -10,9 +10,18 @@ export default function Unsubscribe() {
   const [message, setMessage] = useState("");
   const [match, setMatch] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const { email: emailFromQuery, companyName } = router.query || {};
+    const { email: emailFromQuery, companyName, access } = router.query || {};
+
+    // Check for access parameter
+    if (access === "allowed") {
+      setHasAccess(true);
+    } else {
+      setHasAccess(false);
+      return;
+    }
 
     if (typeof emailFromQuery === "string") {
       setQuery(emailFromQuery.trim());
@@ -21,7 +30,20 @@ export default function Unsubscribe() {
     }
   }, [router.query]);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
   const handleSearch = async () => {
+    if (!hasAccess) {
+      setStatus("error");
+      setMessage("Access denied. Please use the link provided in your email.");
+      return;
+    }
+
     if (!query.trim()) {
       setStatus("error");
       setMessage("Enter an email or company name to search.");
@@ -53,6 +75,12 @@ export default function Unsubscribe() {
   };
 
   const handleUnsubscribe = async () => {
+    if (!hasAccess) {
+      setStatus("error");
+      setMessage("Access denied. Please use the link provided in your email.");
+      return;
+    }
+
     if (!match?._id) {
       setStatus("error");
       setMessage("Search for a customer before unsubscribing.");
@@ -63,10 +91,20 @@ export default function Unsubscribe() {
       setStatus("loading");
       setMessage("");
 
+      const requestBody = {
+        action: "unsubscribe",
+        customerId: match._id,
+      };
+
+      // If unsubscribing a purchase executive, include their ID
+      if (match.isPurchaseExecutive && match.purchaseExecutive?._id) {
+        requestBody.purchaseExecutiveId = match.purchaseExecutive._id;
+      }
+
       const response = await fetch("/api/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "unsubscribe", customerId: match._id }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -74,7 +112,22 @@ export default function Unsubscribe() {
         throw new Error(data?.message || "Unable to unsubscribe.");
       }
 
-      setMatch((prev) => (prev ? { ...prev, opOutEmail: true } : prev));
+      // Update the match state to reflect unsubscribed status
+      setMatch((prev) => {
+        if (!prev) return prev;
+        if (prev.isPurchaseExecutive && prev.purchaseExecutive) {
+          return {
+            ...prev,
+            purchaseExecutive: {
+              ...prev.purchaseExecutive,
+              opOutEmail: true,
+            },
+          };
+        } else {
+          return { ...prev, opOutEmail: true };
+        }
+      });
+
       setStatus("success");
       setMessage("Unsubscribed successfully.");
     } catch (error) {
@@ -84,6 +137,12 @@ export default function Unsubscribe() {
   };
 
   const handleOpenConfirm = () => {
+    if (!hasAccess) {
+      setStatus("error");
+      setMessage("Access denied. Please use the link provided in your email.");
+      return;
+    }
+
     if (!match?._id) {
       setStatus("error");
       setMessage("Search for a customer before unsubscribing.");
@@ -102,6 +161,37 @@ export default function Unsubscribe() {
   };
 
   const isComplete = status === "success";
+
+  // Show access denied if no proper access parameter
+  if (!hasAccess) {
+    return (
+      <Layout
+        title='Unsubscribe | Stat Surgical Supply'
+        description='Manage your email preferences for Stat Surgical Supply.'
+        schema={[]}
+      >
+        <div className='min-h-[50vh] flex items-center justify-center px-4 py-5'>
+          <div className='card w-full max-w-2xl p-8 text-center shadow-sm'>
+            <div className='w-16 h-16 mx-auto mb-4 text-red-500'>
+              <svg fill='currentColor' viewBox='0 0 24 24'>
+                <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' />
+              </svg>
+            </div>
+            <h1 className='text-xl font-semibold text-gray-800 mb-2'>
+              Access Denied
+            </h1>
+            <p className='text-gray-600 mb-4'>
+              This page is only accessible through the unsubscribe link provided
+              in your emails.
+            </p>
+            <p className='text-sm text-gray-500'>
+              Please check your email for the correct unsubscribe link.
+            </p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout
@@ -126,7 +216,8 @@ export default function Unsubscribe() {
               placeholder='email@company.com or Company Name'
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              disabled={status === "loading"}
+              onKeyDown={handleKeyDown}
+              disabled={status === "loading" || !hasAccess}
             />
             <button
               className={`
@@ -140,7 +231,7 @@ export default function Unsubscribe() {
                 }
               `}
               onClick={handleSearch}
-              disabled={status === "loading" || !query.trim()}
+              disabled={status === "loading" || !query.trim() || !hasAccess}
               type='button'
             >
               <span
@@ -176,11 +267,40 @@ export default function Unsubscribe() {
             <div className='mt-6 border-2 border-gray-200 rounded-xl p-6 text-left bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-md'>
               <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
                 <div>
-                  <p className='text-sm text-gray-500'>Match found</p>
-                  <p className='text-base font-semibold'>
-                    {match.companyName || "(No company name)"}
+                  <p className='text-sm text-gray-500'>
+                    {match.isPurchaseExecutive ?
+                      "Information found"
+                    : "Match found"}
                   </p>
-                  <p className='text-sm text-gray-600'>{match.email || ""}</p>
+                  <p className='text-base font-semibold'>
+                    {match.isPurchaseExecutive ?
+                      `${match.purchaseExecutive?.name || ""} ${match.purchaseExecutive?.lastName || ""}`.trim() ||
+                      "(No name)"
+                    : match.companyName || "(No company name)"}
+                  </p>
+                  <p className='text-sm text-gray-600'>
+                    {match.isPurchaseExecutive ?
+                      match.purchaseExecutive?.email || ""
+                    : match.email || ""}
+                  </p>
+                  {match.isPurchaseExecutive && (
+                    <>
+                      <p className='text-xs text-gray-500 mt-1'>
+                        {(
+                          match.purchaseExecutive?.title &&
+                          match.purchaseExecutive?.role
+                        ) ?
+                          `${match.purchaseExecutive.title} - ${match.purchaseExecutive.role}`
+                        : match.purchaseExecutive?.title ||
+                          match.purchaseExecutive?.role ||
+                          "Contact"
+                        }
+                      </p>
+                      <p className='text-xs text-gray-400'>
+                        Company: {match.companyName || "(No company name)"}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <button
                   className={`
@@ -188,7 +308,11 @@ export default function Unsubscribe() {
                     transition-all duration-300 transform hover:scale-105 hover:shadow-lg 
                     focus:outline-none focus:ring-2 focus:ring-offset-2
                     ${
-                      match.opOutEmail ?
+                      (
+                        match.isPurchaseExecutive ?
+                          match.purchaseExecutive?.opOutEmail
+                        : match.opOutEmail
+                      ) ?
                         "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : status === "loading" ?
                         "bg-gray-400 text-white cursor-not-allowed"
@@ -196,11 +320,21 @@ export default function Unsubscribe() {
                     }
                   `}
                   onClick={handleOpenConfirm}
-                  disabled={status === "loading" || match.opOutEmail}
+                  disabled={
+                    status === "loading" ||
+                    (match.isPurchaseExecutive ?
+                      match.purchaseExecutive?.opOutEmail
+                    : match.opOutEmail) ||
+                    !hasAccess
+                  }
                   type='button'
                 >
                   <span className='flex items-center justify-center gap-2'>
-                    {match.opOutEmail ?
+                    {(
+                      match.isPurchaseExecutive ?
+                        match.purchaseExecutive?.opOutEmail
+                      : match.opOutEmail
+                    ) ?
                       <>
                         <svg
                           className='w-4 h-4'
@@ -257,7 +391,10 @@ export default function Unsubscribe() {
         onCancel={handleCancel}
         message={{
           title: "Confirm unsubscribe",
-          body: "Are you sure you want to stop receiving our emails?",
+          body:
+            match?.isPurchaseExecutive ?
+              `Are you sure you want to unsubscribe ${match.purchaseExecutive?.name || "this contact"} from receiving our emails?`
+            : "Are you sure you want to stop receiving our emails?",
         }}
       />
     </Layout>

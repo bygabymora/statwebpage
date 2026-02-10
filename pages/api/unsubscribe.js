@@ -9,7 +9,7 @@ const handler = async (req, res) => {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { action, query, customerId } = req.body || {};
+  const { action, query, customerId, purchaseExecutiveId } = req.body || {};
 
   try {
     await db.connect(true);
@@ -44,10 +44,20 @@ const handler = async (req, res) => {
               { secondEmail: emailMatch },
               { "user.email": emailMatch },
             ],
-      }).select("companyName email opOutEmail");
+      }).select("companyName email opOutEmail purchaseExecutive user");
 
       if (!customer) {
         return res.status(404).json({ message: "Subscriber not found" });
+      }
+
+      // Check if search was for a purchase executive email
+      let purchaseExecutive = null;
+      if (isEmail) {
+        purchaseExecutive = customer.purchaseExecutive?.find(
+          (pe) =>
+            pe.email &&
+            pe.email.toLowerCase() === normalizedQuery.toLowerCase(),
+        );
       }
 
       return res.status(200).json({
@@ -56,6 +66,8 @@ const handler = async (req, res) => {
           companyName: customer.companyName,
           email: customer.email || customer?.user?.email,
           opOutEmail: customer.opOutEmail,
+          purchaseExecutive: purchaseExecutive || null,
+          isPurchaseExecutive: !!purchaseExecutive,
         },
       });
     }
@@ -66,76 +78,119 @@ const handler = async (req, res) => {
       }
 
       const customer = await Customer.findById(customerId).select(
-        "companyName email opOutEmail",
+        "companyName email opOutEmail purchaseExecutive",
       );
 
       if (!customer) {
         return res.status(404).json({ message: "Subscriber not found" });
       }
 
-      if (!customer.opOutEmail) {
-        customer.opOutEmail = true;
-        await customer.save();
+      let unsubscribedContact = null;
+      let isMainCustomer = true;
 
-        // Send confirmation email to the user
-        try {
-          const customerContact = {
-            name: customer.companyName || "",
-            companyName: customer.companyName || "",
-            email: customer.email,
-            _id: customer._id,
-          };
+      // If unsubscribing a specific purchase executive
+      if (purchaseExecutiveId) {
+        const purchaseExecutive = customer.purchaseExecutive?.find(
+          (pe) => pe._id.toString() === purchaseExecutiveId,
+        );
 
-          // Send confirmation email to customer
-          const confirmationMessage = messageManagement(
-            customerContact,
-            "Unsubscribe",
-            null,
-            null,
-            null,
-            null,
-          );
-
-          await handleSendEmails(confirmationMessage, customerContact);
-
-          // Send notification email to admins
-          const adminEmails = [
-            "sales@statsurgicalsupply.com",
-            "sofi@statsurgicalsupply.com",
-            "gaby@statsurgicalsupply.com",
-          ];
-
-          const notificationMessage = messageManagement(
-            customerContact, // Use customer data for the notification content
-            "Unsubscribe Notification",
-            null,
-            null,
-            null,
-            null,
-          );
-
-          // Send notification to each admin
-          for (const adminEmail of adminEmails) {
-            const adminContact = { email: adminEmail };
-            await handleSendEmails(notificationMessage, adminContact);
-          }
-
-          console.log(
-            "Unsubscribe emails sent successfully for:",
-            customer.email,
-          );
-        } catch (emailError) {
-          console.error("Failed to send unsubscribe emails:", emailError);
-          // Don't fail the unsubscribe process if email fails
+        if (!purchaseExecutive) {
+          return res
+            .status(404)
+            .json({ message: "Purchase executive not found" });
         }
+
+        if (!purchaseExecutive.opOutEmail) {
+          purchaseExecutive.opOutEmail = true;
+          await customer.save();
+        }
+
+        unsubscribedContact = {
+          name: `${purchaseExecutive.name} ${purchaseExecutive.lastName || ""}`.trim(),
+          email: purchaseExecutive.email,
+          role: purchaseExecutive.role || purchaseExecutive.title,
+          companyName: customer.companyName,
+        };
+        isMainCustomer = false;
+      } else {
+        // Unsubscribe main customer
+        if (!customer.opOutEmail) {
+          customer.opOutEmail = true;
+          await customer.save();
+        }
+
+        unsubscribedContact = {
+          name: customer.companyName || "",
+          email: customer.email,
+          companyName: customer.companyName,
+        };
+      }
+
+      // Send confirmation email to the user
+      try {
+        const customerContact = {
+          name: unsubscribedContact.name,
+          companyName: unsubscribedContact.companyName,
+          email: unsubscribedContact.email,
+          _id: customer._id,
+        };
+
+        // Send confirmation email to customer
+        const confirmationType =
+          isMainCustomer ? "Unsubscribe" : "Unsubscribe Purchase Executive";
+        const confirmationMessage = messageManagement(
+          customerContact,
+          confirmationType,
+          null,
+          null,
+          null,
+          null,
+        );
+
+        await handleSendEmails(confirmationMessage, customerContact);
+
+        // Send notification email to admins
+        const adminEmails = [
+          "sales@statsurgicalsupply.com",
+          "sofi@statsurgicalsupply.com",
+          "gaby@statsurgicalsupply.com",
+        ];
+
+        const notificationMessage = messageManagement(
+          customerContact, // Use customer data for the notification content
+          "Unsubscribe Notification",
+          null,
+          null,
+          null,
+          null,
+        );
+
+        // Send notification to each admin
+        for (const adminEmail of adminEmails) {
+          const adminContact = { email: adminEmail };
+          await handleSendEmails(notificationMessage, adminContact);
+        }
+
+        console.log(
+          "Unsubscribe emails sent successfully for:",
+          unsubscribedContact.email,
+          isMainCustomer ? "(Main customer)" : "(Purchase executive)",
+        );
+      } catch (emailError) {
+        console.error("Failed to send unsubscribe emails:", emailError);
+        // Don't fail the unsubscribe process if email fails
       }
 
       return res.status(200).json({
         message:
-          customer.opOutEmail ?
+          (
+            isMainCustomer ? customer.opOutEmail : unsubscribedContact
+          ) ?
             "Unsubscribed successfully"
           : "Unsubscribe updated",
         customerId: customer._id,
+        isMainCustomer,
+        unsubscribedContact,
       });
     }
 

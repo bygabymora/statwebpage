@@ -76,7 +76,7 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
               return { ...exec, wpId: wpUser._id };
             }
             return exec;
-          }
+          },
         ),
       };
       setUpdatedCustomer(newUpdatedCustomer);
