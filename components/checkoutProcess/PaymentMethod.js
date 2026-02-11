@@ -12,7 +12,7 @@ export default function PaymentMethod({
 }) {
   const { showStatusMessage } = useModalContext();
   const [selectedMethod, setSelectedMethod] = useState(
-    order.paymentMethod || null
+    order.paymentMethod || null,
   );
   const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
@@ -150,9 +150,9 @@ export default function PaymentMethod({
                     key={method}
                     htmlFor={method}
                     className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
-                      selectedMethod === method
-                        ? "border-[#03793d] bg-green-50 shadow-md"
-                        : "border-gray-300 hover:border-gray-400"
+                      selectedMethod === method ?
+                        "border-[#03793d] bg-green-50 shadow-md"
+                      : "border-gray-300 hover:border-gray-400"
                     }`}
                   >
                     <div className='flex items-center space-x-4'>
@@ -168,9 +168,9 @@ export default function PaymentMethod({
                       />
                       <div
                         className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
-                          selectedMethod === method
-                            ? "border-[#03793d] bg-[#03793d]"
-                            : "border-gray-400"
+                          selectedMethod === method ?
+                            "border-[#03793d] bg-[#03793d]"
+                          : "border-gray-400"
                         }`}
                       >
                         {selectedMethod === method && (
@@ -178,120 +178,128 @@ export default function PaymentMethod({
                         )}
                       </div>
                       <span className='text-lg font-medium text-gray-800'>
-                        {method === "Stripe"
-                          ? "Credit Card (Powered by Stripe)"
-                          : method}
+                        {method === "Stripe" ?
+                          "Credit Card (Powered by Stripe)"
+                        : method}
                       </span>
                     </div>
                   </label>
                 ))}
 
-                {Boolean(customer?.defaultTerm) && (
-                  <label
-                    htmlFor='PO Number'
-                    className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
-                      selectedMethod === "PO Number"
-                        ? "border-[#03793d] bg-green-50 shadow-md"
+                {Boolean(customer?.defaultTerm) &&
+                  !customer.defaultTerm.includes("Net 0") &&
+                  !customer.defaultTerm.includes("Net.0") &&
+                  !customer.defaultTerm.includes("Net. 0") && (
+                    <label
+                      htmlFor='PO Number'
+                      className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
+                        selectedMethod === "PO Number" ?
+                          "border-[#03793d] bg-green-50 shadow-md"
                         : "border-gray-300 hover:border-gray-400"
-                    }`}
-                  >
-                    <div className='flex items-center space-x-4'>
-                      <input
-                        name='paymentMethod'
-                        id='PO Number'
-                        type='radio'
-                        className='hidden'
-                        checked={order.paymentMethod === "PO Number"}
-                        onChange={() =>
-                          handleInputChange("paymentMethod", "PO Number")
-                        }
-                      />
-                      <div
-                        className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
-                          selectedMethod === "PO Number"
-                            ? "border-[#03793d] bg-[#03793d]"
+                      }`}
+                    >
+                      <div className='flex items-center space-x-4'>
+                        <input
+                          name='paymentMethod'
+                          id='PO Number'
+                          type='radio'
+                          className='hidden'
+                          checked={order.paymentMethod === "PO Number"}
+                          onChange={() =>
+                            handleInputChange("paymentMethod", "PO Number")
+                          }
+                        />
+                        <div
+                          className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
+                            selectedMethod === "PO Number" ?
+                              "border-[#03793d] bg-[#03793d]"
                             : "border-gray-400"
-                        }`}
-                      >
-                        {selectedMethod === "PO Number" && (
-                          <div className='w-2.5 h-2.5 bg-white rounded-full' />
-                        )}
+                          }`}
+                        >
+                          {selectedMethod === "PO Number" && (
+                            <div className='w-2.5 h-2.5 bg-white rounded-full' />
+                          )}
+                        </div>
+                        <span className='text-lg font-medium text-gray-800'>
+                          PO Number with Terms
+                        </span>
                       </div>
-                      <span className='text-lg font-medium text-gray-800'>
-                        PO Number with Terms
-                      </span>
-                    </div>
-                  </label>
-                )}
+                    </label>
+                  )}
 
-                <div className='card p-2 '>
-                  <div className='font-semibold my-2'>
-                    To prevent delays in processing your order, please fill the
-                    PO number and upload the PO document.
-                  </div>
-                  {order.paymentMethod === "PO Number" && (
-                    <div className='text-sm text-gray-500 mb-2'>
-                      <span className='text-red-500'>
-                        PO Number is required
-                      </span>
+                {Boolean(customer?.defaultTerm) &&
+                  !customer.defaultTerm.includes("Net 0") &&
+                  !customer.defaultTerm.includes("Net.0") &&
+                  !customer.defaultTerm.includes("Net. 0") && (
+                    <div className='card p-2 '>
+                      <div className='font-semibold my-2'>
+                        To prevent delays in processing your order, please fill
+                        the PO number and upload the PO document.
+                      </div>
+                      {order.paymentMethod === "PO Number" && (
+                        <div className='text-sm text-gray-500 mb-2'>
+                          <span className='text-red-500'>
+                            PO Number is required
+                          </span>
+                        </div>
+                      )}
+                      <div className='md:mb-4'>
+                        <label htmlFor='poNumber' className='block mb-2'>
+                          Purchase Order #:{" "}
+                          {order.paymentMethod === "PO Number" && (
+                            <span className='text-xs italic'>
+                              Your Terms {order.defaultTerm}
+                            </span>
+                          )}
+                        </label>
+                        <input
+                          id='poNumber'
+                          type='text'
+                          className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                          value={order.poNumber || ""}
+                          onChange={(e) =>
+                            handleInputChange("poNumber", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className='md:mb-4'>
+                        <div className='flex justify-between mb-2'>
+                          <span>Upload P.O.:</span>
+                          {order.fileId && (
+                            <span className='text-xs text-gray-400 italic'>
+                              Doc: {order.fileName}
+                            </span>
+                          )}
+                        </div>
+                        <div className='flex gap-2 mt-2'>
+                          <input
+                            id='uploadDoc'
+                            type='file'
+                            className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                            onChange={handleFileChange}
+                          />
+                          {selectedFile ?
+                            <button
+                              type='button'
+                              onClick={handleFileUpload}
+                              className='primary-button h-10'
+                            >
+                              {newFile ? "Upload" : "Uploading..."}
+                            </button>
+                          : order.fileId ?
+                            <button
+                              type='button'
+                              onClick={handleFileDownload}
+                              className='primary-button h-10'
+                            >
+                              Download
+                            </button>
+                          : null}
+                        </div>
+                      </div>
                     </div>
                   )}
-                  <div className='md:mb-4'>
-                    <label htmlFor='poNumber' className='block mb-2'>
-                      Purchase Order #:{" "}
-                      {order.paymentMethod === "PO Number" && (
-                        <span className='text-xs italic'>
-                          Your Terms {order.defaultTerm}
-                        </span>
-                      )}
-                    </label>
-                    <input
-                      id='poNumber'
-                      type='text'
-                      className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
-                      value={order.poNumber || ""}
-                      onChange={(e) =>
-                        handleInputChange("poNumber", e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <div className='md:mb-4'>
-                    <div className='flex justify-between mb-2'>
-                      <span>Upload P.O.:</span>
-                      {order.fileId && (
-                        <span className='text-xs text-gray-400 italic'>
-                          Doc: {order.fileName}
-                        </span>
-                      )}
-                    </div>
-                    <div className='flex gap-2 mt-2'>
-                      <input
-                        id='uploadDoc'
-                        type='file'
-                        className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
-                        onChange={handleFileChange}
-                      />
-                      {selectedFile ? (
-                        <button
-                          type='button'
-                          onClick={handleFileUpload}
-                          className='primary-button h-10'
-                        >
-                          {newFile ? "Upload" : "Uploading..."}
-                        </button>
-                      ) : order.fileId ? (
-                        <button
-                          type='button'
-                          onClick={handleFileDownload}
-                          className='primary-button h-10'
-                        >
-                          Download
-                        </button>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -304,11 +312,13 @@ export default function PaymentMethod({
             >
               Back
             </button>
-            {(order.paymentMethod && order.paymentMethod !== "PO Number") ||
-            (order.paymentMethod === "PO Number" &&
-              order.poNumber &&
-              !newFile &&
-              !uploading) ? (
+            {(
+              (order.paymentMethod && order.paymentMethod !== "PO Number") ||
+              (order.paymentMethod === "PO Number" &&
+                order.poNumber &&
+                !newFile &&
+                !uploading)
+            ) ?
               <button
                 type='button'
                 onClick={(e) => handleSubmit(e)}
@@ -316,7 +326,7 @@ export default function PaymentMethod({
               >
                 Next
               </button>
-            ) : null}
+            : null}
           </div>
         </div>
       </div>
