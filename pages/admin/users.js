@@ -334,6 +334,11 @@ function AdminUsersScreen() {
                               {user.companyName}
                             </span>
                           )}
+                          {user.customerId && (
+                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
+                              ID: {user.customerId}
+                            </span>
+                          )}
                           {statusInfo.label && (
                             <span
                               className={`inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} border`}
@@ -348,6 +353,21 @@ function AdminUsersScreen() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Customer ID Display */}
+                    {user.customerId && (
+                      <div className='bg-blue-50 rounded p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 border border-blue-200'>
+                        <div className='text-xs text-blue-600 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
+                          Customer ID
+                        </div>
+                        <div className='text-sm sm:text-base font-medium text-blue-800'>
+                          {user.customerId ?
+                            <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm md:text-lg' />
+                          : <IoCloseOutline className='text-red-600 text-xs sm:text-sm md:text-lg' />
+                          }
+                        </div>
+                      </div>
+                    )}
 
                     {/* Status Grid */}
                     <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
@@ -439,6 +459,9 @@ function AdminUsersScreen() {
                       <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[120px]'>
                         Company
                       </th>
+                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                        Customer ID
+                      </th>
                       <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[60px] sm:min-w-[80px]'>
                         Active
                       </th>
@@ -498,6 +521,22 @@ function AdminUsersScreen() {
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
                             <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[60px] sm:max-w-[100px] lg:max-w-none'>
                               {user.companyName || "—"}
+                            </div>
+                          </td>
+                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[60px] sm:max-w-[100px] lg:max-w-none'>
+                              {user.customerId ?
+                                <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium'>
+                                  {user.customerId ?
+                                    <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                      <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                    </div>
+                                  : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                      <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
+                                    </div>
+                                  }
+                                </span>
+                              : "—"}
                             </div>
                           </td>
                           <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
