@@ -1,12 +1,13 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { toast } from "react-toastify";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { BsTrash3 } from "react-icons/bs";
 import { BiSolidEdit } from "react-icons/bi";
+import CustomConfirmModal from "../../components/main/CustomConfirmModal";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -59,10 +60,16 @@ export default function AdminNewsScreen() {
     error: "",
   });
 
-  const createHandler = async () => {
-    if (!window.confirm("Are you sure?")) {
-      return;
-    }
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteNewsId, setDeleteNewsId] = useState(null);
+
+  const createHandler = () => {
+    setShowCreateModal(true);
+  };
+
+  const confirmCreateHandler = async () => {
+    setShowCreateModal(false);
     try {
       dispatch({ type: "CREATE_REQUEST" });
       const { data } = await axios.post(`/api/admin/news`);
@@ -93,19 +100,23 @@ export default function AdminNewsScreen() {
     }
   }, [successDelete]);
 
-  const deleteHandler = async (newsId) => {
-    if (!window.confirm("Are you sure?")) {
-      return;
-    }
+  const deleteHandler = (newsId) => {
+    setDeleteNewsId(newsId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteHandler = async () => {
+    setShowDeleteModal(false);
     try {
       dispatch({ type: "DELETE_REQUEST" });
-      await axios.delete(`/api/admin/news/${newsId}`);
+      await axios.delete(`/api/admin/news/${deleteNewsId}`);
       dispatch({ type: "DELETE_SUCCESS" });
       toast.success("News deleted successfully");
     } catch (err) {
       dispatch({ type: "DELETE_FAIL" });
       toast.error(getError(err));
     }
+    setDeleteNewsId(null);
   };
 
   const links = [
@@ -127,9 +138,9 @@ export default function AdminNewsScreen() {
                 key={href}
                 href={href}
                 className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
-                  isBold
-                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                  isBold ?
+                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
@@ -178,12 +189,12 @@ export default function AdminNewsScreen() {
             </div>
           )}
         </div>
-        {loading ? (
+        {loading ?
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
             <span className='ml-3 text-gray-600'>Loading news articles...</span>
           </div>
-        ) : error ? (
+        : error ?
           <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
             <div className='flex items-center'>
               <div className='text-red-600 font-medium'>
@@ -192,15 +203,14 @@ export default function AdminNewsScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        ) : newsEntries.length === 0 ? (
+        : newsEntries.length === 0 ?
           <div className='text-center py-12'>
             <div className='text-gray-500 mb-2'>No news articles found</div>
             <div className='text-sm text-gray-400'>
               Create your first news article to get started
             </div>
           </div>
-        ) : (
-          <>
+        : <>
             {/* Mobile Card Layout */}
             <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
               {newsEntries.map((news) => (
@@ -379,8 +389,31 @@ export default function AdminNewsScreen() {
               </div>
             </div>
           </>
-        )}
+        }
       </div>
+
+      {/* Create Confirmation Modal */}
+      <CustomConfirmModal
+        isOpen={showCreateModal}
+        onConfirm={confirmCreateHandler}
+        onCancel={() => setShowCreateModal(false)}
+        message={{
+          title: "Create New News",
+          body: "Are you sure you want to create a new news article?",
+        }}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <CustomConfirmModal
+        isOpen={showDeleteModal}
+        onConfirm={confirmDeleteHandler}
+        onCancel={() => setShowDeleteModal(false)}
+        message={{
+          title: "Delete News",
+          body: "Are you sure you want to delete this news article?",
+          warning2: "This action cannot be undone.",
+        }}
+      />
     </Layout>
   );
 }
