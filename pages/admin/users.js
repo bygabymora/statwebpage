@@ -1,13 +1,13 @@
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useReducer, useState } from "react";
-import { toast } from "react-toastify";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { BiSolidEdit } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { BsTrash3 } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
+import { RiLoopLeftFill } from "react-icons/ri";
 import { IoCheckmarkSharp, IoCloseOutline } from "react-icons/io5";
 
 function reducer(state, action) {
@@ -48,7 +48,16 @@ function AdminUsersScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/admin/users`);
+        // Add timestamp and cache-busting headers
+        const { data } = await axios.get(`/api/admin/users?t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
+        console.log(
+          `Frontend received ${data.length} users at ${new Date().toISOString()}`,
+        );
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -61,6 +70,25 @@ function AdminUsersScreen() {
     }
   }, [successDelete]);
 
+  // Manual refresh function
+  const handleRefresh = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/admin/users?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      console.log(
+        `Manual refresh: ${data.length} users at ${new Date().toISOString()}`,
+      );
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+    }
+  };
+
   const confirmDelete = (userId) => {
     setSelectedUserId(userId);
     setShowModal(true);
@@ -71,10 +99,8 @@ function AdminUsersScreen() {
       dispatch({ type: "DELETE_REQUEST" });
       await axios.delete(`/api/admin/users/${selectedUserId}`);
       dispatch({ type: "DELETE_SUCCESS" });
-      toast.success("User deleted successfully");
     } catch (err) {
       dispatch({ type: "DELETE_FAIL" });
-      toast.error(getError(err));
     }
     setShowModal(false);
   };
@@ -186,21 +212,33 @@ function AdminUsersScreen() {
                 Manage user accounts and permissions
               </p>
             </div>
-            <div className='flex flex-wrap gap-2 sm:gap-3'>
-              <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
-                Total:{" "}
-                <span className='font-semibold text-gray-700'>
-                  {users.length}
-                </span>
-              </div>
-              {searchTerm && (
-                <div className='text-xs sm:text-sm text-gray-500 bg-blue-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
-                  Found:{" "}
-                  <span className='font-semibold text-blue-700'>
-                    {filteredAndSortedUsers.length}
+            <div className='flex flex-wrap items-center justify-between gap-2 sm:gap-3'>
+              <div className='flex flex-wrap gap-2 sm:gap-3'>
+                <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
+                  Total:{" "}
+                  <span className='font-semibold text-gray-700'>
+                    {users.length}
                   </span>
                 </div>
-              )}
+                {searchTerm && (
+                  <div className='text-xs sm:text-sm text-gray-500 bg-blue-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
+                    Found:{" "}
+                    <span className='font-semibold text-blue-700'>
+                      {filteredAndSortedUsers.length}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className='flex items-center gap-2 text-xs sm:text-sm bg-[#144e8b] hover:bg-[#0e355e] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+              >
+                <RiLoopLeftFill
+                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                ></RiLoopLeftFill>
+                {loading ? "Refreshing..." : "Refresh"}
+              </button>
             </div>
           </div>
         </div>

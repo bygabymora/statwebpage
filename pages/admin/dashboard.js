@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useReducer, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
+import { RiLoopLeftFill } from "react-icons/ri";
 
 ChartJS.register(
   CategoryScale,
@@ -47,6 +48,7 @@ function reducer(state, action) {
 }
 function AdminDashboardScreen() {
   const [activeChart, setActiveChart] = useState("sales");
+
   const chartTitles = {
     sales: "Sales report.",
     orders: "Orders report.",
@@ -122,7 +124,14 @@ function AdminDashboardScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/admin/summary`);
+        // Add timestamp and cache-busting headers
+        const { data } = await axios.get(`/api/admin/summary?t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
+        console.log(`Dashboard data refreshed at ${new Date().toISOString()}`);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -131,6 +140,25 @@ function AdminDashboardScreen() {
 
     fetchData();
   }, []);
+
+  // Manual refresh function
+  const handleRefresh = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/admin/summary?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      console.log(
+        `Dashboard manually refreshed at ${new Date().toISOString()}`,
+      );
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+    }
+  };
 
   const links = [
     { href: "/admin/dashboard", label: "Dashboard", isBold: true },
@@ -167,13 +195,25 @@ function AdminDashboardScreen() {
         {/* Header Section */}
         <div className='mb-3 sm:mb-6 md:mb-8'>
           <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
-            <div>
-              <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
-                Admin Dashboard
-              </h1>
-              <p className='text-sm sm:text-base text-gray-600 mt-1'>
-                Overview of your business metrics and analytics
-              </p>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+              <div>
+                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
+                  Admin Dashboard
+                </h1>
+                <p className='text-sm sm:text-base text-gray-600 mt-1'>
+                  Overview of your business metrics and analytics
+                </p>
+              </div>
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className='flex items-center gap-2 text-xs sm:text-sm bg-[#144e8b] hover:bg-[#0e355e] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+              >
+                <RiLoopLeftFill
+                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                ></RiLoopLeftFill>
+                {loading ? "Refreshing..." : "Refresh"}
+              </button>
             </div>
           </div>
         </div>

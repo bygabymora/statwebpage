@@ -10,11 +10,25 @@ const handler = async (req, res) => {
     return res.status(401).send("Registration required");
   }
 
+  // Prevent caching to ensure fresh data
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
+
   await db.connect(true);
 
-  const ordersCount = await Order.countDocuments();
-  const productsCount = await Product.countDocuments();
-  const usersCount = await WpUser.countDocuments();
+  // Force fresh queries with read concern for latest data
+  const ordersCount = await Order.countDocuments().read("primary");
+  const productsCount = await Product.countDocuments().read("primary");
+  const usersCount = await WpUser.countDocuments().read("primary");
+
+  console.log(
+    `[${new Date().toISOString()}] Dashboard summary: ${ordersCount} orders, ${productsCount} products, ${usersCount} users`,
+  );
 
   const ordersPriceGroup = await Order.aggregate([
     {
@@ -23,7 +37,7 @@ const handler = async (req, res) => {
         sales: { $sum: "$totalPrice" },
       },
     },
-  ]);
+  ]).read("primary");
   const ordersPrice =
     ordersPriceGroup.length > 0 ? ordersPriceGroup[0].sales : 0;
 
@@ -35,7 +49,7 @@ const handler = async (req, res) => {
         orderCount: { $sum: 1 },
       },
     },
-  ]);
+  ]).read("primary");
 
   const salesPerProduct = await Order.aggregate([
     { $unwind: "$orderItems" },
@@ -46,7 +60,7 @@ const handler = async (req, res) => {
         totalQuantity: { $sum: "$orderItems.quantity" },
       },
     },
-  ]);
+  ]).read("primary");
 
   const totalPricePerUser = await Order.aggregate([
     {
@@ -66,7 +80,7 @@ const handler = async (req, res) => {
         totalSpent: { $sum: "$totalPrice" },
       },
     },
-  ]);
+  ]).read("primary");
 
   res.send({
     ordersCount,
