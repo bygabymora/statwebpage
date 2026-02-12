@@ -108,6 +108,20 @@ const nextConfig = {
         destination: "/news",
         permanent: true,
       },
+      // Redirect product URLs with manufacturer prefixes to clean product ID URLs
+      // Example: /products/SMITH-&-NEPHEW-7205310 -> /products/7205310
+      {
+        source: "/products/:manufacturer-:productId(\\d+)",
+        destination: "/products/:productId",
+        permanent: true,
+      },
+      // Handle multiple word manufacturers with hyphens
+      // Example: /products/MEDTRONIC-SOFAMOR-DANEK-12345 -> /products/12345
+      {
+        source: "/products/:path*-:productId(\\d+)",
+        destination: "/products/:productId",
+        permanent: true,
+      },
     ];
   },
 };

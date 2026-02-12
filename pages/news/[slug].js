@@ -275,7 +275,36 @@ export async function getServerSideProps(context) {
   const { slug } = context.params;
   await db.connect(true);
 
-  const doc = await News.findOne({ slug }).lean();
+  // Function to transform URL-encoded/title-case slugs to clean format
+  const cleanSlug = (rawSlug) => {
+    return decodeURIComponent(rawSlug)
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .trim()
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+  };
+
+  // First try to find with the original slug
+  let doc = await News.findOne({ slug }).lean();
+
+  // If not found and slug contains encoded characters or uppercase, try with cleaned slug
+  if (!doc && (slug.includes("%") || /[A-Z]/.test(slug))) {
+    const cleanedSlug = cleanSlug(slug);
+    doc = await News.findOne({ slug: cleanedSlug }).lean();
+
+    // If found with cleaned slug, redirect to correct URL
+    if (doc) {
+      return {
+        redirect: {
+          destination: `/news/${cleanedSlug}`,
+          permanent: true,
+        },
+      };
+    }
+  }
+
   if (!doc) return { notFound: true };
 
   // Get related news based on category and tags
