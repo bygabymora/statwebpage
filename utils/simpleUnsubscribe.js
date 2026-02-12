@@ -68,7 +68,7 @@ export function getEmailFooterWithUnsubscribe(customer) {
 }
 
 // Example usage:
-// const customer = { email: "customer@example.com", companyName: "ABC Medical" };
+// const customer = { email: "yourEmail@example.com", companyName: "ABC Medical" };
 // const unsubscribeUrl = createUnsubscribeLink(customer);
 // console.log(unsubscribeUrl);
-// Output: https://www.statsurgicalsupply.com/unsubscribe?access=allowed&email=customer%40example.com&companyName=ABC%20Medical
+// Output: https://www.statsurgicalsupply.com/unsubscribe?access=allowed&email=yourEmail%40example.com&companyName=ABC%20Medical

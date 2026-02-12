@@ -13,7 +13,7 @@ export default function Unsubscribe() {
   const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const { email: emailFromQuery, companyName, access } = router.query || {};
+    const { email: emailFromQuery, access } = router.query || {};
 
     // Check for access parameter
     if (access === "allowed") {
@@ -25,8 +25,6 @@ export default function Unsubscribe() {
 
     if (typeof emailFromQuery === "string") {
       setQuery(emailFromQuery.trim());
-    } else if (typeof companyName === "string") {
-      setQuery(companyName.trim());
     }
   }, [router.query]);
 
@@ -46,7 +44,15 @@ export default function Unsubscribe() {
 
     if (!query.trim()) {
       setStatus("error");
-      setMessage("Enter an email or company name to search.");
+      setMessage("Enter an email to search.");
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(query.trim())) {
+      setStatus("error");
+      setMessage("Please enter a valid email address.");
       return;
     }
 
@@ -206,14 +212,14 @@ export default function Unsubscribe() {
           </p>
           <h1 className='section__title mt-2'>Unsubscribe</h1>
           <p className='mt-3 text-gray-600'>
-            Search by email or company name to find the subscriber.
+            Search by email to find the subscriber.
           </p>
 
           <div className='mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
             <input
               type='text'
               className='w-full max-w-md border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-[#0e355e] focus:ring-2 focus:ring-[#144e8b] transition-all duration-300 outline-none'
-              placeholder='email@company.com or Company Name'
+              placeholder='email@company.com'
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
