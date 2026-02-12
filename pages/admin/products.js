@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
+import { RiLoopLeftFill } from "react-icons/ri";
 import {
   BsFillArrowDownSquareFill,
   BsFillArrowUpSquareFill,
@@ -91,6 +92,24 @@ export default function AdminProductsScreen() {
     }
   });
 
+  const handleRefresh = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/admin/products?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      console.log(
+        `Manual refresh: ${data.length} products at ${new Date().toISOString()}`,
+      );
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,7 +117,7 @@ export default function AdminProductsScreen() {
         const { slug } = router.query;
         const sortQuery = sortDirection === 1 ? "asc" : "desc";
         const { data } = await axios.get(
-          `/api/admin/products?slug=${slug}&sort=${sortQuery}`
+          `/api/admin/products?slug=${slug}&sort=${sortQuery}`,
         );
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
@@ -131,9 +150,9 @@ export default function AdminProductsScreen() {
                 key={href}
                 href={href}
                 className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
-                  isBold
-                    ? "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                    : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                  isBold ?
+                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
                 {label}
@@ -161,6 +180,16 @@ export default function AdminProductsScreen() {
               <span className='font-semibold text-gray-700'>
                 {filteredProducts.length}
               </span>
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className='flex gap-2 my-5 text-xs sm:text-sm bg-[#144e8b] hover:bg-[#0e355e] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+              >
+                <RiLoopLeftFill
+                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                ></RiLoopLeftFill>
+                {loading ? "Refreshing..." : "Refresh"}
+              </button>
             </div>
           </div>
 
@@ -173,14 +202,14 @@ export default function AdminProductsScreen() {
                 placeholder='Search products or manufacturers...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
+                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#144e8b] focus:border-[#144e8b] transition-colors'
               />
             </div>
             <div className='flex gap-2'>
               <select
                 value={filterStock}
                 onChange={(e) => setFilterStock(e.target.value)}
-                className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white'
+                className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#144e8b] focus:border-[#144e8b] transition-colors bg-white'
               >
                 <option value='all'>All Stock Levels</option>
                 <option value='inStock'>In Stock</option>
@@ -191,12 +220,12 @@ export default function AdminProductsScreen() {
           </div>
         </div>
 
-        {loading ? (
+        {loading ?
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
             <span className='ml-3 text-gray-600'>Loading products...</span>
           </div>
-        ) : error ? (
+        : error ?
           <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
             <div className='flex items-center'>
               <div className='text-red-600 font-medium'>
@@ -205,17 +234,16 @@ export default function AdminProductsScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        ) : filteredProducts.length === 0 ? (
+        : filteredProducts.length === 0 ?
           <div className='text-center py-12'>
             <div className='text-gray-500 mb-2'>No products found</div>
             <div className='text-sm text-gray-400'>
-              {searchTerm || filterStock !== "all"
-                ? "Try adjusting your search or filter criteria"
-                : "No products available"}
+              {searchTerm || filterStock !== "all" ?
+                "Try adjusting your search or filter criteria"
+              : "No products available"}
             </div>
           </div>
-        ) : (
-          <>
+        : <>
             {/* Mobile Card Layout */}
             <div className='grid gap-4 lg:hidden'>
               {filteredProducts.map((product) => {
@@ -322,11 +350,10 @@ export default function AdminProductsScreen() {
                               sortDirection === -1 ? "Ascending" : "Descending"
                             }`}
                           >
-                            {sortDirection === -1 ? (
-                              <BsFillArrowUpSquareFill className='text-blue-600' />
-                            ) : (
-                              <BsFillArrowDownSquareFill className='text-blue-600' />
-                            )}
+                            {sortDirection === -1 ?
+                              <BsFillArrowUpSquareFill className='text-[#0e355e]' />
+                            : <BsFillArrowDownSquareFill className='text-[#144e8b]' />
+                            }
                           </button>
                         </div>
                       </th>
@@ -429,7 +456,7 @@ export default function AdminProductsScreen() {
               </div>
             </div>
           </>
-        )}
+        }
       </div>
     </Layout>
   );

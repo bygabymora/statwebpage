@@ -10,6 +10,7 @@ import {
   FaTruck,
   FaBox,
 } from "react-icons/fa";
+import { RiLoopLeftFill } from "react-icons/ri";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -58,6 +59,24 @@ export default function AdminOrderScreen() {
     orders: [],
     error: "",
   });
+
+  const handleRefresh = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/admin/orders?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      console.log(
+        `Manual refresh: ${data.length} orders at ${new Date().toISOString()}`,
+      );
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+    }
+  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -120,10 +139,14 @@ export default function AdminOrderScreen() {
                 </p>
               </div>
               <button
-                onClick={fetchData}
-                className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm sm:text-base'
+                onClick={handleRefresh}
+                disabled={loading}
+                className='flex gap-2 my-5 text-xs sm:text-sm bg-[#144e8b] hover:bg-[#0e355e] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
               >
-                Refresh Orders
+                <RiLoopLeftFill
+                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                ></RiLoopLeftFill>
+                {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
             <div className='flex flex-wrap gap-2 sm:gap-3'>
