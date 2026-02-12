@@ -286,22 +286,45 @@ export async function getServerSideProps(context) {
       .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
   };
 
+  // Function to handle common abbreviation patterns
+  const fixAbbreviations = (slugStr) => {
+    return slugStr
+      .replace(/\b(u-s|u\.s\.)\b/g, "us") // u-s or u.s. → us
+      .replace(/\b(u-k|u\.k\.)\b/g, "uk") // u-k or u.k. → uk
+      .replace(/\b(e-u|e\.u\.)\b/g, "eu") // e-u or e.u. → eu
+      .replace(/\b(c-e-o)\b/g, "ceo") // c-e-o → ceo
+      .replace(/\b(i-t)\b/g, "it") // i-t → it
+      .replace(/\b(a-i)\b/g, "ai") // a-i → ai
+      .replace(/\b(i-o-t)\b/g, "iot") // i-o-t → iot
+      .replace(/-+/g, "-") // Clean up any multiple hyphens
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+  };
+
   // First try to find with the original slug
   let doc = await News.findOne({ slug }).lean();
 
-  // If not found and slug contains encoded characters or uppercase, try with cleaned slug
-  if (!doc && (slug.includes("%") || /[A-Z]/.test(slug))) {
-    const cleanedSlug = cleanSlug(slug);
-    doc = await News.findOne({ slug: cleanedSlug }).lean();
+  // If not found, try various alternative slug formats
+  if (!doc) {
+    const alternativeSlugs = [
+      // Try with cleaned slug (for encoded URLs)
+      cleanSlug(slug),
+      // Try with abbreviation fixes
+      fixAbbreviations(slug),
+      // Try with both cleaning and abbreviation fixes
+      fixAbbreviations(cleanSlug(slug)),
+    ].filter((altSlug) => altSlug !== slug && altSlug.length > 0); // Only try different slugs
 
-    // If found with cleaned slug, redirect to correct URL
-    if (doc) {
-      return {
-        redirect: {
-          destination: `/news/${cleanedSlug}`,
-          permanent: true,
-        },
-      };
+    for (const altSlug of alternativeSlugs) {
+      doc = await News.findOne({ slug: altSlug }).lean();
+      if (doc) {
+        // If found with alternative slug, redirect to correct URL
+        return {
+          redirect: {
+            destination: `/news/${altSlug}`,
+            permanent: true,
+          },
+        };
+      }
     }
   }
 
