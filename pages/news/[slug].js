@@ -136,16 +136,58 @@ export default function Newscreen({
           </a>
         </div>
         <div className='border-t border-gray-200 pt-4 mb-8'>
-          <div className='relative w-full h-64 sm:h-80 rounded-lg overflow-hidden mb-6'>
-            <Image
-              src={news.imageUrl}
-              alt={news.title}
-              title={news.title}
-              layout='fill'
-              objectFit='cover'
-              priority
-            />
-          </div>
+          {news.hasVideo && news.videoUrl ?
+            <div className='relative w-full rounded-lg overflow-hidden mb-6'>
+              {/* Video Player */}
+              {news.videoType === "youtube" ?
+                <div className='relative w-full h-64 sm:h-80 lg:h-96'>
+                  <iframe
+                    src={news.videoUrl.replace("watch?v=", "embed/")}
+                    title={news.title}
+                    className='absolute top-0 left-0 w-full h-full'
+                    frameBorder='0'
+                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                    allowFullScreen
+                  />
+                </div>
+              : news.videoType === "vimeo" ?
+                <div className='relative w-full h-64 sm:h-80 lg:h-96'>
+                  <iframe
+                    src={news.videoUrl}
+                    title={news.title}
+                    className='absolute top-0 left-0 w-full h-full'
+                    frameBorder='0'
+                    allow='autoplay; fullscreen; picture-in-picture'
+                    allowFullScreen
+                  />
+                </div>
+              : <div className='relative w-full h-64 sm:h-80 lg:h-96'>
+                  <video
+                    controls
+                    className='w-full h-full object-cover'
+                    poster={news.imageUrl}
+                    preload='metadata'
+                  >
+                    <source
+                      src={news.videoUrl}
+                      type={`video/${news.videoType || "mp4"}`}
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              }
+            </div>
+          : <div className='relative w-full h-64 sm:h-80 rounded-lg overflow-hidden mb-6'>
+              <Image
+                src={news.imageUrl}
+                alt={news.title}
+                title={news.title}
+                layout='fill'
+                objectFit='cover'
+                priority
+              />
+            </div>
+          }
           <div className='text-gray-600 mb-4'>
             <span className='text-sm'>{news.title}</span>
           </div>
