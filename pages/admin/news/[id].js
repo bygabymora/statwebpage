@@ -167,19 +167,18 @@ export default function AdminNewsEditScreen() {
   const addLink = () => setLinks((prev) => [...prev, { title: "", url: "" }]);
   const updateLink = (i, field, value) =>
     setLinks((prev) =>
-      prev.map((ln, idx) => (idx === i ? { ...ln, [field]: value } : ln))
+      prev.map((ln, idx) => (idx === i ? { ...ln, [field]: value } : ln)),
     );
 
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
       <div className='grid md:grid-cols-3 md:gap-5'>
         <div className='md:col-span-3'>
-          {loading ? (
+          {loading ?
             <div>Loading...</div>
-          ) : error ? (
+          : error ?
             <div className='alert-error'>{error}</div>
-          ) : (
-            <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
+          : <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
               <h1 className='mb-4 text-xl'>Edit Entry - {newsData.title}</h1>
 
               {/* Title */}
@@ -408,7 +407,7 @@ export default function AdminNewsEditScreen() {
                 <button
                   type='button'
                   onClick={addLink}
-                  className='text-blue-600'
+                  className='text-[#144e8b]'
                 >
                   + Add source
                 </button>
@@ -419,7 +418,7 @@ export default function AdminNewsEditScreen() {
                 <button
                   type='submit'
                   disabled={loadingUpdate}
-                  className='px-4 py-2 bg-blue-600 text-white rounded'
+                  className='px-4 py-2 bg-[#0e355e] text-white rounded'
                 >
                   {loadingUpdate ? "Saving…" : "Update"}
                 </button>
@@ -432,7 +431,7 @@ export default function AdminNewsEditScreen() {
                 </button>
               </div>
             </form>
-          )}
+          }
         </div>
       </div>
     </Layout>
