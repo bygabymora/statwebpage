@@ -6,7 +6,7 @@ import Layout from "../../components/main/Layout";
 import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
-import { BsChevronRight, BsPlay } from "react-icons/bs";
+import { BsChevronRight } from "react-icons/bs";
 import { generateNewsPageJSONLD } from "../../utils/seo";
 
 export default function VideoNews({ news }) {
@@ -48,7 +48,6 @@ export default function VideoNews({ news }) {
 
       <div className='text-center mt-5'>
         <div className='flex items-center justify-center gap-3 mb-4'>
-          <BsPlay className='text-[#0e355e] text-3xl md:text-4xl' />
           <h1
             id='video-news'
             className='section__title text-4xl md:text-5xl font-bold tracking-tight'
