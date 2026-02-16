@@ -53,7 +53,7 @@ export const NewsItem = ({ news }) => {
         />
         {news.hasVideo && (
           <>
-            <div className='absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded z-10 flex items-center gap-1'>
+            <div className='absolute top-2 right-2 bg-[#0e355e] text-white px-2 py-1 text-xs rounded z-10 flex items-center gap-1'>
               🔊 VIDEO
             </div>
             {/* Play Button Overlay */}
