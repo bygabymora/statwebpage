@@ -112,8 +112,7 @@ const Banner = () => {
             variants={containerVariants}
           >
             <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e] my-10'>
-              Premium Surgical Supplies & Medical Equipment | STAT Surgical
-              Supply
+              Premium Surgical Supplies | STAT Surgical Supply
             </h1>
 
             <div className='text-[#414b53de] text-base font-normal text-center mb-6'>
@@ -122,7 +121,7 @@ const Banner = () => {
                 serving over 150+ healthcare facilities nationwide. We provide
                 high-quality surgical disposables and instruments at unmatched
                 competitive prices. Explore our comprehensive range of premium
-                medical equipment featuring industry-leading brands. Our
+                Surgical Supplies featuring industry-leading brands. Our
                 cost-saving solutions are specifically tailored to meet your
                 healthcare facility&apos;s unique needs with fast, reliable
                 delivery and exceptional customer service.
@@ -137,7 +136,7 @@ const Banner = () => {
               <Link
                 href='/products'
                 className='w-full sm:w-auto'
-                aria-label='Browse our complete catalog of surgical supplies and medical equipment'
+                aria-label='Browse our complete catalog of surgical supplies'
                 title='Shop Premium Surgical Supplies - Fast Delivery Available'
               >
                 <motion.button
@@ -145,10 +144,10 @@ const Banner = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type='button'
-                  aria-label='Shop surgical supplies and medical equipment'
+                  aria-label='Shop surgical supplies'
                 >
                   <TiShoppingCart aria-hidden='true' />
-                  Shop Now
+                  Shop Surgical Supplies
                 </motion.button>
               </Link>
 
@@ -176,13 +175,13 @@ const Banner = () => {
             className='relative w-full max-w-[500px] aspect-[1/1] mx-auto'
             variants={imageVariants}
             role='img'
-            aria-label='Showcase of premium surgical equipment and medical supplies'
+            aria-label='Showcase of premium Surgical Supplies'
           >
             {banners.map((banner, index) => {
               const imageDescriptions = [
-                "Premium surgical equipment and medical disposables for hospitals and clinics - featuring sterile instruments and high-quality healthcare supplies",
-                "Professional medical equipment catalog showing surgical tools, disposables, and hospital-grade instruments available for purchase",
-                "Healthcare facility supplies including surgical disposables, medical instruments, and sterile equipment for clinical use",
+                "Premium Surgical Supplies for hospitals and clinics - featuring sterile instruments and high-quality healthcare supplies",
+                "Professional Surgical Supplies catalog showing surgical tools, disposables, and hospital-grade instruments available for purchase",
+                "Healthcare facility supplies including surgical disposables and sterile equipment for clinical use",
               ];
 
               return (
@@ -200,7 +199,7 @@ const Banner = () => {
                     src={banner}
                     alt={imageDescriptions[index]}
                     title={`STAT Surgical Supply - ${
-                      index === 0 ? "Premium Medical Equipment"
+                      index === 0 ? "Premium Surgical Supplies"
                       : index === 1 ? "Surgical Instruments Catalog"
                       : "Healthcare Supplies Collection"
                     }`}

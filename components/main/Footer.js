@@ -70,7 +70,7 @@ export default function Footer() {
       setShowRecaptcha(true);
       showStatusMessage(
         "info",
-        "Please complete the reCAPTCHA verification below"
+        "Please complete the reCAPTCHA verification below",
       );
       return;
     }
@@ -100,7 +100,7 @@ export default function Footer() {
       if (!recaptchaResult.success) {
         showStatusMessage(
           "error",
-          "reCAPTCHA verification failed. Please try again."
+          "reCAPTCHA verification failed. Please try again.",
         );
         setRecaptchaToken(null);
         setIsSubmitting(false);
@@ -111,14 +111,14 @@ export default function Footer() {
       const contactToEmail = { name, email };
       const emailmessage = messageManagement(
         contactToEmail,
-        "Newsletter Subscription"
+        "Newsletter Subscription",
       );
 
       await handleSendEmails(emailmessage, contactToEmail);
 
       showStatusMessage(
         "success",
-        "Successfully subscribed to our newsletter!"
+        "Successfully subscribed to our newsletter!",
       );
       setEmail("");
       if (!user?.isApproved) setName("");
@@ -197,7 +197,7 @@ export default function Footer() {
           className='footer-logo hidden lg:block'
           src={Logo}
           alt='STAT Surgical Supply Main Logo'
-          title='Medical Equipment for Professionals | Wholesale by STAT'
+          title='Surgical Supplies for Professionals | Wholesale by STAT'
           loading='lazy'
           width={300}
           height={100}

@@ -98,7 +98,7 @@ export default function facs() {
             <Link
               href='/return-policy'
               className='font-bold underline'
-              title='Return Policy, medical equipment'
+              title='Return Policy, Surgical Supplies'
             >
               www.statsurgicalsupply.com/return-policy{" "}
             </Link>
@@ -828,7 +828,7 @@ export default function facs() {
             onClick={handleCallButtonClick}
             className='contact__button'
             target='_blank'
-            title='View on Google Maps, healthcare, medical equipment'
+            title='View on Google Maps, healthcare, surgical supplies'
             href='https://www.google.com/maps/place/100+Ashley+Dr+S+%23600,+Tampa,+FL+33602,+EE.+UU./@27.9446387,-82.4577838,17z/data=!3m1!4b1!4m6!3m5!1s0x88c2c48c390490ab:0x202198cbac670f1a!8m2!3d27.9446387!4d-82.4577838!16s%2Fg%2F11q_6clqzb?entry=ttu'
           >
             100 South Ashley Drive, Suite 600, Tampa, FL 33602
@@ -842,7 +842,7 @@ export default function facs() {
             onClick={handleCallButtonClick}
             className='contact__button'
             target='_blank'
-            title='Call Support, medical equipment'
+            title='Call Support, surgical supplies'
           >
             813-252-0727
             <BiArrowFromLeft />

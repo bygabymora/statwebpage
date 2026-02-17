@@ -116,7 +116,7 @@ export default function Layout({
       intuitive: `${base} - Intuitive surgical solution for hospital-grade performance. Bulk discounts, fast delivery & trusted by surgeons.`,
       stryker: `${base} - Stryker surgical device with unmatched reliability. Designed for hospitals with cost-saving bulk pricing & quick shipping.`,
       ethicon: `${base} - Ethicon surgical supply delivering premium quality. Trusted by healthcare facilities worldwide with fast shipping & bulk discounts.`,
-      bard: `${base} - Bard medical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`,
+      bard: `${base} - Bard surgical device trusted for performance & safety. Fast delivery, hospital-grade quality & affordable bulk pricing.`,
     };
 
     const matchingKey = Object.keys(manufacturerDescriptions).find((key) =>
@@ -134,7 +134,7 @@ export default function Layout({
     const manufacturer = product.manufacturer || "surgical supplies";
     return [
       `${manufacturer} surgical supplies`,
-      `${manufacturer} medical equipment`,
+      `${manufacturer} surgical equipment`,
       `${manufacturer} instruments`,
       `${manufacturer} devices`,
       "hospital-grade products",
@@ -146,9 +146,7 @@ export default function Layout({
     <div className='w-full' lang='en-US'>
       <Head>
         <title>
-          {title ?
-            `${title}`
-          : "Stat Surgical Supply | Buy Healthcare Products"}
+          {title ? `${title}` : "Stat Surgical Supply | Buy Surgical Supplies"}
         </title>
         <meta name='googlebot' content='index, follow' />
         <meta name='googlebot' content='index,follow' />
@@ -217,14 +215,14 @@ export default function Layout({
               content={
                 description ||
                 news.content?.slice(0, 160) ||
-                "Stay up to date with important news and insights in the medical and healthcare industry. Trusted updates from Stat Surgical Supply."
+                "Stay up to date with important news and insights in the surgical and healthcare industry. Trusted updates from Stat Surgical Supply."
               }
             />
             <meta
               name='keywords'
               content={
                 news.tags?.join(", ") ||
-                "medical news, healthcare, health updates, surgery, innovation, patient care, medical technology, hospital news"
+                "surgical news, healthcare, health updates, surgery, innovation, patient care, hospital news"
               }
             />
             <meta property='og:type' content='article' />
@@ -284,7 +282,7 @@ export default function Layout({
               name='description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services. Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
+                "Find answers to the most frequently asked questions about our surgical supplies and services. Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
               }
             />
             <meta
@@ -300,7 +298,7 @@ export default function Layout({
               property='og:description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
+                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
               }
             />
             <meta property='og:image' content={defaultOgImage} />
@@ -318,7 +316,7 @@ export default function Layout({
               name='twitter:description'
               content={
                 description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures, ordering surgical tools, and maintaining sterile medical equipment."
+                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
               }
             />
             <meta name='twitter:image' content={defaultOgImage} />
@@ -340,7 +338,7 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta property='og:type' content='website' />
             <meta property='og:site_name' content='STAT Surgical Supply' />
@@ -350,7 +348,7 @@ export default function Layout({
             />
             <meta
               name='keywords'
-              content='sterile surgical disposables, medical disposables for surgery, types of medical equipment, buy surgical supplies online'
+              content='sterile surgical disposables, surgical disposables for surgery, types of surgical equipment, buy surgical supplies online'
             />
             <meta
               property='og:title'
@@ -358,7 +356,7 @@ export default function Layout({
             />
             <meta
               property='og:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta property='og:image' content={defaultOgImage} />
             <meta name='twitter:card' content='summary_large_image' />
@@ -368,7 +366,7 @@ export default function Layout({
             />
             <meta
               name='twitter:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
           </>
