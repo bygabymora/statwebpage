@@ -41,7 +41,7 @@ function generateJSONLD(news) {
 
 function generateProductJSONLD(product) {
   const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
-    product.name
+    product.name,
   )}`;
   const price = (
     product.each?.minSalePrice ||
@@ -53,9 +53,8 @@ function generateProductJSONLD(product) {
     0
   ).toFixed(2);
 
-  const keywords = Array.isArray(product.keywords)
-    ? product.keywords.join(", ")
-    : undefined;
+  const keywords =
+    Array.isArray(product.keywords) ? product.keywords.join(", ") : undefined;
 
   return {
     "@context": "https://schema.org/",
@@ -162,7 +161,7 @@ function generateOrganizationJSONLD() {
       height: 60,
     },
     description:
-      "Leading provider of premium surgical supplies and medical equipment serving healthcare facilities nationwide with cost-effective solutions.",
+      "Leading provider of premium surgical supplies serving healthcare facilities nationwide with cost-effective solutions.",
     foundingDate: "2020",
     // Use NAICS instead (valid in Schema.org & Google)
     naics: "423450",
@@ -195,7 +194,7 @@ function generateOrganizationJSONLD() {
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: "Medical Equipment Supply Services",
+        name: "Shop Surgical Supplies Services",
         description:
           "Comprehensive surgical supply services including equipment sales, bulk pricing, and expert consultation.",
       },
@@ -211,7 +210,7 @@ function generateAboutPageJSONLD() {
     "@id": "https://www.statsurgicalsupply.com/about",
     name: "About STAT Surgical Supply",
     description:
-      "Learn about STAT Surgical Supply's mission to provide premium surgical equipment and medical supplies to healthcare professionals nationwide.",
+      "Learn about STAT Surgical Supply's mission to provide premium surgical supplies to healthcare professionals nationwide.",
     url: "https://www.statsurgicalsupply.com/about",
     mainEntity: {
       "@id": "https://www.statsurgicalsupply.com/#organization",
@@ -244,7 +243,7 @@ function generateContactPageJSONLD() {
     "@id": "https://www.statsurgicalsupply.com/contact",
     name: "Contact STAT Surgical Supply",
     description:
-      "Get in touch with our medical supply experts for quotes, product information, and personalized healthcare solutions.",
+      "Get in touch with our surgical supply experts for quotes, product information, and personalized healthcare solutions.",
     url: "https://www.statsurgicalsupply.com/contact",
     mainEntity: {
       "@id": "https://www.statsurgicalsupply.com/#organization",
@@ -273,7 +272,7 @@ function generateContactPageJSONLD() {
 function generateProductsPageJSONLD(
   products = [],
   currentPage = 1,
-  totalProducts = 0
+  totalProducts = 0,
 ) {
   const baseUrl = "https://www.statsurgicalsupply.com/products";
   const pageUrl = currentPage > 1 ? `${baseUrl}?page=${currentPage}` : baseUrl;
@@ -282,13 +281,13 @@ function generateProductsPageJSONLD(
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": pageUrl,
-    name: "Surgical Supplies & Medical Equipment Catalog",
+    name: "Surgical Supplies Catalog",
     description:
-      "Browse our comprehensive catalog of premium surgical disposables, medical instruments, and healthcare equipment from leading manufacturers.",
+      "Browse our comprehensive catalog of premium surgical disposables and healthcare equipment from leading manufacturers.",
     url: pageUrl,
     mainEntity: {
       "@type": "ItemList",
-      name: "Medical Products Catalog",
+      name: "Surgical Products Catalog",
       numberOfItems: totalProducts,
       // IMPORTANT: avoid nested Product here to prevent "Product snippet" errors on listing pages
       itemListElement: products.slice(0, 10).map((product, index) => ({
@@ -296,7 +295,7 @@ function generateProductsPageJSONLD(
         position: (currentPage - 1) * 10 + index + 1,
         name: `${product.manufacturer} ${product.name}`,
         url: `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
-          product.name
+          product.name,
         )}`,
       })),
     },
@@ -367,9 +366,9 @@ function generateNewsPageJSONLD(articles = []) {
     "@context": "https://schema.org",
     "@type": "Blog",
     "@id": "https://www.statsurgicalsupply.com/news",
-    name: "Medical News & Healthcare Insights",
+    name: "Surgical News & Healthcare Insights",
     description:
-      "Stay updated with the latest news and insights in healthcare, surgical technology, and medical equipment industry.",
+      "Stay updated with the latest news and insights in healthcare, surgical technology.",
     url: "https://www.statsurgicalsupply.com/news",
     publisher: {
       "@id": "https://www.statsurgicalsupply.com/#organization",
@@ -429,7 +428,7 @@ function generateLocalBusinessJSONLD() {
     "@id": "https://www.statsurgicalsupply.com/#localbusiness",
     name: "STAT Surgical Supply",
     description:
-      "Leading supplier of surgical equipment and medical disposables serving healthcare facilities nationwide.",
+      "Leading supplier of surgical supplies serving healthcare facilities nationwide.",
     url: "https://www.statsurgicalsupply.com",
     telephone: "+1-813-252-0727",
     address: {

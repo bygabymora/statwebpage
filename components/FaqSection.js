@@ -25,7 +25,7 @@ const faqData = [
       "All products arrive in original manufacturer packaging, exactly as if shipped directly from the source.",
   },
   {
-    question: "Can I negotiate prices on surgical and medical supplies?",
+    question: "Can I negotiate prices on surgical and Surgical Supplies?",
     answer:
       "Stat Surgical has the best prices in the business. We will never let pricing get in the way of our strong relationships with our customers. If pricing is an issue, we will make it work!",
   },
@@ -57,7 +57,8 @@ export default function FaqSection() {
             Frequently Asked Questions
           </h2>
           <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
-            Quick answers to common questions about our medical supply services
+            Quick answers to common questions about our Surgical Supplies
+            services
           </p>
         </div>
 
@@ -81,11 +82,9 @@ export default function FaqSection() {
                     </h3>
                   </div>
                   <div className='flex-shrink-0'>
-                    {openFaq === index ? (
+                    {openFaq === index ?
                       <FaChevronUp className='text-[#144e8b] text-xl' />
-                    ) : (
-                      <FaChevronDown className='text-[#144e8b] text-xl' />
-                    )}
+                    : <FaChevronDown className='text-[#144e8b] text-xl' />}
                   </div>
                 </div>
               </button>

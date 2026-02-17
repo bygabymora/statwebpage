@@ -12,7 +12,7 @@ export const manufacturerProfiles = {
     aliases: ["medtronic", "covidien"],
     website: "https://www.medtronic.com/",
     description:
-      "Medtronic is a global leader in medical technology, including surgical, cardiovascular, neurological and diabetes solutions. Covidien is now part of Medtronic.",
+      "Medtronic is a global leader in Supplies, including surgical, cardiovascular, neurological and diabetes solutions. Covidien is now part of Medtronic.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: null,
     specialties: ["Surgical", "Cardiovascular", "Neurology", "Diabetes"],
@@ -24,7 +24,7 @@ export const manufacturerProfiles = {
     aliases: ["bd", "becton dickinson", "bard", "c.r. bard", "cr bard"],
     website: "https://www.bd.com/",
     description:
-      "BD is a global medical technology company. In 2017, it acquired C.R. Bard, whose products are now part of BD's portfolio.",
+      "BD is a global leader in Supplies, including medical devices, interventional, urology and vascular solutions. In 2017, it acquired C.R. Bard, whose products are now part of BD's portfolio.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: "customer_support@bd.com",
     specialties: ["Medical Devices", "Interventional", "Urology", "Vascular"],
@@ -36,7 +36,7 @@ export const manufacturerProfiles = {
     aliases: ["johnson & johnson", "j&j", "ethicon", "depuy"],
     website: "https://www.jnjmedtech.com/",
     description:
-      "Johnson & Johnson MedTech is a global leader in surgical, orthopedic and interventional solutions through brands like Ethicon and DePuy.",
+      "Johnson & Johnson MedTech is a global leader in Supplies, including surgical, orthopedic and interventional solutions through brands like Ethicon and DePuy.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: null,
     specialties: ["Surgery", "Orthopedics", "Wound Closure", "Energy Devices"],
@@ -48,7 +48,7 @@ export const manufacturerProfiles = {
     aliases: ["zimmer", "biomet", "zimmer biomet"],
     website: "https://www.zimmerbiomet.com/",
     description:
-      "Zimmer Biomet is a global leader in musculoskeletal healthcare and orthopedic reconstruction.",
+      "Zimmer Biomet is a global leader in Supplies, including musculoskeletal healthcare and orthopedic reconstruction.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: null,
     specialties: ["Orthopedics", "Sports Medicine", "Biologics"],
@@ -60,7 +60,7 @@ export const manufacturerProfiles = {
     aliases: ["stryker"],
     website: "https://www.stryker.com/",
     description:
-      "Stryker is a leading medical technology company offering innovative surgical, orthopedic and neurotechnology products.",
+      "Stryker is a leading medical technology company offering innovative Supplies, including surgical, orthopedic and neurotechnology products.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: null,
     specialties: ["Orthopedics", "Surgical", "Neurotechnology"],
@@ -72,7 +72,7 @@ export const manufacturerProfiles = {
     aliases: ["smith & nephew", "smith and nephew", "s&n"],
     website: "https://www.smith-nephew.com/",
     description:
-      "Smith & Nephew is a global medical technology company focused on orthopedics, sports medicine and wound management.",
+      "Smith & Nephew is a global leader in Supplies, including orthopedics, sports medicine and wound management.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark", "ISO 9001"],
     supportEmail: null,
     specialties: ["Orthopedics", "Sports Medicine", "Wound Care"],
@@ -84,7 +84,7 @@ export const manufacturerProfiles = {
     aliases: ["baxter"],
     website: "https://www.baxter.com/",
     description:
-      "Baxter is a global healthcare company focused on critical care, infusion systems and hospital products.",
+      "Baxter is a global leader in Supplies, including critical care, infusion systems and hospital products.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Infusion", "Critical Care", "Hospital Products"],
@@ -96,7 +96,7 @@ export const manufacturerProfiles = {
     aliases: ["teleflex"],
     website: "https://www.teleflex.com/",
     description:
-      "Teleflex is a global provider of medical technologies focused on anesthesia, surgery, urology and vascular access.",
+      "Teleflex is a global leader in Supplies, including technologies focused on anesthesia, surgery, urology and vascular access.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Anesthesia", "Urology", "Vascular", "Surgery"],
@@ -108,7 +108,7 @@ export const manufacturerProfiles = {
     aliases: ["integra", "integra lifesciences"],
     website: "https://www.integralife.com/",
     description:
-      "Integra LifeSciences develops medical technologies for neurosurgery, reconstructive surgery and wound care.",
+      "Integra LifeSciences is a global leader in Supplies, including technologies for neurosurgery, reconstructive surgery and wound care.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Neurosurgery", "Reconstruction", "Wound Care"],
@@ -120,7 +120,7 @@ export const manufacturerProfiles = {
     aliases: ["arthrex"],
     website: "https://www.arthrex.com/",
     description:
-      "Arthrex is a global medical device company specializing in minimally invasive orthopedic surgery.",
+      "Arthrex is a global leader in Supplies, including technologies for minimally invasive orthopedic surgery.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Sports Medicine", "Arthroscopy", "Orthopedics"],
@@ -132,7 +132,7 @@ export const manufacturerProfiles = {
     aliases: ["hologic"],
     website: "https://www.hologic.com/",
     description:
-      "Hologic is focused on women's health including diagnostics, surgical and medical imaging systems.",
+      "Hologic is a global leader in Supplies, including technologies focused on women's health, diagnostics, surgical and medical imaging systems.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Diagnostics", "Imaging", "Surgical"],
@@ -148,7 +148,7 @@ export const manufacturerProfiles = {
     aliases: ["acclarent"],
     website: "https://products.integralife.com/",
     description:
-      "Acclarent develops ENT surgical technologies and is part of Johnson & Johnson MedTech.",
+      "Acclarent is a global leader in Supplies, including ENT surgical technologies and is part of Johnson & Johnson MedTech.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["ENT Surgery"],
@@ -212,7 +212,7 @@ export const manufacturerProfiles = {
     aliases: ["medical", "surgical", "healthcare", "devices", "instruments"],
     website: null,
     description:
-      "Trusted medical device manufacturer providing high-quality healthcare products and surgical solutions.",
+      "Trusted surgical supplies device manufacturer providing high-quality healthcare products and surgical solutions.",
     certifications: ["ISO 13485", "FDA Registered"],
     supportEmail: null,
     specialties: ["Medical Devices", "Surgical Instruments"],
@@ -267,8 +267,8 @@ export const getManufacturersBySpecialty = (specialty) => {
       (p) =>
         p.specialties &&
         p.specialties.some((s) =>
-          s.toLowerCase().includes(specialty.toLowerCase())
-        )
+          s.toLowerCase().includes(specialty.toLowerCase()),
+        ),
     )
     .map((p) => p.name);
 };

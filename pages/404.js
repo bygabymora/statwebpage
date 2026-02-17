@@ -10,7 +10,7 @@ export default function Custom404() {
   return (
     <Layout
       title='Page Not Found'
-      description="The page you're looking for doesn't exist. Explore our surgical supplies and medical equipment or contact our team for assistance."
+      description="The page you're looking for doesn't exist. Explore our surgical supplies or contact our team for assistance."
     >
       <div className='min-h-[70vh] w-full flex flex-col items-center justify-center py-12'>
         {/* Main Content Container */}
@@ -50,8 +50,7 @@ export default function Custom404() {
               or doesn&apos;t exist.
             </p>
             <p className='text-base text-gray-500'>
-              Let&apos;s get you back to finding the surgical supplies and
-              medical equipment you need.
+              Let&apos;s get you back to finding the surgical supplies you need.
             </p>
           </div>
 
@@ -129,8 +128,7 @@ export default function Custom404() {
               Need Help Finding Something?
             </h4>
             <p className='text-sm text-gray-600 mb-3'>
-              Our team is here to help you find the right surgical supplies and
-              medical equipment.
+              Our team is here to help you find the right surgical supplies.
             </p>
             <div className='flex flex-col sm:flex-row gap-3 justify-center text-sm'>
               <a

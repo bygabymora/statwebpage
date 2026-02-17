@@ -50,7 +50,7 @@ const NewsSection = ({ news = [] }) => {
           </h2>
           <p className='text-[#414b53de] text-base font-normal max-w-3xl mx-auto'>
             Stay informed with the latest developments in healthcare, surgical
-            innovations, and medical supply industry trends that impact your
+            innovations, and surgical supply industry trends that impact your
             practice.
           </p>
         </motion.header>
