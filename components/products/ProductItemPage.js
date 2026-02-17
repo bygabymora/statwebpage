@@ -34,13 +34,13 @@ export const ProductItemPage = ({ product, index }) => {
   });
   const { data: session, status } = useSession();
   const [currentPrice, setCurrentPrice] = useState(
-    product.each?.wpPrice ?? null
+    product.each?.wpPrice ?? null,
   );
   const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ""
+    product.each?.description || "",
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock ?? null
+    product.each?.countInStock ?? null,
   );
   const [showModal, setShowModal] = useState(false);
   const hasPrice = currentPrice !== null && currentPrice !== 0;
@@ -53,10 +53,12 @@ export const ProductItemPage = ({ product, index }) => {
   const availableTypes = [
     ...(product.each?.countInStock > 0 ? ["Each"] : []),
     ...(product.box?.countInStock > 0 ? ["Box"] : []),
-    ...(product.each?.clearanceCountInStock > 0 ||
-    product.box?.clearanceCountInStock > 0
-      ? ["Clearance"]
-      : []),
+    ...((
+      product.each?.clearanceCountInStock > 0 ||
+      product.box?.clearanceCountInStock > 0
+    ) ?
+      ["Clearance"]
+    : []),
   ];
 
   useEffect(() => {
@@ -76,9 +78,9 @@ export const ProductItemPage = ({ product, index }) => {
     if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
       setTypeOfPurchase("Clearance");
       setCurrentPrice(
-        product.clearance?.price
-          ? `$${product.clearance?.price}`
-          : "Contact us for price"
+        product.clearance?.price ?
+          `$${product.clearance?.price}`
+        : "Contact us for price",
       );
       setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(clearanceStock);
@@ -107,7 +109,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
-      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase
+      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase,
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
 
@@ -141,29 +143,20 @@ export const ProductItemPage = ({ product, index }) => {
       quantity,
       typeOfPurchase,
       unitPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       wpPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       price:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
     });
 
     setQty(1);
@@ -192,7 +185,7 @@ export const ProductItemPage = ({ product, index }) => {
       "Product Wait List",
       null,
       null,
-      product
+      product,
     );
     handleSendEmails(emailMessage, contactToEmail, accountOwner);
 
@@ -211,6 +204,28 @@ export const ProductItemPage = ({ product, index }) => {
       }
     }
   }, [active, product]);
+
+  // Reset out of stock states based on actual inventory levels
+  useEffect(() => {
+    const eachStock = product.each?.countInStock ?? 0;
+    const boxStock = product.box?.countInStock ?? 0;
+    const clearanceStock = product.each?.clearanceCountInStock ?? 0;
+
+    // Reset isOutOfStock state for "Each" type
+    if (eachStock > 0) {
+      setIsOutOfStock(false);
+    }
+
+    // Reset isOutOfStockBox state for "Box" type
+    if (boxStock > 0) {
+      setIsOutOfStockBox(false);
+    }
+
+    // Reset isOutOfStockClearance state for "Clearance" type
+    if (clearanceStock > 0) {
+      setIsOutOfStockClearance(false);
+    }
+  }, [product]);
 
   const handleMatchProduct = (productId) => {
     const matchProduct = user?.cart?.find((x) => x.productId === productId);
@@ -317,10 +332,11 @@ export const ProductItemPage = ({ product, index }) => {
                     handleMatchProduct(product._id) > 0 && (
                       <p className='mt-2 font-semibold'>
                         You have{" "}
-                        {handleMatchProduct(product._id) > 1
-                          ? handleMatchProduct(product._id) +
-                            "units of this item in your cart, that are available for purchase"
-                          : "1 unit of this item in your cart, that is available for purchase"}
+                        {handleMatchProduct(product._id) > 1 ?
+                          handleMatchProduct(product._id) +
+                          "units of this item in your cart, that are available for purchase"
+                        : "1 unit of this item in your cart, that is available for purchase"
+                        }
                         .
                       </p>
                     )}
@@ -386,11 +402,12 @@ export const ProductItemPage = ({ product, index }) => {
         )}
       {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
         <div>
-          {product.each?.countInStock > 0 || product.box?.countInStock > 0 ? (
-            typeOfPurchase === "Each" || typeOfPurchase === "Box" ? (
-              <div className='flex justify-between items-center gap-2 mx-10 mt-5'>
-                {active === "loading"
-                  ? "Loading"
+          {
+            product.each?.countInStock > 0 || product.box?.countInStock > 0 ?
+              typeOfPurchase === "Each" || typeOfPurchase === "Box" ?
+                <div className='flex justify-between items-center gap-2 mx-10 mt-5'>
+                  {active === "loading" ?
+                    "Loading"
                   : active && (
                       <div className='mb-2 justify-between -ml-5'>
                         <div className='font-bold text-base'>U o M</div>
@@ -401,18 +418,18 @@ export const ProductItemPage = ({ product, index }) => {
                             if (value === "Each" && product.each) {
                               setCurrentPrice(product.each?.wpPrice || 0);
                               setCurrentDescription(
-                                product.each?.description || ""
+                                product.each?.description || "",
                               );
                               setCurrentCountInStock(
-                                product.each?.countInStock || 0
+                                product.each?.countInStock || 0,
                               );
                             } else if (value === "Box" && product.box) {
                               setCurrentPrice(product.box?.wpPrice || 0);
                               setCurrentDescription(
-                                product.box?.description || ""
+                                product.box?.description || "",
                               );
                               setCurrentCountInStock(
-                                product.box?.countInStock || 0
+                                product.box?.countInStock || 0,
                               );
                             } else if (
                               value === "Clearance" &&
@@ -420,11 +437,11 @@ export const ProductItemPage = ({ product, index }) => {
                             ) {
                               setCurrentPrice(product.clearance?.price || 0);
                               setCurrentDescription(
-                                product.clearance?.description || ""
+                                product.clearance?.description || "",
                               );
                               setCurrentCountInStock(
                                 product.each?.clearanceCountInStock > 0 ||
-                                  product.box?.clearanceCountInStock > 0
+                                  product.box?.clearanceCountInStock > 0,
                               );
                             }
                           }}
@@ -443,9 +460,9 @@ export const ProductItemPage = ({ product, index }) => {
                                   value={option}
                                   className={({ active }) =>
                                     `cursor-pointer select-none px-4 py-2 ${
-                                      active
-                                        ? "bg-blue-100 text-[#0e355e]"
-                                        : "text-gray-900"
+                                      active ?
+                                        "bg-blue-100 text-[#0e355e]"
+                                      : "text-gray-900"
                                     }`
                                   }
                                 >
@@ -463,96 +480,104 @@ export const ProductItemPage = ({ product, index }) => {
                           </div>
                         </Listbox>
                       </div>
-                    )}
-                {active === "loading"
-                  ? "Loading"
+                    )
+                  }
+                  {active === "loading" ?
+                    "Loading"
                   : active && (
                       <div className='mb-2 justify-between'>
                         <div className='font-bold'>Price</div>
                         {hasPrice ? `$${currentPrice}` : "Call for Price"}
                       </div>
-                    )}
-              </div>
-            ) : null
-          ) : (
-            // If you only have Clearance, show it once without an "Add to Cart" button
-            product.each?.clearanceCountInStock > 0 ||
-            (product.box?.clearanceCountInStock > 0 && (
-              <div className='my-5 text-center'>
-                <h1 className='text-red-500 font-bold text-lg'>Clearance</h1>
-                {active === "loading" ? (
-                  "Loading"
-                ) : active ? (
-                  <div className='mb-2 flex justify-center'>
-                    <div className='font-bold'>Price:</div>
-                    <div className='ml-2 text-[#788b9b]'>
-                      $ {product.clearance?.price || "Call for Price"}
+                    )
+                  }
+                </div>
+              : null
+              // If you only have Clearance, show it once without an "Add to Cart" button
+            : product.each?.clearanceCountInStock > 0 ||
+              (product.box?.clearanceCountInStock > 0 && (
+                <div className='my-5 text-center'>
+                  <h1 className='text-red-500 font-bold text-lg'>Clearance</h1>
+                  {active === "loading" ?
+                    "Loading"
+                  : active ?
+                    <div className='mb-2 flex justify-center'>
+                      <div className='font-bold'>Price:</div>
+                      <div className='ml-2 text-[#788b9b]'>
+                        $ {product.clearance?.price || "Call for Price"}
+                      </div>
                     </div>
-                  </div>
-                ) : null}
-                <div className='text-[#414b53]'>{product.notes}</div>
-              </div>
-            ))
-          )}
+                  : null}
+                  <div className='text-[#414b53]'>{product.notes}</div>
+                </div>
+              ))
+
+          }
           {(product.each?.countInStock > 0 ||
             product.box?.countInStock > 0) && (
             <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
               <div className='flex-column'>
                 <div className='font-bold'>Status</div>
                 <div className=''>
-                  {(typeOfPurchase === "Each" && isOutOfStock) ||
-                  (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                  (typeOfPurchase === "Clearance" && isOutOfStockClearance)
-                    ? "Out of Stock"
-                    : "In Stock"}
+                  {(
+                    (typeOfPurchase === "Each" && isOutOfStock) ||
+                    (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                    (typeOfPurchase === "Clearance" && isOutOfStockClearance)
+                  ) ?
+                    "Out of Stock"
+                  : "In Stock"}
                 </div>
               </div>
-              {active === "loading"
-                ? "Loading"
-                : active && (
-                    <>
-                      {!hasPrice || currentPrice === 0 ? (
-                        <Link href='/support'>
-                          <button className='primary-button align-middle text-white'>
-                            Call for Price
-                          </button>
-                        </Link>
-                      ) : (
-                        <button
-                          className='primary-button align-middle'
-                          type='button'
-                          onClick={addToCartHandler}
-                          disabled={
-                            (typeOfPurchase === "Each" && isOutOfStock) ||
-                            (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                            (typeOfPurchase === "Clearance" &&
-                              isOutOfStockClearance)
-                          }
-                        >
-                          {(typeOfPurchase === "Each" && isOutOfStock) ||
+              {active === "loading" ?
+                "Loading"
+              : active && (
+                  <>
+                    {!hasPrice || currentPrice === 0 ?
+                      <Link href='/support'>
+                        <button className='primary-button align-middle text-white'>
+                          Call for Price
+                        </button>
+                      </Link>
+                    : <button
+                        className='primary-button align-middle'
+                        type='button'
+                        onClick={addToCartHandler}
+                        disabled={
+                          (typeOfPurchase === "Each" && isOutOfStock) ||
                           (typeOfPurchase === "Box" && isOutOfStockBox) ||
                           (typeOfPurchase === "Clearance" &&
                             isOutOfStockClearance)
-                            ? "Out of Stock"
-                            : "Add to Cart"}
-                        </button>
-                      )}
-                    </>
-                  )}
+                        }
+                      >
+                        {(
+                          (typeOfPurchase === "Each" && isOutOfStock) ||
+                          (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                          (typeOfPurchase === "Clearance" &&
+                            isOutOfStockClearance)
+                        ) ?
+                          "Out of Stock"
+                        : "Add to Cart"}
+                      </button>
+                    }
+                  </>
+                )
+              }
             </div>
           )}
-          {session?.user && !active ? (
+          {session?.user && !active ?
             <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
               <div className='font-semibold'>
                 You will be able to see this product info soon.
               </div>
             </div>
-          ) : !session?.user ? (
+          : !session?.user ?
             <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
-              {(product.each?.wpPrice &&
-                product.each?.wpPrice !== "Call for price") ||
-              (product.box?.wpPrice &&
-                product.box?.wpPrice !== "Call for price") ? (
+              {(
+                (product.each?.wpPrice &&
+                  product.each?.wpPrice !== "Call for price") ||
+                (product.box?.wpPrice &&
+                  product.box?.wpPrice !== "Call for price")
+              ) ?
                 <div className=''>
                   <span className='font-semibold'>
                     Web price: ${product.each?.wpPrice || product.box?.wpPrice}{" "}
@@ -561,12 +586,11 @@ export const ProductItemPage = ({ product, index }) => {
                   <br />
                   Contact us or register for custom pricing.
                 </div>
-              ) : (
-                <div className=''>
+              : <div className=''>
                   Sign in to see availability and purchase this product at a
                   custom price.
                 </div>
-              )}
+              }
               <div className='flex gap-5'>
                 <Link href='/Login' title='Access Your Account to Order Now'>
                   <button className='primary-button align-middle text-white'>
@@ -583,7 +607,7 @@ export const ProductItemPage = ({ product, index }) => {
                 </Link>
               </div>
             </div>
-          ) : null}
+          : null}
         </div>
       )}
     </div>
