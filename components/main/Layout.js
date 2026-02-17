@@ -340,7 +340,7 @@ export default function Layout({
             {/* Default (homepage, or fallback) */}
             <meta
               name='description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
             />
             <meta property='og:type' content='website' />
             <meta property='og:site_name' content='STAT Surgical Supply' />
@@ -358,7 +358,7 @@ export default function Layout({
             />
             <meta
               property='og:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
             />
             <meta property='og:image' content={defaultOgImage} />
             <meta name='twitter:card' content='summary_large_image' />
@@ -368,7 +368,7 @@ export default function Layout({
             />
             <meta
               name='twitter:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop medical equipment and disposables with fast shipping and easy returns.'
+              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop now and disposables with fast shipping and easy returns.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
           </>
