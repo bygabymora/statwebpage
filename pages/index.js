@@ -46,7 +46,7 @@ export async function getStaticProps() {
       "each.wpPrice": 1,
       "box.wpPrice": 1,
       "clearance.price": 1,
-    }
+    },
   ).lean();
 
   // Same public ordering you described:
@@ -55,7 +55,7 @@ export async function getStaticProps() {
 
   // Home "featured": the same filter you had (each price > 0 AND in stock)
   const featured = ordered.filter(
-    (p) => (p.each?.wpPrice ?? 0) > 0 && (p.each?.countInStock ?? 0) > 0
+    (p) => (p.each?.wpPrice ?? 0) > 0 && (p.each?.countInStock ?? 0) > 0,
   );
 
   // Limit how many cards we send initially for mobile perf
@@ -73,8 +73,9 @@ export async function getStaticProps() {
     ...news,
     _id: news._id.toString(),
     createdAt: news.createdAt.toISOString(),
-    excerpt: news.content
-      ? news.content.replace(/<[^>]*>/g, "").slice(0, 150) + "..."
+    excerpt:
+      news.content ?
+        news.content.replace(/<[^>]*>/g, "").slice(0, 150) + "..."
       : "",
   }));
 
@@ -127,7 +128,7 @@ function Carousel({ products }) {
     if (isInteracting) return;
     const iv = setInterval(
       () => setCurrentSlide((s) => (s + 1) % totalSlides),
-      3000
+      3000,
     );
     return () => clearInterval(iv);
   }, [isInteracting, totalSlides]);
@@ -179,7 +180,7 @@ function Carousel({ products }) {
       initial='hidden'
       whileInView='show'
       viewport={{ once: true, amount: 0.2 }}
-      aria-label='Featured surgical supplies and medical equipment carousel'
+      aria-label='Featured surgical supplies and surgical equipment carousel'
       role='region'
     >
       <nav
@@ -215,7 +216,7 @@ function Carousel({ products }) {
         onMouseEnter={handleInteractionStart}
         onMouseLeave={handleMouseUp}
         role='list'
-        aria-label='Featured medical products'
+        aria-label='Featured surgical products'
       >
         {products.map((p, i) => (
           <motion.div
@@ -255,8 +256,8 @@ export default function Home({ products, news = [] }) {
   return (
     <>
       <Layout
-        title='Premium Surgical Supplies & Medical Equipment | STAT Surgical Supply'
-        description='Discover premium surgical supplies and medical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide. Stay updated with the latest healthcare news and industry insights.'
+        title='Premium Surgical Supplies & Surgical Equipment | STAT Surgical Supply'
+        description='Discover premium surgical supplies and surgical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide. Stay updated with the latest healthcare news and industry insights.'
       >
         <div>
           <div className='my-5 -mt-2'>
@@ -311,19 +312,18 @@ export default function Home({ products, news = [] }) {
                 id='featured-products-heading'
                 className='section__title text-center text-3xl font-bold text-[#0e355e]'
               >
-                Featured Premium Surgical Supplies & Medical Equipment
+                Featured Premium Surgical Supplies
               </h2>
               <p className='text-[#414b53de] text-base font-normal mt-4 max-w-3xl mx-auto'>
-                Explore our most trusted surgical disposables and medical
+                Explore our most trusted surgical disposables and surgical
                 instruments, carefully selected for their quality and
                 reliability by healthcare professionals nationwide.
               </p>
             </motion.header>
 
-            {products.length > 0 ? (
+            {products.length > 0 ?
               <Carousel products={products} />
-            ) : (
-              <div className='text-center mt-10 p-8 bg-gray-50 rounded-lg'>
+            : <div className='text-center mt-10 p-8 bg-gray-50 rounded-lg'>
                 <p className='text-gray-600 text-lg'>
                   No featured products are currently available.
                 </p>
@@ -331,7 +331,7 @@ export default function Home({ products, news = [] }) {
                   Please check back later or browse our full catalog.
                 </p>
               </div>
-            )}
+            }
           </section>
 
           <motion.div

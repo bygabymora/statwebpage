@@ -37,15 +37,15 @@ export default function ProductScreen({ product }) {
   const { status, data: session } = useSession();
   const [currentPrice, setCurrentPrice] = useState();
   const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ""
+    product.each?.description || "",
   );
   const [nowLocal, setNowLocal] = useState(moment());
   const [nowTampa, setNowTampa] = useState(moment.tz("America/New_York"));
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock || null
+    product.each?.countInStock || null,
   );
   const [inventoryLastUpdated, setInventoryLastUpdated] = useState(
-    product?.updatedAt || product?.createdAt || new Date().toISOString()
+    product?.updatedAt || product?.createdAt || new Date().toISOString(),
   );
   const [inventoryJustUpdated, setInventoryJustUpdated] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -116,10 +116,12 @@ export default function ProductScreen({ product }) {
   const availableTypes = [
     ...(product.each?.countInStock > 0 ? ["Each"] : []),
     ...(product.box?.countInStock > 0 ? ["Box"] : []),
-    ...(product.each?.clearanceCountInStock > 0 ||
-    product.box?.clearanceCountInStock > 0
-      ? ["Clearance"]
-      : []),
+    ...((
+      product.each?.clearanceCountInStock > 0 ||
+      product.box?.clearanceCountInStock > 0
+    ) ?
+      ["Clearance"]
+    : []),
   ];
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export default function ProductScreen({ product }) {
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
-      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase
+      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase,
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
 
@@ -174,29 +176,20 @@ export default function ProductScreen({ product }) {
       quantity,
       typeOfPurchase,
       unitPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       wpPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       price:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
     });
 
     setQty(1);
@@ -277,7 +270,7 @@ export default function ProductScreen({ product }) {
           const updatedProduct = await response.json();
           console.warn(
             "Fetched updated product updatedAt:",
-            updatedProduct.updatedAt
+            updatedProduct.updatedAt,
           );
 
           // Ensure we have a valid updatedAt field
@@ -299,7 +292,7 @@ export default function ProductScreen({ product }) {
               setCurrentPrice(
                 updatedProduct.each?.wpPrice ||
                   updatedProduct.each?.customerPrice ||
-                  0
+                  0,
               );
               setCurrentDescription(updatedProduct.each?.description || "");
             } else if (typeOfPurchase === "Box") {
@@ -307,7 +300,7 @@ export default function ProductScreen({ product }) {
               setCurrentPrice(
                 updatedProduct.box?.wpPrice ||
                   updatedProduct.box?.customerPrice ||
-                  0
+                  0,
               );
               setCurrentDescription(updatedProduct.box?.description || "");
             }
@@ -317,7 +310,7 @@ export default function ProductScreen({ product }) {
             setIsOutOfStockBox((updatedProduct.box?.countInStock || 0) <= 0);
             setIsOutOfStockClearance(
               (updatedProduct.each?.clearanceCountInStock || 0) <= 0 &&
-                (updatedProduct.box?.clearanceCountInStock || 0) <= 0
+                (updatedProduct.box?.clearanceCountInStock || 0) <= 0,
             );
 
             // Show notification for 3 seconds
@@ -356,7 +349,7 @@ export default function ProductScreen({ product }) {
       product.each?.description || product.box?.description || product.name;
     return `${product.manufacturer} ${product.name} - ${description.slice(
       0,
-      150
+      150,
     )}... Available for fast delivery with competitive pricing.`;
   };
 
@@ -428,12 +421,12 @@ export default function ProductScreen({ product }) {
             <li className='mt-2'>
               <div
                 className={`text-sm flex items-center gap-2 transition-all duration-300 ${
-                  inventoryJustUpdated
-                    ? "text-green-600 font-semibold animate-pulse"
-                    : "text-[#788b9b]"
+                  inventoryJustUpdated ?
+                    "text-green-600 font-semibold animate-pulse"
+                  : "text-[#788b9b]"
                 }`}
               >
-                {inventoryJustUpdated ? (
+                {inventoryJustUpdated ?
                   <svg
                     className='w-4 h-4 text-green-600'
                     fill='currentColor'
@@ -445,8 +438,7 @@ export default function ProductScreen({ product }) {
                       clipRule='evenodd'
                     />
                   </svg>
-                ) : (
-                  <svg
+                : <svg
                     className='w-4 h-4'
                     fill='currentColor'
                     viewBox='0 0 20 20'
@@ -457,24 +449,22 @@ export default function ProductScreen({ product }) {
                       clipRule='evenodd'
                     />
                   </svg>
-                )}
-                {inventoryJustUpdated ? (
+                }
+                {inventoryJustUpdated ?
                   <span>Inventory just updated!</span>
-                ) : inventoryLastUpdated ? (
+                : inventoryLastUpdated ?
                   <span>
                     Inventory updated:{" "}
                     {moment(inventoryLastUpdated).format("MMM DD, YYYY h:mm A")}
                   </span>
-                ) : (
-                  <span>Inventory status: Loading...</span>
-                )}
+                : <span>Inventory status: Loading...</span>}
               </div>
             </li>
             <h4 className='font-medium text-gray-800 mt-4 mb-2'>
               Shipping Cutoff
             </h4>
             <li>
-              {nowTampa.isBefore(cutoff) ? (
+              {nowTampa.isBefore(cutoff) ?
                 (() => {
                   const diff = moment.duration(cutoff.diff(nowTampa));
                   const hours = Math.floor(diff.asHours());
@@ -488,12 +478,12 @@ export default function ProductScreen({ product }) {
                     </td>
                   );
                 })()
-              ) : nowLocal.isBefore(midnight) ? (
+              : nowLocal.isBefore(midnight) ?
                 <td className='py-2 px-4 border-b text-sm text-gray-600'>
                   The cutoff for next-day shipping has passed. Orders placed now
                   will arrive in two days.
                 </td>
-              ) : null}
+              : null}
             </li>
           </ul>
         </div>
@@ -699,25 +689,24 @@ export default function ProductScreen({ product }) {
       product={product}
       schema={generateProductJSONLD(product)}
       image={product.image}
-      keywords={`${product.manufacturer}, ${product.name}, medical supplies, healthcare equipment, medical devices`}
+      keywords={`${product.manufacturer}, ${product.name}, surgical supplies, healthcare equipment`}
     >
       {/* Breadcrumb Navigation */}
       <nav className='text-sm text-gray-700 mb-6'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#144e8b]'
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span className='text-[#144e8b] font-medium'>
+              : <span className='text-[#144e8b] font-medium'>
                   {breadcrumb.name}
                 </span>
-              )}
+              }
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight className='mx-2 text-gray-500' />
               )}
@@ -745,7 +734,7 @@ export default function ProductScreen({ product }) {
                 className='relative'
               >
                 <Image
-                  alt={`${product.manufacturer} ${product.name} - Professional medical supply product for healthcare facilities and medical professionals`}
+                  alt={`${product.manufacturer} ${product.name} - Professional Surgical supplies product for healthcare facilities`}
                   src={product.image}
                   title={`${product.manufacturer} ${
                     product.name
@@ -876,10 +865,11 @@ export default function ProductScreen({ product }) {
                         handleMatchProduct(product._id) > 0 && (
                           <p className='mt-2 font-semibold'>
                             You have{" "}
-                            {handleMatchProduct(product._id) > 1
-                              ? handleMatchProduct(product._id) +
-                                "units of this item in your cart, that are available for purchase"
-                              : "1 unit of this item in your cart, that is available for purchase"}
+                            {handleMatchProduct(product._id) > 1 ?
+                              handleMatchProduct(product._id) +
+                              "units of this item in your cart, that are available for purchase"
+                            : "1 unit of this item in your cart, that is available for purchase"
+                            }
                             .
                           </p>
                         )}
@@ -901,13 +891,18 @@ export default function ProductScreen({ product }) {
                     !isOutOfStockBox &&
                     !isOutOfStockClearance && (
                       <div>
-                        {product.each?.countInStock > 0 ||
-                        product.box?.countInStock > 0 ? (
-                          typeOfPurchase === "Each" ||
-                          typeOfPurchase === "Box" ? (
-                            <div>
-                              {active === "loading"
-                                ? "Loading"
+                        {
+                          (
+                            product.each?.countInStock > 0 ||
+                            product.box?.countInStock > 0
+                          ) ?
+                            (
+                              typeOfPurchase === "Each" ||
+                              typeOfPurchase === "Box"
+                            ) ?
+                              <div>
+                                {active === "loading" ?
+                                  "Loading"
                                 : active && (
                                     <div className='mb-2 flex justify-between'>
                                       <div className='font-bold'>U o M</div>
@@ -920,43 +915,43 @@ export default function ProductScreen({ product }) {
                                             product.each
                                           ) {
                                             setCurrentPrice(
-                                              product.each?.wpPrice || 0
+                                              product.each?.wpPrice || 0,
                                             );
                                             setCurrentDescription(
-                                              product.each?.description || ""
+                                              product.each?.description || "",
                                             );
                                             setCurrentCountInStock(
-                                              product.each?.countInStock || 0
+                                              product.each?.countInStock || 0,
                                             );
                                           } else if (
                                             value === "Box" &&
                                             product.box
                                           ) {
                                             setCurrentPrice(
-                                              product.box?.wpPrice || 0
+                                              product.box?.wpPrice || 0,
                                             );
                                             setCurrentDescription(
-                                              product.box?.description || ""
+                                              product.box?.description || "",
                                             );
                                             setCurrentCountInStock(
-                                              product.box?.countInStock || 0
+                                              product.box?.countInStock || 0,
                                             );
                                           } else if (
                                             value === "Clearance" &&
                                             product.clearance
                                           ) {
                                             setCurrentPrice(
-                                              product.clearance?.price || 0
+                                              product.clearance?.price || 0,
                                             );
                                             setCurrentDescription(
                                               product.clearance?.description ||
-                                                ""
+                                                "",
                                             );
                                             setCurrentCountInStock(
                                               product.each
                                                 ?.clearanceCountInStock > 0 ||
                                                 product.box
-                                                  ?.clearanceCountInStock > 0
+                                                  ?.clearanceCountInStock > 0,
                                             );
                                           }
                                         }}
@@ -975,9 +970,9 @@ export default function ProductScreen({ product }) {
                                                 value={option}
                                                 className={({ active }) =>
                                                   `cursor-pointer select-none px-4 py-2 ${
-                                                    active
-                                                      ? "bg-blue-100 text-[#0e355e]"
-                                                      : "text-gray-900"
+                                                    active ?
+                                                      "bg-blue-100 text-[#0e355e]"
+                                                    : "text-gray-900"
                                                   }`
                                                 }
                                               >
@@ -995,44 +990,46 @@ export default function ProductScreen({ product }) {
                                         </div>
                                       </Listbox>
                                     </div>
-                                  )}
-                              {active === "loading"
-                                ? "Loading"
+                                  )
+                                }
+                                {active === "loading" ?
+                                  "Loading"
                                 : active && (
                                     <div className='mb-2 flex justify-between'>
                                       <div className='font-bold'>Price</div>
-                                      {hasPrice
-                                        ? `$${currentPrice}`
-                                        : "Call for Price"}
+                                      {hasPrice ?
+                                        `$${currentPrice}`
+                                      : "Call for Price"}
                                     </div>
-                                  )}
-                            </div>
-                          ) : null
-                        ) : (
-                          // If you only have Clearance, show it once without an "Add to Cart" button
-                          product.each?.clearanceCountInStock > 0 && (
-                            <div className='my-5 text-center'>
-                              <div className='text-red-500 font-bold text-lg'>
-                                Clearance
+                                  )
+                                }
                               </div>
-                              {active === "loading" ? (
-                                "Loading"
-                              ) : active ? (
-                                <div className='mb-2 flex justify-between'>
-                                  <div className='font-bold'>Price:</div>
-                                  <div className='ml-2 text-[#788b9b]'>
-                                    ${" "}
-                                    {product.clearance?.price ||
-                                      "Call for Price"}
-                                  </div>
+                            : null
+                            // If you only have Clearance, show it once without an "Add to Cart" button
+                          : product.each?.clearanceCountInStock > 0 && (
+                              <div className='my-5 text-center'>
+                                <div className='text-red-500 font-bold text-lg'>
+                                  Clearance
                                 </div>
-                              ) : null}
-                              <div className='text-[#414b53]'>
-                                {product.notes}
+                                {active === "loading" ?
+                                  "Loading"
+                                : active ?
+                                  <div className='mb-2 flex justify-between'>
+                                    <div className='font-bold'>Price:</div>
+                                    <div className='ml-2 text-[#788b9b]'>
+                                      ${" "}
+                                      {product.clearance?.price ||
+                                        "Call for Price"}
+                                    </div>
+                                  </div>
+                                : null}
+                                <div className='text-[#414b53]'>
+                                  {product.notes}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        )}
+                            )
+
+                        }
                         {(product.each?.countInStock > 0 ||
                           product.box?.countInStock > 0) &&
                           active && (
@@ -1041,53 +1038,57 @@ export default function ProductScreen({ product }) {
                               <div className='mb-2 flex justify-between'>
                                 <div className='font-bold'>Status</div>
                                 <div>
-                                  {(typeOfPurchase === "Each" &&
-                                    isOutOfStock) ||
-                                  (typeOfPurchase === "Box" &&
-                                    isOutOfStockBox) ||
-                                  (typeOfPurchase === "Clearance" &&
-                                    isOutOfStockClearance)
-                                    ? "Out of Stock"
-                                    : "In Stock"}
+                                  {(
+                                    (typeOfPurchase === "Each" &&
+                                      isOutOfStock) ||
+                                    (typeOfPurchase === "Box" &&
+                                      isOutOfStockBox) ||
+                                    (typeOfPurchase === "Clearance" &&
+                                      isOutOfStockClearance)
+                                  ) ?
+                                    "Out of Stock"
+                                  : "In Stock"}
                                 </div>
                               </div>
 
-                              {active === "loading"
-                                ? "Loading"
-                                : active && (
-                                    <>
-                                      {!hasPrice || currentPrice === 0 ? (
-                                        <Link href='/support'>
-                                          <button className='primary-button cart-button text-white'>
-                                            Call for Price
-                                          </button>
-                                        </Link>
-                                      ) : (
-                                        <button
-                                          className='primary-button cart-button my-2'
-                                          type='button'
-                                          onClick={addToCartHandler}
-                                          disabled={
-                                            (typeOfPurchase === "Each" &&
-                                              isOutOfStock) ||
-                                            (typeOfPurchase === "Box" &&
-                                              isOutOfStockBox) ||
-                                            (typeOfPurchase === "Clearance" &&
-                                              isOutOfStockClearance)
-                                          }
-                                        >
-                                          {(typeOfPurchase === "Each" &&
+                              {active === "loading" ?
+                                "Loading"
+                              : active && (
+                                  <>
+                                    {!hasPrice || currentPrice === 0 ?
+                                      <Link href='/support'>
+                                        <button className='primary-button cart-button text-white'>
+                                          Call for Price
+                                        </button>
+                                      </Link>
+                                    : <button
+                                        className='primary-button cart-button my-2'
+                                        type='button'
+                                        onClick={addToCartHandler}
+                                        disabled={
+                                          (typeOfPurchase === "Each" &&
                                             isOutOfStock) ||
                                           (typeOfPurchase === "Box" &&
                                             isOutOfStockBox) ||
                                           (typeOfPurchase === "Clearance" &&
                                             isOutOfStockClearance)
-                                            ? "Out of Stock"
-                                            : "Add to Cart"}
-                                        </button>
-                                      )}
-                                    </>
-                                  )}
+                                        }
+                                      >
+                                        {(
+                                          (typeOfPurchase === "Each" &&
+                                            isOutOfStock) ||
+                                          (typeOfPurchase === "Box" &&
+                                            isOutOfStockBox) ||
+                                          (typeOfPurchase === "Clearance" &&
+                                            isOutOfStockClearance)
+                                        ) ?
+                                          "Out of Stock"
+                                        : "Add to Cart"}
+                                      </button>
+                                    }
+                                  </>
+                                )
+                              }
                             </div>
                           )}
                       </div>
@@ -1166,18 +1167,20 @@ export default function ProductScreen({ product }) {
                         </button>
                       </form>
                     )}
-                  {session?.user && !active ? (
+                  {session?.user && !active ?
                     <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
                       <div className='font-semibold'>
                         You will be able to see this product info soon.
                       </div>
                     </div>
-                  ) : !session?.user ? (
+                  : !session?.user ?
                     <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
-                      {(product.each?.wpPrice &&
-                        product.each?.wpPrice !== "Call for price") ||
-                      (product.box?.wpPrice &&
-                        product.box?.wpPrice !== "Call for price") ? (
+                      {(
+                        (product.each?.wpPrice &&
+                          product.each?.wpPrice !== "Call for price") ||
+                        (product.box?.wpPrice &&
+                          product.box?.wpPrice !== "Call for price")
+                      ) ?
                         <div className=''>
                           <span className='font-semibold'>
                             Web price: $
@@ -1187,12 +1190,11 @@ export default function ProductScreen({ product }) {
                           <br />
                           Contact us or register for custom pricing.
                         </div>
-                      ) : (
-                        <div className=''>
+                      : <div className=''>
                           Sign in to see availability and purchase this product
                           at a custom price.
                         </div>
-                      )}
+                      }
                       <div className='flex gap-5'>
                         <Link href='/Login'>
                           <button className='primary-button align-middle text-white'>
@@ -1206,7 +1208,7 @@ export default function ProductScreen({ product }) {
                         </Link>
                       </div>
                     </div>
-                  ) : null}
+                  : null}
                 </div>
               </div>
             </div>
@@ -1226,9 +1228,9 @@ export default function ProductScreen({ product }) {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
-                    activeTab === tab.id
-                      ? "border-[#144e8b] text-[#144e8b] bg-blue-50"
-                      : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
+                    activeTab === tab.id ?
+                      "border-[#144e8b] text-[#144e8b] bg-blue-50"
+                    : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
                   }`}
                 >
                   <Icon className='w-4 h-4 mr-2' />
@@ -1263,7 +1265,7 @@ export async function getServerSideProps(context) {
     `${protocol}://${host}/api/products/${encodeURIComponent(lookup)}`,
     {
       headers: { cookie },
-    }
+    },
   );
 
   if (!res.ok) {

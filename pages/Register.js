@@ -215,7 +215,7 @@ export default function RegisterScreen() {
   return (
     <Layout
       title='Create Account | STAT Surgical Supply'
-      description='Register your organization with STAT Surgical Supply to access exclusive medical supplies and equipment discounts. Complete the registration form to create your account today.'
+      description='Register your organization with STAT Surgical Supply to access exclusive surgical supplies and surgical equipment discounts. Complete the registration form to create your account today.'
       schema={[]}
     >
       {from === "google" && (

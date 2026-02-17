@@ -29,13 +29,13 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   });
   const { status, data: session } = useSession();
   const [currentPrice, setCurrentPrice] = useState(
-    product.each?.wpPrice ?? null
+    product.each?.wpPrice ?? null,
   );
   const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || ""
+    product.each?.description || "",
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock ?? null
+    product.each?.countInStock ?? null,
   );
   const [showModal, setShowModal] = useState(false);
   const hasPrice = currentPrice !== null && currentPrice !== 0;
@@ -63,7 +63,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(
         product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0
+          product.box?.clearanceCountInStock > 0,
       );
     }
   }, [typeOfPurchase, product]);
@@ -80,10 +80,12 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const availableTypes = [
     ...(product.each?.countInStock > 0 ? ["Each"] : []),
     ...(product.box?.countInStock > 0 ? ["Box"] : []),
-    ...(product.each?.clearanceCountInStock > 0 ||
-    product.box?.clearanceCountInStock > 0
-      ? ["Clearance"]
-      : []),
+    ...((
+      product.each?.clearanceCountInStock > 0 ||
+      product.box?.clearanceCountInStock > 0
+    ) ?
+      ["Clearance"]
+    : []),
   ];
 
   useEffect(() => {
@@ -100,21 +102,21 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       setTypeOfPurchase("Clearance");
 
       setCurrentPrice(
-        product.each?.clearanceCountInStock > 0
-          ? `$${product.each?.wpPrice || "Call for Price"}`
-          : `$${product.box?.wpPrice || "Call for Price"}`
+        product.each?.clearanceCountInStock > 0 ?
+          `$${product.each?.wpPrice || "Call for Price"}`
+        : `$${product.box?.wpPrice || "Call for Price"}`,
       );
 
       setCurrentDescription(
-        product.each?.clearanceCountInStock > 0
-          ? product.each?.description || "No description"
-          : product.box?.description || "No description"
+        product.each?.clearanceCountInStock > 0 ?
+          product.each?.description || "No description"
+        : product.box?.description || "No description",
       );
 
       setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0
-          ? product.each?.clearanceCountInStock
-          : product.box?.clearanceCountInStock
+        product.each?.clearanceCountInStock > 0 ?
+          product.each?.clearanceCountInStock
+        : product.box?.clearanceCountInStock,
       );
     }
   }, [
@@ -138,7 +140,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       setCurrentDescription(product.clearance?.description || "No description");
       setCurrentCountInStock(
         product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0
+          product.box?.clearanceCountInStock > 0,
       );
     }
   }, [
@@ -150,7 +152,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
-      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase
+      (x) => x.productId === product._id && x.typeOfPurchase === typeOfPurchase,
     );
     const quantity = exisItem ? exisItem.quantity + qty : qty;
 
@@ -184,29 +186,20 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       quantity,
       typeOfPurchase,
       unitPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       wpPrice:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
       price:
-        typeOfPurchase === "Each"
-          ? product.each?.wpPrice
-          : typeOfPurchase === "Box"
-          ? product.box?.wpPrice
-          : typeOfPurchase === "Clearance"
-          ? product.clearance?.price
-          : product.price,
+        typeOfPurchase === "Each" ? product.each?.wpPrice
+        : typeOfPurchase === "Box" ? product.box?.wpPrice
+        : typeOfPurchase === "Clearance" ? product.clearance?.price
+        : product.price,
     });
 
     setQty(1);
@@ -234,7 +227,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       "Product Wait List",
       null,
       null,
-      product
+      product,
     );
     handleSendEmails(emailMessage, contactToEmail);
 
@@ -252,28 +245,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       }
     }
   }, [active, product]);
-
-  // Reset out of stock states based on actual inventory levels
-  useEffect(() => {
-    const eachStock = product.each?.countInStock ?? 0;
-    const boxStock = product.box?.countInStock ?? 0;
-    const clearanceStock = product.each?.clearanceCountInStock ?? 0;
-
-    // Reset isOutOfStock state for "Each" type
-    if (eachStock > 0) {
-      setIsOutOfStock(false);
-    }
-
-    // Reset isOutOfStockBox state for "Box" type
-    if (boxStock > 0) {
-      setIsOutOfStockBox(false);
-    }
-
-    // Reset isOutOfStockClearance state for "Clearance" type
-    if (clearanceStock > 0) {
-      setIsOutOfStockClearance(false);
-    }
-  }, [product]);
 
   const handleMatchProduct = (productId) => {
     const matchProduct = user?.cart?.find((x) => x.productId === productId);
@@ -380,10 +351,11 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                   handleMatchProduct(product._id) > 0 && (
                     <p className='mt-2 font-semibold'>
                       You have{" "}
-                      {handleMatchProduct(product._id) > 1
-                        ? handleMatchProduct(product._id) +
-                          "units of this item in your cart, that are available for purchase"
-                        : "1 unit of this item in your cart, that is available for purchase"}
+                      {handleMatchProduct(product._id) > 1 ?
+                        handleMatchProduct(product._id) +
+                        "units of this item in your cart, that are available for purchase"
+                      : "1 unit of this item in your cart, that is available for purchase"
+                      }
                       .
                     </p>
                   )}
@@ -413,140 +385,146 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       </div>
       {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
         <div>
-          {product.each?.countInStock > 0 || product.box?.countInStock > 0 ? (
-            typeOfPurchase === "Each" || typeOfPurchase === "Box" ? (
+          {product.each?.countInStock > 0 || product.box?.countInStock > 0 ?
+            typeOfPurchase === "Each" || typeOfPurchase === "Box" ?
               <div className='flex justify-between items-center gap-2 mx-10 mt-5'>
-                {active === "loading"
-                  ? "Loading"
-                  : active && (
-                      <div className='mb-2 justify-between'>
-                        <div className='font-bold text-base'>U o M</div>
-                        <Listbox
-                          value={typeOfPurchase}
-                          onChange={(value) => {
-                            setTypeOfPurchase(value);
-                            if (value === "Each" && product.each) {
-                              setCurrentPrice(product.each?.wpPrice || 0);
-                              setCurrentDescription(
-                                product.each?.description || ""
-                              );
-                              setCurrentCountInStock(
-                                product.each?.countInStock || 0
-                              );
-                            } else if (value === "Box" && product.box) {
-                              setCurrentPrice(product.box?.wpPrice || 0);
-                              setCurrentDescription(
-                                product.box?.description || ""
-                              );
-                              setCurrentCountInStock(
-                                product.box?.countInStock || 0
-                              );
-                            } else if (
-                              value === "Clearance" &&
-                              product.clearance
-                            ) {
-                              setCurrentPrice(product.clearance?.price || 0);
-                              setCurrentDescription(
-                                product.clearance?.description || ""
-                              );
-                              setCurrentCountInStock(
-                                product.each?.clearanceCountInStock > 0 ||
-                                  product.box?.clearanceCountInStock > 0
-                              );
-                            }
-                          }}
-                        >
-                          <div className='relative'>
-                            <Listbox.Button
-                              className={`w-full rounded-md py-1.5 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
-                            >
-                              {typeOfPurchase || "Select"}
-                            </Listbox.Button>
-                            <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                            <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
-                              {availableTypes.map((option) => (
-                                <Listbox.Option
-                                  key={option}
-                                  value={option}
-                                  className={({ active }) =>
-                                    `cursor-pointer select-none px-4 py-2 ${
-                                      active
-                                        ? "bg-blue-100 text-[#0e355e]"
-                                        : "text-gray-900"
-                                    }`
-                                  }
-                                >
-                                  {({ selected }) => (
-                                    <span className='flex items-center justify-between'>
-                                      {option}
-                                      {selected && (
-                                        <BiCheck className='w-4 h-4 text-[#0e355e]' />
-                                      )}
-                                    </span>
-                                  )}
-                                </Listbox.Option>
-                              ))}
-                            </Listbox.Options>
-                          </div>
-                        </Listbox>
-                      </div>
-                    )}
-                {active === "loading"
-                  ? "Loading"
-                  : active && (
-                      <div className='mb-2 justify-between'>
-                        <div className='font-bold'>Price</div>
-                        {hasPrice ? `$${currentPrice}` : "Call for Price"}
-                      </div>
-                    )}
+                {active === "loading" ?
+                  "Loading"
+                : active && (
+                    <div className='mb-2 justify-between'>
+                      <div className='font-bold text-base'>U o M</div>
+                      <Listbox
+                        value={typeOfPurchase}
+                        onChange={(value) => {
+                          setTypeOfPurchase(value);
+                          if (value === "Each" && product.each) {
+                            setCurrentPrice(product.each?.wpPrice || 0);
+                            setCurrentDescription(
+                              product.each?.description || "",
+                            );
+                            setCurrentCountInStock(
+                              product.each?.countInStock || 0,
+                            );
+                          } else if (value === "Box" && product.box) {
+                            setCurrentPrice(product.box?.wpPrice || 0);
+                            setCurrentDescription(
+                              product.box?.description || "",
+                            );
+                            setCurrentCountInStock(
+                              product.box?.countInStock || 0,
+                            );
+                          } else if (
+                            value === "Clearance" &&
+                            product.clearance
+                          ) {
+                            setCurrentPrice(product.clearance?.price || 0);
+                            setCurrentDescription(
+                              product.clearance?.description || "",
+                            );
+                            setCurrentCountInStock(
+                              product.each?.clearanceCountInStock > 0 ||
+                                product.box?.clearanceCountInStock > 0,
+                            );
+                          }
+                        }}
+                      >
+                        <div className='relative'>
+                          <Listbox.Button
+                            className={`w-full rounded-md py-1.5 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                          >
+                            {typeOfPurchase || "Select"}
+                          </Listbox.Button>
+                          <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                          <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                            {availableTypes.map((option) => (
+                              <Listbox.Option
+                                key={option}
+                                value={option}
+                                className={({ active }) =>
+                                  `cursor-pointer select-none px-4 py-2 ${
+                                    active ?
+                                      "bg-blue-100 text-[#0e355e]"
+                                    : "text-gray-900"
+                                  }`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <span className='flex items-center justify-between'>
+                                    {option}
+                                    {selected && (
+                                      <BiCheck className='w-4 h-4 text-[#0e355e]' />
+                                    )}
+                                  </span>
+                                )}
+                              </Listbox.Option>
+                            ))}
+                          </Listbox.Options>
+                        </div>
+                      </Listbox>
+                    </div>
+                  )
+                }
+                {active === "loading" ?
+                  "Loading"
+                : active && (
+                    <div className='mb-2 justify-between'>
+                      <div className='font-bold'>Price</div>
+                      {hasPrice ? `$${currentPrice}` : "Call for Price"}
+                    </div>
+                  )
+                }
               </div>
-            ) : null
-          ) : null}
+            : null
+          : null}
           {(product.each?.countInStock > 0 ||
             product.box?.countInStock > 0) && (
             <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
               <div className='flex-column'>
                 <div className='font-bold'>Status</div>
                 <div className=''>
-                  {(typeOfPurchase === "Each" && isOutOfStock) ||
-                  (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                  (typeOfPurchase === "Clearance" && isOutOfStockClearance)
-                    ? "Out of Stock"
-                    : "In Stock"}
+                  {(
+                    (typeOfPurchase === "Each" && isOutOfStock) ||
+                    (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                    (typeOfPurchase === "Clearance" && isOutOfStockClearance)
+                  ) ?
+                    "Out of Stock"
+                  : "In Stock"}
                 </div>
               </div>
-              {active === "loading"
-                ? "Loading"
-                : active && (
-                    <>
-                      {!hasPrice || currentPrice === 0 ? (
-                        <Link href='/support'>
-                          <button className='primary-button align-middle text-white'>
-                            Call for Price
-                          </button>
-                        </Link>
-                      ) : (
-                        <button
-                          className='primary-button align-middle'
-                          type='button'
-                          onClick={addToCartHandler}
-                          disabled={
-                            (typeOfPurchase === "Each" && isOutOfStock) ||
-                            (typeOfPurchase === "Box" && isOutOfStockBox) ||
-                            (typeOfPurchase === "Clearance" &&
-                              isOutOfStockClearance)
-                          }
-                        >
-                          {(typeOfPurchase === "Each" && isOutOfStock) ||
+              {active === "loading" ?
+                "Loading"
+              : active && (
+                  <>
+                    {!hasPrice || currentPrice === 0 ?
+                      <Link href='/support'>
+                        <button className='primary-button align-middle text-white'>
+                          Call for Price
+                        </button>
+                      </Link>
+                    : <button
+                        className='primary-button align-middle'
+                        type='button'
+                        onClick={addToCartHandler}
+                        disabled={
+                          (typeOfPurchase === "Each" && isOutOfStock) ||
                           (typeOfPurchase === "Box" && isOutOfStockBox) ||
                           (typeOfPurchase === "Clearance" &&
                             isOutOfStockClearance)
-                            ? "Out of Stock"
-                            : "Add to Cart"}
-                        </button>
-                      )}
-                    </>
-                  )}
+                        }
+                      >
+                        {(
+                          (typeOfPurchase === "Each" && isOutOfStock) ||
+                          (typeOfPurchase === "Box" && isOutOfStockBox) ||
+                          (typeOfPurchase === "Clearance" &&
+                            isOutOfStockClearance)
+                        ) ?
+                          "Out of Stock"
+                        : "Add to Cart"}
+                      </button>
+                    }
+                  </>
+                )
+              }
             </div>
           )}
         </div>
@@ -580,18 +558,19 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             />
           </form>
         )}
-      {session?.user && !active ? (
+      {session?.user && !active ?
         <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
           <div className='font-semibold'>
             You will be able to see this product info soon.
           </div>
         </div>
-      ) : !session?.user ? (
+      : !session?.user ?
         <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
-          {(product.each?.wpPrice &&
-            product.each?.wpPrice !== "Call for price") ||
-          (product.box?.wpPrice &&
-            product.box?.wpPrice !== "Call for price") ? (
+          {(
+            (product.each?.wpPrice &&
+              product.each?.wpPrice !== "Call for price") ||
+            (product.box?.wpPrice && product.box?.wpPrice !== "Call for price")
+          ) ?
             <div className=''>
               <span className='font-semibold'>
                 Web price: ${product.each?.wpPrice || product.box?.wpPrice} per{" "}
@@ -600,12 +579,11 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               <br />
               Contact us or register for custom pricing.
             </div>
-          ) : (
-            <div className=''>
+          : <div className=''>
               Sign in to see availability and purchase this product at a custom
               price.
             </div>
-          )}
+          }
           <div className='flex gap-5'>
             <Link href='/Login' title='Access Your Account to Order Now'>
               <button className='primary-button align-middle text-white'>
@@ -614,7 +592,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             </Link>
             <Link
               href='/Register'
-              title='Register to Start Purchasing Medical Products'
+              title='Register to Start Shopping Surgical Supplies Products'
             >
               <button className='primary-button align-middle text-white'>
                 Register
@@ -622,7 +600,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             </Link>
           </div>
         </div>
-      ) : null}
+      : null}
     </div>
   );
 };

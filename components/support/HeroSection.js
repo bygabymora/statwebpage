@@ -14,12 +14,12 @@ export default function HeroSection() {
           Professional Customer Support
         </h1>
         <h2 className='text-xl lg:text-2xl font-light mb-6 text-[#0e355e]'>
-          Expert assistance for medical professionals
+          Expert assistance for surgical professionals
         </h2>
         {/* LCP Element - Critical paragraph */}
         <p className='text-lg leading-relaxed max-w-3xl mx-auto text-[#0e355e]'>
           Need assistance with your surgical supply order or product questions?
-          Our dedicated support team is here to help medical professionals like
+          Our dedicated support team is here to help surgical professionals like
           you with personalized service and expert guidance.
         </p>
         {/* Simple CTA without icons initially */}

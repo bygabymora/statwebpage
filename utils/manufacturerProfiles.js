@@ -132,7 +132,7 @@ export const manufacturerProfiles = {
     aliases: ["hologic"],
     website: "https://www.hologic.com/",
     description:
-      "Hologic is a global leader in Supplies, including technologies focused on women's health, diagnostics, surgical and medical imaging systems.",
+      "Hologic is a global leader in Supplies, including technologies focused on women's health, diagnostics and surgical.",
     certifications: ["ISO 13485", "FDA Registered", "CE Mark"],
     supportEmail: null,
     specialties: ["Diagnostics", "Imaging", "Surgical"],

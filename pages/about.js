@@ -32,15 +32,15 @@ export default function AboutScreen() {
 
   return (
     <Layout
-      title='About STAT Surgical Supply - Premium Medical Equipment Provider'
-      description='Learn about STAT Surgical Supply, a leading provider of premium surgical equipment and medical disposables serving 150+ healthcare facilities nationwide with cost-effective solutions.'
+      title='About STAT Surgical Supply - Premium Surgical Equipment Provider'
+      description='Learn about STAT Surgical Supply, a leading provider of premium surgical equipment and disposables serving 150+ healthcare facilities nationwide with cost-effective solutions.'
       schema={[aboutSchema, orgSchema]}
     >
       <nav className='text-sm text-gray-700' aria-label='Breadcrumb navigation'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#0e355e] focus:outline-none focus:ring-2 focus:ring-[#0e355e] focus:ring-opacity-50 rounded'
@@ -48,9 +48,7 @@ export default function AboutScreen() {
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span aria-current='page'>{breadcrumb.name}</span>
-              )}
+              : <span aria-current='page'>{breadcrumb.name}</span>}
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight
                   className='mx-2 text-gray-500'
@@ -70,7 +68,7 @@ export default function AboutScreen() {
             About STAT Surgical Supply
           </h2>
           <p className='text-lg text-[#414b53de] mt-2'>
-            Your trusted partner in premium surgical equipment and medical
+            Your trusted partner in premium surgical equipment and surgical
             supplies
           </p>
         </animated.header>
@@ -81,8 +79,8 @@ export default function AboutScreen() {
         >
           <Image
             src={image}
-            alt='STAT Surgical Supply team and facilities - Premium medical equipment provider serving healthcare professionals nationwide'
-            title='About STAT Surgical Supply - Medical Equipment Experts'
+            alt='STAT Surgical Supply team and facilities - Premium surgical equipment provider serving healthcare professionals nationwide'
+            title='About STAT Surgical Supply - Surgical Equipment Experts'
             className='w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[550px] -mt-10'
             priority
             width={550}
@@ -90,8 +88,8 @@ export default function AboutScreen() {
           />
           <figcaption className='sr-only'>
             Visual representation of STAT Surgical Supply&apos;s commitment to
-            providing premium medical equipment and surgical supplies to
-            healthcare facilities.
+            providing premium surgical equipment and supplies to healthcare
+            facilities.
           </figcaption>
         </animated.figure>
 
@@ -149,7 +147,7 @@ export default function AboutScreen() {
           <footer className='mt-10 flex justify-start'>
             <Link
               href='/products'
-              aria-label='Browse our complete catalog of premium surgical supplies and medical equipment'
+              aria-label='Browse our complete catalog of premium surgical supplies and surgical equipment'
             >
               <animated.button
                 style={contentAnimation}

@@ -6,7 +6,7 @@ export default function facs() {
     <>
       <Layout
         title='Return policy | STAT Surgical Supply'
-        description='Read STAT Surgical Supply return policy for medical supplies and equipment. Learn about our return process, conditions, and exceptions to ensure a smooth return experience.'
+        description='Read STAT Surgical Supply return policy for surgical supplies and surgical equipment. Learn about our return process, conditions, and exceptions to ensure a smooth return experience.'
         schema={[]}
       >
         <div className='card p-5 mb-10'>

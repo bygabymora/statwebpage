@@ -151,7 +151,7 @@ export default function ContactMethodsGrid() {
               Trusted Expertise
             </h3>
             <p className='text-gray-600'>
-              Over 15 years of experience in medical supply distribution and
+              Over 15 years of experience in surgical supply distribution and
               customer service.
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function ContactMethodsGrid() {
               Fast Response
             </h3>
             <p className='text-gray-600'>
-              Quick turnaround times to keep your medical facility running
+              Quick turnaround times to keep your surgical facility running
               smoothly.
             </p>
           </div>

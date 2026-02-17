@@ -205,28 +205,6 @@ export const ProductItemPage = ({ product, index }) => {
     }
   }, [active, product]);
 
-  // Reset out of stock states based on actual inventory levels
-  useEffect(() => {
-    const eachStock = product.each?.countInStock ?? 0;
-    const boxStock = product.box?.countInStock ?? 0;
-    const clearanceStock = product.each?.clearanceCountInStock ?? 0;
-
-    // Reset isOutOfStock state for "Each" type
-    if (eachStock > 0) {
-      setIsOutOfStock(false);
-    }
-
-    // Reset isOutOfStockBox state for "Box" type
-    if (boxStock > 0) {
-      setIsOutOfStockBox(false);
-    }
-
-    // Reset isOutOfStockClearance state for "Clearance" type
-    if (clearanceStock > 0) {
-      setIsOutOfStockClearance(false);
-    }
-  }, [product]);
-
   const handleMatchProduct = (productId) => {
     const matchProduct = user?.cart?.find((x) => x.productId === productId);
     if (matchProduct) {

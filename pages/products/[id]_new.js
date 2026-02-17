@@ -364,7 +364,7 @@ export default function ProductScreen({ product }) {
         </h4>
         <p className='text-gray-600 text-sm mb-3'>
           Trusted medical supply manufacturer providing high-quality healthcare
-          products and medical devices.
+          products.
         </p>
         <div className='text-sm text-gray-500'>
           <p>• Certified medical device manufacturer</p>
@@ -395,7 +395,7 @@ export default function ProductScreen({ product }) {
       product={product}
       schema={generateProductJSONLD(product)}
       image={product.image}
-      keywords={`${product.manufacturer}, ${product.name}, medical supplies, healthcare equipment, medical devices`}
+      keywords={`${product.manufacturer}, ${product.name}, medical supplies, healthcare equipment`}
     >
       {/* Breadcrumb Navigation */}
       <nav className='text-sm text-gray-700 mb-6'>

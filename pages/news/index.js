@@ -25,16 +25,14 @@ export default function News({ news }) {
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-6'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span>{breadcrumb.name}</span>
-              )}
+              : <span>{breadcrumb.name}</span>}
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight className='mx-2 text-gray-500' />
               )}
@@ -47,7 +45,7 @@ export default function News({ news }) {
           id='news'
           className='section__title text-4xl md:text-5xl font-bold tracking-tight'
         >
-          Health & Medical Device News <br />
+          Health & SurgicalNews <br />
           <span className='text-[#0e355e]'>
             Latest FDA Alerts and Industry Updates
           </span>
@@ -85,8 +83,9 @@ export async function getServerSideProps() {
     const { _id, createdAt, updatedAt, content, ...rest } = newsItem;
 
     // Generate an excerpt of maximum 250 characters
-    const excerpt = content
-      ? content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 250) + "..."
+    const excerpt =
+      content ?
+        content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 250) + "..."
       : "";
 
     return {

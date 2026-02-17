@@ -103,9 +103,9 @@ export default function FAQs() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": "https://www.statsurgicalsupply.com/faqs",
-    name: "Surgical Supply FAQs - Common Questions About Medical Equipment",
+    name: "Surgical Supply FAQs - Common Questions About Surgical Equipment",
     description:
-      "Find comprehensive answers to frequently asked questions about surgical supplies, medical equipment ordering, sterilization, shipping, and healthcare procurement.",
+      "Find comprehensive answers to frequently asked questions about surgical supplies, surgical equipment ordering, sterilization, shipping, and healthcare procurement.",
     url: "https://www.statsurgicalsupply.com/faqs",
     isPartOf: {
       "@type": "WebSite",
@@ -116,7 +116,7 @@ export default function FAQs() {
       "@type": "Thing",
       name: "Surgical Supply Questions and Answers",
       description:
-        "Comprehensive FAQ covering surgical equipment, medical supplies, ordering processes, and healthcare procurement.",
+        "Comprehensive FAQ covering surgical equipment, surgical supplies, ordering processes, and healthcare procurement.",
     },
     audience: {
       "@type": "Audience",
@@ -127,15 +127,15 @@ export default function FAQs() {
 
   return (
     <Layout
-      title='Surgical Supply FAQs - Common Questions About Medical Equipment'
-      description='Get expert answers to frequently asked questions about surgical supplies, medical equipment ordering, sterilization procedures, bulk pricing, and healthcare procurement from STAT Surgical Supply.'
+      title='Surgical Supply FAQs - Common Questions About Surgical Equipment'
+      description='Get expert answers to frequently asked questions about surgical supplies, surgical equipment ordering, sterilization procedures, bulk pricing, and healthcare procurement from STAT Surgical Supply.'
       schema={[breadcrumbSchema, webPageSchema]}
     >
       <nav className='text-sm text-gray-700' aria-label='Breadcrumb navigation'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2 -mt-4'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#0e355e] focus:outline-none focus:ring-2 focus:ring-[#0e355e] focus:ring-opacity-50 rounded'
@@ -143,11 +143,10 @@ export default function FAQs() {
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span aria-current='page' className='text-gray-600 font-medium'>
+              : <span aria-current='page' className='text-gray-600 font-medium'>
                   {breadcrumb.name}
                 </span>
-              )}
+              }
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight
                   className='mx-2 text-gray-500'
