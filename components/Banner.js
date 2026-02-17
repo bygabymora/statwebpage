@@ -148,7 +148,7 @@ const Banner = () => {
                   aria-label='Shop surgical supplies and medical equipment'
                 >
                   <TiShoppingCart aria-hidden='true' />
-                  Shop Medical Equipment
+                  Shop Now
                 </motion.button>
               </Link>
 
@@ -200,11 +200,9 @@ const Banner = () => {
                     src={banner}
                     alt={imageDescriptions[index]}
                     title={`STAT Surgical Supply - ${
-                      index === 0
-                        ? "Premium Medical Equipment"
-                        : index === 1
-                        ? "Surgical Instruments Catalog"
-                        : "Healthcare Supplies Collection"
+                      index === 0 ? "Premium Medical Equipment"
+                      : index === 1 ? "Surgical Instruments Catalog"
+                      : "Healthcare Supplies Collection"
                     }`}
                     fill
                     priority={index === 0}
