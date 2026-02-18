@@ -84,8 +84,8 @@ export default function BenefitsSection() {
         </h2>
         <p className='text-[#414b53de] text-base font-normal text-center mt-2 max-w-3xl mx-auto'>
           Discover why over 150+ clinics, hospitals, and medical professionals
-          trust STAT Surgical Supply for premium surgical disposables, medical
-          equipment, and exceptional healthcare solutions nationwide.
+          trust STAT Surgical Supply for premium surgical disposables and
+          exceptional healthcare solutions nationwide.
         </p>
       </header>
 
