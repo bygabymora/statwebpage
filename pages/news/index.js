@@ -45,7 +45,7 @@ export default function News({ news }) {
           id='news'
           className='section__title text-4xl md:text-5xl font-bold tracking-tight'
         >
-          Health & SurgicalNews <br />
+          Health & Surgical News <br />
           <span className='text-[#0e355e]'>
             Latest FDA Alerts and Industry Updates
           </span>
