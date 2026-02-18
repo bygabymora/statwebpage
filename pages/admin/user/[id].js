@@ -205,14 +205,14 @@ export default function AdminUserEditScreen() {
 
   return (
     <Layout title={`Edit User${userId}`}>
-      <div className='grid md:grid-cols-4 md:gap-5'>
-        <div className='flex justify-center'>
-          <ul className='flex flex-col space-y-4 my-3 lg:text-lg w-full'>
+      <div className='grid grid-cols-1 md:grid-cols-4 md:gap-5'>
+        <div className='md:flex md:justify-center px-4 md:px-0'>
+          <ul className='flex md:flex-col overflow-x-auto md:overflow-x-visible space-x-2 md:space-x-0 md:space-y-4 my-3 text-sm md:text-base lg:text-lg w-full md:w-auto pb-2 md:pb-0'>
             {links.map(({ href, label, isBold }) => (
-              <li key={href} className='w-full'>
+              <li key={href} className='flex-shrink-0 md:w-full'>
                 <Link
                   href={href}
-                  className={`flex items-center justify-center py-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition ${
+                  className={`flex items-center justify-center py-2 px-3 md:px-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition whitespace-nowrap ${
                     isBold ? "font-semibold" : ""
                   }`}
                 >
@@ -223,50 +223,95 @@ export default function AdminUserEditScreen() {
           </ul>
         </div>
 
-        <div className='md:col-span-3 p-6'>
-          <div className='flex justify-between items-center mb-4 sticky top-[8rem] bg-white z-10'>
-            <h1 className='text-xl'>{`Edit User ${wpUser?.firstName} ${wpUser?.lastName}`}</h1>
-            <div className='flex flex-row my-5'>
-              <button
-                disabled={loadingUpdate}
-                className='primary-button mr-2'
-                onClick={submitHandler}
-              >
-                {loadingUpdate ? "Loading" : "Update"}
-              </button>
-              <button
-                onClick={() => router.push(`/admin/users`)}
-                className='primary-button mr-2'
-              >
-                Back
-              </button>
-              <button
-                onClick={handleRefresh}
-                disabled={loading}
-                className='flex items-center gap-2 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 primary-button transition-colors font-medium'
-              >
-                <RiLoopLeftFill
-                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                ></RiLoopLeftFill>
-                {loading ? "Refreshing..." : "Refresh"}
-              </button>
+        <div className='md:col-span-3 p-4 md:p-6'>
+          <div className='mb-4 sticky top-[8rem] bg-white z-10 pb-4'>
+            <h1 className='text-lg md:text-xl mb-3 md:mb-0 truncate'>
+              {`Edit User ${wpUser?.firstName} ${wpUser?.lastName}`}
+            </h1>
+            {/* Mobile layout - stacked buttons */}
+            <div className='block md:hidden space-y-3'>
+              <div className='flex flex-wrap gap-2'>
+                <button
+                  disabled={loadingUpdate}
+                  className='primary-button flex-1 min-w-[80px] text-sm'
+                  onClick={submitHandler}
+                >
+                  {loadingUpdate ? "Loading" : "Update"}
+                </button>
+                <button
+                  onClick={() => router.push(`/admin/users`)}
+                  className='primary-button flex-1 min-w-[80px] text-sm'
+                >
+                  Back
+                </button>
+              </div>
+              <div className='flex flex-wrap gap-2'>
+                <button
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  className='flex items-center justify-center gap-2 text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded transition-colors font-medium flex-1 min-w-[100px]'
+                >
+                  <RiLoopLeftFill
+                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                  ></RiLoopLeftFill>
+                  {loading ? "Refreshing..." : "Refresh"}
+                </button>
+                <button
+                  type='button'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    sendApprovalEmail();
+                  }}
+                  className='primary-button flex-1 min-w-[120px] text-sm'
+                >
+                  Send Approval
+                </button>
+              </div>
             </div>
-            <div className='flex flex-row my-5'>
-              <button
-                type='button'
-                onClick={(e) => {
-                  e.preventDefault();
-                  sendApprovalEmail();
-                }}
-                className='primary-button mr-2'
-              >
-                Send Approval Email
-              </button>
+            {/* Desktop layout - horizontal buttons */}
+            <div className='hidden md:flex md:justify-between md:items-center'>
+              <div className='flex flex-row'>
+                <button
+                  disabled={loadingUpdate}
+                  className='primary-button mr-2'
+                  onClick={submitHandler}
+                >
+                  {loadingUpdate ? "Loading" : "Update"}
+                </button>
+                <button
+                  onClick={() => router.push(`/admin/users`)}
+                  className='primary-button mr-2'
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  className='flex items-center gap-2 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 primary-button transition-colors font-medium'
+                >
+                  <RiLoopLeftFill
+                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                  ></RiLoopLeftFill>
+                  {loading ? "Refreshing..." : "Refresh"}
+                </button>
+              </div>
+              <div className='flex flex-row'>
+                <button
+                  type='button'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    sendApprovalEmail();
+                  }}
+                  className='primary-button mr-2'
+                >
+                  Send Approval Email
+                </button>
+              </div>
             </div>
           </div>
           <div className=''>
-            <div className='flex gap-4 my-4'>
-              <label>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:flex lg:gap-4 gap-3 my-4'>
+              <label className='flex items-center cursor-pointer touch-manipulation'>
                 <input
                   autoComplete='off'
                   checked={wpUser?.active || false}
@@ -274,10 +319,11 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("active", e.target.checked)
                   }
+                  className='mr-2 w-4 h-4 md:w-auto md:h-auto'
                 />
-                &nbsp; Is Active?
+                <span className='text-sm md:text-base'>Is Active?</span>
               </label>
-              <label>
+              <label className='flex items-center cursor-pointer touch-manipulation'>
                 <input
                   autoComplete='off'
                   checked={wpUser?.approved || false}
@@ -285,10 +331,11 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("approved", e.target.checked)
                   }
+                  className='mr-2 w-4 h-4 md:w-auto md:h-auto'
                 />
-                &nbsp; Is Approved?
+                <span className='text-sm md:text-base'>Is Approved?</span>
               </label>
-              <label>
+              <label className='flex items-center cursor-pointer touch-manipulation'>
                 <input
                   autoComplete='off'
                   type='checkbox'
@@ -296,10 +343,11 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("isAdmin", e.target.checked)
                   }
+                  className='mr-2 w-4 h-4 md:w-auto md:h-auto'
                 />
-                &nbsp; Is Admin?
+                <span className='text-sm md:text-base'>Is Admin?</span>
               </label>
-              <label>
+              <label className='flex items-center cursor-pointer touch-manipulation'>
                 <input
                   autoComplete='off'
                   type='checkbox'
@@ -307,13 +355,16 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("restricted", e.target.checked)
                   }
+                  className='mr-2 w-4 h-4 md:w-auto md:h-auto'
                 />
-                &nbsp; Restricted?
+                <span className='text-sm md:text-base'>Restricted?</span>
               </label>
             </div>
             <div className='mb-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='mb-2'>
-                <label>Name</label>
+                <label className='block text-sm md:text-base font-medium mb-1'>
+                  Name
+                </label>
                 <input
                   autoComplete='off'
                   type='text'
@@ -321,11 +372,13 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("firstName", e.target.value)
                   }
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
               <div className='mb-2'>
-                <label>Last Name</label>
+                <label className='block text-sm md:text-base font-medium mb-1'>
+                  Last Name
+                </label>
                 <input
                   autoComplete='off'
                   type='text'
@@ -333,17 +386,19 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("lastName", e.target.value)
                   }
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
               <div className='mb-2 md:col-span-2'>
-                <label>Email</label>
+                <label className='block text-sm md:text-base font-medium mb-1'>
+                  Email
+                </label>
                 <input
                   autoComplete='off'
                   type='email'
                   value={wpUser?.email || ""}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
             </div>
