@@ -45,6 +45,15 @@ const menuItems = [
   },
   {
     title: <Link href='/news'>News</Link>,
+    subcategories: [
+      {
+        title: "News Categories",
+        links: [
+          { name: "All News", href: "/news" },
+          { name: "Video News", href: "/news/video" },
+        ],
+      },
+    ],
   },
 ];
 
@@ -70,7 +79,7 @@ const Menu = () => {
     } catch (error) {
       console.error(
         "Error fetching manufacturers:",
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
     }
   };
@@ -111,7 +120,7 @@ const Menu = () => {
               .map((manufacturer) => ({
                 name: manufacturer,
                 href: `/products?manufacturer=${encodeURIComponent(
-                  manufacturer
+                  manufacturer,
                 )}`,
                 onClick: (e) => {
                   e.preventDefault();
@@ -143,9 +152,9 @@ const Menu = () => {
               <div
                 className={`custom-scrollbar absolute left-1/2 -translate-x-1/2 top-full w-80 max-h-80 overflow-y-auto 
                 bg-gray-100 shadow-2xl rounded-lg border border-gray-200 transition-all duration-200 z-50 ${
-                  activeIndex === index
-                    ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 translate-y-2 pointer-events-none"
+                  activeIndex === index ?
+                    "opacity-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 translate-y-2 pointer-events-none"
                 }`}
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(null)}
@@ -166,9 +175,9 @@ const Menu = () => {
                             href={link.href}
                             onClick={link.onClick} // Call the onClick function
                             className={`block text-gray-700 text-base px-3 py-2 rounded-md hover:bg-gray-200 transition-all ${
-                              selectedManufacturer === link.name
-                                ? "bg-slate-200"
-                                : ""
+                              selectedManufacturer === link.name ?
+                                "bg-slate-200"
+                              : ""
                             }`}
                           >
                             {link.name}

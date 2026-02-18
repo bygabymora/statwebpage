@@ -56,6 +56,17 @@ export const NewsItem = ({ news }) => {
             <div className='absolute top-2 right-2 bg-[#0e355e] text-white px-2 py-1 text-xs rounded z-10 flex items-center gap-1'>
               🔊 VIDEO
             </div>
+            {/* Play Button Overlay */}
+            <div className='absolute inset-0 flex items-center justify-center z-20 pointer-events-none'>
+              <div
+                className={`bg-black bg-opacity-60 rounded-full p-3 transition-all duration-300 ${
+                  isHovered ? "scale-110 bg-opacity-80" : "scale-100"
+                }`}
+              >
+                <div className='w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-white border-b-[8px] border-b-transparent ml-1'></div>
+              </div>
+            </div>
+            {/* Video Preview on Hover */}
             <div className='absolute inset-0 w-full h-full overflow-hidden'>
               <video
                 ref={videoRef}
