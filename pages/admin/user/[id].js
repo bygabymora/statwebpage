@@ -8,6 +8,7 @@ import CustomerLinking from "../../../components/users/CustomerLinking";
 import { useModalContext } from "../../../components/context/ModalContext";
 import { messageManagement } from "../../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../../utils/alertSystem/documentRelatedEmail";
+import { RiLoopLeftFill } from "react-icons/ri";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -35,7 +36,7 @@ export default function AdminUserEditScreen() {
   const [wpCustomer, setWpCustomer] = useState();
   const [wpAccountOwner, setWpAccountOwner] = useState();
   const userId = query.id;
-  const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
+  const [{ loading, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
   });
@@ -94,6 +95,24 @@ export default function AdminUserEditScreen() {
       console.error("Submit error:", error);
       dispatch({ type: "UPDATE_FAIL", payload: getError(error) });
       showStatusMessage("error", getError(error) || "Error updating user");
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
+      const { data } = await axios.get(`/api/admin/users?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      console.log(
+        `Manual refresh: ${data.length} users at ${new Date().toISOString()}`,
+      );
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
     }
   };
 
@@ -222,14 +241,14 @@ export default function AdminUserEditScreen() {
                 Back
               </button>
               <button
-                onClick={() => {
-                  console.log("Manual refresh triggered");
-                  fetchData();
-                }}
-                className='primary-button'
-                title='Refresh data from database'
+                onClick={handleRefresh}
+                disabled={loading}
+                className='flex items-center gap-2 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 primary-button transition-colors font-medium'
               >
-                Refresh
+                <RiLoopLeftFill
+                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                ></RiLoopLeftFill>
+                {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
             <div className='flex flex-row my-5'>
