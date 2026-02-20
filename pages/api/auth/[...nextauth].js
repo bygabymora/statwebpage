@@ -6,15 +6,15 @@ import db from "../../../utils/db";
 import WpUser from "../../../models/WpUser";
 
 /**
- * Mapea la respuesta de Google People API a un perfil compacto.
- * Campos cubiertos con los scopes básicos (openid, email, profile):
+ * Maps the response from Google People API to a compact profile.
+ * Fields covered with basic scopes (openid, email, profile):
  * - names, photos, emailAddresses, locales
  */
 function mapPeopleProfile(p) {
   const name = p?.names?.[0];
   const photo = (p?.photos || []).find((ph) => ph?.default) || p?.photos?.[0];
   const email = p?.emailAddresses?.[0];
-  const locale = p?.locales?.[0]; // { value: "es", ... }
+  const locale = p?.locales?.[0]; // { value: "is", ... }
 
   return {
     fullName: name?.displayName || "",
@@ -26,17 +26,17 @@ function mapPeopleProfile(p) {
   };
 }
 
-export default NextAuth({
+export const authOptions = {
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
-    signIn: "/Login", // tu página de login
-    error: "/Login", // opcional: errores vuelven a /Login
+    signIn: "/Login", // your login page
+    error: "/Login", // optional: errors redirect to /Login
   },
 
   providers: [
-    // === LOGIN CON EMAIL/PASSWORD (tu flujo actual) ===
+    // === LOGIN WITH EMAIL/PASSWORD (your current flow) ===
     CredentialsProvider({
       async authorize(credentials) {
         await db.connect(true);
@@ -49,7 +49,7 @@ export default NextAuth({
         const ok = bcryptjs.compareSync(credentials.password, user.password);
         if (!ok) throw new Error("Invalid email or password");
 
-        // Lo que retornes aquí llega como 'user' al callback jwt en el primer login
+        // What you return here becomes the 'user' in the jwt callback on first login
         return {
           _id: user._id,
           firstName: user.firstName,
@@ -65,20 +65,19 @@ export default NextAuth({
       },
     }),
 
-    // === LOGIN CON GOOGLE ===
+    // === LOGIN WITH GOOGLE ===
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Si luego quieres forzar/insinuar dominio corporativo:
-      // authorization: { params: { hd: "tuempresa.com" } },
+      // If you want to enforce/suggest a corporate domain later:
     }),
   ],
 
   /**
    * signIn:
-   * - Si el proveedor es Google y NO existe en DB → REDIRIGE a /Register con datos para prellenar
-   * - Si existe pero está inactivo → redirige a /Login con error
-   * - Si todo ok → return true
+   * - If the provider is Google and NOT exist in DB → REDIRECT to /Register with prefill info
+   * - If exist but inactive → redirect to /Login with error
+   * - If everything is ok → return true
    */
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -89,17 +88,17 @@ export default NextAuth({
           (typeof user === "object" && user?.email) ||
           "";
 
-        // Si Google no nos da email, no seguimos (edge-case)
+        // If Google doesn't provide an email, we don't proceed (edge-case)
         if (!email) {
           return "/Login?error=GoogleNoEmail";
         }
 
         await db.connect(true);
         const dbUser = await WpUser.findOne({ email }).select(
-          "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin"
+          "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin",
         );
 
-        // 1) NO EXISTE → redirige a Register con info para prellenar
+        // 1) NOT EXIST → redirect to Register with prefill info
         if (!dbUser) {
           const prefillName =
             profile?.name ||
@@ -117,28 +116,28 @@ export default NextAuth({
           return `/Register?${qs.toString()}`;
         }
 
-        // 2) EXISTE PERO INACTIVO → bloquea
+        // 2) EXIST BUT INACTIVE → block
         if (!dbUser.active) {
           return "/Login?error=Inactive";
         }
 
-        // 3) EXISTE Y ACTIVO → ok
+        // 3) EXIST AND ACTIVE → ok
         return true;
       }
 
-      // Para credentials u otros providers
+      // For credentials or other providers
       return true;
     },
 
     /**
      * jwt:
-     * - En primer login copia datos a token.
-     * - Si el login fue con Google y hay access_token, llama a People API,
-     *   enriquece token (picture, locale, nombres) y opcionalmente actualiza WpUser.
-     * - En sesiones siguientes, refresca desde DB para mantener flags.
+     * - On first login, copy data to token.
+     * - If the login was with Google and there is an access_token, call the People API,
+     *   enrich the token (picture, locale, names) and optionally update WpUser.
+     * - On subsequent sessions, refresh from DB to maintain flags.
      */
     async jwt({ token, user, account }) {
-      // Primer login (credentials o google)
+      // First login (credentials or google)
       if (user) {
         token._id = user._id || null;
         token.firstName = user.firstName || user.name?.split(" ")[0] || "";
@@ -152,26 +151,26 @@ export default NextAuth({
         token.approved = user.approved ?? false;
         token.restricted = user.restricted ?? false;
 
-        // Si fue Google, intenta enriquecer con People API
+        // If it was Google, try to enrich with People API
         if (account?.provider === "google" && account?.access_token) {
           try {
             const res = await fetch(
               "https://people.googleapis.com/v1/people/me?personFields=names,photos,emailAddresses,locales",
-              { headers: { Authorization: `Bearer ${account.access_token}` } }
+              { headers: { Authorization: `Bearer ${account.access_token}` } },
             );
             if (res.ok) {
               const people = await res.json();
               const prof = mapPeopleProfile(people);
 
-              // Completar/ajustar token con datos de People
+              // Complete/adjust token with People API data
               token.picture = prof.picture || token.picture || user.image || "";
               token.locale = prof.locale || token.locale || user.locale || "";
               token.firstName = token.firstName || prof.givenName || "";
               token.lastName = token.lastName || prof.familyName || "";
               token.email = token.email || prof.email || "";
 
-              // Si ya existe en DB, actualiza datos cosméticos sugeridos:
-              // (Asegúrate de tener estos campos en tu schema si deseas persistirlos)
+              // If already exists in DB, update suggested cosmetic data:
+              // (Make sure to have these fields in your schema if you want to persist them)
               if (token.email) {
                 await db.connect(true);
                 const existing = await WpUser.findOne({
@@ -184,24 +183,24 @@ export default NextAuth({
                       $set: {
                         firstName: token.firstName,
                         lastName: token.lastName,
-                        avatarUrl: token.picture || null, // <-- agrega al schema si lo usas
-                        preferredLocale: token.locale || null, // <-- agrega al schema si lo usas
+                        avatarUrl: token.picture || null, // <-- add to schema if you use it
+                        preferredLocale: token.locale || null, // <-- add to schema if you use it
                       },
-                    }
+                    },
                   );
                 }
               }
             }
           } catch {
-            // no rompas el login si falla People API
+            // do not break login if People API fails
           }
         }
 
-        // Reforzar desde DB si fue Google (ya existía) — tu lógica original
+        // Reinforce from DB if it was Google (already existed) — your original logic
         if (account?.provider === "google") {
           await db.connect(true);
           const dbUser = await WpUser.findOne({ email: token.email }).select(
-            "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin"
+            "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin",
           );
           if (dbUser) {
             token._id = dbUser._id;
@@ -217,11 +216,11 @@ export default NextAuth({
           }
         }
       }
-      // Sesiones siguientes → refresca desde DB
+      // Subsequent sessions → refresh from DB
       else if (token._id) {
         await db.connect(true);
         const dbUser = await WpUser.findById(token._id).select(
-          "firstName lastName email active approved restricted"
+          "firstName lastName email active approved restricted",
         );
         if (dbUser) {
           token.firstName = dbUser.firstName;
@@ -251,11 +250,13 @@ export default NextAuth({
         approved: token.approved,
         restricted: token.restricted,
 
-        // Exponer datos enriquecidos por People API / OIDC
+        // Expose enriched data from People API / OIDC
         picture: token.picture || null,
         locale: token.locale || null,
       };
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);
