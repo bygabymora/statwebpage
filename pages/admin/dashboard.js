@@ -207,7 +207,7 @@ function AdminDashboardScreen() {
               <button
                 onClick={handleRefresh}
                 disabled={loading}
-                className='flex items-center gap-2 text-xs sm:text-sm bg-[#144e8b] hover:bg-[#0e355e] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+                className='flex items-center gap-2 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
               >
                 <RiLoopLeftFill
                   className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
