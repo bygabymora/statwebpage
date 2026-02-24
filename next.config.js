@@ -34,6 +34,30 @@ const nextConfig = {
         destination: "/news",
         permanent: true,
       },
+      // Redirect old URL-encoded news article to clean slug
+      {
+        source:
+          "/news/Robotic\\%20Revolution\\%20in\\%20Cardiac\\%20Care\\:\\%20Baylor\\%20St\\.\\%20Luke\\%E2\\%80\\%99s\\%20Completes\\%20First\\%20U\\.S\\.\\%20Fully\\%20Robotic\\%20Heart\\%20Transplant",
+        destination:
+          "/news/robotic-revolution-in-cardiac-care-baylor-st-luke-s-completes-first-u-s-fully-robotic-heart-transplant",
+        permanent: true,
+      },
+      // Redirect Medtronic URL-encoded article to clean slug
+      {
+        source:
+          "/news/Medtronic\\%E2\\%80\\%99s\\%20Hugo\\%20Surgical\\%20Robot\\%20Achieves\\%20Breakthrough\\%20in\\%20Urologic\\%20Clinical\\%20Trial\\%20\\%E2\\%80\\%94\\%20FDA\\%20Approval\\%20Likely\\%20in\\%202025",
+        destination:
+          "/news/medtronic-s-hugo-surgical-robot-achieves-breakthrough-in-urologic-clinical-trial-fda-approval-likely-in-2025",
+        permanent: true,
+      },
+      // Redirect Precigen URL with periods and apostrophe
+      {
+        source:
+          "/news/U\\.S\\.-FDA-approves-Precigen\\'s-immunotherapy-for-rare-respiratory-disease",
+        destination:
+          "/news/u-s-fda-approves-precigen-s-immunotherapy-for-rare-respiratory-disease",
+        permanent: true,
+      },
     ];
   },
 };
