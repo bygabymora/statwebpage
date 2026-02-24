@@ -3,6 +3,7 @@ import Link from "next/link";
 import { NewsItem } from "./NewsItem";
 import { motion } from "framer-motion";
 import { AiOutlineRight } from "react-icons/ai";
+import { BsPlay } from "react-icons/bs";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -41,7 +42,7 @@ const NewsSection = ({ news = [] }) => {
       role='region'
     >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <motion.header className='text-center mb-10' variants={itemVariants}>
+        <motion.header className='text-center mb-7' variants={itemVariants}>
           <h2
             id='news-section-heading'
             className='text-3xl font-bold text-[#0e355e] mb-4'
@@ -54,7 +55,29 @@ const NewsSection = ({ news = [] }) => {
             practice.
           </p>
         </motion.header>
-
+        <motion.div className='text-center' variants={itemVariants}>
+          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center my-5'>
+            <Link
+              href='/news/video'
+              className='inline-flex items-center px-6 py-3 bg-[#0e355e] text-white rounded-lg hover:bg-[#1a4872] transition-colors duration-200 font-medium'
+              aria-label='Watch video news and healthcare updates'
+              title='Watch the latest healthcare video news and updates'
+            >
+              <BsPlay className='mr-2 w-4 h-4' />
+              Watch Video News
+            </Link>
+            <span className='text-gray-400 hidden sm:block'>|</span>
+            <Link
+              href='/news'
+              className='inline-flex items-center px-6 text-[#0e355e] font-medium hover:text-[#03793d] transition-colors duration-200'
+              aria-label='View all healthcare news and industry insights'
+              title='Explore more healthcare news and surgical supply updates'
+            >
+              View All News & Insights
+              <AiOutlineRight className='ml-2 w-4 h-4' />
+            </Link>
+          </div>
+        </motion.div>
         <motion.div
           className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'
           variants={containerVariants}
@@ -64,18 +87,6 @@ const NewsSection = ({ news = [] }) => {
               <NewsItem news={item} />
             </motion.div>
           ))}
-        </motion.div>
-
-        <motion.div className='text-center' variants={itemVariants}>
-          <Link
-            href='/news'
-            className='inline-flex items-center px-6 text-[#0e355e] font-medium hover:text-[#03793d] transition-colors duration-200'
-            aria-label='View all healthcare news and industry insights'
-            title='Explore more healthcare news and surgical supply updates'
-          >
-            View All News & Insights
-            <AiOutlineRight className='ml-2 w-4 h-4' />
-          </Link>
         </motion.div>
       </div>
     </motion.section>
