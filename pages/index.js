@@ -178,6 +178,7 @@ function Carousel({ products }) {
     <motion.section
       className='carousel-container'
       initial='hidden'
+      whileInView='show'
       viewport={{ once: true, amount: 0.2 }}
       aria-label='Featured surgical supplies and surgical equipment carousel'
       role='region'
