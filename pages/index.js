@@ -263,21 +263,8 @@ export default function Home({ products, news = [] }) {
           <div className='my-5 -mt-2'>
             <ShippingCutoffTimer />
           </div>
-          <motion.div
-            initial='hidden'
-            whileInView='show'
-            viewport={{ once: true }}
-          >
-            <Banner />
-          </motion.div>
-
-          <motion.div
-            initial='hidden'
-            whileInView='show'
-            viewport={{ once: true }}
-          >
-            <StaticBanner />
-          </motion.div>
+          <Banner />
+          <StaticBanner />
 
           <motion.div
             initial='hidden'
