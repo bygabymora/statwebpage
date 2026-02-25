@@ -58,6 +58,19 @@ const nextConfig = {
           "/news/u-s-fda-approves-precigen-s-immunotherapy-for-rare-respiratory-disease",
         permanent: true,
       },
+      {
+        source:
+          "/news/surgery-at-the-frontier-cell-therapy-immuno-oncology-and-catheter-innovation-reshape-the-us-surgical-landscape",
+        destination:
+          "/news/surgery-at-the-frontier-cell-therapy-immuno-oncology-and-catheter-innovation-reshape-the-u-s-surgical-landscape",
+        permanent: true,
+      },
+      {
+        source:
+          "/products/470015%3Fsrsltid%3DAfmBOoogUmdPW2zeWTB5KgBuIVuopO7KdtK-v1BcY4JhbsA2JcXnrY0s",
+        destination: "/products/470015",
+        permanent: true,
+      },
     ];
   },
 };

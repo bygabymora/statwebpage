@@ -307,7 +307,7 @@ export default function AdminOrderScreen() {
 
             {/* Desktop Table Layout */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto overflow-y-auto max-h-[85vh] custom-scrollbar'>
+              <div className='overflow-x-auto custom-scrollbar'>
                 <div className='min-w-full' style={{ minWidth: "700px" }}>
                   <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>

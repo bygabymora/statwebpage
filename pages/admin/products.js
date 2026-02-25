@@ -334,7 +334,7 @@ export default function AdminProductsScreen() {
 
             {/* Desktop Table Layout */}
             <div className='hidden lg:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='max-h-[80vh] overflow-auto custom-scrollbar'>
+              <div className='custom-scrollbar'>
                 <div className='min-w-full'>
                   <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-4 px-6 py-4 items-center'>
