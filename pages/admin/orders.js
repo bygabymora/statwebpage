@@ -308,33 +308,33 @@ export default function AdminOrderScreen() {
             {/* Desktop Table Layout */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto overflow-y-auto max-h-[85vh] custom-scrollbar'>
-                <table className='w-full' style={{ minWidth: "700px" }}>
-                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <tr>
-                      <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px] sm:min-w-[150px]'>
+                <div className='min-w-full' style={{ minWidth: "700px" }}>
+                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Order Info
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[100px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Customer
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                      </div>
+                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Date
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                      </div>
+                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Total
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px] sm:min-w-[150px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Payment
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                      </div>
+                      <div className='col-span-2 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Status
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[90px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className='divide-y divide-gray-200'>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='divide-y divide-gray-200'>
                     {orders.map((order, index) => {
                       const createdAt = formatYMD(order?.createdAt);
                       const paidAt = formatYMD(order?.paidAt);
@@ -348,13 +348,13 @@ export default function AdminOrderScreen() {
                         : invoiceStatus;
 
                       return (
-                        <tr
+                        <div
                           key={order?._id}
-                          className={`hover:bg-gray-50 transition-colors ${
+                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
                             index % 2 === 0 ? "bg-white" : "bg-gray-25"
                           }`}
                         >
-                          <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
+                          <div className='col-span-2'>
                             <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
                               <div className='flex-shrink-0 relative'>
                                 <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
@@ -375,18 +375,18 @@ export default function AdminOrderScreen() {
                                 </div>
                               </div>
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[80px] sm:max-w-[100px] lg:max-w-none'>
+                          </div>
+                          <div className='col-span-2'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
                               {order?.wpUser?.firstName || "DELETED USER"}
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                          </div>
+                          <div className='col-span-1'>
                             <div className='text-xs sm:text-xs lg:text-sm text-gray-900'>
                               {createdAt || "No Date"}
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                          </div>
+                          <div className='col-span-1'>
                             <div className='font-semibold text-xs sm:text-xs lg:text-sm text-gray-900'>
                               $
                               {new Intl.NumberFormat("en-US", {
@@ -394,8 +394,8 @@ export default function AdminOrderScreen() {
                                 maximumFractionDigits: 2,
                               }).format(order?.totalPrice ?? 0)}
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <div className='text-xs sm:text-xs lg:text-sm'>
                               <div className='font-semibold text-gray-900 mb-1'>
                                 {paidStatus}
@@ -413,8 +413,8 @@ export default function AdminOrderScreen() {
                                 }
                               </div>
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                          </div>
+                          <div className='col-span-2 text-center'>
                             <div className='flex flex-col gap-1'>
                               <div className='flex justify-center'>
                                 {order?.isDelivered ?
@@ -441,8 +441,8 @@ export default function AdminOrderScreen() {
                                 }
                               </div>
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <Link
                               href={`/order/${order?._id}`}
                               className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
@@ -456,12 +456,12 @@ export default function AdminOrderScreen() {
                                 Details
                               </span>
                             </Link>
-                          </td>
-                        </tr>
+                          </div>
+                        </div>
                       );
                     })}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
               </div>
             </div>
           </>

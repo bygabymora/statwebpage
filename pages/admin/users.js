@@ -488,46 +488,46 @@ function AdminUsersScreen() {
             {/* Desktop Table Layout */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto overflow-y-auto max-h-[85vh] custom-scrollbar'>
-                <table className='w-full' style={{ minWidth: "600px" }}>
-                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <tr>
-                      <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[160px] sm:min-w-[200px]'>
+                <div className='min-w-full' style={{ minWidth: "600px" }}>
+                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
+                      <div className='col-span-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         User Information
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Company
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[80px] sm:min-w-[100px]'>
+                      </div>
+                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Customer ID
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[60px] sm:min-w-[80px]'>
+                      </div>
+                      <div className='col-span-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Active
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[70px] sm:min-w-[90px]'>
+                      </div>
+                      <div className='col-span-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Approved
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[60px] sm:min-w-[80px]'>
+                      </div>
+                      <div className='col-span-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Admin
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[70px] sm:min-w-[90px]'>
+                      </div>
+                      <div className='col-span-1 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Restricted
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[90px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className='divide-y divide-gray-200'>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='divide-y divide-gray-200'>
                     {filteredAndSortedUsers.map((user, index) => {
                       const statusInfo = getUserStatusInfo(user);
                       return (
-                        <tr
+                        <div
                           key={user._id}
-                          className={`hover:bg-gray-50 transition-colors ${
+                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
                             index % 2 === 0 ? "bg-white" : "bg-gray-25"
                           }`}
                         >
-                          <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
+                          <div className='col-span-3'>
                             <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
                               <div className='flex-shrink-0 relative'>
                                 <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
@@ -555,29 +555,25 @@ function AdminUsersScreen() {
                                 </div>
                               </div>
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[60px] sm:max-w-[100px] lg:max-w-none'>
+                          </div>
+                          <div className='col-span-2'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
                               {user.companyName || "—"}
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[60px] sm:max-w-[100px] lg:max-w-none'>
+                          </div>
+                          <div className='col-span-1'>
+                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate flex justify-center'>
                               {user.customerId ?
-                                <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium'>
-                                  {user.customerId ?
-                                    <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                      <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
-                                    </div>
-                                  : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                      <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
-                                    </div>
-                                  }
-                                </span>
-                              : "—"}
+                                <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCheckmarkSharp className='text-green-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              : <div className='bg-red-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
+                                  <IoCloseOutline className='text-red-600 text-xs sm:text-sm lg:text-lg' />
+                                </div>
+                              }
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                          </div>
+                          <div className='col-span-1 text-center'>
                             <div className='flex justify-center'>
                               {user.active ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
@@ -588,8 +584,8 @@ function AdminUsersScreen() {
                                 </div>
                               }
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                          </div>
+                          <div className='col-span-1 text-center'>
                             <div className='flex justify-center'>
                               {user.approved ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
@@ -600,8 +596,8 @@ function AdminUsersScreen() {
                                 </div>
                               }
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                          </div>
+                          <div className='col-span-1 text-center'>
                             <div className='flex justify-center'>
                               {user.isAdmin ?
                                 <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
@@ -612,8 +608,8 @@ function AdminUsersScreen() {
                                 </div>
                               }
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-center'>
+                          </div>
+                          <div className='col-span-1 text-center'>
                             <div className='flex justify-center'>
                               {user.restricted ?
                                 <div className='bg-yellow-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
@@ -624,8 +620,8 @@ function AdminUsersScreen() {
                                 </div>
                               }
                             </div>
-                          </td>
-                          <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
                               <button
                                 onClick={() =>
@@ -653,12 +649,12 @@ function AdminUsersScreen() {
                                 />
                               </button>
                             </div>
-                          </td>
-                        </tr>
+                          </div>
+                        </div>
                       );
                     })}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
               </div>
             </div>
           </>

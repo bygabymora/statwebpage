@@ -144,6 +144,7 @@ export default function Newscreen({
                   <iframe
                     src={news.videoUrl.replace("watch?v=", "embed/")}
                     title={news.title}
+                    alt={news.title}
                     className='absolute top-0 left-0 w-full h-full'
                     frameBorder='0'
                     allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'

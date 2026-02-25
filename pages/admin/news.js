@@ -288,35 +288,35 @@ export default function AdminNewsScreen() {
             {/* Desktop Table Layout */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto overflow-y-auto max-h-[80vh] custom-scrollbar'>
-                <table className='min-w-full' style={{ minWidth: "600px" }}>
-                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <tr>
-                      <th className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px] sm:min-w-[250px]'>
+                <div className='min-w-full' style={{ minWidth: "600px" }}>
+                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
+                      <div className='col-span-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Title
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[100px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Category
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px] sm:min-w-[150px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Tags
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[100px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Author
-                      </th>
-                      <th className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[90px] sm:min-w-[120px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className='divide-y divide-gray-200'>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='divide-y divide-gray-200'>
                     {newsEntries.map((news, index) => (
-                      <tr
+                      <div
                         key={news._id}
-                        className={`hover:bg-gray-50 transition-colors ${
+                        className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
                           index % 2 === 0 ? "bg-white" : "bg-gray-25"
                         }`}
                       >
-                        <td className='px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4'>
+                        <div className='col-span-4'>
                           <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
                             <div className='min-w-0 flex-1'>
                               <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1 line-clamp-2'>
@@ -327,13 +327,13 @@ export default function AdminNewsScreen() {
                               </div>
                             </div>
                           </div>
-                        </td>
-                        <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                        </div>
+                        <div className='col-span-2'>
                           <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-gray-800'>
                             {news.category}
                           </span>
-                        </td>
-                        <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                        </div>
+                        <div className='col-span-2'>
                           <div className='flex flex-wrap gap-1'>
                             {news.tags.slice(0, 2).map((tag, index) => (
                               <span
@@ -349,13 +349,13 @@ export default function AdminNewsScreen() {
                               </span>
                             )}
                           </div>
-                        </td>
-                        <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
-                          <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate max-w-[80px] sm:max-w-[100px] lg:max-w-none'>
+                        </div>
+                        <div className='col-span-2'>
+                          <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
                             {news.author}
                           </div>
-                        </td>
-                        <td className='px-1 py-2 sm:px-2 sm:py-3 lg:px-4 lg:py-4'>
+                        </div>
+                        <div className='col-span-2'>
                           <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
                             <Link
                               href={`/admin/news/${news._id}`}
@@ -381,11 +381,11 @@ export default function AdminNewsScreen() {
                               />
                             </button>
                           </div>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
               </div>
             </div>
           </>

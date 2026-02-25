@@ -335,10 +335,10 @@ export default function AdminProductsScreen() {
             {/* Desktop Table Layout */}
             <div className='hidden lg:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='max-h-[80vh] overflow-auto custom-scrollbar'>
-                <table className='min-w-full'>
-                  <thead className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <tr>
-                      <th className='px-6 py-4 text-left'>
+                <div className='min-w-full'>
+                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                    <div className='grid grid-cols-12 gap-4 px-6 py-4 items-center'>
+                      <div className='col-span-4 text-left'>
                         <div className='flex items-center gap-2'>
                           <span className='text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                             Product / Manufacturer
@@ -356,22 +356,22 @@ export default function AdminProductsScreen() {
                             }
                           </button>
                         </div>
-                      </th>
-                      <th className='px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Each
-                      </th>
-                      <th className='px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Box
-                      </th>
-                      <th className='px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Status
-                      </th>
-                      <th className='px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]'>
+                      </div>
+                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Description
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className='divide-y divide-gray-200'>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='divide-y divide-gray-200'>
                     {filteredProducts.map((product, index) => {
                       const eachStock = product.each?.countInStock ?? 0;
                       const boxStock = product.box?.countInStock ?? 0;
@@ -379,13 +379,13 @@ export default function AdminProductsScreen() {
                       const stockStatus = getStockStatus(totalStock);
 
                       return (
-                        <tr
+                        <div
                           key={product._id}
-                          className={`hover:bg-gray-50 transition-colors ${
+                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-4 px-6 py-4 items-center ${
                             index % 2 === 0 ? "bg-white" : "bg-gray-25"
                           }`}
                         >
-                          <td className='px-6 py-4'>
+                          <div className='col-span-4'>
                             <div className='flex items-center gap-4'>
                               <div className='flex-shrink-0 relative'>
                                 <Image
@@ -409,8 +409,8 @@ export default function AdminProductsScreen() {
                                 </div>
                               </div>
                             </div>
-                          </td>
-                          <td className='px-4 py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <div className='text-sm'>
                               <div className='font-bold text-gray-900 text-lg'>
                                 ${product.each?.wpPrice ?? "N/A"}
@@ -420,8 +420,8 @@ export default function AdminProductsScreen() {
                                 <span className='font-medium'>{eachStock}</span>
                               </div>
                             </div>
-                          </td>
-                          <td className='px-4 py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <div className='text-sm'>
                               <div className='font-bold text-gray-900 text-lg'>
                                 ${product.box?.wpPrice ?? "N/A"}
@@ -431,8 +431,8 @@ export default function AdminProductsScreen() {
                                 <span className='font-medium'>{boxStock}</span>
                               </div>
                             </div>
-                          </td>
-                          <td className='px-4 py-4'>
+                          </div>
+                          <div className='col-span-2'>
                             <div
                               className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${stockStatus.color}`}
                             >
@@ -441,18 +441,18 @@ export default function AdminProductsScreen() {
                             <div className='text-xs text-gray-500 mt-1'>
                               Total: {totalStock}
                             </div>
-                          </td>
-                          <td className='px-4 py-4'>
-                            <div className='text-sm text-gray-700 line-clamp-3 leading-relaxed max-w-xs'>
+                          </div>
+                          <div className='col-span-2'>
+                            <div className='text-sm text-gray-700 line-clamp-3 leading-relaxed'>
                               {product.information ||
                                 "No description available"}
                             </div>
-                          </td>
-                        </tr>
+                          </div>
+                        </div>
                       );
                     })}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
               </div>
             </div>
           </>
