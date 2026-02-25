@@ -284,6 +284,7 @@ export default function Home({ products, news = [] }) {
               className='text-center mb-8'
               variants={fadeInUp}
               initial='hidden'
+              whileInView='show'
               viewport={{ once: true }}
             >
               <h2
