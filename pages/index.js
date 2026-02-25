@@ -178,7 +178,6 @@ function Carousel({ products }) {
     <motion.section
       className='carousel-container'
       initial='hidden'
-      whileInView='show'
       viewport={{ once: true, amount: 0.2 }}
       aria-label='Featured surgical supplies and surgical equipment carousel'
       role='region'
@@ -266,20 +265,12 @@ export default function Home({ products, news = [] }) {
           <Banner />
           <StaticBanner />
 
-          <motion.div
-            initial='hidden'
-            whileInView='show'
-            viewport={{ once: true }}
-          >
+          <motion.div initial='hidden' viewport={{ once: true }}>
             <Benefits className='mt-2' />
           </motion.div>
 
           {news && news.length > 0 && (
-            <motion.div
-              initial='hidden'
-              whileInView='show'
-              viewport={{ once: true }}
-            >
+            <motion.div initial='hidden' viewport={{ once: true }}>
               <NewsSection news={news} />
             </motion.div>
           )}
@@ -292,7 +283,6 @@ export default function Home({ products, news = [] }) {
               className='text-center mb-8'
               variants={fadeInUp}
               initial='hidden'
-              whileInView='show'
               viewport={{ once: true }}
             >
               <h2
@@ -324,7 +314,6 @@ export default function Home({ products, news = [] }) {
           <motion.div
             className='min-h-[534px] w-full'
             initial='hidden'
-            whileInView='show'
             viewport={{ once: true }}
           >
             <Contact className='mt-2' />
