@@ -225,7 +225,25 @@ export default function Layout({
                 "surgical news, healthcare, health updates, surgery, innovation, patient care, hospital news"
               }
             />
-            <meta property='og:type' content='article' />
+
+            {/* Video-specific meta tags */}
+            {news.hasVideo && news.videoUrl ?
+              <>
+                <meta property='og:type' content='video.other' />
+                <meta property='og:video' content={news.videoUrl} />
+                <meta
+                  property='og:video:type'
+                  content={`video/${news.videoType || "mp4"}`}
+                />
+                <meta property='og:video:width' content='1280' />
+                <meta property='og:video:height' content='720' />
+                <meta name='twitter:card' content='player' />
+                <meta name='twitter:player' content={news.videoUrl} />
+                <meta name='twitter:player:width' content='1280' />
+                <meta name='twitter:player:height' content='720' />
+              </>
+            : <meta property='og:type' content='article' />}
+
             <meta property='og:title' content={title || news.title} />
             <meta
               property='og:description'
@@ -248,7 +266,10 @@ export default function Layout({
               />
             )}
 
-            <meta name='twitter:card' content='summary_large_image' />
+            <meta
+              name='twitter:card'
+              content={news.hasVideo ? "player" : "summary_large_image"}
+            />
             <meta name='twitter:title' content={title || news.title} />
             <meta
               name='twitter:description'
@@ -272,7 +293,7 @@ export default function Layout({
             <script
               type='application/ld+json'
               dangerouslySetInnerHTML={{
-                __html: JSON.stringify(generateJSONLD(news)),
+                __html: JSON.stringify(schema || generateJSONLD(news)),
               }}
             />
           </>

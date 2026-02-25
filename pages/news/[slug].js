@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/main/Layout";
 import Link from "next/link";
-import { BsBackspace } from "react-icons/bs";
+import { BsBackspace, BsPlay } from "react-icons/bs";
 import { FaFacebookF, FaLinkedinIn, FaEnvelope } from "react-icons/fa";
 import db from "../../utils/db";
 import News from "../../models/News";
 import Image from "next/image";
+import { generateJSONLD } from "../../utils/seo";
 
 export default function Newscreen({
   news,
@@ -30,6 +31,21 @@ export default function Newscreen({
   if (!news) return <p className='p-8 text-center'>News not found</p>;
 
   const pageTitle = `${news.title.slice(0, 40)}... | STAT Surgical Supply`;
+
+  // Enhanced title for video content
+  const enhancedTitle =
+    news.hasVideo && news.videoUrl ?
+      `Watch: ${news.title} | Video News | STAT Surgical Supply`
+    : pageTitle;
+
+  // Enhanced description for video content
+  const enhancedDescription =
+    news.hasVideo && news.videoUrl ?
+      `Watch this video about ${news.title}. ${news.content?.slice(0, 120)}... Latest health industry video news from STAT Surgical Supply.`
+    : `${news.content?.slice(0, 160)}...`;
+
+  // Generate schema markup (will include VideoObject if video present)
+  const schemaMarkup = generateJSONLD(news);
 
   const contentWithImages = news.content.split("\n").map((para, idx) => {
     const imageRegex = /\[(https?:\/\/[^\s\]]+)\]/;
@@ -75,11 +91,27 @@ export default function Newscreen({
 
   return (
     <Layout
-      title={pageTitle} // Use the constructed page title
+      title={enhancedTitle}
       news={news}
-      description={`${news.content?.slice(0, 160)}...`}
+      description={enhancedDescription}
       image={news.imageUrl}
       url={`https://www.statsurgicalsupply.com/news/${news.slug}`}
+      schema={schemaMarkup}
+      // Add video-specific meta tags
+      additionalMetaTags={
+        news.hasVideo && news.videoUrl ?
+          [
+            { property: "og:video", content: news.videoUrl },
+            {
+              property: "og:video:type",
+              content: `video/${news.videoType || "mp4"}`,
+            },
+            { property: "og:type", content: "video.other" },
+            { name: "twitter:card", content: "player" },
+            { name: "twitter:player", content: news.videoUrl },
+          ]
+        : []
+      }
     >
       <div
         className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
@@ -95,6 +127,15 @@ export default function Newscreen({
         </Link>
 
         <h1 className='text-3xl font-extrabold text-[#0e355e] mb-3'>
+          {news.hasVideo && news.videoUrl && (
+            <span className='inline-flex items-center gap-3 mb-2'>
+              <BsPlay className='text-2xl' />
+              <span className='text-3xl font-extrabold text-[#0e355e]'>
+                Video:
+              </span>
+              <br />
+            </span>
+          )}
           {news.title}
         </h1>
         <div className='text-gray-500 text-sm flex items-center gap-2 mb-4'>

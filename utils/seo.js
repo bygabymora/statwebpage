@@ -4,7 +4,7 @@ function generateJSONLD(news) {
     return value && !isNaN(date);
   };
 
-  return {
+  const baseSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     keywords: news.tags?.join(", "),
@@ -36,6 +36,70 @@ function generateJSONLD(news) {
       },
     },
     description: news.content?.substring(0, 160) || "",
+  };
+
+  // If the news article has a video, add VideoObject schema
+  if (news.hasVideo && news.videoUrl) {
+    const videoSchema = generateVideoObjectJSONLD(news);
+    return [baseSchema, videoSchema];
+  }
+
+  return baseSchema;
+}
+
+// Generate VideoObject schema for news articles with videos
+function generateVideoObjectJSONLD(news) {
+  const isValidDate = (value) => {
+    const date = new Date(value);
+    return value && !isNaN(date);
+  };
+
+  // Extract video duration if available (you may need to add this to your news model)
+  const duration = news.videoDuration || "PT0M0S"; // Default ISO 8601 duration
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: news.title,
+    description: news.content?.substring(0, 160) || "",
+    thumbnailUrl: news.imageUrl,
+    contentUrl: news.videoUrl,
+    embedUrl:
+      news.videoType === "youtube" ?
+        news.videoUrl.replace("watch?v=", "embed/")
+      : news.videoUrl,
+    uploadDate:
+      isValidDate(news.createdAt) ?
+        new Date(news.createdAt).toISOString()
+      : null,
+    duration: duration,
+    publisher: {
+      "@type": "Organization",
+      name: "STAT Surgical Supply",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
+        width: 600,
+        height: 60,
+      },
+    },
+    author: {
+      "@type": "Person",
+      name: news.author || "STAT Surgical Supply",
+    },
+    // Video quality indicators
+    videoQuality: "HD",
+    // Indicate this is health/medical content
+    genre: "Health",
+    // Keywords for better categorization
+    keywords:
+      news.tags?.join(", ") ||
+      "health news, medical updates, surgical supplies",
+    // Main entity linking to the article
+    mainEntity: {
+      "@type": "NewsArticle",
+      "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
+    },
   };
 }
 
@@ -454,6 +518,7 @@ function generateLocalBusinessJSONLD() {
 
 export {
   generateJSONLD,
+  generateVideoObjectJSONLD,
   generateProductJSONLD,
   generateMainPageJSONLD,
   generateOrganizationJSONLD,
