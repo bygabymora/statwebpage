@@ -54,10 +54,7 @@ function generateVideoObjectJSONLD(news) {
     return value && !isNaN(date);
   };
 
-  // Extract video duration if available (you may need to add this to your news model)
-  const duration = news.videoDuration || "PT0M0S"; // Default ISO 8601 duration
-
-  return {
+  const videoObject = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: news.title,
@@ -71,8 +68,7 @@ function generateVideoObjectJSONLD(news) {
     uploadDate:
       isValidDate(news.createdAt) ?
         new Date(news.createdAt).toISOString()
-      : null,
-    duration: duration,
+      : undefined,
     publisher: {
       "@type": "Organization",
       name: "STAT Surgical Supply",
@@ -87,20 +83,23 @@ function generateVideoObjectJSONLD(news) {
       "@type": "Person",
       name: news.author || "STAT Surgical Supply",
     },
-    // Video quality indicators
     videoQuality: "HD",
-    // Indicate this is health/medical content
     genre: "Health",
-    // Keywords for better categorization
     keywords:
       news.tags?.join(", ") ||
       "health news, medical updates, surgical supplies",
-    // Main entity linking to the article
     mainEntity: {
       "@type": "NewsArticle",
       "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
     },
   };
+
+  // ONLY add duration if valid
+  if (news.videoDuration && news.videoDuration !== "PT0M0S") {
+    videoObject.duration = news.videoDuration;
+  }
+
+  return videoObject;
 }
 
 function generateProductJSONLD(product) {
