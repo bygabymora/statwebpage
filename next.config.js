@@ -71,6 +71,11 @@ const nextConfig = {
         destination: "/products/470015",
         permanent: true,
       },
+      {
+        source: "/products/SMITH-&-NEPHEW-7205310",
+        destination: "/products/7205310",
+        permanent: true,
+      },
     ];
   },
 };
