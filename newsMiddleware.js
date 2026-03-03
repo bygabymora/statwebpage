@@ -65,9 +65,22 @@ function handleNews(url) {
   }
 
   // Everything after /news/
-  const slugRaw = pathname.slice("/news/".length);
+  let slugRaw = pathname.slice("/news/".length);
   if (!slugRaw) {
     return NextResponse.next();
+  }
+
+  // Clean up any encoded query parameters in the slug
+  if (slugRaw.includes("%3F") || slugRaw.includes("%3f")) {
+    try {
+      const decoded = decodeURIComponent(slugRaw);
+      if (decoded.includes("?")) {
+        slugRaw = decoded.split("?")[0];
+      }
+    } catch (e) {
+      // Manual cleanup if decoding fails
+      slugRaw = slugRaw.split("%3F")[0].split("%3f")[0];
+    }
   }
 
   const slugPart = slugRaw.split("/")[0];

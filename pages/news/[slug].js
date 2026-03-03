@@ -361,7 +361,28 @@ export async function getServerSideProps(context) {
 
   // Function to transform URL-encoded/title-case slugs to clean format
   const cleanSlug = (rawSlug) => {
-    return decodeURIComponent(rawSlug)
+    let cleaned = rawSlug;
+
+    // First, handle URL-encoded query parameters (like %3F)
+    if (cleaned.includes("%3F") || cleaned.includes("%3f")) {
+      try {
+        const decoded = decodeURIComponent(cleaned);
+        if (decoded.includes("?")) {
+          // Split at the first ? and take only the path part
+          cleaned = decoded.split("?")[0];
+        }
+      } catch (e) {
+        // If decoding fails, try to remove encoded query params manually
+        cleaned = cleaned.split("%3F")[0].split("%3f")[0];
+      }
+    }
+
+    // Remove any remaining query parameters that might not be encoded
+    if (cleaned.includes("?")) {
+      cleaned = cleaned.split("?")[0];
+    }
+
+    return decodeURIComponent(cleaned)
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
       .replace(/\s+/g, "-") // Replace spaces with hyphens

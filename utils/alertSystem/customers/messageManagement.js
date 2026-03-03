@@ -359,44 +359,294 @@ export const messageManagement = (
     case "Unsubscribe":
       emailMessage = {
         ...emailMessage,
-        subject: `${contact.name || contact.companyName || "User"}, You have successfully unsubscribed`,
-        p1: `<div style="font-size: 17px; color: #333333;">
-                 You have successfully unsubscribed from our email communications.
+        subject: `✅ Unsubscription Confirmed - ${contact.name || contact.companyName || "User"}`,
+        p1: `<div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                 <div style="
+                   width: 50px;
+                   height: 50px;
+                   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                   border-radius: 50%;
+                   display: flex;
+                   align-items: center;
+                   justify-content: center;
+                   flex-shrink: 0;
+                   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                 ">
+                   <span style="color: white; font-size: 24px; font-weight: bold;">✓</span>
+                 </div>
+                 <div>
+                   <div style="font-size: 22px; font-weight: 700; color: #059669; margin-bottom: 5px; letter-spacing: -0.3px;">
+                     Unsubscription Successful
+                   </div>
+                   <div style="font-size: 16px; color: #64748b; font-weight: 500;">
+                     You will no longer receive our email communications
+                   </div>
+                 </div>
                </div>`,
-        p2: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
-                 We're sorry to see you go! If you've unsubscribed by mistake or would like to 
-                 update your email preferences instead of completely unsubscribing, please 
-                 <a href="mailto:sales@statsurgicalsupply.com" style="color: #144e8b; text-decoration: none;">contact our support team</a>.
+        p2: `<div style="text-align: left;">
+                 <div style="font-size: 16px; color: #475569; margin-bottom: 25px; line-height: 1.7;">
+                   We're sorry to see you go! Your request has been processed and you've been successfully 
+                   removed from our mailing list.
+                 </div>
+                 
+                 <div style="
+                   background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 20%, #fef3c7 100%);
+                   border-radius: 10px;
+                   padding: 20px;
+                   margin: 20px 0;
+                   border-left: 4px solid #f59e0b;
+                   box-shadow: 0 2px 10px rgba(245, 158, 11, 0.1);
+                 ">
+                   <div style="font-size: 16px; color: #92400e; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                     <span style="font-size: 18px;">🤔</span>
+                     Changed your mind?
+                   </div>
+                   <div style="font-size: 14px; color: #b45309; line-height: 1.6;">
+                     If you've unsubscribed by mistake or would like to update your email preferences, 
+                     <a href="mailto:sales@statsurgicalsupply.com" style="
+                       color: #d97706;
+                       text-decoration: none;
+                       font-weight: 600;
+                       border-bottom: 2px solid #d97706;
+                       padding-bottom: 1px;
+                     ">contact our support team</a> - we're here to help!
+                   </div>
+                 </div>
                </div>`,
-        p3: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
-                 <strong>Unsubscribe Details:</strong><br>
-                 Company: ${contact.companyName || "Not provided"}<br>
-                 Email: ${contact.email}<br>
-                 Date: ${new Date().toLocaleDateString()}<br><br>
-                 Thank you for your past interest in our services.<br>
-                 <strong>Stat Surgical Supply</strong>
+        p3: `<div style="
+                   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+                   border-radius: 10px;
+                   padding: 25px;
+                   border: 1px solid #e2e8f0;
+                 ">
+                 <div style="font-size: 15px; color: #475569; margin-bottom: 20px;">
+                   <div style="font-weight: 600; color: #1e293b; margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                     <span style="font-size: 18px;">📋</span>
+                     Unsubscription Details
+                   </div>
+                   
+                   <div style="display: grid; gap: 10px;">
+                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 6px; border: 1px solid #f1f5f9;">
+                       <span style="font-weight: 500; color: #64748b;">Company:</span>
+                       <span style="color: #1e293b; font-weight: 600;">${contact.companyName || "Not provided"}</span>
+                     </div>
+                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 6px; border: 1px solid #f1f5f9;">
+                       <span style="font-weight: 500; color: #64748b;">Email:</span>
+                       <span style="color: #1e293b; font-weight: 600;">${contact.email}</span>
+                     </div>
+                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 6px; border: 1px solid #f1f5f9;">
+                       <span style="font-weight: 500; color: #64748b;">Date:</span>
+                       <span style="color: #1e293b; font-weight: 600;">${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+                     </div>
+                   </div>
+                 </div>
+                 
+                 <div style="
+                   margin-top: 20px;
+                   padding-top: 20px;
+                   border-top: 1px solid #e2e8f0;
+                   text-align: center;
+                 ">
+                   <div style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 8px;">
+                     Thank you for your past interest in our services. We wish you all the best!
+                   </div>
+                   <div style="
+                     font-size: 16px;
+                     font-weight: 700;
+                     color: #144e8b;
+                   ">
+                     Stat Surgical Supply Team
+                   </div>
+                 </div>
                </div>`,
       };
       break;
     case "Unsubscribe Notification":
       emailMessage = {
         ...emailMessage,
-        subject: `[ADMIN ALERT] User Unsubscribed - ${contact.companyName || contact.email}`,
-        p1: `<div style="font-size: 17px; color: #333333;">
-                 <strong>A user has unsubscribed from email communications.</strong>
+        subject: `🚨 ADMIN ALERT: Unsubscription Alert - ${contact.companyName || contact.email}`,
+        p1: `<div style="
+                   background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+                   border-radius: 12px;
+                   padding: 20px;
+                   border-left: 4px solid #ef4444;
+                   margin-bottom: 10px;
+                   box-shadow: 0 2px 10px rgba(239, 68, 68, 0.1);
+                 ">
+                 <div style="display: flex; align-items: center; gap: 15px;">
+                   <div style="
+                     width: 45px;
+                     height: 45px;
+                     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                     border-radius: 50%;
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     flex-shrink: 0;
+                     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+                   ">
+                     <span style="color: white; font-size: 20px; font-weight: bold;">⚠</span>
+                   </div>
+                   <div>
+                     <div style="font-size: 20px; font-weight: 700; color: #dc2626; margin-bottom: 5px; letter-spacing: -0.3px;">
+                       User Unsubscription Alert
+                     </div>
+                     <div style="font-size: 14px; color: #991b1b; font-weight: 500;">
+                       A customer has opted out of email communications
+                     </div>
+                   </div>
+                 </div>
                </div>`,
-        p2: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
-                 <strong>Customer Details:</strong><br>
-                 Company Name: ${contact.companyName || "Not provided"}<br>
-                 Email: ${contact.email}<br>
-                 Customer ID: ${contact._id || "Not available"}<br>
-                 Date: ${new Date().toLocaleDateString()}<br>
-                 Time: ${new Date().toLocaleTimeString()}
+        p2: `<div style="
+                   background: #f8fafc;
+                   border-radius: 12px;
+                   padding: 25px;
+                   border: 1px solid #e2e8f0;
+                 ">
+                 <div style="font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                   <span style="font-size: 20px;">📊</span>
+                   Customer Information
+                 </div>
+                 
+                 <div style="display: grid; gap: 12px;">
+                   <div style="
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     padding: 12px;
+                     background: white;
+                     border-radius: 8px;
+                     border: 1px solid #f1f5f9;
+                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                   ">
+                     <span style="font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                       <span style="font-size: 16px;">🏢</span>
+                       Company
+                     </span>
+                     <span style="color: #1e293b; font-weight: 600; font-family: 'Courier New', monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${contact.companyName || "Not provided"}</span>
+                   </div>
+                   
+                   <div style="
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     padding: 12px;
+                     background: white;
+                     border-radius: 8px;
+                     border: 1px solid #f1f5f9;
+                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                   ">
+                     <span style="font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                       <span style="font-size: 16px;">📧</span>
+                       Email
+                     </span>
+                     <span style="color: #1e293b; font-weight: 600; font-family: 'Courier New', monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${contact.email}</span>
+                   </div>
+                   
+                   <div style="
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     padding: 12px;
+                     background: white;
+                     border-radius: 8px;
+                     border: 1px solid #f1f5f9;
+                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                   ">
+                     <span style="font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                       <span style="font-size: 16px;">🆔</span>
+                       Customer ID
+                     </span>
+                     <span style="color: #1e293b; font-weight: 600; font-family: 'Courier New', monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${contact._id || "Not available"}</span>
+                   </div>
+                   
+                   <div style="
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     padding: 12px;
+                     background: white;
+                     border-radius: 8px;
+                     border: 1px solid #f1f5f9;
+                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                   ">
+                     <span style="font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                       <span style="font-size: 16px;">📅</span>
+                       Date
+                     </span>
+                     <span style="color: #1e293b; font-weight: 600; font-family: 'Courier New', monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+                   </div>
+                   
+                   <div style="
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     padding: 12px;
+                     background: white;
+                     border-radius: 8px;
+                     border: 1px solid #f1f5f9;
+                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                   ">
+                     <span style="font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px;">
+                       <span style="font-size: 16px;">🕐</span>
+                       Time
+                     </span>
+                     <span style="color: #1e293b; font-weight: 600; font-family: 'Courier New', monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${new Date().toLocaleTimeString("en-US", { hour12: true })}</span>
+                   </div>
+                 </div>
                </div>`,
-        p3: `<div style="font-size: 15px; color: #333333; margin-top: 15px;">
-                 Please review this unsubscription and update any relevant contact lists or 
-                 customer records as needed.<br><br>
-                 <strong>Stat Surgical Supply - Admin System</strong>
+        p3: `<div style="
+                   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                   border-radius: 12px;
+                   padding: 25px;
+                   border-left: 4px solid #3b82f6;
+                   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.1);
+                 ">
+                 <div style="font-size: 16px; font-weight: 600; color: #1e40af; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                   <span style="font-size: 20px;">📋</span>
+                   Action Required
+                 </div>
+                 
+                 <div style="font-size: 15px; color: #1e40af; line-height: 1.7; margin-bottom: 20px; font-weight: 500;">
+                   Please review this unsubscription and take the following actions:
+                 </div>
+                 
+                 <div style="font-size: 14px; color: #1e40af; line-height: 1.6;">
+                   <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #3b82f6; font-weight: bold;">•</span>
+                     Update relevant contact lists and customer records
+                   </div>
+                   <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #3b82f6; font-weight: bold;">•</span>
+                     Remove from active email campaigns
+                   </div>
+                   <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #3b82f6; font-weight: bold;">•</span>
+                     Archive customer communication preferences
+                   </div>
+                   <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 8px;">
+                     <span style="color: #3b82f6; font-weight: bold;">•</span>
+                     Review for any pending orders or communications
+                   </div>
+                 </div>
+                 
+                 <div style="
+                   text-align: center;
+                   padding-top: 20px;
+                   border-top: 1px solid #93c5fd;
+                 ">
+                   <div style="
+                     font-size: 16px;
+                     font-weight: 700;
+                     color: #144e8b;
+                     margin-bottom: 5px;
+                   ">
+                     Stat Surgical Supply - Admin System
+                   </div>
+                   <div style="font-size: 12px; color: #60a5fa; font-weight: 500;">
+                     Automated notification system
+                   </div>
+                 </div>
                </div>`,
       };
       break;

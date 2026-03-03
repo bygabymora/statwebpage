@@ -4,9 +4,15 @@ const TRACKING_PARAMS = [
   "utm_source",
   "utm_medium",
   "utm_campaign",
+  "utm_content",
+  "utm_term",
   "gclid",
   "fbclid",
   "srsltid",
+  "msclkid",
+  "_ga",
+  "mc_cid",
+  "mc_eid",
 ];
 
 export default function proxy(request: NextRequest) {
@@ -23,17 +29,27 @@ export default function proxy(request: NextRequest) {
         const [cleanPath, queryString] = decodedPathname.split("?", 2);
         url.pathname = cleanPath;
 
-        // Add query parameters from pathname to URL search params
+        // Add query parameters from pathname to URL search params, but skip tracking params
         if (queryString) {
           const params = new URLSearchParams(queryString);
           params.forEach((value, key) => {
-            url.searchParams.set(key, value);
+            if (!TRACKING_PARAMS.includes(key.toLowerCase())) {
+              url.searchParams.set(key, value);
+            }
           });
         }
         needsRedirect = true;
       }
     } catch (e) {
-      // Continue if decoding fails
+      // If decoding fails, try manual cleanup for news URLs
+      if (
+        url.pathname.startsWith("/news/") &&
+        (url.pathname.includes("%3F") || url.pathname.includes("%3f"))
+      ) {
+        const cleanPath = url.pathname.split("%3F")[0].split("%3f")[0];
+        url.pathname = cleanPath;
+        needsRedirect = true;
+      }
     }
   }
 
