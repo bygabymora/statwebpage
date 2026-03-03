@@ -31,7 +31,7 @@ const NewsSection = ({ news = [] }) => {
   if (!news || news.length === 0) {
     return null; // Don't render if no news available
   }
-
+  console.log("News length:", news.length);
   return (
     <motion.section
       variants={containerVariants}
@@ -79,10 +79,10 @@ const NewsSection = ({ news = [] }) => {
           </div>
         </motion.div>
         <motion.div
-          className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'
+          className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'
           variants={containerVariants}
         >
-          {news.slice(0, 3).map((item) => (
+          {news.slice(0, 4).map((item) => (
             <motion.div key={item.slug} variants={itemVariants}>
               <NewsItem news={item} />
             </motion.div>

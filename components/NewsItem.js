@@ -96,7 +96,8 @@ export const NewsItem = ({ news }) => {
             {news.excerpt}
           </p>
         </div>
-        <div className='mt-3 text-lg font-semibold text-gray-500'>
+        <div className='mt-3 flex justify-between items-center text-sm text-gray-500'>
+          <span>By {news.author}</span>
           <time dateTime={news.createdAt}>
             {new Date(news.createdAt).toLocaleDateString("en-US", {
               year: "numeric",

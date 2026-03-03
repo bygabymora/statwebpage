@@ -65,7 +65,7 @@ export async function getStaticProps() {
   // Fetch recent news for homepage integration
   const recentNews = await News.find()
     .sort({ createdAt: -1 })
-    .limit(3)
+    .limit(4)
     .select("title slug content imageUrl author createdAt category tags")
     .lean();
 
