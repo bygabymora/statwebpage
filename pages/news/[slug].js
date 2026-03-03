@@ -139,7 +139,7 @@ export default function Newscreen({
           {news.title}
         </h1>
         <div className='text-gray-500 text-sm flex items-center gap-2 mb-4'>
-          <span>By {news.author}</span>
+          <span>By {news.author}, Stat Surgical Supply</span>
           <span className='mx-2'>|</span>
           <time dateTime={news.createdAt}>
             {new Date(news.createdAt).toLocaleDateString("en-US", {
