@@ -5,27 +5,8 @@ import Banner1 from "../public/images/assets/banner1.jpg";
 import Banner2 from "../public/images/assets/banner2.svg";
 import Banner3 from "../public/images/assets/banner3.webp";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { FiPhoneForwarded } from "react-icons/fi";
 import { TiShoppingCart } from "react-icons/ti";
-
-const containerVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 1, ease: "easeOut" },
-  },
-};
-
-const imageVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 1.2, ease: "easeOut" },
-  },
-};
 
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -96,21 +77,14 @@ const Banner = () => {
         />
         <link rel='preload' href={Banner2.src || Banner2} as='image' />
       </Head>
-      <motion.section
+      <section
         className='text-title-color-dark text-center'
-        initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, amount: 0.3 }}
-        variants={containerVariants}
         aria-label='STAT Surgical Supply - Premium Healthcare Equipment'
         role='banner'
       >
         <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 items-center'>
           {/* Main Content */}
-          <motion.header
-            className='text-left -mt-6'
-            variants={containerVariants}
-          >
+          <header className='text-left -mt-6'>
             <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e] my-10'>
               Premium Surgical Supplies | STAT Surgical Supply
             </h1>
@@ -139,16 +113,14 @@ const Banner = () => {
                 aria-label='Browse our complete catalog of surgical supplies'
                 title='Shop Premium Surgical Supplies - Fast Delivery Available'
               >
-                <motion.button
+                <button
                   className='w-full sm:w-auto bg-[#03793d] text-white px-6 py-3 rounded shadow-md hover:bg-green-700 transition-all flex items-center justify-center gap-3'
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   type='button'
                   aria-label='Shop surgical supplies'
                 >
                   <TiShoppingCart aria-hidden='true' />
                   Shop Surgical Supplies
-                </motion.button>
+                </button>
               </Link>
 
               <Link
@@ -157,7 +129,7 @@ const Banner = () => {
                 aria-label='Contact STAT Surgical Supply for personalized assistance and quotes'
                 title='Get Expert Consultation - Free Quotes Available'
               >
-                <motion.button
+                <button
                   className='w-full sm:w-auto border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all flex items-center justify-center gap-3'
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -166,14 +138,13 @@ const Banner = () => {
                 >
                   <FiPhoneForwarded aria-hidden='true' />
                   Get Free Quote
-                </motion.button>
+                </button>
               </Link>
             </nav>
-          </motion.header>
+          </header>
 
-          <motion.figure
+          <figure
             className='relative w-full max-w-[500px] aspect-[1/1] mx-auto'
-            variants={imageVariants}
             role='img'
             aria-label='Showcase of premium Surgical Supplies'
           >
@@ -185,7 +156,7 @@ const Banner = () => {
               ];
 
               return (
-                <motion.div
+                <div
                   key={index}
                   className='absolute inset-0'
                   initial={false}
@@ -211,7 +182,7 @@ const Banner = () => {
                     loading={index === 0 ? "eager" : "lazy"}
                     quality={index === 0 ? 95 : 85}
                   />
-                </motion.div>
+                </div>
               );
             })}
             <figcaption className='sr-only'>
@@ -219,9 +190,9 @@ const Banner = () => {
               disposables, and healthcare supplies available from STAT Surgical
               Supply for hospitals, clinics, and healthcare facilities.
             </figcaption>
-          </motion.figure>
+          </figure>
         </div>
-      </motion.section>
+      </section>
     </>
   );
 };
