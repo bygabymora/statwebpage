@@ -34,7 +34,7 @@ export default function HeroSection() {
           <a
             href='mailto:centralsales@statsurgicalsupply.com'
             className='inline-flex items-center px-8 py-3 bg-transparent border-2 border-[#144e8b] text-[#144e8b]
-               font-semibold rounded-lg hover:bg-white hover:text-[#144e8b] transition-all'
+              font-semibold rounded-lg hover:bg-white hover:text-[#144e8b] transition-all'
           >
             <FaEnvelope className='mr-2' />
             Send Email
