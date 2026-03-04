@@ -36,8 +36,10 @@ export default function ShippingCutoffTimer() {
 
   const shouldRender = showTimer && timeRemaining;
 
+  if (!shouldRender) return null;
+
   return (
-    <motion.section
+    <section
       className='w-full min-h-[220px] bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg -mt-2'
       initial={{ opacity: 0 }}
       animate={{ opacity: shouldRender ? 1 : 0 }}
@@ -142,6 +144,6 @@ export default function ShippingCutoffTimer() {
           </div>
         </div>
       : null}
-    </motion.section>
+    </section>
   );
 }
