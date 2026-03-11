@@ -12,6 +12,20 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      keyframes: {
+        "timer-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
+        "banner-fade": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "timer-pulse": "timer-pulse 2s ease-in-out infinite",
+        "banner-fade": "banner-fade 1.5s ease-in-out",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

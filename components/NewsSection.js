@@ -31,7 +31,6 @@ const NewsSection = ({ news = [] }) => {
   if (!news || news.length === 0) {
     return null; // Don't render if no news available
   }
-  console.log("News length:", news.length);
   return (
     <motion.section
       variants={containerVariants}

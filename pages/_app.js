@@ -14,12 +14,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const LazyPayPalScriptProvider = dynamic(
   () =>
     import("@paypal/react-paypal-js").then((mod) => mod.PayPalScriptProvider),
-  { ssr: false }
+  { ssr: false },
 );
 
 const LazyCookieAcceptancePopup = dynamic(
   () => import("../components/CookieAcceptancePopup"),
-  { ssr: false }
+  { ssr: false },
 );
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
@@ -72,7 +72,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
                   });
                 `}
               </Script>
-              <Script id='gtm-script' strategy='afterInteractive'>
+              <Script id='gtm-script' strategy='lazyOnload'>
                 {`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -84,23 +84,19 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </>
           )}
 
-          {Component.usePayPal ? (
+          {Component.usePayPal ?
             <LazyPayPalScriptProvider deferLoading={true}>
-              {Component.auth ? (
+              {Component.auth ?
                 <Auth adminOnly={Component.auth.adminOnly}>
                   <Component {...pageProps} />
                 </Auth>
-              ) : (
-                <Component {...pageProps} />
-              )}
+              : <Component {...pageProps} />}
             </LazyPayPalScriptProvider>
-          ) : Component.auth ? (
+          : Component.auth ?
             <Auth adminOnly={Component.auth.adminOnly}>
               <Component {...pageProps} />
             </Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}
+          : <Component {...pageProps} />}
         </StoreProvider>
       </ModalProvider>
     </SessionProvider>
