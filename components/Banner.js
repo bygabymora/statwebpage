@@ -5,8 +5,43 @@ import Banner1 from "../public/images/assets/banner1.jpg";
 import Banner2 from "../public/images/assets/banner2.svg";
 import Banner3 from "../public/images/assets/banner3.webp";
 import Link from "next/link";
-import { FiPhoneForwarded } from "react-icons/fi";
-import { TiShoppingCart } from "react-icons/ti";
+
+// Inline SVG icons — eliminates react-icons/fi and react-icons/ti from this chunk
+function PhoneIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      strokeWidth='2'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path
+        d='M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+    </svg>
+  );
+}
+
+function CartIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z' />
+    </svg>
+  );
+}
 
 const Banner = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -118,7 +153,7 @@ const Banner = () => {
                   type='button'
                   aria-label='Shop surgical supplies'
                 >
-                  <TiShoppingCart aria-hidden='true' />
+                  <CartIcon />
                   Shop Surgical Supplies
                 </button>
               </Link>
@@ -131,12 +166,10 @@ const Banner = () => {
               >
                 <button
                   className='w-full sm:w-auto border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all flex items-center justify-center gap-3'
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   type='button'
                   aria-label='Contact our surgical supply experts'
                 >
-                  <FiPhoneForwarded aria-hidden='true' />
+                  <PhoneIcon />
                   Get Free Quote
                 </button>
               </Link>
@@ -158,11 +191,9 @@ const Banner = () => {
               return (
                 <div
                   key={index}
-                  className='absolute inset-0'
-                  initial={false}
-                  animate={{ opacity: index === currentBanner ? 1 : 0 }}
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  className='absolute inset-0 transition-opacity duration-[1500ms] ease-in-out'
                   style={{
+                    opacity: index === currentBanner ? 1 : 0,
                     pointerEvents: index === currentBanner ? "auto" : "none",
                   }}
                 >
