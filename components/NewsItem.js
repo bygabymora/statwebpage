@@ -85,18 +85,18 @@ export const NewsItem = ({ news }) => {
         )}
       </Link>
 
-      <div className='flex flex-col justify-between p-4 h-full'>
+      <div className='flex flex-col justify-between p-4 h-full text-left'>
         <div>
           <Link href={`/news/${news.slug}`}>
-            <h2 className='text-lg font-semibold text-[#0e355e] hover:underline my-1'>
+            <h2 className='text-lg font-semibold text-[#0e355e] hover:underline my-3 text-left'>
               {news.title}
             </h2>
           </Link>
-          <p className='text-gray-600 text-sm mt-1 line-clamp-3'>
+          <p className='text-gray-600 text-sm mt-1 line-clamp-3 text-left'>
             {news.excerpt}
           </p>
         </div>
-        <div className='mt-3 flex justify-between items-center text-sm text-gray-500'>
+        <div className='mt-3 flex justify-between text-sm text-gray-500'>
           <span>By {news.author}</span>
           <time dateTime={news.createdAt}>
             {new Date(news.createdAt).toLocaleDateString("en-US", {
