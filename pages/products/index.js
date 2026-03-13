@@ -29,7 +29,7 @@ export async function getStaticProps() {
       "box.wpPrice": 1,
       "clearance.price": 1,
       sentOvernigth: 1,
-    }
+    },
   ).lean();
 
   // ⬇⬇ SAME order you need
@@ -68,7 +68,7 @@ export default function Products({ products }) {
     if (!selectedManufacturer) return products;
     const target = selectedManufacturer.trim().toLowerCase();
     return products.filter(
-      (p) => p.manufacturer?.trim().toLowerCase() === target
+      (p) => p.manufacturer?.trim().toLowerCase() === target,
     );
   }, [products, selectedManufacturer]);
 
@@ -91,7 +91,7 @@ export default function Products({ products }) {
 
   const paginatedProducts = useMemo(
     () => filteredProducts.slice(0, page * productsPerPage),
-    [filteredProducts, page]
+    [filteredProducts, page],
   );
 
   const handleManufacturerClick = (manufacturer) => {
@@ -100,7 +100,7 @@ export default function Products({ products }) {
       undefined,
       {
         shallow: true,
-      }
+      },
     );
     window.scrollTo({ top: 0, behavior: "smooth" });
     setPage(1);
@@ -120,16 +120,14 @@ export default function Products({ products }) {
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
             {breadcrumbs.map((breadcrumb, index) => (
               <li key={index} className='flex items-center'>
-                {breadcrumb.href ? (
+                {breadcrumb.href ?
                   <Link
                     href={breadcrumb.href}
                     className='hover:underline text-[#0e355e]'
                   >
                     {breadcrumb.name}
                   </Link>
-                ) : (
-                  <span>{breadcrumb.name}</span>
-                )}
+                : <span>{breadcrumb.name}</span>}
                 {index < breadcrumbs.length - 1 && (
                   <BsChevronRight className='mx-2 text-gray-500' />
                 )}
@@ -138,7 +136,7 @@ export default function Products({ products }) {
           </ul>
           <div className='block md:hidden'>
             <button
-              className='bg-[#144e8b] px-4 py-2 rounded'
+              className='bg-[#0e355e] px-4 py-2 rounded'
               onClick={() => setShowManufacturers((s) => !s)}
               aria-label='Toggle Manufacturers List'
             >
@@ -166,14 +164,14 @@ export default function Products({ products }) {
                 <div
                   onClick={handleShowAll}
                   className={`cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg pb-3 sticky top-0 ${
-                    selectedManufacturer === null && !query
-                      ? "primary-button"
-                      : "secondary-button"
+                    selectedManufacturer === null && !query ?
+                      "primary-button"
+                    : "secondary-button"
                   }`}
                 >
-                  {selectedManufacturer === null && !query
-                    ? "ALL PRODUCTS"
-                    : "SEE ALL PRODUCTS"}
+                  {selectedManufacturer === null && !query ?
+                    "ALL PRODUCTS"
+                  : "SEE ALL PRODUCTS"}
                 </div>
                 {manufacturers
                   .slice()
@@ -183,9 +181,8 @@ export default function Products({ products }) {
                       key={index}
                       onClick={() => handleManufacturerClick(manufacturer)}
                       className={`cursor-pointer block justify-center card items-center text-center my-3 text-xs lg:text-lg py-2 ${
-                        selectedManufacturer === manufacturer
-                          ? "bg-slate-200"
-                          : ""
+                        selectedManufacturer === manufacturer ? "bg-slate-200"
+                        : ""
                       }`}
                     >
                       {manufacturer}
@@ -200,7 +197,7 @@ export default function Products({ products }) {
             Products
           </h1>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6'>
-            {paginatedProducts.length > 0 ? (
+            {paginatedProducts.length > 0 ?
               paginatedProducts.map((product, index) => (
                 <ProductItemPage
                   key={product._id}
@@ -208,16 +205,14 @@ export default function Products({ products }) {
                   index={index}
                 />
               ))
-            ) : query ? (
+            : query ?
               <SearchForm
                 searchedWord={String(query)}
                 setSearchedWord={() => {}}
                 name=''
                 setName={() => {}}
               />
-            ) : (
-              <p>No products found.</p>
-            )}
+            : <p>No products found.</p>}
           </div>
 
           {filteredProducts.length > paginatedProducts.length && (
