@@ -19,13 +19,42 @@ import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import moment from "moment-timezone";
 import { generateProductJSONLD } from "../../utils/seo";
 import {
   findManufacturerProfile,
   manufacturerProfiles,
 } from "../../utils/manufacturerProfiles";
 import RelatedProducts from "../../components/products/RelatedProducts";
+
+// Native timezone helpers — replaces moment-timezone (~500 KB parsed)
+function getNYSecondsSinceMidnight() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+  }).formatToParts(new Date());
+  const get = (type) =>
+    parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
+  return get("hour") * 3600 + get("minute") * 60 + get("second");
+}
+
+function formatDateShort(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(d);
+}
+
+const CUTOFF_SECONDS = 15 * 3600 + 30 * 60; // 3:30 PM ET
 
 export default function ProductScreen({ product }) {
   const router = useRouter();
@@ -39,8 +68,7 @@ export default function ProductScreen({ product }) {
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || "",
   );
-  const [nowLocal, setNowLocal] = useState(moment());
-  const [nowTampa, setNowTampa] = useState(moment.tz("America/New_York"));
+  const [nySec, setNySec] = useState(() => getNYSecondsSinceMidnight());
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.each?.countInStock || null,
   );
@@ -329,10 +357,8 @@ export default function ProductScreen({ product }) {
     }
   }, [product._id, inventoryLastUpdated, typeOfPurchase, active]);
 
-  // compute Tampa cutoff (today at 15:30 Tampa time)
-  const cutoff = nowTampa.clone().hour(15).minute(30).second(0);
-  // compute your local midnight (start of next day)
-  const midnight = nowLocal.clone().add(1, "day").startOf("day");
+  // Whether we're before the 3:30 PM ET shipping cutoff
+  const isBeforeCutoff = nySec < CUTOFF_SECONDS;
 
   if (!product) {
     // in case getServerSideProps returned no product
@@ -454,8 +480,7 @@ export default function ProductScreen({ product }) {
                   <span>Inventory just updated!</span>
                 : inventoryLastUpdated ?
                   <span>
-                    Inventory updated:{" "}
-                    {moment(inventoryLastUpdated).format("MMM DD, YYYY h:mm A")}
+                    Inventory updated: {formatDateShort(inventoryLastUpdated)}
                   </span>
                 : <span>Inventory status: Loading...</span>}
               </div>
@@ -464,11 +489,11 @@ export default function ProductScreen({ product }) {
               Shipping Cutoff
             </h4>
             <li>
-              {nowTampa.isBefore(cutoff) ?
+              {isBeforeCutoff ?
                 (() => {
-                  const diff = moment.duration(cutoff.diff(nowTampa));
-                  const hours = Math.floor(diff.asHours());
-                  const minutes = diff.minutes();
+                  const diffSec = CUTOFF_SECONDS - nySec;
+                  const hours = Math.floor(diffSec / 3600);
+                  const minutes = Math.floor((diffSec % 3600) / 60);
                   return (
                     <td className='py-2 px-4 border-b text-sm text-gray-600'>
                       Want it by tomorrow? Place your order within the next{" "}
@@ -478,12 +503,11 @@ export default function ProductScreen({ product }) {
                     </td>
                   );
                 })()
-              : nowLocal.isBefore(midnight) ?
-                <td className='py-2 px-4 border-b text-sm text-gray-600'>
+              : <td className='py-2 px-4 border-b text-sm text-gray-600'>
                   The cutoff for next-day shipping has passed. Orders placed now
                   will arrive in two days.
                 </td>
-              : null}
+              }
             </li>
           </ul>
         </div>

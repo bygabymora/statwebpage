@@ -6,48 +6,25 @@ export default function Document() {
       <Head>
         <link
           rel='preconnect'
-          href='https://www.googletagmanager.com'
-          strategy='lazyOnload'
+          href='https://fonts.googleapis.com'
           crossOrigin='anonymous'
         />
         <link
           rel='preconnect'
-          href='https://js.stripe.com'
+          href='https://fonts.gstatic.com'
           crossOrigin='anonymous'
         />
 
-        {/* Preload all fonts */}
+        {/* Consolidated font request — single HTTP round-trip instead of 3×2 */}
         <link
           rel='preload'
-          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap'
-          as='style'
-        />
-        <link
-          rel='preload'
-          href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap'
-          as='style'
-        />
-        <link
-          rel='preload'
-          href='https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600&display=swap'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Roboto:wght@400;500;600&family=Lato:wght@400;500;600&display=swap'
           as='style'
         />
 
         {/* Load fonts non-blocking */}
         <link
-          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap'
-          rel='stylesheet'
-          media='print'
-          onLoad="this.media='all'"
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap'
-          rel='stylesheet'
-          media='print'
-          onLoad="this.media='all'"
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600&display=swap'
+          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Roboto:wght@400;500;600&family=Lato:wght@400;500;600&display=swap'
           rel='stylesheet'
           media='print'
           onLoad="this.media='all'"

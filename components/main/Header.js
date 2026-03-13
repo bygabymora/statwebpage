@@ -1,19 +1,49 @@
 import Signupbutton from "./Signupbutton";
 import React, { useState } from "react";
 import Link from "next/link";
-import { BsCart2 } from "react-icons/bs";
 import Image from "next/image";
 import Logo2 from "../../public/images/assets/logo.png";
 import Navbar from "./Navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { BiSearch } from "react-icons/bi";
 import axios from "axios";
 import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 import { useModalContext } from "../context/ModalContext";
 import StatusMessage from "./StatusMessage";
+
+// Inline SVG icons — eliminates react-icons/bs and react-icons/bi from the
+// shared Header bundle, saving JS parse time on every page load.
+function CartIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 16 16'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z' />
+    </svg>
+  );
+}
+
+function SearchIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z' />
+    </svg>
+  );
+}
 
 const Header = () => {
   const router = useRouter();
@@ -69,7 +99,7 @@ const Header = () => {
     } catch (error) {
       console.error(
         "Error in the search:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
     }
   };
@@ -103,7 +133,7 @@ const Header = () => {
             aria-label='Search'
             className='p-1'
           >
-            <BiSearch className='text-[#03793d] text-lg' />
+            <SearchIcon className='text-[#03793d] text-lg' />
           </button>
         </div>
         {suggestions.length > 0 && (
@@ -152,7 +182,7 @@ const Header = () => {
               aria-label='Search'
               className='p-2'
             >
-              <BiSearch className='text-[#03793d] text-lg' />
+              <SearchIcon className='text-[#03793d] text-lg' />
             </button>
           </div>
           {suggestions.length > 0 && (
@@ -178,7 +208,7 @@ const Header = () => {
               aria-label='Cart'
               className='relative group'
             >
-              <BsCart2 className='text-3xl text-[#0e355e] transition-transform transform group-hover:scale-110' />
+              <CartIcon className='text-3xl text-[#0e355e] transition-transform transform group-hover:scale-110' />
               {cartItemsCount > 0 && (
                 <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
                   {cartItemsCount}

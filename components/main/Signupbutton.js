@@ -1,8 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BsPerson } from "react-icons/bs";
 import { signOut, useSession } from "next-auth/react";
 import Cookies from "js-cookie";
 import Link from "next/link";
+
+// Inline SVG — eliminates react-icons/bs from shared header chunk
+function PersonIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 16 16'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z' />
+    </svg>
+  );
+}
+
 const SignupButton = () => {
   const { status, data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,7 +63,7 @@ const SignupButton = () => {
           }}
         >
           {/* User Icon (Unchanged Size) */}
-          <BsPerson className='font-bold text-[2rem] text-[#03793d] cursor-pointer place-self-center' />
+          <PersonIcon className='font-bold text-[2rem] text-[#03793d] cursor-pointer place-self-center' />
         </button>
 
         {menuOpen && (
@@ -57,9 +73,9 @@ const SignupButton = () => {
             role='menu'
             aria-orientation='vertical'
           >
-            {status === "loading" ? (
+            {status === "loading" ?
               <div className='p-4 text-center text-gray-700'>Loading...</div>
-            ) : session?.user ? (
+            : session?.user ?
               <>
                 <div className='px-4 py-2 text-sm text-[#03793d] font-semibold'>
                   Hello, {session.user.firstName}!
@@ -72,18 +88,19 @@ const SignupButton = () => {
                     Profile
                   </Link>
                 </div>
-                {active === "loading"
-                  ? "Loading"
-                  : active && (
-                      <div className='block px-4 py-2 text-sm'>
-                        <Link
-                          href='/order-history'
-                          className='block px-4 py-2 hover:bg-[#f4f4f4]'
-                        >
-                          Order History
-                        </Link>
-                      </div>
-                    )}
+                {active === "loading" ?
+                  "Loading"
+                : active && (
+                    <div className='block px-4 py-2 text-sm'>
+                      <Link
+                        href='/order-history'
+                        className='block px-4 py-2 hover:bg-[#f4f4f4]'
+                      >
+                        Order History
+                      </Link>
+                    </div>
+                  )
+                }
                 {session.user?.isAdmin && (
                   <div className='block px-4 py-2 text-sm'>
                     <Link
@@ -100,8 +117,7 @@ const SignupButton = () => {
                   </Link>
                 </div>
               </>
-            ) : (
-              <>
+            : <>
                 <div className='block px-4 py-2 text-sm'>
                   <Link href='/Login'>Login</Link>
                 </div>
@@ -109,7 +125,7 @@ const SignupButton = () => {
                   <Link href='/Register'>Register</Link>
                 </div>
               </>
-            )}
+            }
           </div>
         )}
       </div>

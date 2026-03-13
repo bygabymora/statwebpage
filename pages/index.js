@@ -3,7 +3,39 @@ import dynamic from "next/dynamic";
 import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
-import { motion } from "framer-motion";
+
+// Inline SVG icons — eliminates react-icons/bi from this page chunk
+function SkipPrevIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
+      <path d='M8 7v10h2V7H8zm4 5 6 5V7l-6 5z' />
+    </svg>
+  );
+}
+
+function SkipNextIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
+      <path d='M6 17l6-5-6-5v10zm8-10v10h2V7h-2z' />
+    </svg>
+  );
+}
 
 // Render hero/above-the-fold on the server so LCP is discoverable
 const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
@@ -88,16 +120,6 @@ export async function getStaticProps() {
   };
 }
 
-// Variants of scrolling animations
-const fadeInUp = {
-  hidden: { opacity: 0, y: 60 },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.2, duration: 0.8, ease: "easeOut" },
-  }),
-};
-
 // Enhanced carousel component with SEO optimization
 function Carousel({ products }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -175,11 +197,8 @@ function Carousel({ products }) {
   };
 
   return (
-    <motion.section
+    <section
       className='carousel-container'
-      initial='hidden'
-      whileInView='show'
-      viewport={{ once: true, amount: 0.2 }}
       aria-label='Featured surgical supplies and surgical equipment carousel'
       role='region'
     >
@@ -218,16 +237,14 @@ function Carousel({ products }) {
         role='list'
         aria-label='Featured surgical products'
       >
-        {products.map((p, i) => (
-          <motion.div
+        {products.map((p) => (
+          <div
             key={p._id}
             className='carousel-item px-3 lg:px-0'
-            variants={fadeInUp}
-            custom={i}
             role='listitem'
           >
             <ProductItem product={p} />
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -248,7 +265,7 @@ function Carousel({ products }) {
           Next <BiSkipNextCircle className='text-lg' aria-hidden='true' />
         </button>
       </nav>
-    </motion.section>
+    </section>
   );
 }
 
@@ -266,27 +283,21 @@ export default function Home({ products, news = [] }) {
           <Banner />
           <StaticBanner />
 
-          <motion.div initial='hidden' viewport={{ once: true }}>
+          <div>
             <Benefits className='mt-2' />
-          </motion.div>
+          </div>
 
           {news && news.length > 0 && (
-            <motion.div initial='hidden' viewport={{ once: true }}>
+            <div>
               <NewsSection news={news} />
-            </motion.div>
+            </div>
           )}
 
           <section
             aria-labelledby='featured-products-heading'
             className='mt-10'
           >
-            <motion.header
-              className='text-center mb-8'
-              variants={fadeInUp}
-              initial='hidden'
-              whileInView='show'
-              viewport={{ once: true }}
-            >
+            <header className='text-center mb-8'>
               <h2
                 id='featured-products-heading'
                 className='section__title text-center text-3xl font-bold text-[#0e355e]'
@@ -298,7 +309,7 @@ export default function Home({ products, news = [] }) {
                 instruments, carefully selected for their quality and
                 reliability by healthcare professionals nationwide.
               </p>
-            </motion.header>
+            </header>
 
             {products.length > 0 ?
               <Carousel products={products} />
@@ -313,13 +324,9 @@ export default function Home({ products, news = [] }) {
             }
           </section>
 
-          <motion.div
-            className='min-h-[534px] w-full'
-            initial='hidden'
-            viewport={{ once: true }}
-          >
+          <div className='min-h-[534px] w-full'>
             <Contact className='mt-2' />
-          </motion.div>
+          </div>
         </div>
       </Layout>
     </>

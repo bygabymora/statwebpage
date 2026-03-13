@@ -1,15 +1,18 @@
 // utils/formatDateWithMonthInLetters.js
 
-import moment from "moment";
-
 const formatDateWithMonthInLetters = (date) => {
   if (!date) return "";
 
-  const m = moment.utc(date);
-  if (!m.isValid()) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
 
-  // e.g. "14 May 2025"
-  return m.format("MMMM DD, YYYY");
+  // e.g. "May 14, 2025" — matches moment.utc().format("MMMM DD, YYYY")
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  }).format(d);
 };
 
 export default formatDateWithMonthInLetters;

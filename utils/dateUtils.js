@@ -1,10 +1,12 @@
-import moment from "moment";
-
 const formatDateForInput = (date) => {
   if (!date) return "";
-  // If date is a Date object, convert it to an ISO string first.
-  const validDate = date instanceof Date ? date.toISOString() : date;
-  return moment.utc(validDate).format("YYYY-MM-DD");
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+  // Format as YYYY-MM-DD in UTC (matches moment.utc().format("YYYY-MM-DD"))
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 export default formatDateForInput;

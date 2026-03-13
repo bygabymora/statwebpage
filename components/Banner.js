@@ -103,14 +103,13 @@ const Banner = () => {
             __html: JSON.stringify(breadcrumbSchema),
           }}
         />
-        {/* Preload critical banner images for better LCP */}
+        {/* Preload only the first banner image for LCP */}
         <link
           rel='preload'
           href={Banner1.src || Banner1}
           as='image'
           fetchpriority='high'
         />
-        <link rel='preload' href={Banner2.src || Banner2} as='image' />
       </Head>
       <section
         className='text-title-color-dark text-center'

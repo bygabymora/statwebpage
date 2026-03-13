@@ -76,7 +76,7 @@ export const NewsItem = ({ news }) => {
                 }`}
                 loop
                 playsInline
-                preload='auto'
+                preload='none'
                 onLoadedData={handleVideoLoad}
                 onError={(e) => console.error("Video error:", e)}
               />
