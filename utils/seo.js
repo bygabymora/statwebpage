@@ -135,8 +135,9 @@ function generateProductJSONLD(product) {
     },
     description: product?.each?.description || product?.box?.description || "",
     // information: product?.information || "", // NOT a valid Product property → removed
-    sku: product._id,
-    mpn: product._id,
+    sku: product.name,
+    mpn: product.name,
+    productID: product.name,
     offers: {
       "@type": "Offer",
       priceCurrency: "USD",

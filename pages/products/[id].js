@@ -366,14 +366,14 @@ export default function ProductScreen({ product }) {
   }
 
   const getProductTitle = (product) => {
-    const base = `${product.manufacturer}: ${product.name}`;
-    return `${base} | ${product.each?.description ? product.each.description.slice(0, 50) : ""}...`;
+    const base = `${product.name} - ${product.manufacturer}`;
+    return `${base} | ${product.each?.description ? product.each.description.slice(0, 60) : ""}...`;
   };
 
   const getProductDescription = (product) => {
     const description =
       product.each?.description || product.box?.description || product.name;
-    return `${product.manufacturer} ${product.name} - ${description.slice(
+    return `${product.name} - ${product.manufacturer}... ${description.slice(
       0,
       150,
     )}... Available for fast delivery with competitive pricing.`;
