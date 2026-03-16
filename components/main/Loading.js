@@ -2,8 +2,8 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5">
-      <div className="loader"></div>
+    <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5'>
+      <div className='loader'></div>
       <style jsx>{`
         .loader {
           border: 4px solid #5a6f81;
