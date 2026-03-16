@@ -103,9 +103,9 @@ export default function Layout({
   const productDescription = useMemo(() => {
     if (!product) return null;
 
-    const base = `${product.manufacturer} ${
+    const base = `${
       product.name
-    }: ${product.each?.description?.slice(0, 43)}`;
+    } - ${product.manufacturer} : ${product.each?.description?.slice(0, 50)}`;
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
     const manufacturerDescriptions = {
