@@ -12,14 +12,11 @@ const Header = dynamic(() => import("./Header"), { ssr: true });
 const Footer = dynamic(() => import("./Footer"), { ssr: true });
 const ToastContainer = dynamic(
   () =>
-    import("react-toastify").then((mod) => ({ default: mod.ToastContainer })),
+    import("react-toastify/dist/ReactToastify.css").then(() =>
+      import("react-toastify").then((mod) => ({ default: mod.ToastContainer })),
+    ),
   { ssr: false },
 );
-
-// Import CSS only when needed
-if (typeof window !== "undefined") {
-  import("react-toastify/dist/ReactToastify.css");
-}
 
 export default function Layout({
   children,

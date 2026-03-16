@@ -19,8 +19,21 @@ import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useModalContext } from "../../components/context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import moment from "moment-timezone";
 import { generateProductJSONLD } from "../../utils/seo";
+
+// Native timezone helper — replaces moment-timezone (~300 KB parsed)
+function getNewYorkSeconds() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+  }).formatToParts(new Date());
+  const get = (type) =>
+    parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
+  return get("hour") * 3600 + get("minute") * 60 + get("second");
+}
 
 export default function ProductScreen({ product }) {
   const router = useRouter();
@@ -34,8 +47,7 @@ export default function ProductScreen({ product }) {
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || "",
   );
-  const [nowLocal, setNowLocal] = useState(moment());
-  const [nowTampa, setNowTampa] = useState(moment.tz("America/New_York"));
+  const [nowTampaSec, setNowTampaSec] = useState(() => getNewYorkSeconds());
   const [currentCountInStock, setCurrentCountInStock] = useState(
     product.each?.countInStock || null,
   );
@@ -249,17 +261,18 @@ export default function ProductScreen({ product }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setNowLocal(moment()); // your browser's clock
-      setNowTampa(moment.tz("America/New_York")); // Tampa/Eastern
+      setNowTampaSec(getNewYorkSeconds());
     }, 60_000); // tick every minute
 
     return () => clearInterval(timer);
   }, []);
 
   // compute Tampa cutoff (today at 15:30 Tampa time)
-  const cutoff = nowTampa.clone().hour(15).minute(30).second(0);
-  // compute your local midnight (start of next day)
-  const midnight = nowLocal.clone().add(1, "day").startOf("day");
+  const cutoffSec = 15 * 3600 + 30 * 60; // 3:30 PM ET in seconds
+  const isBeforeCutoff = nowTampaSec < cutoffSec;
+  const diffSec = Math.max(cutoffSec - nowTampaSec, 0);
+  const countdownHours = Math.floor(diffSec / 3600);
+  const countdownMinutes = Math.floor((diffSec % 3600) / 60);
 
   if (!product) {
     // in case getServerSideProps returned no product
@@ -978,29 +991,27 @@ export default function ProductScreen({ product }) {
                     <td className='px-4 py-4'>{product.name}</td>
                     <td className='px-4 py-4'>{product.manufacturer}</td>
                     <td className='px-4 py-4 text-sm text-gray-600'>
-                      {nowTampa.isBefore(cutoff) ?
+                      {isBeforeCutoff ?
                         (() => {
-                          const diff = moment.duration(cutoff.diff(nowTampa));
-                          const hours = Math.floor(diff.asHours());
-                          const minutes = diff.minutes();
                           return (
                             <>
                               Want it by tomorrow? Place your order within the
                               next{" "}
                               <span className='font-semibold text-[#144e8b]'>
-                                {hours} hour{hours !== 1 && "s"} and {minutes}{" "}
-                                minute{minutes !== 1 && "s"}
+                                {countdownHours} hour
+                                {countdownHours !== 1 && "s"} and{" "}
+                                {countdownMinutes} minute
+                                {countdownMinutes !== 1 && "s"}
                               </span>{" "}
                               and select overnight shipping at checkout.
                             </>
                           );
                         })()
-                      : nowLocal.isBefore(midnight) ?
-                        <>
+                      : <>
                           The cutoff for next-day shipping has passed. Orders
                           placed now will arrive in two days.
                         </>
-                      : null}
+                      }
                     </td>
                   </tr>
                 </tbody>
@@ -1061,29 +1072,27 @@ export default function ProductScreen({ product }) {
                       Shipping Info
                     </h4>
                     <p className='text-sm text-gray-600'>
-                      {nowTampa.isBefore(cutoff) ?
+                      {isBeforeCutoff ?
                         (() => {
-                          const diff = moment.duration(cutoff.diff(nowTampa));
-                          const hours = Math.floor(diff.asHours());
-                          const minutes = diff.minutes();
                           return (
                             <>
                               Want it by tomorrow? Place your order within the
                               next{" "}
                               <span className='font-semibold text-[#144e8b]'>
-                                {hours} hour{hours !== 1 && "s"} and {minutes}{" "}
-                                minute{minutes !== 1 && "s"}
+                                {countdownHours} hour
+                                {countdownHours !== 1 && "s"} and{" "}
+                                {countdownMinutes} minute
+                                {countdownMinutes !== 1 && "s"}
                               </span>{" "}
                               and select overnight shipping at checkout.
                             </>
                           );
                         })()
-                      : nowLocal.isBefore(midnight) ?
-                        <>
+                      : <>
                           The cutoff for next-day shipping has passed. Orders
                           placed now will arrive in two days.
                         </>
-                      : null}
+                      }
                     </p>
                   </div>
                 </div>
