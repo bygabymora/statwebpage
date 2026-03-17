@@ -817,11 +817,7 @@ export default function ProductScreen({ product }) {
               </h2>
             )}
             {product.sentOverNight && (
-              <li className='space-y-2'>
-                <br />
-                <br />
-                <br />
-                <br />
+              <li className='text-[#0e355e] space-y-2'>
                 <div className='text-lg font-semibold text-[#0e355e]'>
                   Shipping recomendations:
                 </div>
