@@ -127,16 +127,16 @@ export default function Layout({
 
   const productKeywords = useMemo(() => {
     if (!product) return null;
+    const baseKeywords = [
+      product.keywords ?
+        product.keywords.join(", ")
+      : `${product.name}, ${product.manufacturer}`,
+      "surgical supplies",
+    ];
 
-    const manufacturer = product.manufacturer || "surgical supplies";
-    return [
-      `${manufacturer} surgical supplies`,
-      `${manufacturer} surgical equipment`,
-      `${manufacturer} instruments`,
-      `${manufacturer} devices`,
-      "hospital-grade products",
-      "bulk pricing surgical supplies",
-    ].join(", ");
+    return product.keywords && product.keywords.length > 0 ?
+        baseKeywords.join(", ")
+      : baseKeywords.join(", ");
   }, [product]);
 
   return (
