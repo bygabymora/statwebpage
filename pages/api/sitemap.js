@@ -2,6 +2,7 @@
 import db from "../../utils/db";
 import News from "../../models/News";
 import Product from "../../models/Product";
+import { getAllFaqSlugs } from "../../utils/faqData";
 
 const BASE_URL = "https://www.statsurgicalsupply.com";
 
@@ -34,7 +35,14 @@ export default async function handler(req, res) {
       ];
     });
 
-    const allUrls = [...newsUrls, ...productUrls].join("");
+    // build <url> entries for FAQ detail pages
+    const faqSlugs = getAllFaqSlugs();
+    const faqUrls = faqSlugs.map((slug) => {
+      const loc = `${BASE_URL}/faqs/${encodeURIComponent(slug)}`;
+      return `<url><loc>${loc}</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>`;
+    });
+
+    const allUrls = [...newsUrls, ...productUrls, ...faqUrls].join("");
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>` +

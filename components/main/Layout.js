@@ -35,6 +35,12 @@ export default function Layout({
   const defaultOgImage =
     "https://www.statsurgicalsupply.com/images/assets/StaticBanner.png";
 
+  const ensureAbsoluteUrl = (imgUrl) => {
+    if (!imgUrl) return defaultOgImage;
+    if (imgUrl.startsWith("http")) return imgUrl;
+    return `https://www.statsurgicalsupply.com${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
+  };
+
   const approvalMessage = useMemo(
     () => ({
       title: "Account Verification",
@@ -159,6 +165,7 @@ export default function Layout({
             <meta name='description' content={productDescription} />
             <meta name='keywords' content={productKeywords} />
             <meta property='og:type' content='product' />
+            <meta property='og:site_name' content='STAT Surgical Supply' />
             <meta
               property='og:title'
               content={`${product.manufacturer} - ${product.name}`}
@@ -169,7 +176,7 @@ export default function Layout({
             />
             <meta
               property='og:image'
-              content={product.image || defaultOgImage}
+              content={ensureAbsoluteUrl(product.image)}
             />
             <meta
               property='og:url'
@@ -187,14 +194,14 @@ export default function Layout({
             />
             <meta
               name='twitter:image'
-              content={product.image || defaultOgImage}
+              content={ensureAbsoluteUrl(product.image)}
             />
 
             <link
               rel='canonical'
               href={`https://www.statsurgicalsupply.com/products/${product.name}`}
             />
-            <link rel='image_src' href={image} />
+            <link rel='image_src' href={ensureAbsoluteUrl(product.image)} />
 
             <script
               type='application/ld+json'
@@ -241,6 +248,7 @@ export default function Layout({
               </>
             : <meta property='og:type' content='article' />}
 
+            <meta property='og:site_name' content='STAT Surgical Supply' />
             <meta property='og:title' content={title || news.title} />
             <meta
               property='og:description'
@@ -248,7 +256,7 @@ export default function Layout({
             />
             <meta
               property='og:image'
-              content={image || news.imageUrl || defaultOgImage}
+              content={ensureAbsoluteUrl(image || news.imageUrl)}
             />
             <meta
               property='og:url'
@@ -274,7 +282,7 @@ export default function Layout({
             />
             <meta
               name='twitter:image'
-              content={image || news.imageUrl || defaultOgImage}
+              content={ensureAbsoluteUrl(image || news.imageUrl)}
             />
 
             <link
@@ -285,6 +293,10 @@ export default function Layout({
                   `https://www.statsurgicalsupply.com/news/${news.slug}`
                 : "https://www.statsurgicalsupply.com/news"
               }
+            />
+            <link
+              rel='image_src'
+              href={ensureAbsoluteUrl(image || news.imageUrl)}
             />
 
             <script
@@ -308,6 +320,7 @@ export default function Layout({
               content='FAQs, surgical supplies, sterilization, expiration, order timeline'
             />
             <meta property='og:type' content='website' />
+            <meta property='og:site_name' content='STAT Surgical Supply' />
             <meta
               property='og:title'
               content={title || "Frequently Asked Questions"}
@@ -343,6 +356,7 @@ export default function Layout({
               rel='canonical'
               href={`https://www.statsurgicalsupply.com${router.asPath}`}
             />
+            <link rel='image_src' href={defaultOgImage} />
 
             {(Array.isArray(schema) ? schema : [schema]).map((entry, i) => (
               <script
@@ -387,6 +401,7 @@ export default function Layout({
               content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
+            <link rel='image_src' href={defaultOgImage} />
           </>
         }
       </Head>

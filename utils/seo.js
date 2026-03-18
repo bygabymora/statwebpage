@@ -488,6 +488,49 @@ function generateBreadcrumbJSONLD(breadcrumbs) {
   };
 }
 
+// FAQ Detail Page Schema (QAPage + FAQPage for individual FAQ pages)
+function generateFAQDetailPageJSONLD(faq) {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "QAPage",
+      "@id": `https://www.statsurgicalsupply.com/faqs/${faq.slug}`,
+      name: faq.question,
+      description: faq.metaDescription,
+      url: `https://www.statsurgicalsupply.com/faqs/${faq.slug}`,
+      mainEntity: {
+        "@type": "Question",
+        name: faq.question,
+        text: faq.question,
+        answerCount: 1,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.expandedAnswer.join(" "),
+        },
+      },
+      isPartOf: {
+        "@type": "WebSite",
+        "@id": "https://www.statsurgicalsupply.com",
+        name: "STAT Surgical Supply",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.expandedAnswer.join(" "),
+          },
+        },
+      ],
+    },
+  ];
+}
+
 // Local Business Schema (if you have physical location)
 function generateLocalBusinessJSONLD() {
   return {
@@ -532,5 +575,6 @@ export {
   generateServicePageJSONLD,
   generateNewsPageJSONLD,
   generateBreadcrumbJSONLD,
+  generateFAQDetailPageJSONLD,
   generateLocalBusinessJSONLD,
 };
