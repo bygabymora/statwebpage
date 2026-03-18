@@ -171,6 +171,8 @@ export default function Layout({
               property='og:image'
               content={product.image || defaultOgImage}
             />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={`https://www.statsurgicalsupply.com/products/${product.name}`}
@@ -194,7 +196,10 @@ export default function Layout({
               rel='canonical'
               href={`https://www.statsurgicalsupply.com/products/${product.name}`}
             />
-            <link rel='image_src' href={image} />
+            <link
+              rel='image_src'
+              href={product.image || defaultOgImage}
+            />
 
             <script
               type='application/ld+json'
@@ -250,6 +255,8 @@ export default function Layout({
               property='og:image'
               content={image || news.imageUrl || defaultOgImage}
             />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={
@@ -286,6 +293,10 @@ export default function Layout({
                 : "https://www.statsurgicalsupply.com/news"
               }
             />
+            <link
+              rel='image_src'
+              href={image || news.imageUrl || defaultOgImage}
+            />
 
             <script
               type='application/ld+json'
@@ -320,6 +331,8 @@ export default function Layout({
               }
             />
             <meta property='og:image' content={defaultOgImage} />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={`https://www.statsurgicalsupply.com${router.asPath}`}
@@ -343,6 +356,7 @@ export default function Layout({
               rel='canonical'
               href={`https://www.statsurgicalsupply.com${router.asPath}`}
             />
+            <link rel='image_src' href={defaultOgImage} />
 
             {(Array.isArray(schema) ? schema : [schema]).map((entry, i) => (
               <script
@@ -377,6 +391,8 @@ export default function Layout({
               content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta property='og:image' content={defaultOgImage} />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta name='twitter:card' content='summary_large_image' />
             <meta
               name='twitter:title'
@@ -387,6 +403,7 @@ export default function Layout({
               content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta name='twitter:image' content={defaultOgImage} />
+            <link rel='image_src' href={defaultOgImage} />
           </>
         }
       </Head>
