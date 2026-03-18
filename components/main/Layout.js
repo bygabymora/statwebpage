@@ -178,6 +178,8 @@ export default function Layout({
               property='og:image'
               content={ensureAbsoluteUrl(product.image)}
             />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={`https://www.statsurgicalsupply.com/products/${product.name}`}
@@ -201,7 +203,7 @@ export default function Layout({
               rel='canonical'
               href={`https://www.statsurgicalsupply.com/products/${product.name}`}
             />
-            <link rel='image_src' href={ensureAbsoluteUrl(product.image)} />
+            <link rel='image_src' href={product.image || defaultOgImage} />
 
             <script
               type='application/ld+json'
@@ -258,6 +260,8 @@ export default function Layout({
               property='og:image'
               content={ensureAbsoluteUrl(image || news.imageUrl)}
             />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={
@@ -296,7 +300,7 @@ export default function Layout({
             />
             <link
               rel='image_src'
-              href={ensureAbsoluteUrl(image || news.imageUrl)}
+              href={image || news.imageUrl || defaultOgImage}
             />
 
             <script
@@ -333,6 +337,8 @@ export default function Layout({
               }
             />
             <meta property='og:image' content={defaultOgImage} />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta
               property='og:url'
               content={`https://www.statsurgicalsupply.com${router.asPath}`}
@@ -391,6 +397,8 @@ export default function Layout({
               content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
             />
             <meta property='og:image' content={defaultOgImage} />
+            <meta property='og:image:width' content='1200' />
+            <meta property='og:image:height' content='630' />
             <meta name='twitter:card' content='summary_large_image' />
             <meta
               name='twitter:title'
