@@ -231,7 +231,7 @@ export default function Newscreen({
             </div>
           }
           <div className='text-gray-600 mb-4'>
-            <span className='text-sm'>{news.title}</span>
+            <span className='text-sm'>{news.title} - Stat Surgical Supply</span>
           </div>
         </div>
         <div className='border-t border-gray-200 pt-4 mb-8'>
