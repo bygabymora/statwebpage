@@ -13,6 +13,16 @@ const menuItems = [
   },
   {
     title: <Link href='/products'>Products</Link>,
+    subcategories: [
+      {
+        title: "Products",
+        links: [
+          { name: "All Products", href: "/products" },
+          { name: "Surgical Supplies", href: "/surgical-supplies" },
+          { name: "Clearance", href: "/clearance" },
+        ],
+      },
+    ],
   },
   {
     title: <Link href='/about'>About Us</Link>,
@@ -30,20 +40,62 @@ const menuItems = [
       {
         title: "FAQ Topics",
         links: [
-          { name: "Surgical Procedure Duration", href: "/faqs/how-long-does-a-typical-surgical-procedure-last" },
-          { name: "Factors Affecting Surgery Time", href: "/faqs/what-factors-influence-the-duration-of-surgery" },
-          { name: "Sterility Upon Delivery", href: "/faqs/how-sterile-are-surgical-supplies-upon-delivery" },
-          { name: "Supply Expiration Dates", href: "/faqs/can-surgical-supplies-expire-and-how-do-i-check-their-expiration-dates" },
-          { name: "Sterile Storage Guidelines", href: "/faqs/how-should-i-store-surgical-instruments-to-maintain-sterility" },
-          { name: "Ordering Timeline", href: "/faqs/how-far-in-advance-should-i-order-surgical-supplies" },
-          { name: "Outpatient Procedure Supplies", href: "/faqs/what-surgical-supplies-are-most-commonly-used-in-outpatient-procedures" },
-          { name: "Same-Day Shipping", href: "/faqs/do-you-offer-same-day-shipping-for-surgical-instruments" },
-          { name: "Bulk Discounts", href: "/faqs/do-you-provide-bulk-discounts-for-hospitals-and-surgical-centers" },
-          { name: "Product Authenticity", href: "/faqs/how-do-i-verify-the-authenticity-of-a-surgical-product" },
-          { name: "Payment Methods", href: "/faqs/what-payment-methods-are-accepted-for-placing-surgical-supply-orders" },
-          { name: "International Shipping", href: "/faqs/do-you-ship-medical-devices-internationally-or-only-within-the-us" },
-          { name: "Recurring Orders", href: "/faqs/how-do-i-set-up-recurring-orders-for-frequently-used-surgical-supplies" },
-          { name: "Why Choose STAT", href: "/faqs/what-makes-stat-surgical-supply-different-from-other-medical-supply-companies" },
+          {
+            name: "Surgical Procedure Duration",
+            href: "/faqs/how-long-does-a-typical-surgical-procedure-last",
+          },
+          {
+            name: "Factors Affecting Surgery Time",
+            href: "/faqs/what-factors-influence-the-duration-of-surgery",
+          },
+          {
+            name: "Sterility Upon Delivery",
+            href: "/faqs/how-sterile-are-surgical-supplies-upon-delivery",
+          },
+          {
+            name: "Supply Expiration Dates",
+            href: "/faqs/can-surgical-supplies-expire-and-how-do-i-check-their-expiration-dates",
+          },
+          {
+            name: "Sterile Storage Guidelines",
+            href: "/faqs/how-should-i-store-surgical-instruments-to-maintain-sterility",
+          },
+          {
+            name: "Ordering Timeline",
+            href: "/faqs/how-far-in-advance-should-i-order-surgical-supplies",
+          },
+          {
+            name: "Outpatient Procedure Supplies",
+            href: "/faqs/what-surgical-supplies-are-most-commonly-used-in-outpatient-procedures",
+          },
+          {
+            name: "Same-Day Shipping",
+            href: "/faqs/do-you-offer-same-day-shipping-for-surgical-instruments",
+          },
+          {
+            name: "Bulk Discounts",
+            href: "/faqs/do-you-provide-bulk-discounts-for-hospitals-and-surgical-centers",
+          },
+          {
+            name: "Product Authenticity",
+            href: "/faqs/how-do-i-verify-the-authenticity-of-a-surgical-product",
+          },
+          {
+            name: "Payment Methods",
+            href: "/faqs/what-payment-methods-are-accepted-for-placing-surgical-supply-orders",
+          },
+          {
+            name: "International Shipping",
+            href: "/faqs/do-you-ship-medical-devices-internationally-or-only-within-the-us",
+          },
+          {
+            name: "Recurring Orders",
+            href: "/faqs/how-do-i-set-up-recurring-orders-for-frequently-used-surgical-supplies",
+          },
+          {
+            name: "Why Choose STAT",
+            href: "/faqs/what-makes-stat-surgical-supply-different-from-other-medical-supply-companies",
+          },
         ],
       },
     ],

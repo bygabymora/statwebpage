@@ -146,6 +146,8 @@ export default function Footer() {
               </Link>
             </h4>
             <Link href='/products'>All products</Link>
+            <Link href='/surgical-supplies'>Surgical Supplies</Link>
+            <Link href='/clearance'>Clearance</Link>
           </div>
           <div className='footer-linkGroup flex flex-col m-5'>
             <h4 className='font-bold'>Company</h4>
