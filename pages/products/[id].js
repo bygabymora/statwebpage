@@ -542,7 +542,7 @@ export default function ProductScreen({ product }) {
                     href={profile.website}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center px-4 py-2 bg-[#144e8b] text-white text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200'
+                    className='inline-flex items-center px-4 py-2 bg-[#0e355e] text-white text-sm rounded-lg hover:bg-[#144e8b] transition-colors duration-200'
                   >
                     Visit Website
                     <svg
