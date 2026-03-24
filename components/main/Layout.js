@@ -103,9 +103,7 @@ export default function Layout({
   const productDescription = useMemo(() => {
     if (!product) return null;
 
-    const base = `${
-      product.name
-    } - ${product.manufacturer} : ${product.each?.description?.slice(0, 50)}`;
+    const base = `${product.information?.slice(0, 200)}`;
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
     const manufacturerDescriptions = {
@@ -120,9 +118,7 @@ export default function Layout({
       manufacturer.includes(key),
     );
 
-    return matchingKey ?
-        manufacturerDescriptions[matchingKey]
-      : `${base} - Premium surgical supply trusted by 150+ healthcare facilities. Fast shipping, bulk pricing & top-quality instruments.`;
+    return matchingKey ? manufacturerDescriptions[matchingKey] : `${base}`;
   }, [product]);
 
   const productKeywords = useMemo(() => {
@@ -165,7 +161,7 @@ export default function Layout({
             />
             <meta
               property='og:description'
-              content={product.each?.description?.slice(0, 200)}
+              content={product.information?.slice(0, 200)}
             />
             <meta
               property='og:image'
@@ -185,7 +181,7 @@ export default function Layout({
             />
             <meta
               name='twitter:description'
-              content={product.each?.description?.slice(0, 200)}
+              content={product.information?.slice(0, 200)}
             />
             <meta
               name='twitter:image'

@@ -367,16 +367,7 @@ export default function ProductScreen({ product }) {
 
   const getProductTitle = (product) => {
     const base = `${product.name} - ${product.manufacturer}`;
-    return `${base} | ${product.each?.description ? product.each.description.slice(0, 60) : ""}...`;
-  };
-
-  const getProductDescription = (product) => {
-    const description =
-      product.each?.description || product.box?.description || product.name;
-    return `${product.name} - ${product.manufacturer}... ${description.slice(
-      0,
-      150,
-    )}... Available for fast delivery with competitive pricing.`;
+    return `${base} | ${product.each?.description ? product.each.description.slice(0, 39) : ""}...`;
   };
 
   // Tab content components
@@ -709,7 +700,6 @@ export default function ProductScreen({ product }) {
   return (
     <Layout
       title={getProductTitle(product)}
-      description={getProductDescription(product)}
       product={product}
       schema={generateProductJSONLD(product)}
       image={product.image}
