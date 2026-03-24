@@ -631,15 +631,15 @@ export default function ProductScreen({ product }) {
               </p>
               <ul className='text-sm text-gray-600 space-y-1'>
                 <li className='flex items-center'>
-                  <span className='w-2 h-2 bg-green-500 rounded-full mr-2'></span>
+                  <span className='w-2 h-2 bg-[#07783e] rounded-full mr-2'></span>
                   FDA Registered Facility
                 </li>
                 <li className='flex items-center'>
-                  <span className='w-2 h-2 bg-green-500 rounded-full mr-2'></span>
+                  <span className='w-2 h-2 bg-[#07783e] rounded-full mr-2'></span>
                   ISO 13485 Certified
                 </li>
                 <li className='flex items-center'>
-                  <span className='w-2 h-2 bg-green-500 rounded-full mr-2'></span>
+                  <span className='w-2 h-2 bg-[#07783e] rounded-full mr-2'></span>
                   Quality Assurance Verified
                 </li>
               </ul>
@@ -672,7 +672,7 @@ export default function ProductScreen({ product }) {
               details, please{" "}
               <Link
                 href='/support'
-                className='text-[#144e8b] hover:text-blue-700 underline'
+                className='text-[#144e8b] hover:text-[#0e355e] underline'
               >
                 contact our team
               </Link>

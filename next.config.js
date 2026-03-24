@@ -52,6 +52,17 @@ const nextConfig = {
         destination: "/news",
         permanent: true,
       },
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "query",
+            key: "srsltid",
+          },
+        ],
+        destination: "/:path*",
+        permanent: true,
+      },
       // Redirect old URL-encoded news article to clean slug
       {
         source:
