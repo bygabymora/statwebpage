@@ -158,18 +158,18 @@ function OrderHistoryScreen() {
 
   const paymentAmountStatus = (invoice) => {
     let status = "";
-    invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction
-      ? (status = "Paid")
-      : invoice.balance === invoice?.totalPrice
-      ? (status = "Not Paid")
-      : invoice?.balance > 0 &&
-        invoice?.balance <
-          invoice.totalPrice -
-            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-      ? (status = "Partial Payment")
-      : invoice.balance < 0
-      ? (status = "Over Payment")
-      : (status = "Not Paid");
+    invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction ?
+      (status = "Paid")
+    : invoice.balance === invoice?.totalPrice ? (status = "Not Paid")
+    : (
+      invoice?.balance > 0 &&
+      invoice?.balance <
+        invoice.totalPrice -
+          (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+    ) ?
+      (status = "Partial Payment")
+    : invoice.balance < 0 ? (status = "Over Payment")
+    : (status = "Not Paid");
     return status;
   };
 
@@ -220,7 +220,7 @@ function OrderHistoryScreen() {
   };
 
   return (
-    <Layout title='Order History'>
+    <Layout title='Order History | Stat Surgical Supply'>
       <h1 className='mb-4 text-xl'>Order History</h1>
 
       <div className='overflow-x-auto mb-4'>
@@ -265,22 +265,20 @@ function OrderHistoryScreen() {
                     PAYMENT STATUS
                   </div>
                   <div>
-                    {order.isPaid
-                      ? "Paid"
-                      : order.invoice
-                      ? paymentAmountStatus(order.invoice)
-                      : "Not Paid"}
+                    {order.isPaid ?
+                      "Paid"
+                    : order.invoice ?
+                      paymentAmountStatus(order.invoice)
+                    : "Not Paid"}
                   </div>
                   <div>
                     {" "}
-                    {order.paymentMethod === "Stripe" ? (
+                    {order.paymentMethod === "Stripe" ?
                       <div>
                         Credit Card <br />
                         (Powered by Stripe)
                       </div>
-                    ) : (
-                      <div>{order.paymentMethod}</div>
-                    )}
+                    : <div>{order.paymentMethod}</div>}
                     {order.paymentMethod === "PO Number" &&
                       order.defaultTerm && (
                         <div>
@@ -297,9 +295,9 @@ function OrderHistoryScreen() {
                     SHIPMENT STATUS
                   </div>
                   <div>
-                    {order.invoice && order.invoice?.shippings?.length > 0
-                      ? shippingsShippmentStatus(order.invoice?.shippings)
-                      : "Shipment Not Processed Yet "}
+                    {order.invoice && order.invoice?.shippings?.length > 0 ?
+                      shippingsShippmentStatus(order.invoice?.shippings)
+                    : "Shipment Not Processed Yet "}
                   </div>
                 </div>
 
