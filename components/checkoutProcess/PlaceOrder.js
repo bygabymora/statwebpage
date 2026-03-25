@@ -18,7 +18,7 @@ import { messageManagement } from "../../utils/alertSystem/customers/messageMana
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 );
 
 export default function PlaceOrder({
@@ -62,19 +62,19 @@ export default function PlaceOrder({
   const itemsPrice = useMemo(
     () =>
       round2(order?.orderItems.reduce((a, c) => a + c.quantity * c.price, 0)),
-    [order?.orderItems]
+    [order?.orderItems],
   );
   const isPayByWire = order?.paymentMethod === "Pay By Wire";
   const discountAmount = useMemo(
     () =>
       round2(
-        itemsPrice * (isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE / 100 : 0)
+        itemsPrice * (isPayByWire ? WIRE_PAYMENT_DISCOUNT_PERCENTAGE / 100 : 0),
       ),
-    [itemsPrice, isPayByWire]
+    [itemsPrice, isPayByWire],
   );
   const totalPrice = useMemo(
     () => round2(itemsPrice - discountAmount),
-    [itemsPrice, discountAmount]
+    [itemsPrice, discountAmount],
   );
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export default function PlaceOrder({
       const buyer = customer?.purchaseExecutive?.find(
         (exec) =>
           exec.name?.trim().toLowerCase() ===
-          user?.firstName.trim().toLowerCase()
+          user?.firstName.trim().toLowerCase(),
       );
 
       // Update estimate API call
@@ -168,13 +168,13 @@ export default function PlaceOrder({
         },
         shippingMethod: order.shippingPreferences?.shippingMethod,
         shippingBilling:
-          order.shippingPreferences?.paymentMethod === "Bill Me"
-            ? "Bill Invoice"
-            : order.shippingPreferences?.paymentMethod === "Use My Account"
-            ? order.shippingPreferences?.carrier +
-              " " +
-              order.shippingPreferences?.account
-            : "Bill Invoice",
+          order.shippingPreferences?.paymentMethod === "Bill Me" ?
+            "Bill Invoice"
+          : order.shippingPreferences?.paymentMethod === "Use My Account" ?
+            order.shippingPreferences?.carrier +
+            " " +
+            order.shippingPreferences?.account
+          : "Bill Invoice",
         paymentTerms: order?.defaultTerm,
         poNumber: order.poNumber,
         subtotal: order.subtotal,
@@ -204,16 +204,18 @@ export default function PlaceOrder({
     const confirmMessage = {
       title: "Are you sure?",
       body:
-        order?.paymentMethod === "Stripe" &&
-        order?.shippingPreferences?.paymentMethod === "Bill Me"
-          ? `You selected the "Bill Me" option for the Shipping Payment. You are about to place an order. Please confirm that all the information is correct.`
-          : "You are about to place an order. Please confirm that all the information is correct.",
+        (
+          order?.paymentMethod === "Stripe" &&
+          order?.shippingPreferences?.paymentMethod === "Bill Me"
+        ) ?
+          `You selected the "Bill Me" option for the Shipping Payment. You are about to place an order. Please confirm that all the information is correct.`
+        : "You are about to place an order. Please confirm that all the information is correct.",
       warning:
-        order?.paymentMethod === "Stripe"
-          ? order?.shippingPreferences?.paymentMethod === "Bill Me"
-            ? "⚠ You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment. ⚠"
-            : "⚠ After the payment, any change will need to be processed by your Stat Rep. ⚠"
-          : "⚠ You will have 2 hours to make any changes, after that time, the order will be processed. ⚠",
+        order?.paymentMethod === "Stripe" ?
+          order?.shippingPreferences?.paymentMethod === "Bill Me" ?
+            "⚠ You will receive an email when your order is ready to ship, and the order with the shipment value included, so you can make the payment. ⚠"
+          : "⚠ After the payment, any change will need to be processed by your Stat Rep. ⚠"
+        : "⚠ You will have 2 hours to make any changes, after that time, the order will be processed. ⚠",
     };
 
     const action = async (confirmed) => {
@@ -244,7 +246,7 @@ export default function PlaceOrder({
           });
         } else {
           console.warn(
-            "[placeOrderAction] No customerId (customer._id). Skipping address update."
+            "[placeOrderAction] No customerId (customer._id). Skipping address update.",
           );
         }
 
@@ -297,7 +299,7 @@ export default function PlaceOrder({
         console.error("Error placing order:", err);
         showStatusMessage(
           "error",
-          err?.message || "An error occurred while placing the order."
+          err?.message || "An error occurred while placing the order.",
         );
         stopLoading();
       }
@@ -368,7 +370,7 @@ export default function PlaceOrder({
     if (!actions || !actions.order) {
       showStatusMessage(
         "error",
-        "PayPal SDK is not loaded properly. Please refresh the page."
+        "PayPal SDK is not loaded properly. Please refresh the page.",
       );
       return;
     }
@@ -396,12 +398,12 @@ export default function PlaceOrder({
     return actions.order.capture().then(async function (details) {
       try {
         const { data } = await axios.put(
-          `/api/orders/${order._id}/pay`,
-          details
+          `/api/orders/${order._id}/pay-paypal`,
+          details,
         );
         showStatusMessage(
           "success",
-          "Payment successful. Thank you for your order!"
+          "Payment successful. Thank you for your order!",
         );
         setOrder((prev) => ({
           ...prev,
@@ -412,7 +414,7 @@ export default function PlaceOrder({
       } catch (error) {
         showStatusMessage(
           "error",
-          getError(error) || "An error occurred while processing the payment."
+          getError(error) || "An error occurred while processing the payment.",
         );
       }
     });
@@ -434,7 +436,7 @@ export default function PlaceOrder({
         null,
         order,
         null,
-        accountOwner
+        accountOwner,
       );
 
       handleSendEmails(emailmessage, contactToEmail, accountOwner);
@@ -442,7 +444,7 @@ export default function PlaceOrder({
       console.error("Error sending approval email:", error);
       showStatusMessage(
         "error",
-        "Error sending approval email. Please try again."
+        "Error sending approval email. Please try again.",
       );
     }
   };
@@ -462,7 +464,7 @@ export default function PlaceOrder({
       <h1 className='mb-6 text-2xl font-bold text-[#0e355e] text-center'>
         Confirm Your Order
       </h1>
-      {order?.orderItems?.length === 0 ? (
+      {order?.orderItems?.length === 0 ?
         <div className='text-center text-gray-600 text-lg my-5'>
           Your cart is empty.{" "}
           <Link
@@ -472,8 +474,7 @@ export default function PlaceOrder({
             Go shopping
           </Link>
         </div>
-      ) : (
-        <div className='grid md:grid-cols-4'>
+      : <div className='grid md:grid-cols-4'>
           <div className='md:col-span-3'>
             <div className='card bg-white shadow-lg p-6 rounded-lg border mt-5'>
               <h2 className='mb-4 text-xl font-semibold text-[#0e355e]'>
@@ -485,15 +486,15 @@ export default function PlaceOrder({
                   <div className=' bg-white p-2 rounded-md gap-4 mb-2 '>
                     <span>
                       Method:{" "}
-                      {order?.paymentMethod === "Stripe"
-                        ? "Credit Card (Powered by Stripe)"
-                        : order?.paymentMethod}
+                      {order?.paymentMethod === "Stripe" ?
+                        "Credit Card (Powered by Stripe)"
+                      : order?.paymentMethod}
                     </span>
                     {order.poNumber && <span>{" - " + order.poNumber}</span>}{" "}
                     <br />
-                    {order?.paymentMethod === "PO Number"
-                      ? "Terms: " + order.defaultTerm
-                      : ""}
+                    {order?.paymentMethod === "PO Number" ?
+                      "Terms: " + order.defaultTerm
+                    : ""}
                     <br />
                     <button
                       className='font-bold text-[#0e355e] hover:text-[#122338] mt-3 transition'
@@ -525,7 +526,7 @@ export default function PlaceOrder({
                                 "billing",
                                 "contactInfo",
                                 e.target.value,
-                                "firstName"
+                                "firstName",
                               )
                             }
                             value={
@@ -549,7 +550,7 @@ export default function PlaceOrder({
                                 "billing",
                                 "contactInfo",
                                 e.target.value,
-                                "lastName"
+                                "lastName",
                               )
                             }
                             value={
@@ -571,7 +572,7 @@ export default function PlaceOrder({
                           handleInputChange(
                             "billing",
                             "companyName",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         value={
@@ -615,7 +616,7 @@ export default function PlaceOrder({
                             "billing",
                             "contactInfo",
                             e.target.value,
-                            "email"
+                            "email",
                           )
                         }
                         value={order?.shippingAddress?.contactInfo?.email || ""}
@@ -632,7 +633,7 @@ export default function PlaceOrder({
                             "billing",
                             "contactInfo",
                             e.target.value,
-                            "secondEmail"
+                            "secondEmail",
                           )
                         }
                         value={
@@ -652,7 +653,7 @@ export default function PlaceOrder({
                           handleInputChange(
                             "billing",
                             "address",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         value={
@@ -674,7 +675,7 @@ export default function PlaceOrder({
                           handleInputChange(
                             "billing",
                             "suiteNumber",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         value={
@@ -715,7 +716,7 @@ export default function PlaceOrder({
                             handleInputChange(
                               "billing",
                               "state",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           value={
@@ -746,7 +747,7 @@ export default function PlaceOrder({
                             handleInputChange(
                               "billing",
                               "postalCode",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           value={
@@ -801,9 +802,9 @@ export default function PlaceOrder({
                     )}
                     {formatPhoneNumber(order?.shippingAddress?.phone)} <br />
                     {order?.shippingAddress?.address}
-                    {order?.shippingAddress?.suiteNumber
-                      ? "," + order?.shippingAddress.suiteNumber
-                      : ""}{" "}
+                    {order?.shippingAddress?.suiteNumber ?
+                      "," + order?.shippingAddress.suiteNumber
+                    : ""}{" "}
                     <br /> {order?.shippingAddress?.state},{" "}
                     {order?.shippingAddress?.city},{" "}
                     {order?.shippingAddress?.postalCode}
@@ -898,9 +899,9 @@ export default function PlaceOrder({
                           <div className='flex items-center'>
                             <span className='font-semibold mr-1'>U o M:</span>
                             <span className='text-gray-700'>
-                              {item.typeOfPurchase === "Box"
-                                ? "Box"
-                                : item.typeOfPurchase}
+                              {item.typeOfPurchase === "Box" ?
+                                "Box"
+                              : item.typeOfPurchase}
                             </span>
                           </div>
 
@@ -983,8 +984,10 @@ export default function PlaceOrder({
                   </span>
                 </li>
                 <li>
-                  {order?.paymentMethod === "Stripe" &&
-                  order?.shippingPreferences?.paymentMethod !== "Bill Me" ? (
+                  {(
+                    order?.paymentMethod === "Stripe" &&
+                    order?.shippingPreferences?.paymentMethod !== "Bill Me"
+                  ) ?
                     <div className='buttons-container text-center mx-auto'>
                       <button
                         onClick={placeOrderHandler}
@@ -1005,23 +1008,23 @@ export default function PlaceOrder({
                         />
                       </button>
                     </div>
-                  ) : order?.paymentMethod === "PayPal" ? (
-                    isPending ? (
+                  : order?.paymentMethod === "PayPal" ?
+                    isPending ?
                       <div>Loading...</div>
-                    ) : (
-                      <PayPalButtons
+                    : <PayPalButtons
                         className='fit-content mt-3'
                         createOrder={createOrder}
                         onApprove={onApprove}
                         onError={onError}
                         forceReRender={[totalPrice]}
                       ></PayPalButtons>
-                    )
-                  ) : order?.paymentMethod === "PO Number" ||
+
+                  : (
+                    order?.paymentMethod === "PO Number" ||
                     order?.paymentMethod === "Pay By Wire" ||
                     (order?.paymentMethod === "Stripe" &&
-                      order?.shippingPreferences?.paymentMethod ===
-                        "Bill Me") ? (
+                      order?.shippingPreferences?.paymentMethod === "Bill Me")
+                  ) ?
                     <button
                       disabled={loading}
                       onClick={placeOrderHandler}
@@ -1029,10 +1032,12 @@ export default function PlaceOrder({
                     >
                       {loading ? "Processing..." : "Confirm Order"}
                     </button>
-                  ) : null}
+                  : null}
                 </li>
-                {order?.paymentMethod === "Stripe" &&
-                order?.shippingPreferences?.paymentMethod === "Bill Me" ? (
+                {(
+                  order?.paymentMethod === "Stripe" &&
+                  order?.shippingPreferences?.paymentMethod === "Bill Me"
+                ) ?
                   <li className='mt-3 '>
                     <div className='font-semibold my-2 text-lg items-center text-center'>
                       You selected the &quot;Bill Me&quot; option for the
@@ -1044,12 +1049,11 @@ export default function PlaceOrder({
                       you can make the payment.
                     </div>
                   </li>
-                ) : (
-                  <li className='mt-3 text-gray-600 text-sm'>
+                : <li className='mt-3 text-gray-600 text-sm'>
                     We will contact you for more information depending on your
                     shipping preference selection.
                   </li>
-                )}
+                }
               </ul>
               <div className='mt-6 w-full flex justify-center gap-4'>
                 <button
@@ -1063,7 +1067,7 @@ export default function PlaceOrder({
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

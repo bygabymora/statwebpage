@@ -45,6 +45,21 @@ function SearchIcon({ className }) {
   );
 }
 
+function PhoneIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox='0 0 24 24'
+      fill='currentColor'
+      width='1em'
+      height='1em'
+      aria-hidden='true'
+    >
+      <path d='M20.487 17.14l-4.065-3.696a1.001 1.001 0 0 0-1.391.043l-2.393 2.461c-.576-.11-1.734-.471-2.926-1.66-1.192-1.193-1.553-2.354-1.66-2.926l2.459-2.394a1 1 0 0 0 .043-1.391L6.859 3.513a1 1 0 0 0-1.391-.087l-2.17 1.861a1 1 0 0 0-.29.649c-.015.25-.301 6.172 4.291 10.766C11.305 20.707 16.323 21 17.705 21c.202 0 .326-.006.359-.008a.992.992 0 0 0 .648-.291l1.86-2.171a.998.998 0 0 0-.085-1.39z' />
+    </svg>
+  );
+}
+
 const Header = () => {
   const router = useRouter();
   const { user, isVisible, statusMessage, messageType } = useModalContext();
@@ -116,110 +131,142 @@ const Header = () => {
 
   return (
     <header className='header'>
+      {/* ── Top utility bar (desktop only) ── */}
       <MiniHeader />
-      <div className='relative block item-center justify-center md:hidden flex-1 max-w-md mx-4 w-full'>
-        <div className='flex items-center w-[90%] justify-between border rounded-full px-3 bg-gray-100 my-2'>
+
+      {/* ── Mobile search bar (fixed top on mobile) ── */}
+      <div className='relative block md:hidden w-full px-4 py-2 bg-white'>
+        <div className='flex items-center w-full border border-gray-200 rounded-full px-4 py-2 bg-gray-50 shadow-sm'>
           <input
             autoComplete='off'
             type='text'
             value={searchQuery}
             onChange={handleSearchInputChange}
             onKeyDown={handleKeyDown}
-            className=' bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
-            placeholder='Search...'
+            className='flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+            placeholder='Search products...'
           />
           <button
             onClick={() => handleSearch()}
             aria-label='Search'
-            className='p-1'
+            className='ml-2 p-1.5 rounded-full bg-[#03793d] text-white hover:bg-[#025f2f] transition-colors'
           >
-            <SearchIcon className='text-[#03793d] text-lg' />
+            <SearchIcon className='text-sm' />
           </button>
         </div>
         {suggestions.length > 0 && (
-          <div className='suggestions-list absolute w-[90%] mt-1 overflow-auto max-h-[50vh] bg-white shadow-md bottom-full z-[9999] custom-scrollbar'>
+          <div className='suggestions-list absolute left-4 right-4 mt-1 overflow-auto max-h-[50vh] bg-white rounded-lg shadow-lg border border-gray-100 top-full z-[9999] custom-scrollbar'>
             {suggestions.map((product, index) => (
               <div
                 key={index}
-                className='p-2 hover:bg-gray-100 cursor-pointer'
+                className='px-4 py-2.5 hover:bg-green-50 cursor-pointer text-sm text-gray-700 border-b border-gray-50 last:border-b-0 transition-colors'
                 onMouseDown={() => handleSuggestionClick(product.name)}
               >
-                {product.name} / {product.manufacturer}
+                <span className='font-medium text-[#0e355e]'>
+                  {product.name}
+                </span>
+                <span className='text-gray-400 ml-1'>
+                  / {product.manufacturer}
+                </span>
               </div>
             ))}
           </div>
         )}
       </div>
-      <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
-        <div className='flex items-center min-h-[200px]'>
+
+      {/* ── Main navigation bar ── */}
+      <nav className='max-w-7xl mx-auto w-full px-4 py-2 md:py-0'>
+        <div className='flex items-center justify-between gap-4 md:gap-6 md:h-20'>
+          {/* Logo */}
           <button
             onClick={handleHomeClick}
-            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32 min-h-[200px]'
+            className='flex-shrink-0 focus:outline-none'
           >
             <Image
               src={Logo2}
               alt='Company Logo - STAT Surgical Supply'
-              title='types Equipment Distributor'
-              width={100}
-              height={100}
+              title='Surgical Equipment Distributor'
+              width={80}
+              height={80}
+              className='w-12 h-12 md:w-20 md:h-20 object-contain'
             />
           </button>
-        </div>
 
-        <div className='relative md:block hidden flex-1 max-w-md mx-4 w-full'>
-          <div className='flex items-center border rounded-full px-3 py-1 bg-gray-100'>
-            <input
-              autoComplete='off'
-              type='text'
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              onKeyDown={handleKeyDown}
-              className='w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
-              placeholder='Search...'
-            />
-            <button
-              onClick={() => handleSearch()}
-              aria-label='Search'
-              className='p-2'
-            >
-              <SearchIcon className='text-[#03793d] text-lg' />
-            </button>
-          </div>
-          {suggestions.length > 0 && (
-            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999] max-h-[50vh] overflow-auto custom-scrollbar'>
-              {suggestions.map((product, index) => (
-                <div
-                  key={index}
-                  className='p-2 hover:bg-gray-100 cursor-pointer'
-                  onMouseDown={() => handleSuggestionClick(product.name)}
-                >
-                  {product.name} / {product.manufacturer}
-                </div>
-              ))}
+          {/* Desktop search bar */}
+          <div className='relative hidden md:flex flex-1 max-w-xl'>
+            <div className='flex items-center w-full border border-gray-200 rounded-full pl-5 pr-1.5 py-1.5 bg-gray-50 hover:border-[#03793d]/40 focus-within:border-[#03793d] focus-within:ring-2 focus-within:ring-[#03793d]/10 transition-all'>
+              <input
+                autoComplete='off'
+                type='text'
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                onKeyDown={handleKeyDown}
+                className='flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+                placeholder='Search products, manufacturers...'
+              />
+              <button
+                onClick={() => handleSearch()}
+                aria-label='Search'
+                className='ml-2 p-2 rounded-full bg-[#03793d] text-white hover:bg-[#025f2f] transition-colors'
+              >
+                <SearchIcon className='text-base' />
+              </button>
             </div>
-          )}
-        </div>
+            {suggestions.length > 0 && (
+              <div className='suggestions-list absolute left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 top-full z-[9999] max-h-[50vh] overflow-auto custom-scrollbar'>
+                {suggestions.map((product, index) => (
+                  <div
+                    key={index}
+                    className='px-5 py-3 hover:bg-green-50 cursor-pointer text-sm text-gray-700 border-b border-gray-50 last:border-b-0 transition-colors'
+                    onMouseDown={() => handleSuggestionClick(product.name)}
+                  >
+                    <span className='font-medium text-[#0e355e]'>
+                      {product.name}
+                    </span>
+                    <span className='text-gray-400 ml-1.5'>
+                      / {product.manufacturer}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        <div className='flex items-center gap-6 relative'>
-          {active && (
-            <Link
-              href='/cart'
-              title='Your Shopping Cart Products'
-              aria-label='Cart'
-              className='relative group'
-            >
-              <CartIcon className='text-3xl text-[#0e355e] transition-transform transform group-hover:scale-110' />
-              {cartItemsCount > 0 && (
-                <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
-                  {cartItemsCount}
-                </span>
-              )}
-            </Link>
-          )}
-          <Signupbutton aria-label='Profile' />
-          <Navbar />
+          {/* Phone number (desktop only) */}
+          <a
+            href='tel:+18132520727'
+            className='hidden lg:flex items-center gap-2 text-[#0e355e] hover:text-[#03793d] transition-colors flex-shrink-0'
+            title='Call us'
+          >
+            <PhoneIcon className='text-lg' />
+            <span className='text-sm font-semibold whitespace-nowrap'>
+              (813) 252-0727
+            </span>
+          </a>
+
+          {/* Action buttons */}
+          <div className='flex items-center gap-3 md:gap-5 flex-shrink-0'>
+            {active && (
+              <Link
+                href='/cart'
+                title='Your Shopping Cart Products'
+                aria-label='Cart'
+                className='relative group p-2'
+              >
+                <CartIcon className='text-2xl md:text-[1.7rem] text-[#0e355e] transition-transform group-hover:scale-110' />
+                {cartItemsCount > 0 && (
+                  <span className='absolute -top-0.5 -right-0.5 bg-[#03793d] text-white min-w-[1.25rem] h-5 flex items-center justify-center rounded-full text-[11px] font-bold shadow-md px-1'>
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
+            )}
+            <Signupbutton aria-label='Profile' />
+            <Navbar />
+          </div>
         </div>
       </nav>
+
       <StatusMessage
         type={messageType}
         message={statusMessage}

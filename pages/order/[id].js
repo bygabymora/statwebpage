@@ -19,7 +19,7 @@ import formatPhoneNumber from "../../utils/functions/phoneModified";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 );
 
 function reducer(state, action) {
@@ -104,7 +104,7 @@ function OrderScreen() {
         data.accountOwner ||
           data.order?.accountOwner ||
           data.estimate?.accountOwner ||
-          {}
+          {},
       );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
@@ -171,7 +171,7 @@ function OrderScreen() {
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage(
         "error",
-        "Please fill all the fields before sending the email."
+        "Please fill all the fields before sending the email.",
       );
       return;
     }
@@ -193,7 +193,7 @@ function OrderScreen() {
     const emailmessage = messageManagement(
       contactToEmail,
       "Order Confirmation",
-      message
+      message,
     );
 
     handleSendEmails(emailmessage, contactToEmail);
@@ -244,7 +244,7 @@ function OrderScreen() {
     if (!actions || !actions.order) {
       showStatusMessage(
         "error",
-        "PayPal SDK is not loaded properly. Please refresh the page."
+        "PayPal SDK is not loaded properly. Please refresh the page.",
       );
       return;
     }
@@ -267,8 +267,8 @@ function OrderScreen() {
       try {
         dispatch({ type: "PAY_REQUEST" });
         const { data } = await axios.put(
-          `/api/orders/${order._id}/pay`,
-          details
+          `/api/orders/${order._id}/pay-paypal`,
+          details,
         );
         dispatch({ type: "PAY_SUCCESS", payload: data });
         toast.success("Order is paid successfully");
@@ -292,7 +292,7 @@ function OrderScreen() {
     try {
       dispatch({ type: "PAY_REQUEST" });
       const { data } = await axios.put(
-        `/api/orders/${order._id}/pay`
+        `/api/orders/${order._id}/pay`,
         // Include any necessary payload here
       );
       dispatch({ type: "PAY_SUCCESS", payload: data });
@@ -351,7 +351,7 @@ function OrderScreen() {
           window.history.replaceState(
             {},
             document.title,
-            window.location.pathname + (newQuery ? "?" + newQuery : "")
+            window.location.pathname + (newQuery ? "?" + newQuery : ""),
           );
 
           await fetchOrder(); // refresh order data
@@ -381,9 +381,8 @@ function OrderScreen() {
   };
 
   const dueDateHandler = (terms) => {
-    const date = invoice
-      ? new Date(invoice.createdAt)
-      : new Date(order.createdAt);
+    const date =
+      invoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
     const daysToAdd = parseInt(terms.split(" ")[1]);
     console.log("daysToAdd", daysToAdd);
     date.setDate(date.getDate() + daysToAdd);
@@ -394,9 +393,8 @@ function OrderScreen() {
       const date = dueDateHandler(order.defaultTerm);
       setDueDate(date);
     } else {
-      const date = invoice
-        ? new Date(invoice.createdAt)
-        : new Date(order.createdAt);
+      const date =
+        invoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
       setDueDate(date);
     }
   }, [order.defaultTerm, order.paymentMethod]);
@@ -409,18 +407,17 @@ function OrderScreen() {
     } else if (invoice && order.isPaid) {
       status = "Paid";
     } else if (invoice && !order.isPaid) {
-      order.isPaid
-        ? (status = "Paid")
-        : invoice.balance === invoice?.totalPrice
-        ? (status = "Not Paid")
-        : invoice?.balance > 0 &&
-          invoice?.balance <
-            invoice.totalPrice -
-              (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-        ? (status = "Partial Payment")
-        : invoice.balance < 0
-        ? (status = "Over Payment")
-        : (status = "Not Paid");
+      order.isPaid ? (status = "Paid")
+      : invoice.balance === invoice?.totalPrice ? (status = "Not Paid")
+      : (
+        invoice?.balance > 0 &&
+        invoice?.balance <
+          invoice.totalPrice -
+            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+      ) ?
+        (status = "Partial Payment")
+      : invoice.balance < 0 ? (status = "Over Payment")
+      : (status = "Not Paid");
     }
     return status;
   };
@@ -464,14 +461,14 @@ function OrderScreen() {
         if (result.error) {
           showStatusMessage(
             "error",
-            result.error.message || "An error occurred with Stripe checkout."
+            result.error.message || "An error occurred with Stripe checkout.",
           );
         }
       } catch (error) {
         console.error("Error placing order:", error);
         showStatusMessage(
           "error",
-          getError(error) || "An error occurred while placing the order."
+          getError(error) || "An error occurred while placing the order.",
         );
         stopLoading();
       }
@@ -481,9 +478,9 @@ function OrderScreen() {
   return (
     <Layout
       title={`Order ${
-        typeof orderId === "string" && orderId.length >= 8
-          ? orderId.substring(orderId.length - 8).toUpperCase()
-          : ""
+        typeof orderId === "string" && orderId.length >= 8 ?
+          orderId.substring(orderId.length - 8).toUpperCase()
+        : ""
       }`}
     >
       <div className='flex-1 bg-white rounded-lg p-2 flex flex-col md:flex-row'>
@@ -512,15 +509,13 @@ function OrderScreen() {
             </div>
             <div>
               <h2 className='text-lg font-bold'>Payment Method</h2>
-              {paymentMethod === "Stripe" ? (
+              {paymentMethod === "Stripe" ?
                 <div>Credit Card (Powered by Stripe)</div>
-              ) : paymentMethod === "PO Number" ? (
+              : paymentMethod === "PO Number" ?
                 <div>
                   {paymentMethod} - {order.poNumber}
                 </div>
-              ) : (
-                <div>{paymentMethod}</div>
-              )}
+              : <div>{paymentMethod}</div>}
               {order.paymentMethod === "PO Number" && order.defaultTerm && (
                 <div>
                   <span className='font-semibold'>Terms: </span>
@@ -557,9 +552,9 @@ function OrderScreen() {
               </div>
               <div
                 className={`${
-                  paymentAmountStatus() === "Not Paid"
-                    ? "bg-red-100"
-                    : "bg-green-100"
+                  paymentAmountStatus() === "Not Paid" ? "bg-red-100" : (
+                    "bg-green-100"
+                  )
                 } p-2 rounded-lg text-xl`}
               >
                 {console.log("Payment Status:", paymentAmountStatus())}
@@ -578,7 +573,7 @@ function OrderScreen() {
         <div className='flex flex-col md:flex-row gap-4'>
           <div className='mt-3 flex-1 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
             <h2 className='text-lg font-bold'>Shipping Status</h2>
-            {invoice && invoice.shippings?.length > 0 ? (
+            {invoice && invoice.shippings?.length > 0 ?
               <div className='w-full mt-3'>
                 {invoice.shippings?.map((shipping) => (
                   <div key={shipping._id}>
@@ -591,27 +586,25 @@ function OrderScreen() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className='p-4 bg-white rounded-lg text-center text-[#0e355e] font-semibold'>
+            : <div className='p-4 bg-white rounded-lg text-center text-[#0e355e] font-semibold'>
                 Not shipped yet
               </div>
-            )}
+            }
           </div>
         </div>
       </div>
 
       {/* Loading and error messages */}
-      {loading ? (
+      {loading ?
         <div className='alert-info'>Loading...</div>
-      ) : error ? (
+      : error ?
         <div className='alert-error'>{error}</div>
-      ) : paymentComplete ? (
+      : paymentComplete ?
         <div className='alert-success flex items-center gap-2'>
           <AiOutlineCheckCircle className='text-green-500 text-2xl' />
           Payment completed successfully. Reloading...
         </div>
-      ) : (
-        <div className='grid md:grid-cols-4 md:gap-4'>
+      : <div className='grid md:grid-cols-4 md:gap-4'>
           <div className='overflow-x-auto md:col-span-3'>
             <div className=''>
               <div className='mt-4 bg-white shadow-lg p-6 rounded-lg border'>
@@ -678,9 +671,9 @@ function OrderScreen() {
                         )}
                         {formatPhoneNumber(shippingAddress?.phone)} <br />
                         {shippingAddress?.address}
-                        {shippingAddress?.suiteNumber
-                          ? "," + shippingAddress?.suiteNumber
-                          : ""}{" "}
+                        {shippingAddress?.suiteNumber ?
+                          "," + shippingAddress?.suiteNumber
+                        : ""}{" "}
                         <br /> {shippingAddress?.state}, {shippingAddress?.city}
                         , {shippingAddress?.postalCode}
                       </div>
@@ -713,9 +706,9 @@ function OrderScreen() {
                         )}
                         {formatPhoneNumber(billingAddress?.phone)} <br />
                         {billingAddress?.address}
-                        {billingAddress?.suiteNumber
-                          ? "," + billingAddress?.suiteNumber
-                          : ""}{" "}
+                        {billingAddress?.suiteNumber ?
+                          "," + billingAddress?.suiteNumber
+                        : ""}{" "}
                         <br /> {billingAddress?.state}, {billingAddress?.city},{" "}
                         {billingAddress?.postalCode}
                       </div>
@@ -777,9 +770,9 @@ function OrderScreen() {
                           <div className='flex items-center'>
                             <span className='font-semibold mr-1'>U o M:</span>
                             <span className='text-gray-700'>
-                              {item.typeOfPurchase === "Box"
-                                ? "Box"
-                                : item.typeOfPurchase}
+                              {item.typeOfPurchase === "Box" ?
+                                "Box"
+                              : item.typeOfPurchase}
                             </span>
                           </div>
 
@@ -828,14 +821,14 @@ function OrderScreen() {
                   <div>Items</div>
                   <div>${itemsPrice.toFixed(2)}</div>
                 </div>
-                {paymentMethod === "Pay By Wire" ? (
+                {paymentMethod === "Pay By Wire" ?
                   <li>
                     <div className='mb-2 px-3 flex justify-between'>
                       <div>Discount</div>
                       <div>- ${discountAmount.toFixed(2)}</div>
                     </div>
                   </li>
-                ) : null}
+                : null}
                 {invoice &&
                   invoice?.shippingCost > 0 &&
                   invoice.shippingBilling === "Bill Invoice" && (
@@ -866,11 +859,13 @@ function OrderScreen() {
                 </li>
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
-                    {(paymentMethod === "Stripe" &&
-                      shippingPreferences?.paymentMethod !== "Bill Me") ||
-                    (paymentMethod === "Stripe" &&
-                      shippingPreferences?.paymentMethod === "Bill Me" &&
-                      stripeReadyToPay()) ? (
+                    {(
+                      (paymentMethod === "Stripe" &&
+                        shippingPreferences?.paymentMethod !== "Bill Me") ||
+                      (paymentMethod === "Stripe" &&
+                        shippingPreferences?.paymentMethod === "Bill Me" &&
+                        stripeReadyToPay())
+                    ) ?
                       <div className='buttons-container text-center mx-auto'>
                         <button
                           onClick={placeOrderHandler}
@@ -891,7 +886,7 @@ function OrderScreen() {
                           />
                         </button>
                       </div>
-                    ) : paymentMethod === "Pay By Wire" ? (
+                    : paymentMethod === "Pay By Wire" ?
                       <div>
                         {session.user.isAdmin && (
                           <button
@@ -921,19 +916,18 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    ) : paymentMethod === "PayPal" ? (
-                      isPending ? (
+                    : paymentMethod === "PayPal" ?
+                      isPending ?
                         <div>Loading...</div>
-                      ) : (
-                        <PayPalButtons
+                      : <PayPalButtons
                           className='fit-content mt-3'
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
                           forceReRender={[totalPrice]}
                         ></PayPalButtons>
-                      )
-                    ) : null}
+
+                    : null}
                     {loadingPay && <div>Loading...</div>}
                     {paymentMethod === "Stripe" &&
                       shippingPreferences?.paymentMethod === "Bill Me" &&
@@ -979,7 +973,7 @@ function OrderScreen() {
             </div>
           </div>
         </div>
-      )}
+      }
     </Layout>
   );
 }

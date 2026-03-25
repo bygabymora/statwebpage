@@ -228,7 +228,7 @@ main {
 
 /*=============== HEADER ===============*/
 .logo {
-  height: 6.5rem;
+  height: 5rem;
   width: auto;
 }
 
@@ -246,10 +246,8 @@ main {
 }
 
 .nav {
-  height: 5rem;
   display: flex;
-  justify-content: space-evenly;
-  width: 80%;
+  width: 100%;
 }
 
 .nav__logo,
@@ -1036,7 +1034,7 @@ main {
 
   .nav {
     height: var(--header-height);
-    width: 90%;
+    width: 100%;
     flex-direction: row;
     justify-content: center;
     gap: 1rem;
