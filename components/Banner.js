@@ -118,7 +118,7 @@ const Banner = () => {
       >
         <div className='grid lg:grid-cols-2 md:grid-cols-1 banner-container mx-auto px-4 items-center'>
           {/* Main Content */}
-          <header className='text-left -mt-6'>
+          <header className='text-left -mt-16'>
             <h1 className='text-4xl font-bold mb-6 text-center text-[#0e355e] my-10'>
               Premium Surgical Supplies | STAT Surgical Supply
             </h1>

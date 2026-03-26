@@ -7,7 +7,6 @@ import Navbar from "./Navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import StaticHeader from "./StaticHeader";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 import { useModalContext } from "../context/ModalContext";
@@ -273,7 +272,6 @@ const Header = () => {
         isVisible={isVisible}
       />
       <Menu />
-      <StaticHeader />
     </header>
   );
 };

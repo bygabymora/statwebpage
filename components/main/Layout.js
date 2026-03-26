@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 // Dynamic imports to reduce initial bundle size
 const Header = dynamic(() => import("./Header"), { ssr: true });
 const Footer = dynamic(() => import("./Footer"), { ssr: true });
+const StaticHeader = dynamic(() => import("./StaticHeader"), { ssr: true });
 const ToastContainer = dynamic(
   () =>
     import("react-toastify/dist/ReactToastify.css").then(() =>
@@ -432,6 +433,7 @@ export default function Layout({
           className='main m-auto mt-0 md:mt-[8rem] lg:mt-[12rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
           key={router.asPath}
         >
+          <StaticHeader />
           {children}
         </main>
         <Footer />
