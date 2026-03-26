@@ -175,7 +175,7 @@ const Header = () => {
 
       {/* ── Main navigation bar ── */}
       <nav className='max-w-7xl mx-auto w-full px-4 py-2 md:py-0'>
-        <div className='flex items-center justify-between gap-4 md:gap-6 md:h-20'>
+        <div className='flex items-center justify-between gap-4 md:gap-6 md:h-32'>
           {/* Logo */}
           <button
             onClick={handleHomeClick}
@@ -187,7 +187,7 @@ const Header = () => {
               title='Surgical Equipment Distributor'
               width={80}
               height={80}
-              className='w-12 h-12 md:w-20 md:h-20 object-contain'
+              className='w-12 h-12 md:w-[7rem] md:h-[7rem] object-contain'
             />
           </button>
 

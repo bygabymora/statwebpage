@@ -430,7 +430,7 @@ export default function Layout({
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
         <main
-          className='main m-auto mt-0 md:mt-[8rem] lg:mt-[12rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
+          className='main m-auto mt-0 md:mt-[11rem] lg:mt-[13rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
           key={router.asPath}
         >
           <StaticHeader />
