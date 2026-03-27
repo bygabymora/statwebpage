@@ -28,15 +28,43 @@ export async function getStaticProps() {
       "each.wpPrice": 1,
       "box.wpPrice": 1,
       "clearance.price": 1,
-      sentOvernigth: 1,
     },
   ).lean();
 
-  // ⬇⬇ SAME order you need
-  const products = enrichAndSortForPublic(productsRaw);
+  // Sort first, then strip to only the fields the UI needs
+  const sorted = enrichAndSortForPublic(productsRaw);
+
+  const products = sorted.map((p) => {
+    const slim = {
+      _id: p._id.toString(),
+      name: p.name,
+      image: p.image,
+      manufacturer: p.manufacturer,
+    };
+
+    const each = {};
+    if (p.each?.description) each.description = p.each.description;
+    if (p.each?.wpPrice) each.wpPrice = p.each.wpPrice;
+    if (p.each?.countInStock) each.countInStock = p.each.countInStock;
+    if (p.each?.clearanceCountInStock)
+      each.clearanceCountInStock = p.each.clearanceCountInStock;
+    if (Object.keys(each).length) slim.each = each;
+
+    const box = {};
+    if (p.box?.description) box.description = p.box.description;
+    if (p.box?.wpPrice) box.wpPrice = p.box.wpPrice;
+    if (p.box?.countInStock) box.countInStock = p.box.countInStock;
+    if (p.box?.clearanceCountInStock)
+      box.clearanceCountInStock = p.box.clearanceCountInStock;
+    if (Object.keys(box).length) slim.box = box;
+
+    if (p.clearance?.price) slim.clearance = { price: p.clearance.price };
+
+    return slim;
+  });
 
   return {
-    props: { products: JSON.parse(JSON.stringify(products)) },
+    props: { products },
     revalidate: 300,
   };
 }
