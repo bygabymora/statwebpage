@@ -76,6 +76,26 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: #0e355e #e6e4e4;
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #e6e4e4;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #0e355e;
+  border-radius: 8px;
+  border: 2px solid #e6e4e4;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: #07783e;
 }
 
 body,
@@ -1296,6 +1316,29 @@ main {
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  .scrollbar-themed {
+    scrollbar-color: #0e355e #e6e4e4;
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-themed::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .scrollbar-themed::-webkit-scrollbar-track {
+    background: #e6e4e4;
+    border-radius: 8px;
+  }
+
+  .scrollbar-themed::-webkit-scrollbar-thumb {
+    background-color: #0e355e;
+    border-radius: 8px;
+  }
+
+  .scrollbar-themed::-webkit-scrollbar-thumb:hover {
+    background-color: #07783e;
   }
 
   @keyframes slideUp {

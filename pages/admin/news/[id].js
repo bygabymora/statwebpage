@@ -1,9 +1,11 @@
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState, useCallback } from "react";
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
 import { useModalContext } from "../../../components/context/ModalContext";
+import { BsTrash3 } from "react-icons/bs";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -166,274 +168,405 @@ export default function AdminNewsEditScreen() {
   };
 
   const addLink = () => setLinks((prev) => [...prev, { title: "", url: "" }]);
+  const removeLink = (i) =>
+    setLinks((prev) => prev.filter((_, idx) => idx !== i));
   const updateLink = (i, field, value) =>
     setLinks((prev) =>
       prev.map((ln, idx) => (idx === i ? { ...ln, [field]: value } : ln)),
     );
 
+  const navLinks = [
+    { href: "/admin/dashboard", label: "Dashboard" },
+    { href: "/admin/orders", label: "Orders" },
+    { href: "/admin/products", label: "Products" },
+    { href: "/admin/users", label: "Users" },
+    { href: "/admin/news", label: "News", isBold: true },
+  ];
+
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
-      <div className='grid md:grid-cols-3 md:gap-5'>
-        <div className='md:col-span-3'>
-          {loading ?
-            <div>Loading...</div>
-          : error ?
-            <div className='alert-error'>{error}</div>
-          : <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
-              <h1 className='mb-4 text-xl'>Edit Entry - {newsData.title}</h1>
+      {/* Navigation */}
+      <div className='bg-white shadow-sm border-b'>
+        <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
+          <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
+            {navLinks.map(({ href, label, isBold }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                  isBold ?
+                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className='max-w-3xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6'>
+        {loading ?
+          <div className='flex items-center justify-center py-12'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
+            <span className='ml-3 text-gray-600'>Loading news entry...</span>
+          </div>
+        : error ?
+          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
+            <div className='text-red-600 font-medium'>
+              Error loading news entry:
+            </div>
+            <div className='text-red-500 mt-1'>{error}</div>
+          </div>
+        : <form onSubmit={handleSubmit}>
+            {/* Header */}
+            <div className='mb-6'>
+              <h1 className='text-xl sm:text-2xl font-bold text-[#0e355e]'>
+                Edit Entry
+              </h1>
+              <p className='text-sm text-gray-500 mt-1'>
+                {newsData.title || "Untitled"} &middot; #{newsId?.slice(-6)}
+              </p>
+            </div>
+
+            {/* Basic Info Section */}
+            <div className='bg-white shadow-md rounded-xl border border-gray-200 p-4 sm:p-6 mb-6'>
+              <h2 className='text-lg font-semibold text-[#0e355e] mb-4'>
+                Basic Information
+              </h2>
 
               {/* Title */}
               <div className='mb-4'>
-                <label htmlFor='title'>Title</label>
+                <label
+                  htmlFor='title'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Title
+                </label>
                 <input
                   id='title'
                   value={newsData.title}
                   onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
                 />
                 {fieldErrors.title && (
-                  <p className='text-red-500'>{fieldErrors.title}</p>
+                  <p className='text-red-500 text-sm mt-1'>
+                    {fieldErrors.title}
+                  </p>
                 )}
               </div>
 
               {/* Reference */}
               <div className='mb-4'>
-                <label htmlFor='slug'>Reference</label>
+                <label
+                  htmlFor='slug'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Reference
+                </label>
                 <input
                   id='slug'
                   value={newsData.slug}
                   onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
                 />
                 {fieldErrors.slug && (
-                  <p className='text-red-500'>{fieldErrors.slug}</p>
+                  <p className='text-red-500 text-sm mt-1'>
+                    {fieldErrors.slug}
+                  </p>
                 )}
               </div>
 
               {/* Content */}
               <div className='mb-4'>
-                <label htmlFor='content'>Content</label>
+                <label
+                  htmlFor='content'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Content
+                </label>
                 <textarea
                   id='content'
                   value={newsData.content}
                   onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded h-40'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all h-40 customer-scrollbar'
                 />
                 {fieldErrors.content && (
-                  <p className='text-red-500'>{fieldErrors.content}</p>
+                  <p className='text-red-500 text-sm mt-1'>
+                    {fieldErrors.content}
+                  </p>
                 )}
               </div>
 
+              {/* Category & Author */}
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4'>
+                <div>
+                  <label
+                    htmlFor='category'
+                    className='block text-sm font-semibold text-gray-700 mb-1'
+                  >
+                    Category
+                  </label>
+                  <input
+                    id='category'
+                    value={newsData.category}
+                    onChange={handleChange}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
+                  />
+                  {fieldErrors.category && (
+                    <p className='text-red-500 text-sm mt-1'>
+                      {fieldErrors.category}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor='author'
+                    className='block text-sm font-semibold text-gray-700 mb-1'
+                  >
+                    Author
+                  </label>
+                  <input
+                    id='author'
+                    value={newsData.author}
+                    onChange={handleChange}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
+                  />
+                  {fieldErrors.author && (
+                    <p className='text-red-500 text-sm mt-1'>
+                      {fieldErrors.author}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label
+                  htmlFor='tags'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Tags (comma-separated)
+                </label>
+                <input
+                  id='tags'
+                  value={newsData.tags}
+                  onChange={handleChange}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
+                />
+                {fieldErrors.tags && (
+                  <p className='text-red-500 text-sm mt-1'>
+                    {fieldErrors.tags}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Media Section */}
+            <div className='bg-white shadow-md rounded-xl border border-gray-200 p-4 sm:p-6 mb-6'>
+              <h2 className='text-lg font-semibold text-[#0e355e] mb-4'>
+                Media
+              </h2>
+
               {/* Main Image URL */}
               <div className='mb-4'>
-                <label htmlFor='imageUrl'>Image URL</label>
+                <label
+                  htmlFor='imageUrl'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Image URL
+                </label>
                 <input
                   id='imageUrl'
                   value={newsData.imageUrl}
                   onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
                 />
                 {fieldErrors.imageUrl && (
-                  <p className='text-red-500'>{fieldErrors.imageUrl}</p>
+                  <p className='text-red-500 text-sm mt-1'>
+                    {fieldErrors.imageUrl}
+                  </p>
                 )}
               </div>
 
               {/* Upload Main Image */}
               <div className='mb-4'>
-                <label htmlFor='imageFile'>Upload Image</label>
+                <label
+                  htmlFor='imageFile'
+                  className='block text-sm font-semibold text-gray-700 mb-1'
+                >
+                  Upload Image
+                </label>
                 <input
                   id='imageFile'
                   type='file'
                   onChange={(e) => uploadHandler(e, "imageUrl")}
-                  className='w-full'
+                  className='w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#0e355e] hover:file:bg-blue-100 transition-all'
                 />
-                {loadingUpload && <p>Uploading…</p>}
-              </div>
-
-              {/* Embedded Image URL */}
-              <div className='mb-4'>
-                <label htmlFor='embeddedImageUrl'>Embedded Image URL</label>
-                <input
-                  id='embeddedImageUrl'
-                  value={newsData.embeddedImageUrl}
-                  onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
-                />
-              </div>
-
-              {/* Upload Embedded Image */}
-              <div className='mb-4'>
-                <label htmlFor='embeddedImageFile'>Upload Embedded Image</label>
-                <input
-                  id='embeddedImageFile'
-                  type='file'
-                  onChange={(e) => uploadHandler(e, "embeddedImageUrl")}
-                  className='w-full'
-                />
-                {loadingUpload && <p>Uploading…</p>}
-              </div>
-
-              {/* Video Section */}
-              <div className='mb-6 border-t pt-4'>
-                <h3 className='text-lg font-semibold mb-4'>Video Settings</h3>
-
-                {/* Has Video Toggle */}
-                <div className='mb-4'>
-                  <label className='flex items-center'>
-                    <input
-                      type='checkbox'
-                      checked={newsData.hasVideo}
-                      onChange={(e) =>
-                        setNewsData((prev) => ({
-                          ...prev,
-                          hasVideo: e.target.checked,
-                        }))
-                      }
-                      className='mr-2'
-                    />
-                    This news item has a video
-                  </label>
-                </div>
-
-                {newsData.hasVideo && (
-                  <>
-                    {/* Video URL */}
-                    <div className='mb-4'>
-                      <label htmlFor='videoUrl'>Video URL</label>
-                      <input
-                        id='videoUrl'
-                        value={newsData.videoUrl}
-                        onChange={handleChange}
-                        placeholder='https://example.com/video.mp4'
-                        className='w-full px-3 py-2 border rounded'
-                      />
-                      {fieldErrors.videoUrl && (
-                        <p className='text-red-500'>{fieldErrors.videoUrl}</p>
-                      )}
-                    </div>
-
-                    {/* Upload Video */}
-                    <div className='mb-4'>
-                      <label htmlFor='videoFile'>Upload Video</label>
-                      <input
-                        id='videoFile'
-                        type='file'
-                        accept='video/*'
-                        onChange={(e) => uploadHandler(e, "videoUrl")}
-                        className='w-full'
-                      />
-                      {loadingUpload && <p>Uploading…</p>}
-                    </div>
-
-                    {/* Video Type */}
-                    <div className='mb-4'>
-                      <label htmlFor='videoType'>Video Type</label>
-                      <select
-                        id='videoType'
-                        value={newsData.videoType}
-                        onChange={handleChange}
-                        className='w-full px-3 py-2 border rounded'
-                      >
-                        <option value='mp4'>MP4</option>
-                        <option value='webm'>WebM</option>
-                        <option value='youtube'>YouTube</option>
-                        <option value='vimeo'>Vimeo</option>
-                      </select>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Category */}
-              <div className='mb-4'>
-                <label htmlFor='category'>Category</label>
-                <input
-                  id='category'
-                  value={newsData.category}
-                  onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
-                />
-                {fieldErrors.category && (
-                  <p className='text-red-500'>{fieldErrors.category}</p>
-                )}
-              </div>
-
-              {/* Tags */}
-              <div className='mb-4'>
-                <label htmlFor='tags'>Tags (comma-separated)</label>
-                <input
-                  id='tags'
-                  value={newsData.tags}
-                  onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
-                />
-                {fieldErrors.tags && (
-                  <p className='text-red-500'>{fieldErrors.tags}</p>
-                )}
-              </div>
-
-              {/* Author */}
-              <div className='mb-4'>
-                <label htmlFor='author'>Author</label>
-                <input
-                  id='author'
-                  value={newsData.author}
-                  onChange={handleChange}
-                  className='w-full px-3 py-2 border rounded'
-                />
-                {fieldErrors.author && (
-                  <p className='text-red-500'>{fieldErrors.author}</p>
-                )}
-              </div>
-
-              {/* Sources */}
-              <div className='mb-4'>
-                <label>Sources</label>
-                {links.map((link, idx) => (
-                  <div key={idx} className='flex space-x-2 mb-2'>
-                    <input
-                      placeholder='Title'
-                      value={link.title}
-                      onChange={(e) => updateLink(idx, "title", e.target.value)}
-                      className='flex-1 px-2 py-1 border rounded'
-                    />
-                    <input
-                      placeholder='URL'
-                      value={link.url}
-                      onChange={(e) => updateLink(idx, "url", e.target.value)}
-                      className='flex-1 px-2 py-1 border rounded'
-                    />
+                {loadingUpload && (
+                  <div className='flex items-center mt-2 text-sm text-gray-500'>
+                    <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-2'></div>
+                    Uploading...
                   </div>
-                ))}
-                <button
-                  type='button'
-                  onClick={addLink}
-                  className='text-[#144e8b]'
-                >
-                  + Add source
-                </button>
+                )}
+              </div>
+            </div>
+
+            {/* Video Section */}
+            <div className='bg-white shadow-md rounded-xl border border-gray-200 p-4 sm:p-6 mb-6'>
+              <h2 className='text-lg font-semibold text-[#0e355e] mb-4'>
+                Video Settings
+              </h2>
+
+              {/* Has Video Toggle */}
+              <div className='mb-4'>
+                <label className='flex items-center cursor-pointer'>
+                  <input
+                    type='checkbox'
+                    checked={newsData.hasVideo}
+                    onChange={(e) =>
+                      setNewsData((prev) => ({
+                        ...prev,
+                        hasVideo: e.target.checked,
+                      }))
+                    }
+                    className='w-4 h-4 text-[#0e355e] border-gray-300 rounded focus:ring-[#0e355e] mr-2'
+                  />
+                  <span className='text-sm font-medium text-gray-700'>
+                    This news item has a video
+                  </span>
+                </label>
               </div>
 
-              {/* Actions */}
-              <div className='flex space-x-2 my-5'>
-                <button
-                  type='submit'
-                  disabled={loadingUpdate}
-                  className='px-4 py-2 bg-[#0e355e] text-white rounded'
-                >
-                  {loadingUpdate ? "Saving…" : "Update"}
-                </button>
-                <button
-                  type='button'
-                  onClick={() => router.push("/admin/news")}
-                  className='px-4 py-2 bg-gray-300 rounded'
-                >
-                  Back
-                </button>
-              </div>
-            </form>
-          }
-        </div>
+              {newsData.hasVideo && (
+                <>
+                  {/* Video URL */}
+                  <div className='mb-4'>
+                    <label
+                      htmlFor='videoUrl'
+                      className='block text-sm font-semibold text-gray-700 mb-1'
+                    >
+                      Video URL
+                    </label>
+                    <input
+                      id='videoUrl'
+                      value={newsData.videoUrl}
+                      onChange={handleChange}
+                      placeholder='https://example.com/video.mp4'
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
+                    />
+                    {fieldErrors.videoUrl && (
+                      <p className='text-red-500 text-sm mt-1'>
+                        {fieldErrors.videoUrl}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Upload Video */}
+                  <div className='mb-4'>
+                    <label
+                      htmlFor='videoFile'
+                      className='block text-sm font-semibold text-gray-700 mb-1'
+                    >
+                      Upload Video
+                    </label>
+                    <input
+                      id='videoFile'
+                      type='file'
+                      accept='video/*'
+                      onChange={(e) => uploadHandler(e, "videoUrl")}
+                      className='w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#0e355e] hover:file:bg-blue-100 transition-all'
+                    />
+                    {loadingUpload && (
+                      <div className='flex items-center mt-2 text-sm text-gray-500'>
+                        <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-2'></div>
+                        Uploading...
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Video Type */}
+                  <div>
+                    <label
+                      htmlFor='videoType'
+                      className='block text-sm font-semibold text-gray-700 mb-1'
+                    >
+                      Video Type
+                    </label>
+                    <select
+                      id='videoType'
+                      value={newsData.videoType}
+                      onChange={handleChange}
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all'
+                    >
+                      <option value='mp4'>MP4</option>
+                      <option value='webm'>WebM</option>
+                      <option value='youtube'>YouTube</option>
+                      <option value='vimeo'>Vimeo</option>
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Sources Section */}
+            <div className='bg-white shadow-md rounded-xl border border-gray-200 p-4 sm:p-6 mb-6'>
+              <h2 className='text-lg font-semibold text-[#0e355e] mb-4'>
+                Sources
+              </h2>
+              {links.map((link, idx) => (
+                <div key={idx} className='flex items-center gap-2 mb-3'>
+                  <input
+                    placeholder='Title'
+                    value={link.title}
+                    onChange={(e) => updateLink(idx, "title", e.target.value)}
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all text-sm'
+                  />
+                  <input
+                    placeholder='URL'
+                    value={link.url}
+                    onChange={(e) => updateLink(idx, "url", e.target.value)}
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0e355e]/30 focus:border-[#0e355e] outline-none transition-all text-sm'
+                  />
+                  <button
+                    type='button'
+                    onClick={() => removeLink(idx)}
+                    className='p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all'
+                  >
+                    <BsTrash3 size={14} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type='button'
+                onClick={addLink}
+                className='text-sm font-medium text-[#0e355e] hover:text-[#144e8b] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all'
+              >
+                + Add source
+              </button>
+            </div>
+
+            {/* Actions */}
+            <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8'>
+              <button
+                type='submit'
+                disabled={loadingUpdate}
+                className='primary-button flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                {loadingUpdate ? "Saving..." : "Update"}
+              </button>
+              <button
+                type='button'
+                onClick={() => router.push("/admin/news")}
+                className='secondary-button flex-1 sm:flex-none'
+              >
+                Back
+              </button>
+            </div>
+          </form>
+        }
       </div>
     </Layout>
   );
