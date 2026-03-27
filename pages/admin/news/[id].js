@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer, useState, useCallback } from "react";
-import { toast } from "react-toastify";
 import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
+import { useModalContext } from "../../../components/context/ModalContext";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -34,6 +34,7 @@ export default function AdminNewsEditScreen() {
   const { query } = useRouter();
   const newsId = query.id;
   const router = useRouter();
+  const { showStatusMessage } = useModalContext();
 
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
@@ -127,10 +128,10 @@ export default function AdminNewsEditScreen() {
       const { data } = await axios.post(uploadUrl, formData);
       dispatch({ type: "UPLOAD_SUCCESS" });
       setNewsData((prev) => ({ ...prev, [field]: data.secure_url }));
-      toast.success("File uploaded successfully");
+      showStatusMessage("success", "File uploaded successfully");
     } catch (err) {
       dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
-      toast.error(getError(err));
+      showStatusMessage("error", getError(err));
     }
   };
 
@@ -156,11 +157,11 @@ export default function AdminNewsEditScreen() {
         videoType: newsData.hasVideo ? newsData.videoType : null,
       });
       dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success("News updated successfully");
+      showStatusMessage("success", "News updated successfully");
       router.push("/admin/news");
     } catch (err) {
       dispatch({ type: "UPDATE_FAIL", payload: getError(err) });
-      toast.error(getError(err));
+      showStatusMessage("error", getError(err));
     }
   };
 
