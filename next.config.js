@@ -52,17 +52,6 @@ const nextConfig = {
         destination: "/news",
         permanent: true,
       },
-      {
-        source: "/:path*",
-        has: [
-          {
-            type: "query",
-            key: "srsltid",
-          },
-        ],
-        destination: "/:path*",
-        permanent: true,
-      },
       // Redirect old URL-encoded news article to clean slug
       {
         source:
@@ -92,12 +81,6 @@ const nextConfig = {
           "/news/surgery-at-the-frontier-cell-therapy-immuno-oncology-and-catheter-innovation-reshape-the-us-surgical-landscape",
         destination:
           "/news/surgery-at-the-frontier-cell-therapy-immuno-oncology-and-catheter-innovation-reshape-the-u-s-surgical-landscape",
-        permanent: true,
-      },
-      {
-        source:
-          "/products/470015%3Fsrsltid%3DAfmBOoogUmdPW2zeWTB5KgBuIVuopO7KdtK-v1BcY4JhbsA2JcXnrY0s",
-        destination: "/products/470015",
         permanent: true,
       },
       {
