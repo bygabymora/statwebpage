@@ -16,6 +16,13 @@ const TRACKING_PARAMS = [
 ];
 
 export default function proxy(request: NextRequest) {
+  // Static/ISR pages only support GET and HEAD.
+  // Reject other methods early to avoid Vercel 405 warnings.
+  const method = request.method.toUpperCase();
+  if (method !== "GET" && method !== "HEAD") {
+    return new NextResponse("Method Not Allowed", { status: 405 });
+  }
+
   const url = request.nextUrl.clone();
   let needsRedirect = false;
 
