@@ -377,65 +377,98 @@ export default function ProductScreen({ product }) {
 
   const AdditionalDetailsTab = () => (
     <div className='bg-gray-50 p-6 rounded-lg'>
-      <h3 className='text-lg font-semibold text-[#144e8b] mb-4'>
+      <h3 className='text-lg font-semibold text-[#0e355e] mb-4'>
         Product Specifications
       </h3>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         <div>
-          <h4 className='font-medium text-gray-800 mb-2'>
+          <h4 className='font-semibold text-gray-800 mb-3'>
             Product Information
           </h4>
-          <ul className='space-y-2 text-sm text-gray-600'>
-            <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+          <div className='space-y-3'>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
+              <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                Product Name
+              </p>
+              <p className='text-sm font-semibold text-[#0e355e]'>
                 {product.name}
-              </h1>
-            </li>
-            <li>
-              <h1 className='text-xl font-bold text-[#0e355e]'>
+              </p>
+            </div>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
+              <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                Manufacturer
+              </p>
+              <p className='text-sm font-semibold text-[#0e355e]'>
                 {product.manufacturer}
-              </h1>
-            </li>
-            <li>
-              <h2 className='text-xl font-bold text-[#0e355e]'>
-                {currentDescription}
-              </h2>
-            </li>
+              </p>
+            </div>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
+              <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                Description
+              </p>
+              <p className='text-sm text-gray-700'>{currentDescription}</p>
+            </div>
             {product.information && (
-              <h3>
-                <p className='text-sm text-[#788b9b]'>{product.information}</p>
-              </h3>
+              <div className='bg-white rounded-lg p-3 border border-gray-100'>
+                <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                  Additional Info
+                </p>
+                <p className='text-sm text-gray-600'>{product.information}</p>
+              </div>
             )}
             {product.each?.description && (
-              <li>
-                <span className='font-medium'>Each Description:</span>{" "}
-                {product.each.description}
-              </li>
+              <div className='bg-white rounded-lg p-3 border border-gray-100'>
+                <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                  Each Description
+                </p>
+                <p className='text-sm text-gray-600'>
+                  {product.each.description}
+                </p>
+              </div>
             )}
             {product.box?.description && (
-              <li>
-                <span className='font-medium'>Box Description:</span>{" "}
-                {product.box.description}
-              </li>
+              <div className='bg-white rounded-lg p-3 border border-gray-100'>
+                <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                  Box Description
+                </p>
+                <p className='text-sm text-gray-600'>
+                  {product.box.description}
+                </p>
+              </div>
             )}
-          </ul>
+          </div>
         </div>
         <div>
-          <h4 className='font-medium text-gray-800 mb-3'>
+          <h4 className='font-semibold text-gray-800 mb-3'>
             Shipping & Handling
           </h4>
-          <ul className='space-y-3 text-sm text-gray-600'>
+          <div className='space-y-3'>
             {product.sentOverNight && (
-              <li className='text-orange-600'>
-                <span className='font-medium'>Special Shipping:</span> Overnight
-                recommended due to temperature sensitivity
-              </li>
+              <div className='bg-orange-50 rounded-lg p-3 border border-orange-200'>
+                <p className='text-xs font-semibold text-orange-700 mb-1'>
+                  Special Shipping
+                </p>
+                <p className='text-sm text-orange-600'>
+                  Overnight recommended due to temperature sensitivity
+                </p>
+              </div>
             )}
-            <li>
-              <span className='font-medium'>Stock Status:</span>{" "}
-              {currentCountInStock > 0 ? "In Stock" : "Out of Stock"}
-            </li>
-            <li className='mt-2'>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
+              <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-1'>
+                Stock Status
+              </p>
+              {currentCountInStock > 0 ?
+                <span className='inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-full'>
+                  <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+                  In Stock
+                </span>
+              : <span className='inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 bg-red-50 px-2.5 py-1 rounded-full'>
+                  <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
+                  Out of Stock
+                </span>
+              }
+            </div>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
               <div
                 className={`text-sm flex items-center gap-2 transition-all duration-300 ${
                   inventoryJustUpdated ?
@@ -470,37 +503,36 @@ export default function ProductScreen({ product }) {
                 {inventoryJustUpdated ?
                   <span>Inventory just updated!</span>
                 : inventoryLastUpdated ?
-                  <span>
-                    Inventory updated: {formatDateShort(inventoryLastUpdated)}
-                  </span>
-                : <span>Inventory status: Loading...</span>}
+                  <span>Updated: {formatDateShort(inventoryLastUpdated)}</span>
+                : <span>Loading...</span>}
               </div>
-            </li>
-            <h4 className='font-medium text-gray-800 mt-4 mb-2'>
-              Shipping Cutoff
-            </h4>
-            <li>
+            </div>
+            <div className='bg-white rounded-lg p-3 border border-gray-100'>
+              <p className='text-xs text-[#788b9b] uppercase tracking-wide mb-2'>
+                Shipping Cutoff
+              </p>
               {isBeforeCutoff ?
                 (() => {
                   const diffSec = CUTOFF_SECONDS - nySec;
                   const hours = Math.floor(diffSec / 3600);
                   const minutes = Math.floor((diffSec % 3600) / 60);
                   return (
-                    <td className='py-2 px-4 border-b text-sm text-gray-600'>
-                      Want it by tomorrow? Place your order within the next{" "}
-                      {hours} hour{hours !== 1 && "s"} and {minutes} minute
-                      {minutes !== 1 && "s"} and select overnight shipping at
-                      checkout.
-                    </td>
+                    <p className='text-sm text-gray-600'>
+                      Want it by tomorrow? Place your order within{" "}
+                      <span className='font-semibold text-[#03793d]'>
+                        {hours}h {minutes}m
+                      </span>{" "}
+                      and select overnight shipping at checkout.
+                    </p>
                   );
                 })()
-              : <td className='py-2 px-4 border-b text-sm text-gray-600'>
+              : <p className='text-sm text-gray-600'>
                   The cutoff for next-day shipping has passed. Orders placed now
                   will arrive in two days.
-                </td>
+                </p>
               }
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -706,27 +738,27 @@ export default function ProductScreen({ product }) {
       keywords={`${product.manufacturer}, ${product.name}, surgical supplies, healthcare equipment`}
     >
       {/* Breadcrumb Navigation */}
-      <nav className='text-sm text-gray-700 mb-6'>
-        <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
+      <nav className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6'>
+        <ol className='flex items-center space-x-2 text-sm'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
               {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#144e8b]'
+                  className='text-[#788b9b] hover:text-[#144e8b] transition-colors duration-200'
                 >
                   {breadcrumb.name}
                 </Link>
-              : <span className='text-[#144e8b] font-medium'>
+              : <span className='text-[#0e355e] font-medium'>
                   {breadcrumb.name}
                 </span>
               }
               {index < breadcrumbs.length - 1 && (
-                <BsChevronRight className='mx-2 text-gray-500' />
+                <BsChevronRight className='mx-2 text-gray-400 w-3 h-3' />
               )}
             </li>
           ))}
-        </ul>
+        </ol>
       </nav>
 
       {/* Main Product Layout */}
@@ -787,59 +819,73 @@ export default function ProductScreen({ product }) {
           </div>
 
           {/* Product Information Section */}
-          <div className='space-y-6'>
+          <div className='space-y-5'>
             <div>
-              <h1 className='text-3xl font-bold text-[#144e8b] mb-2'>
+              <span className='inline-block text-xs font-semibold tracking-wider uppercase text-[#03793d] bg-green-50 px-3 py-1 rounded-full mb-3'>
+                {product.manufacturer}
+              </span>
+              <h1 className='text-2xl sm:text-3xl font-bold text-[#0e355e] mb-3 leading-tight'>
                 {product.name}
               </h1>
-              <h2 className='text-xl font-semibold text-[#144e8b] mb-3'>
-                {product.manufacturer}
-              </h2>
-              <p className='text-lg text-gray-700 leading-relaxed'>
+              <p className='text-base text-gray-600 leading-relaxed'>
                 {currentDescription}
               </p>
             </div>
             {product.information && (
-              <h2>
-                <p className='text-sm text-[#788b9b]'>
-                  {product.name} {product.information}
-                </p>
-              </h2>
+              <p className='text-sm text-[#788b9b] leading-relaxed'>
+                {product.name} {product.information}
+              </p>
             )}
             {product.sentOverNight && (
-              <li className='text-[#0e355e] space-y-2'>
-                <div className='text-lg font-semibold text-[#0e355e]'>
-                  Shipping recomendations:
+              <div className='flex items-start gap-3 bg-orange-50 border border-orange-200 rounded-lg p-4'>
+                <svg
+                  className='w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+                <div>
+                  <p className='text-sm font-semibold text-orange-800'>
+                    Shipping Recommendation
+                  </p>
+                  <p className='text-sm text-orange-700 mt-1'>
+                    This product should ship overnight due to temperature
+                    sensitivity. Stat Surgical Supply is not responsible for
+                    product damage if another shipping method is selected.
+                  </p>
                 </div>
-                <p className='text-sm text-[#788b9b]'>
-                  It is recommended that this product ships overnight due to
-                  temperature sensitivity. Stat Surgical Supply is not
-                  responsible for product damage or failure if the customer
-                  chooses another shipping method.
-                </p>
-              </li>
+              </div>
             )}
-            <div className='flex flex-col items-center justify-center'>
-              <div className='card p-5 mb-4 bg-white shadow-lg rounded-lg w-full max-w-full lg:max-w-md'>
+            <div className='w-full'>
+              <div className='bg-white border border-gray-200 shadow-md rounded-xl p-5 w-full'>
                 {!isOutOfStock &&
                   !isOutOfStockBox &&
                   !isOutOfStockClearance &&
                   active &&
                   currentCountInStock > 0 &&
                   hasPrice && (
-                    <div className='mb-2 flex items-center justify-center'>
-                      <div className='font-bold mt-4'>Quantity &nbsp;</div>
-                      <div className='flex items-center flex-row'>
+                    <div className='flex items-center justify-between mb-4'>
+                      <span className='text-sm font-semibold text-gray-700'>
+                        Quantity
+                      </span>
+                      <div className='flex items-center border border-gray-300 rounded-lg overflow-hidden'>
                         <button
-                          className='border px-2 py-1 card'
+                          className='px-3 py-2 text-[#0e355e] hover:bg-gray-100 transition-colors disabled:opacity-40'
                           onClick={() => setQty(Math.max(1, qty - 1))}
                           disabled={qty <= 1}
                         >
                           -
                         </button>
-                        <span className='px-1 mt-4'>{qty}</span>
+                        <span className='px-4 py-2 text-sm font-semibold border-x border-gray-300 min-w-[40px] text-center'>
+                          {qty}
+                        </span>
                         <button
-                          className='border px-2 py-1 card'
+                          className='px-3 py-2 text-[#0e355e] hover:bg-gray-100 transition-colors'
                           onClick={() => {
                             if (qty < currentCountInStock) {
                               setQty(qty + 1);
@@ -858,37 +904,64 @@ export default function ProductScreen({ product }) {
                   isOutOfStockClearance ||
                   currentCountInStock <= 0) &&
                   active && (
-                    <div className='mb-2 justify-center gap-10 text-center items-center mt-2'>
-                      <div className='font-bold'>Status</div>
-                      <div className=''>Out of Stock</div>
+                    <div className='flex items-center justify-center gap-2 py-3 mb-3 bg-red-50 rounded-lg'>
+                      <svg
+                        className='w-4 h-4 text-red-500'
+                        fill='currentColor'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          fillRule='evenodd'
+                          d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                          clipRule='evenodd'
+                        />
+                      </svg>
+                      <span className='text-sm font-semibold text-red-700'>
+                        Currently Out of Stock
+                      </span>
                     </div>
                   )}
                 {showModal && (
                   <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
-                    <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
-                      <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
-                      <span className='font-bold text-[#0e355e]'>
-                        {product.manufacturer} - {product.name} -{" "}
-                        {typeOfPurchase}
-                      </span>{" "}
+                    <div className='bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 text-center'>
+                      <div className='w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                        <svg
+                          className='w-6 h-6 text-red-500'
+                          fill='currentColor'
+                          viewBox='0 0 20 20'
+                        >
+                          <path
+                            fillRule='evenodd'
+                            d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                            clipRule='evenodd'
+                          />
+                        </svg>
+                      </div>
+                      <h2 className='text-lg font-bold text-[#0e355e] mb-1'>
+                        Out of Stock
+                      </h2>
+                      <p className='text-sm font-medium text-gray-700 mb-2'>
+                        {product.manufacturer} — {product.name} (
+                        {typeOfPurchase})
+                      </p>
                       {user?.cart?.length > 0 &&
                         handleMatchProduct(product._id) > 0 && (
-                          <p className='mt-2 font-semibold'>
+                          <p className='text-sm text-green-700 bg-green-50 rounded-lg p-2 mb-2'>
                             You have{" "}
                             {handleMatchProduct(product._id) > 1 ?
                               handleMatchProduct(product._id) +
-                              "units of this item in your cart, that are available for purchase"
-                            : "1 unit of this item in your cart, that is available for purchase"
+                              " units of this item in your cart, available for purchase"
+                            : "1 unit of this item in your cart, available for purchase"
                             }
                             .
                           </p>
                         )}
-                      <p className='text-[#788b9b]'>
-                        We do not have any additional units at this moment.
-                        Please contact us for more information.
+                      <p className='text-sm text-[#788b9b] mb-4'>
+                        No additional units are available at this time. Please
+                        contact us for more information.
                       </p>
                       <button
-                        className='mt-4 px-4 py-2 bg-[#0e355e] text-white rounded-lg hover:bg-[#788b9b] transition'
+                        className='w-full px-4 py-2.5 bg-[#0e355e] text-white text-sm font-medium rounded-lg hover:bg-[#144e8b] transition-colors duration-200'
                         onClick={() => setShowModal(false)}
                       >
                         Close
@@ -914,8 +987,10 @@ export default function ProductScreen({ product }) {
                                 {active === "loading" ?
                                   "Loading"
                                 : active && (
-                                    <div className='mb-2 flex justify-between'>
-                                      <div className='font-bold'>U o M</div>
+                                    <div className='flex items-center justify-between mb-4'>
+                                      <span className='text-sm font-semibold text-gray-700'>
+                                        Unit of Measure
+                                      </span>
                                       <Listbox
                                         value={typeOfPurchase}
                                         onChange={(value) => {
@@ -1005,11 +1080,15 @@ export default function ProductScreen({ product }) {
                                 {active === "loading" ?
                                   "Loading"
                                 : active && (
-                                    <div className='mb-2 flex justify-between'>
-                                      <div className='font-bold'>Price</div>
-                                      {hasPrice ?
-                                        `$${currentPrice}`
-                                      : "Call for Price"}
+                                    <div className='flex items-center justify-between mb-4 pt-3 border-t border-gray-100'>
+                                      <span className='text-sm font-semibold text-gray-700'>
+                                        Price
+                                      </span>
+                                      <span className='text-lg font-bold text-[#0e355e]'>
+                                        {hasPrice ?
+                                          `$${currentPrice}`
+                                        : "Call for Price"}
+                                      </span>
                                     </div>
                                   )
                                 }
@@ -1017,25 +1096,29 @@ export default function ProductScreen({ product }) {
                             : null
                             // If you only have Clearance, show it once without an "Add to Cart" button
                           : product.each?.clearanceCountInStock > 0 && (
-                              <div className='my-5 text-center'>
-                                <div className='text-red-500 font-bold text-lg'>
+                              <div className='my-4 text-center bg-red-50 border border-red-200 rounded-lg p-4'>
+                                <span className='inline-block text-xs font-semibold tracking-wider uppercase text-red-600 bg-red-100 px-3 py-1 rounded-full mb-2'>
                                   Clearance
-                                </div>
+                                </span>
                                 {active === "loading" ?
                                   "Loading"
                                 : active ?
-                                  <div className='mb-2 flex justify-between'>
-                                    <div className='font-bold'>Price:</div>
-                                    <div className='ml-2 text-[#788b9b]'>
+                                  <div className='flex items-center justify-between mb-2'>
+                                    <span className='text-sm font-semibold text-gray-700'>
+                                      Price
+                                    </span>
+                                    <span className='text-lg font-bold text-[#0e355e]'>
                                       ${" "}
                                       {product.clearance?.price ||
                                         "Call for Price"}
-                                    </div>
+                                    </span>
                                   </div>
                                 : null}
-                                <div className='text-[#414b53]'>
-                                  {product.notes}
-                                </div>
+                                {product.notes && (
+                                  <p className='text-sm text-gray-600'>
+                                    {product.notes}
+                                  </p>
+                                )}
                               </div>
                             )
 
@@ -1044,35 +1127,40 @@ export default function ProductScreen({ product }) {
                           product.box?.countInStock > 0) &&
                           active && (
                             <div>
-                              {console.log("session", session)}
-                              <div className='mb-2 flex justify-between'>
-                                <div className='font-bold'>Status</div>
-                                <div>
-                                  {(
-                                    (typeOfPurchase === "Each" &&
-                                      isOutOfStock) ||
-                                    (typeOfPurchase === "Box" &&
-                                      isOutOfStockBox) ||
-                                    (typeOfPurchase === "Clearance" &&
-                                      isOutOfStockClearance)
-                                  ) ?
-                                    "Out of Stock"
-                                  : "In Stock"}
-                                </div>
+                              <div className='flex items-center justify-between mb-4 pt-3 border-t border-gray-100'>
+                                <span className='text-sm font-semibold text-gray-700'>
+                                  Status
+                                </span>
+                                {(
+                                  (typeOfPurchase === "Each" && isOutOfStock) ||
+                                  (typeOfPurchase === "Box" &&
+                                    isOutOfStockBox) ||
+                                  (typeOfPurchase === "Clearance" &&
+                                    isOutOfStockClearance)
+                                ) ?
+                                  <span className='inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 bg-red-50 px-2.5 py-1 rounded-full'>
+                                    <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
+                                    Out of Stock
+                                  </span>
+                                : <span className='inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-full'>
+                                    <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+                                    In Stock
+                                  </span>
+                                }
                               </div>
 
                               {active === "loading" ?
                                 "Loading"
                               : active && (
-                                  <>
+                                  <div className='pt-2'>
                                     {!hasPrice || currentPrice === 0 ?
                                       <Link href='/support'>
-                                        <button className='primary-button cart-button text-white'>
+                                        <button className='w-full py-3 bg-[#0e355e] text-white text-sm font-semibold rounded-lg hover:bg-[#144e8b] transition-colors duration-200'>
                                           Call for Price
                                         </button>
                                       </Link>
                                     : <button
-                                        className='primary-button cart-button my-2'
+                                        className='w-full py-3 bg-[#03793d] text-white text-sm font-semibold rounded-lg hover:bg-[#025f2f] transition-colors duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed'
                                         type='button'
                                         onClick={addToCartHandler}
                                         disabled={
@@ -1096,7 +1184,7 @@ export default function ProductScreen({ product }) {
                                         : "Add to Cart"}
                                       </button>
                                     }
-                                  </>
+                                  </div>
                                 )
                               }
                             </div>
@@ -1134,85 +1222,110 @@ export default function ProductScreen({ product }) {
                       isOutOfStockClearance)) &&
                     active && (
                       <form
-                        className='text-center p-2'
+                        className='mt-4 pt-4 border-t border-gray-100'
                         ref={form}
                         onSubmit={sendEmail}
                       >
-                        <label className='mt-3 font-bold'>
+                        <p className='text-sm font-semibold text-[#0e355e] mb-3 text-center'>
                           Join Our Wait List
-                        </label>
-                        <input
-                          type='text'
-                          name='user_name'
-                          className='contact__form-input'
-                          onChange={(e) => setName(e.target.value)}
-                          value={name}
-                          placeholder='Name'
-                          required
-                        />
-                        <input
-                          type='email'
-                          name='user_email'
-                          className='contact__form-input mt-2'
-                          onChange={(e) => setEmail(e.target.value)}
-                          value={email}
-                          placeholder='Email'
-                          required
-                        />
-                        <input
-                          type='text'
-                          name='emailManufacturer'
-                          className='contact__form-input'
-                          onChange={(e) => setEmailManufacturer(e.target.value)}
-                          value={emailManufacturer}
-                          hidden
-                          required
-                        />
-                        <button
-                          className='primary-button mt-3'
-                          type='submit'
-                          onClick={sendEmail}
-                        >
-                          Submit
-                        </button>
+                        </p>
+                        <div className='space-y-2'>
+                          <input
+                            type='text'
+                            name='user_name'
+                            className='w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144e8b] focus:border-transparent'
+                            onChange={(e) => setName(e.target.value)}
+                            value={name}
+                            placeholder='Your name'
+                            required
+                          />
+                          <input
+                            type='email'
+                            name='user_email'
+                            className='w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144e8b] focus:border-transparent'
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                            placeholder='Email address'
+                            required
+                          />
+                          <input
+                            type='text'
+                            name='emailManufacturer'
+                            className='contact__form-input'
+                            onChange={(e) =>
+                              setEmailManufacturer(e.target.value)
+                            }
+                            value={emailManufacturer}
+                            hidden
+                            required
+                          />
+                          <button
+                            className='w-full py-2.5 bg-[#0e355e] text-white text-sm font-semibold rounded-lg hover:bg-[#144e8b] transition-colors duration-200'
+                            type='submit'
+                            onClick={sendEmail}
+                          >
+                            Notify Me When Available
+                          </button>
+                        </div>
                       </form>
                     )}
                   {session?.user && !active ?
-                    <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
-                      <div className='font-semibold'>
-                        You will be able to see this product info soon.
+                    <div className='text-center py-4'>
+                      <div className='w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3'>
+                        <svg
+                          className='w-5 h-5 text-[#144e8b]'
+                          fill='currentColor'
+                          viewBox='0 0 20 20'
+                        >
+                          <path
+                            fillRule='evenodd'
+                            d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z'
+                            clipRule='evenodd'
+                          />
+                        </svg>
                       </div>
+                      <p className='text-sm font-medium text-gray-700'>
+                        Your account is being reviewed.
+                      </p>
+                      <p className='text-xs text-[#788b9b] mt-1'>
+                        Product details will be available shortly.
+                      </p>
                     </div>
                   : !session?.user ?
-                    <div className='mb-2 flex flex-col justify-center gap-5 m-2 text-center items-center'>
+                    <div className='text-center py-4'>
                       {(
                         (product.each?.wpPrice &&
                           product.each?.wpPrice !== "Call for price") ||
                         (product.box?.wpPrice &&
                           product.box?.wpPrice !== "Call for price")
                       ) ?
-                        <div className=''>
-                          <span className='font-semibold'>
-                            Web price: $
-                            {product.each?.wpPrice || product.box?.wpPrice} per{" "}
-                            {product.each?.wpPrice ? "Unit" : "Box"}.
-                          </span>{" "}
-                          <br />
-                          Contact us or register for custom pricing.
+                        <div className='mb-4'>
+                          <p className='text-xl font-bold text-[#0e355e] mb-1'>
+                            ${product.each?.wpPrice || product.box?.wpPrice}
+                            <span className='text-sm font-normal text-gray-500'>
+                              {" "}
+                              per {product.each?.wpPrice ? "Unit" : "Box"}
+                            </span>
+                          </p>
+                          <p className='text-xs text-[#788b9b]'>
+                            Sign in or register for custom pricing.
+                          </p>
                         </div>
-                      : <div className=''>
-                          Sign in to see availability and purchase this product
-                          at a custom price.
+                      : <div className='mb-4'>
+                          <p className='text-sm text-gray-600'>
+                            Sign in to see availability and purchase at a custom
+                            price.
+                          </p>
                         </div>
                       }
-                      <div className='flex gap-5'>
+                      <div className='flex gap-3 justify-center'>
                         <Link href='/Login'>
-                          <button className='primary-button align-middle text-white'>
+                          <button className='px-6 py-2.5 bg-[#0e355e] text-white text-sm font-semibold rounded-lg hover:bg-[#144e8b] transition-colors duration-200'>
                             Login
                           </button>
                         </Link>
                         <Link href='/Register'>
-                          <button className='primary-button align-middle text-white'>
+                          <button className='px-6 py-2.5 border-2 border-[#0e355e] text-[#0e355e] text-sm font-semibold rounded-lg hover:bg-[#0e355e] hover:text-white transition-colors duration-200'>
                             Register
                           </button>
                         </Link>
@@ -1227,32 +1340,34 @@ export default function ProductScreen({ product }) {
       </div>
 
       {/* Tabbed Interface Section */}
-      <div className='bg-white shadow-lg rounded-xl overflow-hidden mb-8'>
-        {/* Tab Navigation */}
-        <div className='border-b border-gray-200'>
-          <nav className='flex flex-wrap'>
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
-                    activeTab === tab.id ?
-                      "border-[#144e8b] text-[#144e8b] bg-blue-50"
-                    : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
-                  }`}
-                >
-                  <Icon className='w-4 h-4 mr-2' />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8'>
+        <div className='bg-white shadow-md rounded-xl overflow-hidden border border-gray-100'>
+          {/* Tab Navigation */}
+          <div className='border-b border-gray-200'>
+            <nav className='flex flex-wrap'>
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
+                      activeTab === tab.id ?
+                        "border-[#144e8b] text-[#144e8b] bg-blue-50"
+                      : "border-transparent text-gray-500 hover:text-[#144e8b] hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className='w-4 h-4 mr-2' />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
-        {/* Tab Content */}
-        <div className='p-6'>{renderTabContent()}</div>
+          {/* Tab Content */}
+          <div className='p-6'>{renderTabContent()}</div>
+        </div>
       </div>
     </Layout>
   );
