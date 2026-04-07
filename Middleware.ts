@@ -58,7 +58,7 @@ export default function middleware(request: NextRequest) {
   }
 
   // -----------------------------
-  // 2. Normalize /news trailing slash ONLY
+  // 2. Normalize trailing slash ONLY for /news
   // -----------------------------
   if (
     url.pathname.startsWith("/news") &&
@@ -70,7 +70,7 @@ export default function middleware(request: NextRequest) {
   }
 
   // -----------------------------
-  // 3. Remove tracking params in /news
+  // 3. Remove tracking params (only /news)
   // -----------------------------
   if (url.pathname.startsWith("/news")) {
     TRACKING_PARAMS.forEach((param) => {
@@ -82,7 +82,7 @@ export default function middleware(request: NextRequest) {
   }
 
   // -----------------------------
-  // 4. Normalize /news slug (SEO clean)
+  // 4. Normalize /news slug
   // -----------------------------
   if (url.pathname.startsWith("/news/")) {
     const slug = url.pathname.replace("/news/", "");
@@ -93,17 +93,42 @@ export default function middleware(request: NextRequest) {
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    const newPath = `/news/${cleanSlug}`;
-
-    // ONLY redirect if you actually changed the slug
     if (slug !== cleanSlug) {
-      url.pathname = newPath;
+      url.pathname = `/news/${cleanSlug}`;
       needsRedirect = true;
     }
   }
 
   // -----------------------------
-  // 5. Final redirect (anti-loop safe)
+  // 5. Normalize /products URLs
+  // -----------------------------
+  if (url.pathname.startsWith("/products/")) {
+    const slug = url.pathname.replace("/products/", "");
+
+    // Extract numeric product ID at the end
+    const match = slug.match(/(\d+)$/);
+
+    if (match) {
+      const productId = match[1];
+      const cleanPath = `/products/${productId}`;
+
+      if (url.pathname !== cleanPath) {
+        url.pathname = cleanPath;
+        needsRedirect = true;
+      }
+    }
+
+    // Remove tracking params for products too
+    TRACKING_PARAMS.forEach((param) => {
+      if (url.searchParams.has(param)) {
+        url.searchParams.delete(param);
+        needsRedirect = true;
+      }
+    });
+  }
+
+  // -----------------------------
+  // 6. Final redirect (anti-loop safe)
   // -----------------------------
   const original = request.url;
   const updated = url.toString();
