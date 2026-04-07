@@ -46,12 +46,6 @@ const nextConfig = {
 
   async redirects() {
     return [
-      // Redirect from /news/ to /news to avoid duplicate content issues
-      {
-        source: "/news/",
-        destination: "/news",
-        permanent: true,
-      },
       // Redirect old URL-encoded news article to clean slug
       {
         source:
