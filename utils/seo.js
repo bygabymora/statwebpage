@@ -123,6 +123,13 @@ function generateProductJSONLD(product) {
   const keywords =
     Array.isArray(product.keywords) ? product.keywords.join(", ") : undefined;
 
+  const isInStock =
+    (product.each?.countInStock || 0) > 0 ||
+    (product.box?.countInStock || 0) > 0 ||
+    (product.each?.clearanceCountInStock || 0) > 0 ||
+    (product.box?.clearanceCountInStock || 0) > 0 ||
+    (product.loose?.countInStock || 0) > 0;
+
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -143,7 +150,10 @@ function generateProductJSONLD(product) {
       priceCurrency: "USD",
       price: price,
       itemCondition: "https://schema.org/NewCondition",
-      availability: "https://schema.org/InStock",
+      availability:
+        isInStock ?
+          "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       url: canonicalUrl,
       seller: {
         "@type": "Organization",
