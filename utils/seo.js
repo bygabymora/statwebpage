@@ -110,15 +110,7 @@ function generateProductJSONLD(product) {
   const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
     product.name,
   )}`;
-  const price = (
-    product.each?.minSalePrice ||
-    product.box?.minSalePrice ||
-    product.each?.wprice ||
-    product.box?.wprice ||
-    product.each?.customerPrice ||
-    product.box?.customerPrice ||
-    0
-  ).toFixed(2);
+  const wpPrice = product.each?.wpPrice || product.box?.wpPrice || 0;
 
   const keywords =
     Array.isArray(product.keywords) ? product.keywords.join(", ") : undefined;
@@ -129,6 +121,16 @@ function generateProductJSONLD(product) {
     (product.each?.clearanceCountInStock || 0) > 0 ||
     (product.box?.clearanceCountInStock || 0) > 0 ||
     (product.loose?.countInStock || 0) > 0;
+
+  const priceSpec =
+    wpPrice > 0 ?
+      { price: wpPrice.toFixed(2), priceCurrency: "USD" }
+    : {
+        price: 0,
+        priceCurrency: "USD",
+        priceValidUntil: "2099-12-31",
+        description: "Call for price",
+      };
 
   return {
     "@context": "https://schema.org/",
@@ -147,8 +149,7 @@ function generateProductJSONLD(product) {
     productID: product.name,
     offers: {
       "@type": "Offer",
-      priceCurrency: "USD",
-      price: price,
+      ...priceSpec,
       itemCondition: "https://schema.org/NewCondition",
       availability:
         isInStock ?
