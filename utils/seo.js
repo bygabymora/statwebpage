@@ -110,17 +110,22 @@ function generateProductJSONLD(product) {
   const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
     product.name,
   )}`;
-  const wpPrice = product.each?.wpPrice || product.box?.wpPrice || 0;
-
   const keywords =
     Array.isArray(product.keywords) ? product.keywords.join(", ") : undefined;
 
-  const isInStock =
+  const eachInStock =
     (product.each?.countInStock || 0) > 0 ||
+    (product.each?.clearanceCountInStock || 0) > 0;
+  const boxInStock =
     (product.box?.countInStock || 0) > 0 ||
-    (product.each?.clearanceCountInStock || 0) > 0 ||
-    (product.box?.clearanceCountInStock || 0) > 0 ||
-    (product.loose?.countInStock || 0) > 0;
+    (product.box?.clearanceCountInStock || 0) > 0;
+  const looseInStock = (product.loose?.countInStock || 0) > 0;
+  const isInStock = eachInStock || boxInStock || looseInStock;
+
+  const wpPrice =
+    eachInStock ? product.each?.wpPrice || 0
+    : boxInStock ? product.box?.wpPrice || 0
+    : product.each?.wpPrice || product.box?.wpPrice || 0;
 
   const priceSpec =
     wpPrice > 0 ?
