@@ -123,9 +123,13 @@ function generateProductJSONLD(product) {
   const isInStock = eachInStock || boxInStock || looseInStock;
 
   const wpPrice =
-    eachInStock ? product.each?.wpPrice || 0
-    : boxInStock ? product.box?.wpPrice || 0
-    : product.each?.wpPrice || product.box?.wpPrice || 0;
+    eachInStock ? product.each?.wpPrice || product.each?.customerPrice || 0
+    : boxInStock ? product.box?.wpPrice || product.box?.customerPrice || 0
+    : product.each?.wpPrice ||
+      product.each?.customerPrice ||
+      product.box?.wpPrice ||
+      product.box?.customerPrice ||
+      0;
 
   const priceSpec =
     wpPrice > 0 ?
