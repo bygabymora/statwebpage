@@ -1,6 +1,11 @@
 import mailchimp from "@mailchimp/mailchimp_transactional";
 
 export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Allow", "POST, OPTIONS");
+    return res.status(204).end();
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -59,7 +64,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error(
       "Error sending email:",
-      error.response?.data || error.message || error
+      error.response?.data || error.message || error,
     );
     res.status(500).json({ success: false, error: "Error sending email" });
   }

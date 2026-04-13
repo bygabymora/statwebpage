@@ -13,6 +13,7 @@ const ContactUs = () => {
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // New: reCAPTCHA v2 token (checkbox)
   const [captchaToken, setCaptchaToken] = useState(null);
@@ -35,6 +36,8 @@ const ContactUs = () => {
 
   const sendEmail = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     // Get actual form data from DOM (handles autofill that bypasses onChange)
     const formData = new FormData(e.currentTarget);
@@ -150,8 +153,47 @@ const ContactUs = () => {
       actualMessage,
     );
 
+    // --- Email Tracker: verify content before sending ---
+    console.log("[ContactUs Tracker] emailmessage:", {
+      subject: emailmessage?.subject || "(EMPTY)",
+      hasP1: !!emailmessage?.p1,
+      hasP2: !!emailmessage?.p2,
+      hasP3: !!emailmessage?.p3,
+    });
+
+    if (!emailmessage?.subject || !emailmessage?.p1) {
+      console.error(
+        "[ContactUs Tracker] Email message is empty! Aborting send.",
+      );
+      showStatusMessage(
+        "error",
+        "Something went wrong building the email. Please try again.",
+      );
+      return;
+    }
+
     try {
-      await handleSendEmails(emailmessage, contactToEmail);
+      const response = await handleSendEmails(
+        emailmessage,
+        contactToEmail,
+        null,
+        "Contact Us",
+      );
+
+      // Validate the API response
+      if (response && !response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error(
+          "[ContactUs Tracker] API returned error:",
+          response.status,
+          errorData,
+        );
+        showStatusMessage(
+          "error",
+          "There was a problem sending your message. Please try again.",
+        );
+        return;
+      }
       showStatusMessage("success", "Message sent successfully!");
 
       // Clear the form using form ref (e.currentTarget becomes null after async)
@@ -171,6 +213,8 @@ const ContactUs = () => {
     } catch (err) {
       console.error("[ContactUs] handleSendEmails error:", err);
       showStatusMessage("error", "There was a problem sending your message.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -286,11 +330,14 @@ const ContactUs = () => {
 
         <motion.button
           type='submit'
+          disabled={isSubmitting}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className='button button--flex btn-contact'
         >
-          <span className='text-white'>Send Message {tab}</span>
+          <span className='text-white'>
+            {isSubmitting ? "Sending..." : "Send Message"} {tab}
+          </span>
           <BiMessageAdd className='text-white' />
         </motion.button>
       </form>
