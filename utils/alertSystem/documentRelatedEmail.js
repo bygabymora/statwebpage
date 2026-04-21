@@ -2,9 +2,24 @@ import ContactTemplate from "../../components/mailChimp/ContactTemplate";
 import DocumentComponent from "../../components/mailChimp/document/Component";
 import SignatureTemplate from "../../components/mailChimp/document/Signatures";
 
+const normalizeText = (value) =>
+  (value || "").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || "");
+
 const handleSendEmails = async (message, contact, accountOwner) => {
   let response;
   const headersToSend = "X-WpEmail";
+  const toEmail = normalizeText(contact?.email || "").toLowerCase();
+  const subject = normalizeText(message?.subject || "");
+
+  if (!toEmail || !isValidEmail(toEmail)) {
+    throw new Error("Invalid or missing recipient email");
+  }
+
+  if (!subject || !message?.p1) {
+    throw new Error("Invalid or empty email content");
+  }
 
   // --- Email Tracker: log what we're about to send ---
   console.log("[Email Tracker] Preparing email for:", contact?.email);
@@ -26,15 +41,21 @@ const handleSendEmails = async (message, contact, accountOwner) => {
   }
 
   try {
-    const templateHtml = DocumentComponent({
-      message,
-      contact,
-    });
+    const templateHtml = normalizeText(
+      DocumentComponent({
+        message,
+        contact,
+      }),
+    );
+
+    if (!templateHtml) {
+      throw new Error("Email HTML content is empty");
+    }
 
     let payload = {
-      toEmail: contact.email,
+      toEmail,
       fromEmail: "sales@statsurgicalsupply.com",
-      subject: message.subject,
+      subject,
       htmlContent: templateHtml,
       headers: {
         [headersToSend]: true,
@@ -49,9 +70,9 @@ const handleSendEmails = async (message, contact, accountOwner) => {
         signature: signature,
       });
       payload = {
-        toEmail: contact.email,
+        toEmail,
         fromEmail: accountOwnerEmail,
-        subject: message.subject,
+        subject,
         htmlContent: finalHtml,
         headers: {
           [headersToSend]: true,

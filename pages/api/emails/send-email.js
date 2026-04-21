@@ -1,5 +1,10 @@
 import mailchimp from "@mailchimp/mailchimp_transactional";
 
+const normalizeText = (value) =>
+  (value || "").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || "");
+
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     res.setHeader("Allow", "POST, OPTIONS");
@@ -14,6 +19,37 @@ export default async function handler(req, res) {
   const { toEmail, fromEmail, subject, htmlContent, headers, attachment } =
     req.body;
 
+  const normalizedToEmail = normalizeText(toEmail).toLowerCase();
+  const normalizedFromEmail = normalizeText(fromEmail).toLowerCase();
+  const normalizedSubject = normalizeText(subject);
+  const normalizedHtmlContent = normalizeText(htmlContent);
+
+  if (!normalizedToEmail || !isValidEmail(normalizedToEmail)) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid or missing recipient email",
+    });
+  }
+
+  if (normalizedFromEmail && !isValidEmail(normalizedFromEmail)) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid sender email",
+    });
+  }
+
+  if (!normalizedSubject) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing email subject" });
+  }
+
+  if (!normalizedHtmlContent) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing email content" });
+  }
+
   // Check if the Mailchimp API key is available
   if (!process.env.MAILCHIMP_TRANSACTIONAL_API_KEY) {
     console.error("Mailchimp API key is missing.");
@@ -26,16 +62,22 @@ export default async function handler(req, res) {
     // Initialize Mailchimp client
     const client = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY);
 
+    const bccRecipients = [
+      "gaby@statsurgicalsupply.com",
+      "sofi@statsurgicalsupply.com",
+    ];
+    if (normalizedFromEmail) {
+      bccRecipients.push(normalizedFromEmail);
+    }
+
     const message = {
-      from_email: fromEmail ? fromEmail : "sales@statsurgicalsupply.com",
-      subject: subject,
-      html: htmlContent,
+      from_email: normalizedFromEmail || "sales@statsurgicalsupply.com",
+      subject: normalizedSubject,
+      html: normalizedHtmlContent,
       headers: headers || {},
       to: [
-        { email: toEmail, type: "to" },
-        { email: "gaby@statsurgicalsupply.com", type: "bcc" },
-        { email: "sofi@statsurgicalsupply.com", type: "bcc" },
-        { email: fromEmail, type: "bcc" },
+        { email: normalizedToEmail, type: "to" },
+        ...bccRecipients.map((email) => ({ email, type: "bcc" })),
       ],
     };
 
