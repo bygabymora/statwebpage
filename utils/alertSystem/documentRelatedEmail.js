@@ -7,6 +7,16 @@ const normalizeText = (value) =>
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || "");
 
+const extractMeaningfulText = (value) =>
+  normalizeText(
+    (value || "")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/\s+/g, " "),
+  );
+
 const handleSendEmails = async (message, contact, accountOwner) => {
   let response;
   const headersToSend = "X-WpEmail";
@@ -19,6 +29,13 @@ const handleSendEmails = async (message, contact, accountOwner) => {
 
   if (!subject || !message?.p1) {
     throw new Error("Invalid or empty email content");
+  }
+
+  const composedText = extractMeaningfulText(
+    `${message?.p1 || ""} ${message?.p2 || ""} ${message?.p3 || ""}`,
+  );
+  if (composedText.length < 10) {
+    throw new Error("Email content is not meaningful");
   }
 
   // --- Email Tracker: log what we're about to send ---
@@ -50,6 +67,10 @@ const handleSendEmails = async (message, contact, accountOwner) => {
 
     if (!templateHtml) {
       throw new Error("Email HTML content is empty");
+    }
+
+    if (extractMeaningfulText(templateHtml).length < 10) {
+      throw new Error("Rendered email content is not meaningful");
     }
 
     let payload = {

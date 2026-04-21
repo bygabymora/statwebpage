@@ -55,6 +55,26 @@ describe("/api/emails/send-email", () => {
     expect(sendMock).not.toHaveBeenCalled();
   });
 
+  test("returns 400 when html has no meaningful text", async () => {
+    const { req, res } = createMocks({
+      method: "POST",
+      body: {
+        toEmail: "customer@example.com",
+        fromEmail: "sales@statsurgicalsupply.com",
+        subject: "Contact",
+        htmlContent: "<div>   </div><p>&nbsp;</p>",
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res._getStatusCode()).toBe(400);
+    expect(JSON.parse(res._getData()).error).toBe(
+      "Email content is empty or not meaningful",
+    );
+    expect(sendMock).not.toHaveBeenCalled();
+  });
+
   test("does not add empty fromEmail as bcc", async () => {
     const { req, res } = createMocks({
       method: "POST",
@@ -62,7 +82,7 @@ describe("/api/emails/send-email", () => {
         toEmail: "customer@example.com",
         fromEmail: "   ",
         subject: "Hello",
-        htmlContent: "<div>Hi</div>",
+        htmlContent: "<div>Hello customer, your request was received.</div>",
       },
     });
 
@@ -86,7 +106,8 @@ describe("/api/emails/send-email", () => {
         toEmail: " customer@example.com ",
         fromEmail: "sales@statsurgicalsupply.com",
         subject: " Contact request ",
-        htmlContent: " <div>Hello</div> ",
+        htmlContent:
+          " <div>Hello customer, this is a complete confirmation message.</div> ",
       },
     });
 
