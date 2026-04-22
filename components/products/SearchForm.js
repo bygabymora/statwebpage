@@ -79,7 +79,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       "Product Request",
       message,
       null,
-      item
+      item,
     );
     handleSendEmails(emailMessage, contactToEmail, accountOwner);
     showStatusMessage("success", "Request sent successfully");
@@ -155,7 +155,9 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               <label className='contact__form-tag'>Quantity Needed</label>
               <input
                 autoComplete='off'
-                type='text'
+                type='number'
+                min='0'
+                step='1'
                 placeholder='Please enter the quantity needed'
                 name='quantity'
                 className='contact__form-input'
