@@ -122,14 +122,23 @@ function generateProductJSONLD(product) {
   const looseInStock = (product.loose?.countInStock || 0) > 0;
   const isInStock = eachInStock || boxInStock || looseInStock;
 
-  const wpPrice =
-    eachInStock ? product.each?.wpPrice || product.each?.customerPrice || 0
-    : boxInStock ? product.box?.wpPrice || product.box?.customerPrice || 0
-    : product.each?.wpPrice ||
-      product.each?.customerPrice ||
-      product.box?.wpPrice ||
+  const prioritizedWebsitePrice =
+    product.each?.wpPrice ||
+    product.box?.wpPrice ||
+    product.loose?.wpPrice ||
+    0;
+
+  const fallbackPrice =
+    eachInStock ? product.each?.customerPrice || 0
+    : boxInStock ? product.box?.customerPrice || 0
+    : looseInStock ? product.loose?.customerPrice || 0
+    : product.each?.customerPrice ||
       product.box?.customerPrice ||
+      product.loose?.customerPrice ||
       0;
+
+  const wpPrice =
+    prioritizedWebsitePrice > 0 ? prioritizedWebsitePrice : fallbackPrice;
 
   const priceSpec =
     wpPrice > 0 ?
