@@ -77,7 +77,7 @@ const SearchPage = ({ query }) => {
     const emailMessage = messageManagement(
       contactToEmail,
       "Product Request",
-      message
+      message,
     );
 
     handleSendEmails(emailMessage, contactToEmail);
@@ -96,14 +96,13 @@ const SearchPage = ({ query }) => {
     <Layout title='Search Results'>
       <div className='max-w-4xl mx-auto p-5'>
         <h1 className='section__title'>Search Results</h1>
-        {products.length > 0 ? (
+        {products.length > 0 ?
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
             {products.map((product) => (
               <ProductItem key={product._id} product={product} />
             ))}
           </div>
-        ) : (
-          <>
+        : <>
             <div className='text-center'>
               <h2 className='section__subtitle'>No products found</h2>
               <p className='section__text text-center font-semibold'>
@@ -161,7 +160,9 @@ const SearchPage = ({ query }) => {
                   <label className='contact__form-tag'>Quantity Needed</label>
                   <input
                     autoComplete='off'
-                    type='text'
+                    type='number'
+                    min='0'
+                    step='1'
                     placeholder='Please enter the quantity needed'
                     name='quantity'
                     className='contact__form-input'
@@ -226,7 +227,7 @@ const SearchPage = ({ query }) => {
               </button>
             </form>
           </>
-        )}
+        }
       </div>
     </Layout>
   );

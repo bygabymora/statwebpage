@@ -122,14 +122,27 @@ function generateProductJSONLD(product) {
   const looseInStock = (product.loose?.countInStock || 0) > 0;
   const isInStock = eachInStock || boxInStock || looseInStock;
 
+  const toPositiveNumber = (value) => {
+    const numberValue = Number(value);
+    return Number.isFinite(numberValue) && numberValue > 0 ? numberValue : 0;
+  };
+
+  const getPriceByStockPriority = (fieldName) => {
+    const eachPrice = toPositiveNumber(product.each?.[fieldName]);
+    const boxPrice = toPositiveNumber(product.box?.[fieldName]);
+    const loosePrice = toPositiveNumber(product.loose?.[fieldName]);
+
+    if (eachInStock && eachPrice > 0) return eachPrice;
+    if (boxInStock && boxPrice > 0) return boxPrice;
+    if (looseInStock && loosePrice > 0) return loosePrice;
+
+    return eachPrice || boxPrice || loosePrice || 0;
+  };
+
+  const prioritizedWebsitePrice = getPriceByStockPriority("wpPrice");
+  const fallbackPrice = getPriceByStockPriority("customerPrice");
   const wpPrice =
-    eachInStock ? product.each?.wpPrice || product.each?.customerPrice || 0
-    : boxInStock ? product.box?.wpPrice || product.box?.customerPrice || 0
-    : product.each?.wpPrice ||
-      product.each?.customerPrice ||
-      product.box?.wpPrice ||
-      product.box?.customerPrice ||
-      0;
+    prioritizedWebsitePrice > 0 ? prioritizedWebsitePrice : fallbackPrice;
 
   const priceSpec =
     wpPrice > 0 ?

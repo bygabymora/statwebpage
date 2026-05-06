@@ -18,6 +18,9 @@ const ContactUs = () => {
   // New: reCAPTCHA v2 token (checkbox)
   const [captchaToken, setCaptchaToken] = useState(null);
 
+  const normalizeText = (value) =>
+    (value || "").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+
   // Sync React state with actual form values (handles autofill)
   const syncFormValues = () => {
     if (form.current) {
@@ -39,140 +42,143 @@ const ContactUs = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Get actual form data from DOM (handles autofill that bypasses onChange)
-    const formData = new FormData(e.currentTarget);
-    const actualName = formData.get("user_name")?.trim() || "";
-    const actualEmail = formData.get("user_email")?.trim().toLowerCase() || "";
-    const actualMessage = formData.get("message")?.trim() || "";
-
-    // Honeypot
-    const botField = formData.get("bot_field");
-    if (botField) {
-      console.warn("Bot submission blocked 🚫");
-      return;
-    }
-
-    // Enhanced validation to prevent empty emails
-    if (!actualName || !actualEmail || !actualMessage) {
-      showStatusMessage("error", "Please fill all the fields");
-      return;
-    }
-
-    // Check for minimum meaningful content length
-    if (actualName.length < 2) {
-      showStatusMessage(
-        "error",
-        "Please enter a valid name (at least 2 characters)",
-      );
-      return;
-    }
-
-    if (actualMessage.length < 10) {
-      showStatusMessage(
-        "error",
-        "Please enter a more detailed message (at least 10 characters)",
-      );
-      return;
-    }
-
-    // Check message contains actual meaningful content (not just special characters/whitespace)
-    const messageContentCheck = actualMessage.replace(/[\s\W]/g, "");
-    if (messageContentCheck.length < 3) {
-      showStatusMessage(
-        "error",
-        "Please enter a meaningful message with actual content",
-      );
-      return;
-    }
-
-    // Basic email format validation (additional to HTML5 validation)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(actualEmail)) {
-      showStatusMessage("error", "Please enter a valid email address");
-      return;
-    }
-
-    // Validate that the checkbox has been checked
-    if (!captchaToken) {
-      showStatusMessage(
-        "error",
-        "Please confirm you are not a robot by ticking the checkbox.",
-      );
-      return;
-    }
-
-    // Verify token on the server
-    let verifyData = null;
     try {
-      const verifyRes = await fetch("/api/recaptcha/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: captchaToken,
-        }),
-      });
-      verifyData = await verifyRes.json();
-    } catch (err) {
-      console.error("[reCAPTCHA verify] network/fetch error:", err);
-      showStatusMessage("error", "No network. Try again.");
-      return;
-    }
+      // Get actual form data from DOM (handles autofill that bypasses onChange)
+      const formData = new FormData(e.currentTarget);
+      const actualName = normalizeText(formData.get("user_name"));
+      const actualEmail = normalizeText(
+        formData.get("user_email"),
+      ).toLowerCase();
+      const actualMessage = normalizeText(formData.get("message"));
 
-    if (!verifyData?.success) {
-      console.warn("[reCAPTCHA verify] failed:", verifyData);
-      const reason = verifyData?.reason;
-
-      if (reason === "server_misconfig") {
-        showStatusMessage(
-          "error",
-          "Server configuration error. Please try later.",
-        );
-      } else if (reason === "missing_token") {
-        showStatusMessage(
-          "error",
-          "reCAPTCHA error. Please reload and try again.",
-        );
-      } else if (reason === "google_not_success") {
-        showStatusMessage("error", "reCAPTCHA failed with Google. Try again.");
-      } else if (reason === "google_parse_error") {
-        showStatusMessage(
-          "error",
-          "Unexpected response from Google. Try again.",
-        );
-      } else {
-        showStatusMessage("error", "reCAPTCHA verification failed.");
+      // Honeypot
+      const botField = normalizeText(formData.get("bot_field"));
+      if (botField) {
+        console.warn("Bot submission blocked");
+        return;
       }
-      return;
-    }
 
-    // OK → send the email
-    const contactToEmail = { name: actualName, email: actualEmail };
-    const emailmessage = messageManagement(
-      contactToEmail,
-      "Contact Us",
-      actualMessage,
-    );
+      if (!actualName || !actualEmail || !actualMessage) {
+        showStatusMessage("error", "Please fill all the fields");
+        return;
+      }
 
-    // --- Email Tracker: verify content before sending ---
-    console.log("[ContactUs Tracker] emailmessage:", {
-      subject: emailmessage?.subject || "(EMPTY)",
-      hasP1: !!emailmessage?.p1,
-      hasP2: !!emailmessage?.p2,
-      hasP3: !!emailmessage?.p3,
-    });
+      if (actualName.length < 2) {
+        showStatusMessage(
+          "error",
+          "Please enter a valid name (at least 2 characters)",
+        );
+        return;
+      }
 
-    if (!emailmessage?.subject || !emailmessage?.p1) {
-      console.error(
-        "[ContactUs Tracker] Email message is empty! Aborting send.",
+      if (actualMessage.length < 10) {
+        showStatusMessage(
+          "error",
+          "Please enter a more detailed message (at least 10 characters)",
+        );
+        return;
+      }
+
+      // Require at least 3 letters/numbers to reject punctuation-only content.
+      const messageContentCheck = actualMessage.replace(/[^\p{L}\p{N}]/gu, "");
+      if (messageContentCheck.length < 3) {
+        showStatusMessage(
+          "error",
+          "Please enter a meaningful message with actual content",
+        );
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(actualEmail)) {
+        showStatusMessage("error", "Please enter a valid email address");
+        return;
+      }
+
+      if (!captchaToken) {
+        showStatusMessage(
+          "error",
+          "Please confirm you are not a robot by ticking the checkbox.",
+        );
+        return;
+      }
+
+      // Verify token on the server
+      let verifyData = null;
+      try {
+        const verifyRes = await fetch("/api/recaptcha/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: captchaToken,
+          }),
+        });
+        verifyData = await verifyRes.json();
+      } catch (err) {
+        console.error("[reCAPTCHA verify] network/fetch error:", err);
+        showStatusMessage("error", "No network. Try again.");
+        return;
+      }
+
+      if (!verifyData?.success) {
+        console.warn("[reCAPTCHA verify] failed:", verifyData);
+        const reason = verifyData?.reason;
+
+        if (reason === "server_misconfig") {
+          showStatusMessage(
+            "error",
+            "Server configuration error. Please try later.",
+          );
+        } else if (reason === "missing_token") {
+          showStatusMessage(
+            "error",
+            "reCAPTCHA error. Please reload and try again.",
+          );
+        } else if (reason === "google_not_success") {
+          showStatusMessage(
+            "error",
+            "reCAPTCHA failed with Google. Try again.",
+          );
+        } else if (reason === "google_parse_error") {
+          showStatusMessage(
+            "error",
+            "Unexpected response from Google. Try again.",
+          );
+        } else {
+          showStatusMessage("error", "reCAPTCHA verification failed.");
+        }
+        return;
+      }
+
+      const contactToEmail = { name: actualName, email: actualEmail };
+      const emailmessage = messageManagement(
+        contactToEmail,
+        "Contact Us",
+        actualMessage,
       );
-      showStatusMessage(
-        "error",
-        "Something went wrong building the email. Please try again.",
-      );
-      return;
-    }
 
-    try {
+      console.log("[ContactUs Tracker] emailmessage:", {
+        subject: emailmessage?.subject || "(EMPTY)",
+        hasP1: !!emailmessage?.p1,
+        hasP2: !!emailmessage?.p2,
+        hasP3: !!emailmessage?.p3,
+      });
+
+      if (
+        !emailmessage?.subject ||
+        !emailmessage?.p1 ||
+        !contactToEmail.email
+      ) {
+        console.error(
+          "[ContactUs Tracker] Email message is empty or recipient is missing. Aborting send.",
+        );
+        showStatusMessage(
+          "error",
+          "Something went wrong building the email. Please try again.",
+        );
+        return;
+      }
+
       const response = await handleSendEmails(
         emailmessage,
         contactToEmail,
@@ -180,7 +186,6 @@ const ContactUs = () => {
         "Contact Us",
       );
 
-      // Validate the API response
       if (response && !response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error(
@@ -196,7 +201,6 @@ const ContactUs = () => {
       }
       showStatusMessage("success", "Message sent successfully!");
 
-      // Clear the form using form ref (e.currentTarget becomes null after async)
       if (form.current) {
         form.current.reset();
       }
@@ -205,9 +209,7 @@ const ContactUs = () => {
       setMessage("");
       setCaptchaToken(null);
 
-      // Optional: reset the v2 widget if you want
       if (typeof window !== "undefined" && window.grecaptcha) {
-        // reset all widgets (simple and effective)
         window.grecaptcha.reset();
       }
     } catch (err) {
