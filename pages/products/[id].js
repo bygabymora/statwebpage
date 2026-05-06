@@ -115,6 +115,10 @@ export default function ProductScreen({ product }) {
     { id: "manufacturer", label: "MANUFACTURER", icon: BsBuilding },
   ];
 
+  useEffect(() => {
+    setQty(1);
+  }, [product?._id]);
+
   React.useEffect(() => {
     console.warn("Product updatedAt:", product?.updatedAt);
     console.warn("Product createdAt:", product?.createdAt);
@@ -190,6 +194,13 @@ export default function ProductScreen({ product }) {
       setCurrentCountInStock(product.each?.clearanceCountInStock ?? 0);
     }
   }, [typeOfPurchase, product]);
+
+  useEffect(() => {
+    setQty((prevQty) => {
+      const maxAllowed = currentCountInStock > 0 ? currentCountInStock : 1;
+      return Math.max(1, Math.min(prevQty, maxAllowed));
+    });
+  }, [currentCountInStock]);
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
