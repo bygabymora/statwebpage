@@ -122,21 +122,25 @@ function generateProductJSONLD(product) {
   const looseInStock = (product.loose?.countInStock || 0) > 0;
   const isInStock = eachInStock || boxInStock || looseInStock;
 
-  const prioritizedWebsitePrice =
-    product.each?.wpPrice ||
-    product.box?.wpPrice ||
-    product.loose?.wpPrice ||
-    0;
+  const toPositiveNumber = (value) => {
+    const numberValue = Number(value);
+    return Number.isFinite(numberValue) && numberValue > 0 ? numberValue : 0;
+  };
 
-  const fallbackPrice =
-    eachInStock ? product.each?.customerPrice || 0
-    : boxInStock ? product.box?.customerPrice || 0
-    : looseInStock ? product.loose?.customerPrice || 0
-    : product.each?.customerPrice ||
-      product.box?.customerPrice ||
-      product.loose?.customerPrice ||
-      0;
+  const getPriceByStockPriority = (fieldName) => {
+    const eachPrice = toPositiveNumber(product.each?.[fieldName]);
+    const boxPrice = toPositiveNumber(product.box?.[fieldName]);
+    const loosePrice = toPositiveNumber(product.loose?.[fieldName]);
 
+    if (eachInStock && eachPrice > 0) return eachPrice;
+    if (boxInStock && boxPrice > 0) return boxPrice;
+    if (looseInStock && loosePrice > 0) return loosePrice;
+
+    return eachPrice || boxPrice || loosePrice || 0;
+  };
+
+  const prioritizedWebsitePrice = getPriceByStockPriority("wpPrice");
+  const fallbackPrice = getPriceByStockPriority("customerPrice");
   const wpPrice =
     prioritizedWebsitePrice > 0 ? prioritizedWebsitePrice : fallbackPrice;
 
