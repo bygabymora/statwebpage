@@ -82,37 +82,37 @@ export default function News({ news }) {
 
 export async function getServerSideProps() {
   await db.connect(true);
-  const news = await New.find().lean();
+  const news = await New.find(
+    {},
+    {
+      title: 1,
+      slug: 1,
+      imageUrl: 1,
+      author: 1,
+      createdAt: 1,
+      content: 1,
+      hasVideo: 1,
+      videoUrl: 1,
+    },
+  )
+    .sort({ createdAt: -1 })
+    .lean();
 
   const newsWithModifiedFields = news.map((newsItem) => {
-    const sourcesWithModifiedFields = newsItem.sources.map((source) => {
-      const { _id, createdAt, updatedAt, ...rest } = source;
-      return {
-        ...rest,
-        _id: _id.toString(),
-        createdAt: createdAt ? createdAt.toISOString() : null,
-        updatedAt: updatedAt ? updatedAt.toISOString() : null,
-      };
-    });
-
-    const { _id, createdAt, updatedAt, content, ...rest } = newsItem;
-
-    // Generate an excerpt of maximum 250 characters
-    const excerpt =
-      content ?
-        content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 250) + "..."
+    const excerptText =
+      newsItem.content ?
+        newsItem.content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 180)
       : "";
 
     return {
-      ...rest,
-      _id: _id.toString(),
-      createdAt: createdAt ? createdAt.toISOString() : null,
-      updatedAt: updatedAt ? updatedAt.toISOString() : null,
-      sources: sourcesWithModifiedFields,
-      excerpt, // we add only a short summary
+      title: newsItem.title,
+      slug: newsItem.slug,
+      imageUrl: newsItem.imageUrl,
+      author: newsItem.author,
+      createdAt: newsItem.createdAt ? newsItem.createdAt.toISOString() : null,
+      excerpt: excerptText ? `${excerptText}...` : "",
+      hasVideo: Boolean(newsItem.hasVideo),
       videoUrl: newsItem.videoUrl || null,
-      hasVideo: newsItem.hasVideo || false,
-      videoType: newsItem.videoType || null,
     };
   });
 
