@@ -144,8 +144,6 @@ export default function Layout({
         <meta name='googlebot' content='index, follow' />
         <meta name='googlebot' content='index,follow' />
         <meta name='bingbot' content='index, follow' />
-        <meta name='robots' content='index, follow' />
-        <meta name='robots' content='index,follow' />
         <meta name='robots' content='max-image-preview:large' />
         <meta name='author' content='Stat Surgical Supply' />
         <meta name='publisher' content='Stat Surgical Supply' />
