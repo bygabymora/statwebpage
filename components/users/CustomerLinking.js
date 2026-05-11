@@ -1,5 +1,51 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+
+const normalizeValue = (value = "") => value.trim().toLowerCase();
+
+const getFullName = (firstName = "", lastName = "") =>
+  `${firstName} ${lastName}`.replace(/\s+/g, " ").trim();
+
+const customerMatchesWpUser = (customer, wpUser) => {
+  const normalizedEmail = normalizeValue(wpUser?.email);
+  const normalizedFullName = normalizeValue(
+    getFullName(wpUser?.firstName, wpUser?.lastName),
+  );
+  const normalizedCompanyName = normalizeValue(wpUser?.companyName);
+
+  const purchaseExecutives = customer?.purchaseExecutive || [];
+
+  if (
+    normalizedEmail &&
+    [
+      customer?.email,
+      customer?.secondEmail,
+      customer?.user?.email,
+      ...purchaseExecutives.map((exec) => exec?.email),
+    ].some((value) => normalizeValue(value) === normalizedEmail)
+  ) {
+    return true;
+  }
+
+  if (
+    normalizedFullName &&
+    [
+      customer?.user?.name,
+      ...purchaseExecutives.map((exec) =>
+        getFullName(exec?.name, exec?.lastName),
+      ),
+    ].some((value) => normalizeValue(value) === normalizedFullName)
+  ) {
+    return true;
+  }
+
+  return (
+    normalizedCompanyName &&
+    [customer?.companyName, customer?.aka].some(
+      (value) => normalizeValue(value) === normalizedCompanyName,
+    )
+  );
+};
 
 export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   const [keyword, setKeyword] = useState("");
@@ -7,13 +53,77 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   const [loading, setLoading] = useState(false);
   const [updatedCustomer, setUpdatedCustomer] = useState(null);
   const [updatedWpUser, setUpdatedWpUser] = useState(null);
+  const autoMatchedRef = useRef(false);
 
   useEffect(() => {
     if (wpCustomer) {
       setKeyword(wpCustomer.companyName);
       setSuggestions([]);
+      autoMatchedRef.current = true;
     }
   }, [wpCustomer]);
+
+  useEffect(() => {
+    if (
+      !wpUser?._id ||
+      wpCustomer ||
+      updatedCustomer ||
+      autoMatchedRef.current
+    ) {
+      return;
+    }
+
+    const matchCandidates = [
+      wpUser.email,
+      getFullName(wpUser.firstName, wpUser.lastName),
+      wpUser.companyName,
+    ]
+      .map((value) => value?.trim())
+      .filter(Boolean);
+
+    if (matchCandidates.length === 0) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const findExistingCustomerMatch = async () => {
+      setLoading(true);
+      try {
+        for (const candidate of matchCandidates) {
+          const { data } = await axios.get("/api/customer/searchCustomers", {
+            params: { keyword: candidate, limit: 10 },
+          });
+
+          if (isCancelled) {
+            return;
+          }
+
+          const exactMatches = (data?.data || []).filter((customer) =>
+            customerMatchesWpUser(customer, wpUser),
+          );
+
+          if (exactMatches.length === 1) {
+            autoMatchedRef.current = true;
+            await handleSelect(exactMatches[0]);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Error auto-linking existing customer", err);
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    findExistingCustomerMatch();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [wpCustomer, wpUser, updatedCustomer]);
 
   // Fetch suggestions on keyword change with debounce
   useEffect(() => {
@@ -41,7 +151,8 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
 
   const handleSelect = async (customer) => {
     setKeyword(customer.companyName);
-    const executiveMatch = customer.purchaseExecutive
+    const purchaseExecutives = customer?.purchaseExecutive || [];
+    const executiveMatch = purchaseExecutives
       .map((exec) => exec.email)
       .includes(wpUser.email);
 
@@ -55,7 +166,7 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
       newUpdatedCustomer = {
         ...customer,
         purchaseExecutive: [
-          ...customer.purchaseExecutive,
+          ...purchaseExecutives,
           {
             name: wpUser.firstName,
             lastName: wpUser.lastName,
@@ -70,14 +181,12 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
     } else {
       newUpdatedCustomer = {
         ...customer,
-        purchaseExecutive: newUpdatedCustomer?.purchaseExecutive?.map(
-          (exec) => {
-            if (exec.email === wpUser.email) {
-              return { ...exec, wpId: wpUser._id };
-            }
-            return exec;
-          },
-        ),
+        purchaseExecutive: purchaseExecutives.map((exec) => {
+          if (exec.email === wpUser.email) {
+            return { ...exec, wpId: wpUser._id };
+          }
+          return exec;
+        }),
       };
       setUpdatedCustomer(newUpdatedCustomer);
     }
