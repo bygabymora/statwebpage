@@ -107,14 +107,38 @@ export default function Footer() {
         return;
       }
 
-      // Proceed with email subscription
+      const subscriptionResponse = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          source: "footer",
+          page: "/",
+          referrer:
+            typeof document !== "undefined" ? document.referrer || "" : "",
+        }),
+      });
+
+      const subscriptionResult = await subscriptionResponse.json();
+
+      if (!subscriptionResponse.ok) {
+        throw new Error(
+          subscriptionResult?.message || "Could not save your subscription",
+        );
+      }
+
       const contactToEmail = { name, email };
       const emailmessage = messageManagement(
         contactToEmail,
         "Newsletter Subscription",
       );
 
-      await handleSendEmails(emailmessage, contactToEmail);
+      try {
+        await handleSendEmails(emailmessage, contactToEmail);
+      } catch (emailError) {
+        console.warn("Newsletter welcome email could not be sent:", emailError);
+      }
 
       showStatusMessage(
         "success",
