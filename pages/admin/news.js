@@ -41,6 +41,8 @@ function reducer(state, action) {
   }
 }
 
+const getSafeTags = (entry) => (Array.isArray(entry?.tags) ? entry.tags : []);
+
 export default function AdminNewsScreen() {
   const router = useRouter();
 
@@ -127,20 +129,27 @@ export default function AdminNewsScreen() {
     { href: "/admin/news", label: "News", isBold: true },
   ];
 
+  const uniqueCategories = new Set(
+    newsEntries.map((entry) => entry?.category).filter(Boolean),
+  ).size;
+  const totalTags = newsEntries.reduce(
+    (acc, entry) => acc + getSafeTags(entry).length,
+    0,
+  );
+
   return (
     <Layout title='Admin News'>
-      {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
-        <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
-          <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
+      <div className='border-b border-slate-200 bg-white/95 backdrop-blur'>
+        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+          <nav className='flex gap-2 overflow-x-auto py-3'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-200 sm:px-4 sm:py-2 sm:text-sm ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                    "bg-[#0e355e] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-[#0e355e]"
                 }`}
               >
                 {label}
@@ -149,250 +158,262 @@ export default function AdminNewsScreen() {
           </nav>
         </div>
       </div>
-      {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-1 sm:px-2 md:px-4 lg:px-8 py-2 sm:py-4 md:py-6'>
-        {/* Header Section */}
-        <div className='mb-3 sm:mb-6 md:mb-8'>
-          <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+
+      <div className='bg-gradient-to-b from-slate-50 via-white to-slate-100/70'>
+        <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8'>
+          <section className='mb-6 rounded-2xl border border-[#d7e3f2] bg-white p-5 shadow-sm sm:p-6'>
+            <div className='mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
               <div>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
+                <h1 className='text-2xl font-bold tracking-tight text-[#0e355e] sm:text-3xl'>
                   News Management
                 </h1>
-                <p className='text-sm sm:text-base text-gray-600 mt-1'>
-                  Manage news articles and announcements
+                <p className='mt-1 text-sm text-slate-600 sm:text-base'>
+                  Create and manage announcements and news articles.
                 </p>
               </div>
               <button
                 disabled={loadingCreate}
                 onClick={createHandler}
-                className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
+                className='inline-flex items-center justify-center rounded-lg bg-[#0e355e] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#144e8b] disabled:cursor-not-allowed disabled:bg-slate-400'
               >
                 {loadingCreate ? "Creating..." : "Create News"}
               </button>
             </div>
-            <div className='flex flex-wrap gap-2 sm:gap-3'>
-              <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
-                Total:{" "}
-                <span className='font-semibold text-gray-700'>
+
+            <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Total Articles
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
                   {newsEntries.length}
-                </span>
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Published or draft items
+                </p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Categories
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {uniqueCategories}
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Distinct category count
+                </p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2 lg:col-span-1'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Tags
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {totalTags}
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Total tags across entries
+                </p>
               </div>
             </div>
-          </div>
+          </section>
+
           {loadingDelete && (
-            <div className='flex items-center justify-center py-6 mb-6'>
-              <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-sm'>
-                <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-3'></div>
+            <div className='mb-6 flex items-center justify-center'>
+              <div className='inline-flex items-center rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-[#0e355e] shadow-sm'>
+                <div className='mr-3 h-4 w-4 animate-spin rounded-full border-b-2 border-[#0e355e]'></div>
                 Deleting news article...
               </div>
             </div>
           )}
-        </div>
-        {loading ?
-          <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
-            <span className='ml-3 text-gray-600'>Loading news articles...</span>
-          </div>
-        : error ?
-          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
-            <div className='flex items-center'>
-              <div className='text-red-600 font-medium'>
-                Error loading news:
+
+          {loading ?
+            <div className='flex items-center justify-center rounded-2xl border border-slate-200 bg-white py-14 shadow-sm'>
+              <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-[#0e355e]'></div>
+              <span className='ml-3 text-slate-600'>
+                Loading news articles...
+              </span>
+            </div>
+          : error ?
+            <div className='mb-6 rounded-xl border border-red-200 bg-red-50 p-4'>
+              <div className='text-sm font-semibold text-red-700'>
+                Error loading news
+              </div>
+              <div className='mt-1 text-sm text-red-600'>{error}</div>
+            </div>
+          : newsEntries.length === 0 ?
+            <div className='rounded-2xl border border-slate-200 bg-white py-14 text-center shadow-sm'>
+              <div className='mb-2 text-base font-semibold text-slate-600'>
+                No news articles found
+              </div>
+              <div className='text-sm text-slate-500'>
+                Create your first news article to get started
               </div>
             </div>
-            <div className='text-red-500 mt-1'>{error}</div>
-          </div>
-        : newsEntries.length === 0 ?
-          <div className='text-center py-12'>
-            <div className='text-gray-500 mb-2'>No news articles found</div>
-            <div className='text-sm text-gray-400'>
-              Create your first news article to get started
-            </div>
-          </div>
-        : <>
-            {/* Mobile Card Layout */}
-            <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
-              {newsEntries.map((news) => (
-                <div
-                  key={news._id}
-                  className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
-                >
-                  {/* Mobile Card Header */}
-                  <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                    <div className='min-w-0 flex-1'>
-                      <h3 className='font-bold text-gray-900 text-xs sm:text-sm md:text-lg leading-tight mb-1 line-clamp-2'>
-                        {news.title}
-                      </h3>
-                      <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
-                        By {news.author}
-                      </p>
-                      <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
-                        <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
-                          {news.category}
-                        </span>
-                        <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
-                          #{news._id.slice(-6)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tags Section */}
-                  {news.tags && news.tags.length > 0 && (
-                    <div className='mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='flex flex-wrap gap-1 sm:gap-1.5'>
-                        {news.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={index}
-                            className='inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700'
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {news.tags.length > 3 && (
-                          <span className='text-xs text-gray-500'>
-                            +{news.tags.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
-                    <Link
-                      href={`/admin/news/${news._id}`}
-                      className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
+          : <>
+              <div className='grid gap-4 md:hidden'>
+                {newsEntries.map((news) => {
+                  const tags = getSafeTags(news);
+                  return (
+                    <article
+                      key={news._id}
+                      className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md'
                     >
-                      <BiSolidEdit
-                        size={10}
-                        className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
-                      />
-                      <span className='hidden xs:inline sm:inline'>Edit</span>
-                    </Link>
-                    <button
-                      onClick={() => deleteHandler(news._id)}
-                      className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
-                    >
-                      <BsTrash3
-                        size={8}
-                        className='sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 lg:w-3.5 lg:h-3.5'
-                      />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      <div className='h-1 w-full bg-gradient-to-r from-[#0e355e] to-[#2c6aa9]'></div>
+                      <div className='p-4'>
+                        <h3 className='line-clamp-2 text-base font-bold leading-tight text-slate-900'>
+                          {news.title}
+                        </h3>
+                        <p className='mt-1 text-sm font-medium text-slate-600'>
+                          By {news.author || "Unknown"}
+                        </p>
 
-            {/* Desktop Table Layout */}
-            <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto custom-scrollbar'>
-                <div className='min-w-full' style={{ minWidth: "600px" }}>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
-                      <div className='col-span-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Title
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Category
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Tags
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Author
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Actions
-                      </div>
-                    </div>
-                  </div>
-                  <div className='divide-y divide-gray-200'>
-                    {newsEntries.map((news, index) => (
-                      <div
-                        key={news._id}
-                        className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                        }`}
-                      >
-                        <div className='col-span-4'>
-                          <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
-                            <div className='min-w-0 flex-1'>
-                              <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1 line-clamp-2'>
-                                {news.title}
-                              </div>
-                              <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
-                                #{news._id.slice(-6)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-gray-800'>
-                            {news.category}
+                        <div className='mt-3 flex flex-wrap items-center gap-2'>
+                          <span className='rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700'>
+                            {news.category || "Uncategorized"}
+                          </span>
+                          <span className='rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600'>
+                            #{String(news._id).slice(-6)}
                           </span>
                         </div>
-                        <div className='col-span-2'>
-                          <div className='flex flex-wrap gap-1'>
-                            {news.tags.slice(0, 2).map((tag, index) => (
+
+                        {tags.length > 0 && (
+                          <div className='mt-3 flex flex-wrap gap-1.5'>
+                            {tags.slice(0, 3).map((tag, index) => (
                               <span
-                                key={index}
-                                className='inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700'
+                                key={`${news._id}-tag-${index}`}
+                                className='rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700'
                               >
                                 {tag}
                               </span>
                             ))}
-                            {news.tags.length > 2 && (
-                              <span className='text-xs text-gray-500'>
-                                +{news.tags.length - 2}
+                            {tags.length > 3 && (
+                              <span className='text-xs text-slate-500'>
+                                +{tags.length - 3} more
                               </span>
                             )}
                           </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
-                            {news.author}
-                          </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
-                            <Link
-                              href={`/admin/news/${news._id}`}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
-                              title='Edit News Article'
-                            >
-                              <BiSolidEdit
-                                size={12}
-                                className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
-                              />
-                              <span className='hidden md:inline text-xs'>
-                                Edit
-                              </span>
-                            </Link>
-                            <button
-                              onClick={() => deleteHandler(news._id)}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-gradient-to-r primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
-                              title='Delete News Article'
-                            >
-                              <BsTrash3
-                                size={10}
-                                className='sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5'
-                              />
-                            </button>
-                          </div>
+                        )}
+
+                        <div className='mt-4 flex gap-2'>
+                          <Link
+                            href={`/admin/news/${news._id}`}
+                            className='inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#0e355e] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#144e8b]'
+                          >
+                            <BiSolidEdit className='h-4 w-4' />
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => deleteHandler(news._id)}
+                            className='inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700'
+                          >
+                            <BsTrash3 className='h-4 w-4' />
+                          </button>
                         </div>
                       </div>
-                    ))}
+                    </article>
+                  );
+                })}
+              </div>
+
+              <section className='hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block'>
+                <div className='overflow-x-auto'>
+                  <div className='min-w-[940px]'>
+                    <div className='grid grid-cols-12 items-center gap-4 border-b border-slate-200 bg-slate-50 px-6 py-4'>
+                      <div className='col-span-4 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Title
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Category
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Tags
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Author
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Actions
+                      </div>
+                    </div>
+
+                    <div className='divide-y divide-slate-200'>
+                      {newsEntries.map((news, index) => {
+                        const tags = getSafeTags(news);
+                        return (
+                          <div
+                            key={news._id}
+                            className={`grid grid-cols-12 items-center gap-4 px-6 py-4 transition-colors hover:bg-slate-50 ${
+                              index % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+                            }`}
+                          >
+                            <div className='col-span-4'>
+                              <p className='line-clamp-2 text-sm font-semibold leading-tight text-slate-900'>
+                                {news.title}
+                              </p>
+                              <p className='mt-1 text-xs text-slate-500'>
+                                #{String(news._id).slice(-6)}
+                              </p>
+                            </div>
+
+                            <div className='col-span-2'>
+                              <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700'>
+                                {news.category || "Uncategorized"}
+                              </span>
+                            </div>
+
+                            <div className='col-span-2'>
+                              <div className='flex flex-wrap gap-1'>
+                                {tags.slice(0, 2).map((tag, idx) => (
+                                  <span
+                                    key={`${news._id}-desk-tag-${idx}`}
+                                    className='rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700'
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                                {tags.length > 2 && (
+                                  <span className='text-xs text-slate-500'>
+                                    +{tags.length - 2}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className='col-span-2 truncate text-sm text-slate-800'>
+                              {news.author || "Unknown"}
+                            </div>
+
+                            <div className='col-span-2'>
+                              <div className='flex gap-2'>
+                                <Link
+                                  href={`/admin/news/${news._id}`}
+                                  className='inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#0e355e] px-3 py-2 text-xs font-semibold text-[#0e355e] transition-colors hover:bg-[#0e355e] hover:text-white'
+                                  title='Edit News Article'
+                                >
+                                  <BiSolidEdit className='h-3.5 w-3.5' />
+                                  Edit
+                                </Link>
+                                <button
+                                  onClick={() => deleteHandler(news._id)}
+                                  className='inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700'
+                                  title='Delete News Article'
+                                >
+                                  <BsTrash3 className='h-3.5 w-3.5' />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </>
-        }
+              </section>
+            </>
+          }
+        </div>
       </div>
 
-      {/* Create Confirmation Modal */}
       <CustomConfirmModal
         isOpen={showCreateModal}
         onConfirm={confirmCreateHandler}
@@ -403,7 +424,6 @@ export default function AdminNewsScreen() {
         }}
       />
 
-      {/* Delete Confirmation Modal */}
       <CustomConfirmModal
         isOpen={showDeleteModal}
         onConfirm={confirmDeleteHandler}

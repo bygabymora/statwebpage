@@ -53,6 +53,13 @@ const paymentAmountStatus = (invoice) => {
   return status;
 };
 
+const paymentStatusStyle = (status) => {
+  if (status.startsWith("Paid")) return "bg-emerald-100 text-emerald-700";
+  if (status === "Partial Payment") return "bg-amber-100 text-amber-700";
+  if (status === "Over Payment") return "bg-sky-100 text-sky-700";
+  return "bg-slate-100 text-slate-700";
+};
+
 export default function AdminOrderScreen() {
   const [{ loading, error, orders = [] }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -69,9 +76,6 @@ export default function AdminOrderScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Manual refresh: ${data.length} orders at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -94,6 +98,23 @@ export default function AdminOrderScreen() {
     fetchData();
   }, [fetchData]);
 
+  const paidOrders = orders.filter((order) => {
+    const paidAt = formatYMD(order?.paidAt);
+    const invoiceStatus = paymentAmountStatus(order?.invoice);
+    const isPaidByFlag = !!order?.isPaid;
+    const paidStatus =
+      isPaidByFlag ?
+        paidAt ? `Paid (${paidAt})`
+        : "Paid"
+      : invoiceStatus;
+    return paidStatus.startsWith("Paid");
+  }).length;
+
+  const deliveredOrders = orders.filter((order) => !!order?.isDelivered).length;
+  const atCustomerOrders = orders.filter(
+    (order) => !!order?.isAtCostumers,
+  ).length;
+
   const links = [
     { href: "/admin/dashboard", label: "Dashboard" },
     { href: "/admin/orders", label: "Orders", isBold: true },
@@ -104,18 +125,17 @@ export default function AdminOrderScreen() {
 
   return (
     <Layout title='Admin Orders'>
-      {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
-        <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
-          <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
+      <div className='border-b border-slate-200 bg-white/95 backdrop-blur'>
+        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+          <nav className='flex gap-2 overflow-x-auto py-3'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-200 sm:px-4 sm:py-2 sm:text-sm ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                    "bg-[#0e355e] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-[#0e355e]"
                 }`}
               >
                 {label}
@@ -124,348 +144,358 @@ export default function AdminOrderScreen() {
           </nav>
         </div>
       </div>
-      {/* Main Content */}
-      <div className='mx-auto px-1 sm:px-2 md:px-4 lg:px-8 xl:px-12 py-2 sm:py-4 md:py-6'>
-        {/* Header Section */}
-        <div className='mb-3 sm:mb-6 md:mb-8'>
-          <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+
+      <div className='bg-gradient-to-b from-slate-50 via-white to-slate-100/70'>
+        <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8'>
+          <section className='mb-6 rounded-2xl border border-[#d7e3f2] bg-white p-5 shadow-sm sm:p-6'>
+            <div className='mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
               <div>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-[#0e355e]'>
+                <h1 className='text-2xl font-bold tracking-tight text-[#0e355e] sm:text-3xl'>
                   Order Management
                 </h1>
-                <p className='text-sm sm:text-base text-gray-600 mt-1'>
-                  Manage customer orders and track deliveries
+                <p className='mt-1 text-sm text-slate-600 sm:text-base'>
+                  Track payments, processing, and fulfillment across all orders.
                 </p>
               </div>
               <button
                 onClick={handleRefresh}
                 disabled={loading}
-                className='flex gap-2 my-5 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+                className='inline-flex items-center justify-center gap-2 rounded-lg bg-[#0e355e] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#144e8b] disabled:cursor-not-allowed disabled:bg-slate-400'
               >
                 <RiLoopLeftFill
-                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                ></RiLoopLeftFill>
+                  className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                />
                 {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
-            <div className='flex flex-wrap gap-2 sm:gap-3'>
-              <div className='text-xs sm:text-sm text-gray-500 bg-gray-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg'>
-                Total:{" "}
-                <span className='font-semibold text-gray-700'>
+
+            <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Total Orders
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
                   {orders.length}
-                </span>
+                </p>
+                <p className='text-xs text-slate-500'>All recorded orders</p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Paid
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {paidOrders}
+                </p>
+                <p className='text-xs text-slate-500'>Completed payments</p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Processed
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {deliveredOrders}
+                </p>
+                <p className='text-xs text-slate-500'>Marked for delivery</p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Delivered
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {atCustomerOrders}
+                </p>
+                <p className='text-xs text-slate-500'>At customer status</p>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {loading ?
-          <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
-            <span className='ml-3 text-gray-600'>Loading orders...</span>
-          </div>
-        : error ?
-          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
-            <div className='flex items-center'>
-              <div className='text-red-600 font-medium'>
-                Error loading orders:
+          {loading ?
+            <div className='flex items-center justify-center rounded-2xl border border-slate-200 bg-white py-14 shadow-sm'>
+              <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-[#0e355e]'></div>
+              <span className='ml-3 text-slate-600'>Loading orders...</span>
+            </div>
+          : error ?
+            <div className='mb-6 rounded-xl border border-red-200 bg-red-50 p-4'>
+              <div className='text-sm font-semibold text-red-700'>
+                Error loading orders
+              </div>
+              <div className='mt-1 text-sm text-red-600'>{error}</div>
+            </div>
+          : orders.length === 0 ?
+            <div className='rounded-2xl border border-slate-200 bg-white py-14 text-center shadow-sm'>
+              <div className='mb-2 text-base font-semibold text-slate-600'>
+                No orders found
+              </div>
+              <div className='text-sm text-slate-500'>
+                Orders will appear here once customers place them
               </div>
             </div>
-            <div className='text-red-500 mt-1'>{error}</div>
-          </div>
-        : orders.length === 0 ?
-          <div className='text-center py-12'>
-            <div className='text-gray-500 mb-2'>No orders found</div>
-            <div className='text-sm text-gray-400'>
-              Orders will appear here once customers place them
-            </div>
-          </div>
-        : <>
-            {/* Mobile Card Layout */}
-            <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
-              {orders.map((order) => {
-                const createdAt = formatYMD(order?.createdAt);
-                const paidAt = formatYMD(order?.paidAt);
+          : <>
+              <div className='grid gap-4 md:hidden'>
+                {orders.map((order) => {
+                  const createdAt = formatYMD(order?.createdAt);
+                  const paidAt = formatYMD(order?.paidAt);
+                  const invoiceStatus = paymentAmountStatus(order?.invoice);
+                  const isPaidByFlag = !!order?.isPaid;
+                  const paidStatus =
+                    isPaidByFlag ?
+                      paidAt ? `Paid (${paidAt})`
+                      : "Paid"
+                    : invoiceStatus;
 
-                const invoiceStatus = paymentAmountStatus(order?.invoice);
-                const isPaidByFlag = !!order?.isPaid;
-                const paidStatus =
-                  isPaidByFlag ?
-                    paidAt ? `Paid (${paidAt})`
-                    : "Paid"
-                  : invoiceStatus;
-
-                return (
-                  <div
-                    key={order?._id}
-                    className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
-                  >
-                    {/* Mobile Card Header */}
-                    <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='flex-shrink-0 relative'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
-                          <FaBox />
-                        </div>
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <h3 className='font-bold text-gray-900 text-xs sm:text-sm md:text-lg leading-tight mb-1'>
-                          Order #
-                          {order?._id ? String(order._id).slice(-6) : "No ID"}
-                        </h3>
-                        <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
-                          {order?.wpUser?.firstName || "DELETED USER"}
-                        </p>
-                        <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
-                          <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
-                            {createdAt || "No Date"}
-                          </span>
-                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
-                            $
-                            {new Intl.NumberFormat("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).format(order?.totalPrice ?? 0)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Payment Status */}
-                    <div className='mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='bg-gray-50 rounded p-1.5 sm:p-2 md:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1'>
-                          Payment Status
-                        </div>
-                        <div className='font-semibold text-xs sm:text-sm text-gray-900'>
-                          {paidStatus}
-                        </div>
-                        <div className='text-xs text-gray-600 mt-1'>
-                          {order?.paymentMethod === "Stripe" ?
-                            <div className='flex items-center gap-1'>
-                              <FaCreditCard className='w-3 h-3' />
-                              Credit Card (Stripe)
+                  return (
+                    <article
+                      key={order?._id}
+                      className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md'
+                    >
+                      <div className='h-1 w-full bg-gradient-to-r from-[#0e355e] to-[#2c6aa9]'></div>
+                      <div className='p-4'>
+                        <div className='mb-4 flex items-start gap-3'>
+                          <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0e355e] to-[#144e8b] text-white shadow-sm'>
+                            <FaBox />
+                          </div>
+                          <div className='min-w-0 flex-1'>
+                            <h3 className='text-sm font-bold leading-tight text-slate-900'>
+                              Order #
+                              {order?._id ?
+                                String(order._id).slice(-6)
+                              : "No ID"}
+                            </h3>
+                            <p className='mt-1 truncate text-sm font-medium text-slate-600'>
+                              {order?.wpUser?.firstName || "DELETED USER"}
+                            </p>
+                            <div className='mt-2 flex flex-wrap items-center gap-2'>
+                              <span className='rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700'>
+                                {createdAt || "No Date"}
+                              </span>
+                              <span className='rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700'>
+                                $
+                                {new Intl.NumberFormat("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }).format(order?.totalPrice ?? 0)}
+                              </span>
                             </div>
-                          : <div className='flex items-center gap-1'>
-                              <FaFileInvoice className='w-3 h-3' />
-                              {order?.paymentMethod || "—"}
-                            </div>
-                          }
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    {/* Status Grid */}
-                    <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
-                          Processed
-                        </div>
-                        <div className='flex justify-center'>
-                          {order?.isDelivered ?
-                            <FaTruck className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          : <span className='text-gray-400 text-xs'>
-                              Pending
+                        <div className='mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3'>
+                          <p className='mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                            Payment Status
+                          </p>
+                          <div className='flex flex-wrap items-center gap-2'>
+                            <span
+                              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${paymentStatusStyle(
+                                paidStatus,
+                              )}`}
+                            >
+                              {paidStatus}
                             </span>
-                          }
-                        </div>
-                      </div>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
-                          Delivered
-                        </div>
-                        <div className='flex justify-center'>
-                          {order?.isAtCostumers ?
-                            <FaBox className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          : <span className='text-gray-400 text-xs'>
-                              Pending
+                            <span className='inline-flex items-center gap-1 text-xs text-slate-600'>
+                              {order?.paymentMethod === "Stripe" ?
+                                <>
+                                  <FaCreditCard className='h-3 w-3' />
+                                  Credit Card (Stripe)
+                                </>
+                              : <>
+                                  <FaFileInvoice className='h-3 w-3' />
+                                  {order?.paymentMethod || "-"}
+                                </>
+                              }
                             </span>
-                          }
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    {/* Action Button */}
-                    <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
-                      <Link
-                        href={`/order/${order?._id}`}
-                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
-                      >
-                        <FaEye
-                          size={10}
-                          className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
-                        />
-                        <span className='hidden xs:inline sm:inline'>
+                        <div className='mb-4 grid grid-cols-2 gap-3'>
+                          <div className='rounded-lg border border-slate-200 bg-white p-3 text-center'>
+                            <p className='mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                              Processed
+                            </p>
+                            {order?.isDelivered ?
+                              <FaTruck className='mx-auto text-base text-emerald-600' />
+                            : <span className='text-xs text-slate-400'>
+                                Pending
+                              </span>
+                            }
+                          </div>
+                          <div className='rounded-lg border border-slate-200 bg-white p-3 text-center'>
+                            <p className='mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                              Delivered
+                            </p>
+                            {order?.isAtCostumers ?
+                              <FaBox className='mx-auto text-base text-emerald-600' />
+                            : <span className='text-xs text-slate-400'>
+                                Pending
+                              </span>
+                            }
+                          </div>
+                        </div>
+
+                        <Link
+                          href={`/order/${order?._id}`}
+                          className='inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0e355e] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#144e8b]'
+                        >
+                          <FaEye className='h-4 w-4' />
                           View Details
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Desktop Table Layout */}
-            <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto custom-scrollbar'>
-                <div className='min-w-full' style={{ minWidth: "700px" }}>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Order Info
+                        </Link>
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <section className='hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block'>
+                <div className='overflow-x-auto'>
+                  <div className='min-w-[1040px]'>
+                    <div className='grid grid-cols-12 items-center gap-4 border-b border-slate-200 bg-slate-50 px-6 py-4'>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Order
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Customer
                       </div>
-                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-1 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Date
                       </div>
-                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-1 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Total
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-3 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Payment
                       </div>
-                      <div className='col-span-2 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-1 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Status
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Actions
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                        Action
                       </div>
                     </div>
-                  </div>
-                  <div className='divide-y divide-gray-200'>
-                    {orders.map((order, index) => {
-                      const createdAt = formatYMD(order?.createdAt);
-                      const paidAt = formatYMD(order?.paidAt);
 
-                      const invoiceStatus = paymentAmountStatus(order?.invoice);
-                      const isPaidByFlag = !!order?.isPaid;
-                      const paidStatus =
-                        isPaidByFlag ?
-                          paidAt ? `Paid (${paidAt})`
-                          : "Paid"
-                        : invoiceStatus;
+                    <div className='divide-y divide-slate-200'>
+                      {orders.map((order, index) => {
+                        const createdAt = formatYMD(order?.createdAt);
+                        const paidAt = formatYMD(order?.paidAt);
+                        const invoiceStatus = paymentAmountStatus(
+                          order?.invoice,
+                        );
+                        const isPaidByFlag = !!order?.isPaid;
+                        const paidStatus =
+                          isPaidByFlag ?
+                            paidAt ? `Paid (${paidAt})`
+                            : "Paid"
+                          : invoiceStatus;
 
-                      return (
-                        <div
-                          key={order?._id}
-                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
-                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                          }`}
-                        >
-                          <div className='col-span-2'>
-                            <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
-                              <div className='flex-shrink-0 relative'>
-                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
-                                  <FaBox />
+                        return (
+                          <div
+                            key={order?._id}
+                            className={`grid grid-cols-12 items-center gap-4 px-6 py-4 transition-colors hover:bg-slate-50 ${
+                              index % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+                            }`}
+                          >
+                            <div className='col-span-2'>
+                              <div className='flex items-center gap-3'>
+                                <div className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#0e355e] to-[#144e8b] text-white'>
+                                  <FaBox className='h-4 w-4' />
                                 </div>
-                              </div>
-                              <div className='min-w-0 flex-1'>
-                                <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1'>
-                                  #
-                                  {order?._id ?
-                                    String(order._id).slice(-6)
-                                  : "No ID"}
-                                </div>
-                                <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
-                                  {order?._id ?
-                                    String(order._id).slice(-12)
-                                  : "No ID"}
+                                <div className='min-w-0'>
+                                  <p className='text-sm font-semibold text-slate-900'>
+                                    #
+                                    {order?._id ?
+                                      String(order._id).slice(-6)
+                                    : "No ID"}
+                                  </p>
+                                  <p className='text-xs text-slate-500'>
+                                    {order?._id ?
+                                      String(order._id).slice(-12)
+                                    : "No ID"}
+                                  </p>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
+
+                            <div className='col-span-2 truncate text-sm font-medium text-slate-800'>
                               {order?.wpUser?.firstName || "DELETED USER"}
                             </div>
-                          </div>
-                          <div className='col-span-1'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900'>
+
+                            <div className='col-span-1 text-sm text-slate-700'>
                               {createdAt || "No Date"}
                             </div>
-                          </div>
-                          <div className='col-span-1'>
-                            <div className='font-semibold text-xs sm:text-xs lg:text-sm text-gray-900'>
+
+                            <div className='col-span-1 text-sm font-semibold text-slate-900'>
                               $
                               {new Intl.NumberFormat("en-US", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
                               }).format(order?.totalPrice ?? 0)}
                             </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-xs sm:text-xs lg:text-sm'>
-                              <div className='font-semibold text-gray-900 mb-1'>
+
+                            <div className='col-span-3'>
+                              <div
+                                className={`mb-1 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${paymentStatusStyle(
+                                  paidStatus,
+                                )}`}
+                              >
                                 {paidStatus}
                               </div>
-                              <div className='text-gray-600 flex items-center gap-1'>
+                              <div className='flex items-center gap-1 text-xs text-slate-600'>
                                 {order?.paymentMethod === "Stripe" ?
                                   <>
-                                    <FaCreditCard className='w-3 h-3' />
-                                    <span>Card</span>
+                                    <FaCreditCard className='h-3 w-3' />
+                                    <span>Credit Card (Stripe)</span>
                                   </>
                                 : <>
-                                    <FaFileInvoice className='w-3 h-3' />
-                                    <span>{order?.paymentMethod || "—"}</span>
+                                    <FaFileInvoice className='h-3 w-3' />
+                                    <span>{order?.paymentMethod || "-"}</span>
                                   </>
                                 }
                               </div>
                             </div>
-                          </div>
-                          <div className='col-span-2 text-center'>
-                            <div className='flex flex-col gap-1'>
-                              <div className='flex justify-center'>
-                                {order?.isDelivered ?
-                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <FaTruck className='text-green-600 text-xs sm:text-sm lg:text-lg' />
-                                  </div>
-                                : <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <span className='text-gray-400 text-xs'>
-                                      P
-                                    </span>
-                                  </div>
-                                }
-                              </div>
-                              <div className='flex justify-center'>
-                                {order?.isAtCostumers ?
-                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <FaBox className='text-green-600 text-xs sm:text-sm lg:text-lg' />
-                                  </div>
-                                : <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <span className='text-gray-400 text-xs'>
-                                      D
-                                    </span>
-                                  </div>
-                                }
+
+                            <div className='col-span-1'>
+                              <div className='flex gap-2'>
+                                <span
+                                  title='Processed'
+                                  className={`inline-flex h-7 w-7 items-center justify-center rounded-full ${
+                                    order?.isDelivered ?
+                                      "bg-emerald-100 text-emerald-700"
+                                    : "bg-slate-100 text-slate-400"
+                                  }`}
+                                >
+                                  <FaTruck className='h-3.5 w-3.5' />
+                                </span>
+                                <span
+                                  title='Delivered'
+                                  className={`inline-flex h-7 w-7 items-center justify-center rounded-full ${
+                                    order?.isAtCostumers ?
+                                      "bg-emerald-100 text-emerald-700"
+                                    : "bg-slate-100 text-slate-400"
+                                  }`}
+                                >
+                                  <FaBox className='h-3.5 w-3.5' />
+                                </span>
                               </div>
                             </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <Link
-                              href={`/order/${order?._id}`}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
-                              title='View Order Details'
-                            >
-                              <FaEye
-                                size={12}
-                                className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
-                              />
-                              <span className='hidden md:inline text-xs'>
+
+                            <div className='col-span-2'>
+                              <Link
+                                href={`/order/${order?._id}`}
+                                className='inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#0e355e] px-3 py-2 text-xs font-semibold text-[#0e355e] transition-colors hover:bg-[#0e355e] hover:text-white'
+                                title='View Order Details'
+                              >
+                                <FaEye className='h-3.5 w-3.5' />
                                 Details
-                              </span>
-                            </Link>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </>
-        }
+              </section>
+            </>
+          }
+        </div>
       </div>
     </Layout>
   );
