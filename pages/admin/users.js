@@ -190,7 +190,7 @@ function AdminUsersScreen() {
       </div>
 
       <div className='bg-gradient-to-b from-slate-50 via-white to-slate-100/70'>
-        <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8'>
+        <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8 my-6'>
           <section className='mb-6 rounded-2xl border border-[#d7e3f2] bg-white p-5 shadow-sm sm:p-6'>
             <div className='mb-5 flex flex-col gap-4'>
               <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
