@@ -12,7 +12,6 @@ import {
 } from "react-icons/bs";
 import Image from "next/image";
 
-// Helper function to determine stock status
 const getStockStatus = (stock) => {
   if (stock === 0)
     return {
@@ -68,7 +67,6 @@ export default function AdminProductsScreen() {
     products: [],
   });
 
-  // Filter products based on search and stock filter
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,9 +99,6 @@ export default function AdminProductsScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Manual refresh: ${data.length} products at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -141,18 +136,17 @@ export default function AdminProductsScreen() {
 
   return (
     <Layout title='Admin Products'>
-      {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <nav className='flex space-x-1 sm:space-x-4 py-3 overflow-x-auto'>
+      <div className='border-b border-slate-200 bg-white/95 backdrop-blur'>
+        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+          <nav className='flex gap-2 overflow-x-auto py-3'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-200 sm:px-4 sm:py-2 sm:text-sm ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
-                  : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
+                    "bg-[#0e355e] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-[#0e355e]"
                 }`}
               >
                 {label}
@@ -162,54 +156,87 @@ export default function AdminProductsScreen() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
-        {/* Header Section */}
-        <div className='mb-8'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
-            <div>
-              <h1 className='text-3xl font-bold text-[#0e355e]'>
-                Product Management
-              </h1>
-              <p className='text-gray-600 mt-1'>
-                Look at the product inventory and pricing
-              </p>
-            </div>
-            <div className='text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg'>
-              Total Products:{" "}
-              <span className='font-semibold text-gray-700'>
-                {filteredProducts.length}
-              </span>
+      <div className='bg-gradient-to-b from-slate-50 via-white to-slate-100/70'>
+        <div className='mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8'>
+          <section className='mb-6 rounded-2xl border border-[#d7e3f2] bg-white p-5 shadow-sm sm:p-6'>
+            <div className='mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+              <div>
+                <h1 className='text-2xl font-bold tracking-tight text-[#0e355e] sm:text-3xl'>
+                  Product Management
+                </h1>
+                <p className='mt-1 text-sm text-slate-600 sm:text-base'>
+                  Review inventory, pricing, and stock health across your
+                  catalog.
+                </p>
+              </div>
+
               <button
                 onClick={handleRefresh}
                 disabled={loading}
-                className='flex gap-2 my-5 text-xs sm:text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded-lg transition-colors font-medium'
+                className='inline-flex items-center justify-center gap-2 rounded-lg bg-[#0e355e] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#144e8b] disabled:cursor-not-allowed disabled:bg-slate-400'
               >
                 <RiLoopLeftFill
-                  className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                ></RiLoopLeftFill>
+                  className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                />
                 {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
-          </div>
 
-          {/* Search and Filter Section */}
-          <div className='flex flex-col sm:flex-row gap-4 mb-6'>
-            <div className='relative flex-1'>
-              <BsSearch className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
-              <input
-                type='text'
-                placeholder='Search products or manufacturers...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#144e8b] focus:border-[#144e8b] transition-colors'
-              />
+            <div className='mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Showing
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {filteredProducts.length}
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Products in current view
+                </p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Catalog
+                </p>
+                <p className='mt-1 text-2xl font-bold text-[#0e355e]'>
+                  {products.length}
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Total products available
+                </p>
+              </div>
+              <div className='rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2 lg:col-span-1'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                  Stock Filter
+                </p>
+                <p className='mt-1 text-base font-semibold text-[#0e355e]'>
+                  {filterStock === "all" && "All Stock Levels"}
+                  {filterStock === "inStock" && "In Stock"}
+                  {filterStock === "lowStock" && "Low Stock"}
+                  {filterStock === "outOfStock" && "Out of Stock"}
+                </p>
+                <p className='text-xs text-slate-500'>
+                  Current inventory segment
+                </p>
+              </div>
             </div>
-            <div className='flex gap-2'>
+
+            <div className='flex flex-col gap-3 sm:flex-row'>
+              <div className='relative flex-1'>
+                <BsSearch className='absolute left-3 top-1/2 -translate-y-1/2 text-slate-400' />
+                <input
+                  type='text'
+                  placeholder='Search products or manufacturers...'
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className='w-full rounded-lg border border-slate-300 bg-white py-2 pl-10 pr-4 text-sm transition-colors placeholder:text-slate-400 focus:border-[#144e8b] focus:outline-none focus:ring-2 focus:ring-[#9fc0e5]'
+                />
+              </div>
+
               <select
                 value={filterStock}
                 onChange={(e) => setFilterStock(e.target.value)}
-                className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#144e8b] focus:border-[#144e8b] transition-colors bg-white'
+                className='w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm transition-colors focus:border-[#144e8b] focus:outline-none focus:ring-2 focus:ring-[#9fc0e5] sm:w-56'
               >
                 <option value='all'>All Stock Levels</option>
                 <option value='inStock'>In Stock</option>
@@ -217,246 +244,247 @@ export default function AdminProductsScreen() {
                 <option value='outOfStock'>Out of Stock</option>
               </select>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {loading ?
-          <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#0e355e]'></div>
-            <span className='ml-3 text-gray-600'>Loading products...</span>
-          </div>
-        : error ?
-          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
-            <div className='flex items-center'>
-              <div className='text-red-600 font-medium'>
-                Error loading products:
+          {loading ?
+            <div className='flex items-center justify-center rounded-2xl border border-slate-200 bg-white py-14 shadow-sm'>
+              <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-[#0e355e]'></div>
+              <span className='ml-3 text-slate-600'>Loading products...</span>
+            </div>
+          : error ?
+            <div className='mb-6 rounded-xl border border-red-200 bg-red-50 p-4'>
+              <div className='text-sm font-semibold text-red-700'>
+                Error loading products
+              </div>
+              <div className='mt-1 text-sm text-red-600'>{error}</div>
+            </div>
+          : filteredProducts.length === 0 ?
+            <div className='rounded-2xl border border-slate-200 bg-white py-14 text-center shadow-sm'>
+              <div className='mb-2 text-base font-semibold text-slate-600'>
+                No products found
+              </div>
+              <div className='text-sm text-slate-500'>
+                {searchTerm || filterStock !== "all" ?
+                  "Try adjusting your search or filter criteria"
+                : "No products available"}
               </div>
             </div>
-            <div className='text-red-500 mt-1'>{error}</div>
-          </div>
-        : filteredProducts.length === 0 ?
-          <div className='text-center py-12'>
-            <div className='text-gray-500 mb-2'>No products found</div>
-            <div className='text-sm text-gray-400'>
-              {searchTerm || filterStock !== "all" ?
-                "Try adjusting your search or filter criteria"
-              : "No products available"}
-            </div>
-          </div>
-        : <>
-            {/* Mobile Card Layout */}
-            <div className='grid gap-4 lg:hidden'>
-              {filteredProducts.map((product) => {
-                const eachStock = product.each?.countInStock ?? 0;
-                const boxStock = product.box?.countInStock ?? 0;
-                const totalStock = eachStock + boxStock;
-                const stockStatus = getStockStatus(totalStock);
+          : <>
+              <div className='grid gap-4 lg:hidden'>
+                {filteredProducts.map((product) => {
+                  const eachStock = product.each?.countInStock ?? 0;
+                  const boxStock = product.box?.countInStock ?? 0;
+                  const totalStock = eachStock + boxStock;
+                  const stockStatus = getStockStatus(totalStock);
 
-                return (
-                  <div
-                    key={product._id}
-                    className='bg-white shadow-md rounded-xl p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
-                  >
-                    {/* Header with Image and Title */}
-                    <div className='flex items-start gap-4 mb-4'>
-                      <div className='flex-shrink-0 relative'>
-                        <Image
-                          width={80}
-                          height={80}
-                          src={product.image}
-                          alt={product.name}
-                          className='rounded-xl object-cover shadow-sm'
-                          loading='lazy'
-                        />
-                        <div
-                          className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${stockStatus.badge}`}
-                        ></div>
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <h3 className='font-bold text-gray-900 text-lg leading-tight mb-1'>
-                          {product.name}
-                        </h3>
-                        <p className='text-gray-600 text-sm font-medium'>
-                          {product.manufacturer}
-                        </p>
-                        <div
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${stockStatus.color}`}
-                        >
-                          {stockStatus.label}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Pricing Grid */}
-                    <div className='grid grid-cols-2 gap-4 mb-4'>
-                      <div className='bg-gray-50 rounded-lg p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1'>
-                          Each
-                        </div>
-                        <div className='text-lg font-bold text-gray-900'>
-                          ${product.each?.wpPrice ?? "N/A"}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Stock: {eachStock}
-                        </div>
-                      </div>
-                      <div className='bg-gray-50 rounded-lg p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1'>
-                          Box
-                        </div>
-                        <div className='text-lg font-bold text-gray-900'>
-                          ${product.box?.wpPrice ?? "N/A"}
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Stock: {boxStock}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className='mb-4'>
-                      <p className='text-sm text-gray-700 line-clamp-2 leading-relaxed'>
-                        {product.information || "No description available"}
-                      </p>
-                    </div>
-
-                    {/* Action Button */}
-                    <Link
-                      href={`/admin/product/${product._id}`}
-                      className='block w-full text-center px-4 py-3 bg-gradient-to-r bg-[#0e355e] text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg'
+                  return (
+                    <article
+                      key={product._id}
+                      className='overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md'
                     >
-                      Edit Product Info
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Desktop Table Layout */}
-            <div className='hidden lg:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='custom-scrollbar'>
-                <div className='min-w-full'>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-4 px-6 py-4 items-center'>
-                      <div className='col-span-4 text-left'>
-                        <div className='flex items-center gap-2'>
-                          <span className='text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                            Product / Manufacturer
-                          </span>
-                          <button
-                            onClick={toggleSortDirection}
-                            className='p-1 rounded-md hover:bg-gray-200 transition-colors'
-                            title={`Sort ${
-                              sortDirection === -1 ? "Ascending" : "Descending"
-                            }`}
-                          >
-                            {sortDirection === -1 ?
-                              <BsFillArrowUpSquareFill className='text-[#0e355e]' />
-                            : <BsFillArrowDownSquareFill className='text-[#144e8b]' />
-                            }
-                          </button>
+                      <div className='h-1 w-full bg-gradient-to-r from-[#0e355e] to-[#2c6aa9]'></div>
+                      <div className='p-5'>
+                        <div className='mb-4 flex items-start gap-4'>
+                          <div className='relative flex-shrink-0'>
+                            <Image
+                              width={80}
+                              height={80}
+                              src={product.image}
+                              alt={product.name}
+                              className='rounded-xl border border-slate-200 object-cover shadow-sm'
+                              loading='lazy'
+                            />
+                            <span
+                              className={`absolute -right-1 -top-1 h-3 w-3 rounded-full ${stockStatus.badge} ring-2 ring-white`}
+                            ></span>
+                          </div>
+                          <div className='min-w-0 flex-1'>
+                            <h3 className='text-base font-bold leading-tight text-slate-900'>
+                              {product.name}
+                            </h3>
+                            <p className='mt-1 text-sm font-medium text-slate-600'>
+                              {product.manufacturer}
+                            </p>
+                            <span
+                              className={`mt-2 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${stockStatus.color}`}
+                            >
+                              {stockStatus.label}
+                            </span>
+                          </div>
                         </div>
+
+                        <div className='mb-4 grid grid-cols-2 gap-3'>
+                          <div className='rounded-lg border border-slate-200 bg-slate-50 p-3'>
+                            <div className='mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                              Each
+                            </div>
+                            <div className='text-lg font-bold text-slate-900'>
+                              ${product.each?.wpPrice ?? "N/A"}
+                            </div>
+                            <div className='text-sm text-slate-600'>
+                              Stock: {eachStock}
+                            </div>
+                          </div>
+                          <div className='rounded-lg border border-slate-200 bg-slate-50 p-3'>
+                            <div className='mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500'>
+                              Box
+                            </div>
+                            <div className='text-lg font-bold text-slate-900'>
+                              ${product.box?.wpPrice ?? "N/A"}
+                            </div>
+                            <div className='text-sm text-slate-600'>
+                              Stock: {boxStock}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='mb-4 rounded-lg border border-slate-200 bg-white p-3'>
+                          <p className='line-clamp-2 text-sm leading-relaxed text-slate-700'>
+                            {product.information || "No description available"}
+                          </p>
+                          <p className='mt-2 text-xs font-medium text-slate-500'>
+                            Total Stock: {totalStock}
+                          </p>
+                        </div>
+
+                        <Link
+                          href={`/admin/product/${product._id}`}
+                          className='block w-full rounded-lg bg-[#0e355e] px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-[#144e8b]'
+                        >
+                          Edit Product Info
+                        </Link>
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <section className='hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:block'>
+                <div className='overflow-x-auto'>
+                  <div className='min-w-[1120px]'>
+                    <div className='grid grid-cols-12 items-center gap-4 border-b border-slate-200 bg-slate-50 px-6 py-4'>
+                      <div className='col-span-4 flex items-center gap-2'>
+                        <span className='text-xs font-semibold uppercase tracking-wider text-slate-600'>
+                          Product / Manufacturer
+                        </span>
+                        <button
+                          onClick={toggleSortDirection}
+                          className='rounded-md p-1 transition-colors hover:bg-slate-200'
+                          title={`Sort ${
+                            sortDirection === -1 ? "Ascending" : "Descending"
+                          }`}
+                        >
+                          {sortDirection === -1 ?
+                            <BsFillArrowUpSquareFill className='text-[#0e355e]' />
+                          : <BsFillArrowDownSquareFill className='text-[#144e8b]' />
+                          }
+                        </button>
+                      </div>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Each
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Box
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-1 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Status
                       </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-2 text-xs font-semibold uppercase tracking-wider text-slate-600'>
                         Description
                       </div>
                     </div>
-                  </div>
-                  <div className='divide-y divide-gray-200'>
-                    {filteredProducts.map((product, index) => {
-                      const eachStock = product.each?.countInStock ?? 0;
-                      const boxStock = product.box?.countInStock ?? 0;
-                      const totalStock = eachStock + boxStock;
-                      const stockStatus = getStockStatus(totalStock);
 
-                      return (
-                        <div
-                          key={product._id}
-                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-4 px-6 py-4 items-center ${
-                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                          }`}
-                        >
-                          <div className='col-span-4'>
-                            <div className='flex items-center gap-4'>
-                              <div className='flex-shrink-0 relative'>
-                                <Image
-                                  width={64}
-                                  height={64}
-                                  src={product.image}
-                                  alt={product.name}
-                                  className='rounded-lg object-cover shadow-sm border border-gray-200'
-                                  loading='lazy'
-                                />
-                                <div
-                                  className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${stockStatus.badge} border-2 border-white`}
-                                ></div>
-                              </div>
-                              <div className='min-w-0 flex-1'>
-                                <div className='font-semibold text-gray-900 text-sm leading-tight mb-1'>
-                                  {product.name}
+                    <div className='divide-y divide-slate-200'>
+                      {filteredProducts.map((product, index) => {
+                        const eachStock = product.each?.countInStock ?? 0;
+                        const boxStock = product.box?.countInStock ?? 0;
+                        const totalStock = eachStock + boxStock;
+                        const stockStatus = getStockStatus(totalStock);
+
+                        return (
+                          <div
+                            key={product._id}
+                            className={`grid grid-cols-12 items-center gap-4 px-6 py-4 transition-colors hover:bg-slate-50 ${
+                              index % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+                            }`}
+                          >
+                            <div className='col-span-4'>
+                              <div className='flex items-center gap-4'>
+                                <div className='relative flex-shrink-0'>
+                                  <Image
+                                    width={64}
+                                    height={64}
+                                    src={product.image}
+                                    alt={product.name}
+                                    className='rounded-lg border border-slate-200 object-cover shadow-sm'
+                                    loading='lazy'
+                                  />
+                                  <span
+                                    className={`absolute -right-1 -top-1 h-3 w-3 rounded-full ${stockStatus.badge} ring-2 ring-white`}
+                                  ></span>
                                 </div>
-                                <div className='text-gray-600 text-sm font-medium'>
-                                  {product.manufacturer}
+                                <div className='min-w-0'>
+                                  <div className='truncate text-sm font-semibold leading-tight text-slate-900'>
+                                    {product.name}
+                                  </div>
+                                  <div className='truncate text-sm font-medium text-slate-600'>
+                                    {product.manufacturer}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm'>
-                              <div className='font-bold text-gray-900 text-lg'>
+
+                            <div className='col-span-2 text-sm'>
+                              <div className='text-lg font-bold text-slate-900'>
                                 ${product.each?.wpPrice ?? "N/A"}
                               </div>
-                              <div className='text-gray-600'>
+                              <div className='text-slate-600'>
                                 Stock:{" "}
-                                <span className='font-medium'>{eachStock}</span>
+                                <span className='font-semibold'>
+                                  {eachStock}
+                                </span>
                               </div>
                             </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm'>
-                              <div className='font-bold text-gray-900 text-lg'>
+
+                            <div className='col-span-2 text-sm'>
+                              <div className='text-lg font-bold text-slate-900'>
                                 ${product.box?.wpPrice ?? "N/A"}
                               </div>
-                              <div className='text-gray-600'>
+                              <div className='text-slate-600'>
                                 Stock:{" "}
-                                <span className='font-medium'>{boxStock}</span>
+                                <span className='font-semibold'>
+                                  {boxStock}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className='col-span-1'>
+                              <span
+                                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${stockStatus.color}`}
+                              >
+                                {stockStatus.label}
+                              </span>
+                              <div className='mt-1 text-xs text-slate-500'>
+                                Total: {totalStock}
+                              </div>
+                            </div>
+
+                            <div className='col-span-2'>
+                              <div className='line-clamp-3 text-sm leading-relaxed text-slate-700'>
+                                {product.information ||
+                                  "No description available"}
                               </div>
                             </div>
                           </div>
-                          <div className='col-span-2'>
-                            <div
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${stockStatus.color}`}
-                            >
-                              {stockStatus.label}
-                            </div>
-                            <div className='text-xs text-gray-500 mt-1'>
-                              Total: {totalStock}
-                            </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm text-gray-700 line-clamp-3 leading-relaxed'>
-                              {product.information ||
-                                "No description available"}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </>
-        }
+              </section>
+            </>
+          }
+        </div>
       </div>
     </Layout>
   );
