@@ -36,6 +36,7 @@ function AdminUsersScreen() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const [{ loading, error, users, successDelete, loadingDelete }, dispatch] =
     useReducer(reducer, {
@@ -135,7 +136,16 @@ function AdminUsersScreen() {
     };
   };
 
+  const matchesStatusFilter = (user) => {
+    if (statusFilter === "all") return true;
+    if (statusFilter === "active") return !!user.active;
+    if (statusFilter === "admin") return !!user.isAdmin;
+    if (statusFilter === "restricted") return !!user.restricted;
+    return true;
+  };
+
   const filteredAndSortedUsers = users
+    .filter((user) => matchesStatusFilter(user))
     .filter((user) => {
       if (!searchTerm) return true;
       const search = searchTerm.toLowerCase();
@@ -154,6 +164,10 @@ function AdminUsersScreen() {
       const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
       return nameA.localeCompare(nameB);
     });
+
+  const handleStatusFilterClick = (filterName) => {
+    setStatusFilter((prev) => (prev === filterName ? "all" : filterName));
+  };
 
   const activeUsers = users.filter((user) => user.active).length;
   const adminUsers = users.filter((user) => user.isAdmin).length;
@@ -215,7 +229,15 @@ function AdminUsersScreen() {
               </div>
 
               <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
-                <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                <button
+                  type='button'
+                  onClick={() => setStatusFilter("all")}
+                  className={`rounded-xl border p-4 text-left transition-colors ${
+                    statusFilter === "all" ?
+                      "border-[#0e355e] bg-[#e8f0fa]"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  }`}
+                >
                   <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
                     Total Users
                   </p>
@@ -223,8 +245,16 @@ function AdminUsersScreen() {
                     {users.length}
                   </p>
                   <p className='text-xs text-slate-500'>All user accounts</p>
-                </div>
-                <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                </button>
+                <button
+                  type='button'
+                  onClick={() => handleStatusFilterClick("active")}
+                  className={`rounded-xl border p-4 text-left transition-colors ${
+                    statusFilter === "active" ?
+                      "border-[#0e355e] bg-[#e8f0fa]"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  }`}
+                >
                   <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
                     Active
                   </p>
@@ -232,8 +262,16 @@ function AdminUsersScreen() {
                     {activeUsers}
                   </p>
                   <p className='text-xs text-slate-500'>Users marked active</p>
-                </div>
-                <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                </button>
+                <button
+                  type='button'
+                  onClick={() => handleStatusFilterClick("admin")}
+                  className={`rounded-xl border p-4 text-left transition-colors ${
+                    statusFilter === "admin" ?
+                      "border-[#0e355e] bg-[#e8f0fa]"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  }`}
+                >
                   <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
                     Admins
                   </p>
@@ -243,8 +281,16 @@ function AdminUsersScreen() {
                   <p className='text-xs text-slate-500'>
                     Administrator accounts
                   </p>
-                </div>
-                <div className='rounded-xl border border-slate-200 bg-slate-50 p-4'>
+                </button>
+                <button
+                  type='button'
+                  onClick={() => handleStatusFilterClick("restricted")}
+                  className={`rounded-xl border p-4 text-left transition-colors ${
+                    statusFilter === "restricted" ?
+                      "border-[#0e355e] bg-[#e8f0fa]"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  }`}
+                >
                   <p className='text-xs font-semibold uppercase tracking-wide text-slate-500'>
                     Restricted
                   </p>
@@ -254,7 +300,7 @@ function AdminUsersScreen() {
                   <p className='text-xs text-slate-500'>
                     Limited access accounts
                   </p>
-                </div>
+                </button>
               </div>
 
               <div className='flex flex-col gap-3'>
@@ -280,6 +326,22 @@ function AdminUsersScreen() {
                       title='Clear search'
                     >
                       Clear
+                    </button>
+                  </div>
+                )}
+                {statusFilter !== "all" && (
+                  <div className='flex items-center justify-between rounded-lg bg-[#e8f0fa] px-3 py-2 text-xs text-[#0e355e] sm:text-sm'>
+                    <span>
+                      Filtered by: {statusFilter === "active" && "Active"}
+                      {statusFilter === "admin" && "Admins"}
+                      {statusFilter === "restricted" && "Restricted"}
+                    </span>
+                    <button
+                      onClick={() => setStatusFilter("all")}
+                      className='font-semibold text-[#0e355e] hover:underline'
+                      title='Clear status filter'
+                    >
+                      Show All
                     </button>
                   </div>
                 )}
