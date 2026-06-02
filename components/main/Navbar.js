@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { MdOutlineWavingHand } from "react-icons/md";
 
 // Inline SVG icons — eliminates react-icons/bi and react-icons/md
 // from the shared header bundle on every page
@@ -96,21 +97,6 @@ function CloseIcon({ className, ...props }) {
   );
 }
 
-function WavingHandIcon({ className }) {
-  return (
-    <svg
-      className={className}
-      viewBox='0 0 24 24'
-      fill='currentColor'
-      width='1em'
-      height='1em'
-      aria-hidden='true'
-    >
-      <path d='M7.03 4.95c-.44 2.54-1.93 4.29-4.04 5.5L1.21 8.83C2.84 7.88 4.06 6.5 4.41 4.58c.22-1.27-.08-2-.56-2.47-.71-.71-1.84-.56-2.47.11l-1.58-1.27c1.34-1.61 3.87-2.25 5.88-.24.82.82 1.63 2.13 1.35 4.24zM13.85.96c-.56-.57-1.28-.68-1.82-.32-.55.36-.78.99-.5 1.64l4.66 10.53-3.22 1.42C12.76 13.36 12 12.62 11 12.62s-1.76.74-1.96 1.61l-3.22-1.42L10.47 2.3c.28-.65.04-1.28-.5-1.64-.55-.36-1.27-.25-1.82.32L3.38 5.87c-1 1.07-1.55 2.31-1.87 3.74-.32 1.37-.34 2.62-.05 3.94l.67 3.1c.39 1.78 1.46 3.38 3.09 4.21.37.19.76.34 1.19.45 1.09.28 2.48.37 3.78-.02.8-.24 1.62-.72 2.29-1.55l5.37-8.72c.37-.6.31-1.33-.17-1.76-.48-.43-1.21-.41-1.7.05l-1.84 2.07L8.96 2.17C8.86 1.95 8.82 1.75 8.86 1.56c.04-.19.17-.32.34-.4.17-.09.37-.09.55.01.17.1.28.27.35.46l5.3 11.96c.12.26.37.42.66.42.07 0 .14-.01.2-.03.36-.1.58-.47.48-.83L13.85.96z' />
-    </svg>
-  );
-}
-
 const Navbar = () => {
   const router = useRouter();
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -195,7 +181,7 @@ const Navbar = () => {
               onClick={() => handleLinkClick("contact")}
               className='nav__link'
             >
-              <WavingHandIcon className='uil uil-message nav__icon' />
+              <MdOutlineWavingHand className='uil uil-message nav__icon' />
               Contact
             </Link>
             <Link href='/news' title='News' className='nav__link'>

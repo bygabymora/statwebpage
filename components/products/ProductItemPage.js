@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { Listbox } from "@headlessui/react";
 import { BiCheck, BiChevronDown } from "react-icons/bi";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
@@ -16,8 +17,15 @@ export const ProductItemPage = ({ product, index }) => {
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const { showStatusMessage, fetchUserData, setUser, user, accountOwner } =
-    useModalContext();
+  const {
+    showStatusMessage,
+    fetchUserData,
+    setUser,
+    user,
+    accountOwner,
+    customer,
+    setCustomer,
+  } = useModalContext();
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
     if ((product.box?.countInStock ?? 0) > 0) {
@@ -211,6 +219,38 @@ export const ProductItemPage = ({ product, index }) => {
       return matchProduct.quantity;
     }
     return 0;
+  };
+
+  const isWishlisted = customer?.wishlist?.some(
+    (w) => w.productId?.toString() === product._id,
+  );
+
+  const toggleWishlist = async () => {
+    if (!customer?._id) return;
+    try {
+      if (isWishlisted) {
+        const { data } = await axios.delete(
+          `/api/customer/${customer._id}/wishlist`,
+          { data: { productId: product._id } },
+        );
+        setCustomer((prev) => ({ ...prev, wishlist: data.wishlist }));
+        showStatusMessage("success", "Removed from wishlist");
+      } else {
+        const { data } = await axios.post(
+          `/api/customer/${customer._id}/wishlist`,
+          {
+            productId: product._id,
+            name: product.name,
+            manufacturer: product.manufacturer,
+            image: product.image,
+          },
+        );
+        setCustomer((prev) => ({ ...prev, wishlist: data.wishlist }));
+        showStatusMessage("success", "Added to wishlist");
+      }
+    } catch (err) {
+      showStatusMessage("error", "Could not update wishlist");
+    }
   };
 
   return (
@@ -540,6 +580,21 @@ export const ProductItemPage = ({ product, index }) => {
                   </>
                 )
               }
+            </div>
+          )}
+          {active && customer?._id && (
+            <div className='mb-2 flex justify-end m-2'>
+              <button
+                onClick={toggleWishlist}
+                aria-label={
+                  isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+                }
+                className='text-red-500 hover:scale-110 transition-transform duration-150'
+              >
+                {isWishlisted ?
+                  <AiFillHeart size={22} />
+                : <AiOutlineHeart size={22} />}
+              </button>
             </div>
           )}
           {session?.user && !active ?

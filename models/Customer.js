@@ -156,6 +156,7 @@ const customerSchema = new mongoose.Schema(
         },
         name: { type: String, required: false },
         manufacturer: { type: String, required: false },
+        image: { type: String, required: false },
         typeOfPurchase: { type: String, required: false },
         minPurchasePrice: { type: Number, required: false },
         maxPurchasePrice: { type: Number, required: false },
@@ -297,7 +298,7 @@ const customerSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 customerSchema.index({ companyName: "text", notes: "text", aka: "text" });
 const Customer =

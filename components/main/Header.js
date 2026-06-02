@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { AiFillHeart } from "react-icons/ai";
 import Menu from "./../Menu";
 import MiniHeader from "./../MiniHeader";
 import { useModalContext } from "../context/ModalContext";
@@ -245,6 +246,16 @@ const Header = () => {
 
           {/* Action buttons */}
           <div className='flex items-center gap-3 md:gap-5 flex-shrink-0'>
+            {active && (
+              <Link
+                href='/wishlist'
+                title='Your Wishlist'
+                aria-label='Wishlist'
+                className='relative group p-2'
+              >
+                <AiFillHeart className='text-2xl md:text-[1.7rem] text-red-400 transition-transform group-hover:scale-110' />
+              </Link>
+            )}
             {active && (
               <Link
                 href='/cart'
