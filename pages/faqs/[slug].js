@@ -299,7 +299,7 @@ export default function FAQDetail({ faq, relatedFaqs, relatedProducts }) {
             </Link>
           </div>
           <p className='text-sm text-gray-500 mt-4'>
-            Available Monday-Friday, 9 AM - 5 PM EST
+            Available Monday-Friday, 7 AM - 5 PM EST
           </p>
         </footer>
       </div>
