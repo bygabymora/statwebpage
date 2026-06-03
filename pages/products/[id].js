@@ -10,6 +10,7 @@ import {
   BsBuilding,
   BsGrid,
 } from "react-icons/bs";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -89,7 +90,14 @@ export default function ProductScreen({ product }) {
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const { showStatusMessage, setUser, fetchUserData, user } = useModalContext();
+  const {
+    showStatusMessage,
+    setUser,
+    fetchUserData,
+    user,
+    customer,
+    setCustomer,
+  } = useModalContext();
   const [emailName, setEmailName] = useState("");
   const [emailManufacturer, setEmailManufacturer] = useState("");
   const hasPrice = currentPrice !== null && currentPrice !== 0;
@@ -319,6 +327,38 @@ export default function ProductScreen({ product }) {
       return matchProduct.quantity;
     }
     return 0;
+  };
+
+  const isWishlisted = customer?.wishlist?.some(
+    (w) => w.productId?.toString() === product._id,
+  );
+
+  const toggleWishlist = async () => {
+    if (!customer?._id) return;
+    try {
+      if (isWishlisted) {
+        const { data } = await axios.delete(
+          `/api/customer/${customer._id}/wishlist`,
+          { data: { productId: product._id } },
+        );
+        setCustomer((prev) => ({ ...prev, wishlist: data.wishlist }));
+        showStatusMessage("success", "Removed from wishlist");
+      } else {
+        const { data } = await axios.post(
+          `/api/customer/${customer._id}/wishlist`,
+          {
+            productId: product._id,
+            name: product.name,
+            manufacturer: product.manufacturer,
+            image: product.image,
+          },
+        );
+        setCustomer((prev) => ({ ...prev, wishlist: data.wishlist }));
+        showStatusMessage("success", "Added to wishlist");
+      }
+    } catch (err) {
+      showStatusMessage("error", "Could not update wishlist");
+    }
   };
 
   useEffect(() => {
@@ -820,6 +860,28 @@ export default function ProductScreen({ product }) {
           {/* Product Information Section */}
           <div className='space-y-6'>
             <div>
+              {active && customer?._id && (
+                <div className='mb-2 flex justify-end m-r-2'>
+                  <button
+                    onClick={toggleWishlist}
+                    aria-label={
+                      isWishlisted ?
+                        "Remove from wishlist"
+                      : "Add product to wishlist"
+                    }
+                    title={
+                      isWishlisted ?
+                        "Remove from wishlist"
+                      : "Add product to wishlist"
+                    }
+                    className='text-red-500 hover:scale-110 transition-transform duration-150'
+                  >
+                    {isWishlisted ?
+                      <AiFillHeart size={30} />
+                    : <AiOutlineHeart size={30} />}
+                  </button>
+                </div>
+              )}
               <h1 className='text-3xl font-bold text-[#144e8b] mb-2'>
                 {product.name}
               </h1>
