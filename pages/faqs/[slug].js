@@ -1,9 +1,9 @@
 import React from "react";
 import Layout from "../../components/main/Layout";
 import Link from "next/link";
-import Image from "next/image";
 import { BsChevronRight } from "react-icons/bs";
 import { FaQuestionCircle } from "react-icons/fa";
+import { ProductItemPage } from "../../components/products/ProductItemPage";
 import {
   generateBreadcrumbJSONLD,
   generateFAQDetailPageJSONLD,
@@ -11,6 +11,7 @@ import {
 import { faqData, getFaqBySlug, getAllFaqSlugs } from "../../utils/faqData";
 import db from "../../utils/db";
 import Product from "../../models/Product";
+import { enrichAndSortForPublic } from "../../utils/productSort";
 
 export async function getStaticPaths() {
   const slugs = getAllFaqSlugs();
@@ -45,6 +46,7 @@ export async function getStaticProps({ params }) {
             { name: { $in: regexPatterns } },
             { keywords: { $in: regexPatterns } },
             { "each.description": { $in: regexPatterns } },
+            { "box.description": { $in: regexPatterns } },
           ],
         },
         {
@@ -54,23 +56,46 @@ export async function getStaticProps({ params }) {
           "each.wpPrice": 1,
           "each.description": 1,
           "each.countInStock": 1,
+          "each.clearanceCountInStock": 1,
           "box.wpPrice": 1,
+          "box.description": 1,
           "box.countInStock": 1,
+          "box.clearanceCountInStock": 1,
+          "clearance.price": 1,
         },
       )
-        .limit(6)
+        .limit(24)
         .lean();
 
-      relatedProducts = products.map((p) => ({
-        _id: p._id.toString(),
-        name: p.name,
-        manufacturer: p.manufacturer,
-        image: p.image || "",
-        price: p.each?.wpPrice || p.box?.wpPrice || 0,
-        description: p.each?.description?.slice(0, 100) || "",
-        hasStock:
-          (p.each?.countInStock || 0) > 0 || (p.box?.countInStock || 0) > 0,
-      }));
+      const sorted = enrichAndSortForPublic(products);
+      relatedProducts = sorted.slice(0, 4).map((p) => {
+        const slim = {
+          _id: p._id.toString(),
+          name: p.name,
+          image: p.image,
+          manufacturer: p.manufacturer,
+        };
+
+        const each = {};
+        if (p.each?.description) each.description = p.each.description;
+        if (p.each?.wpPrice) each.wpPrice = p.each.wpPrice;
+        if (p.each?.countInStock) each.countInStock = p.each.countInStock;
+        if (p.each?.clearanceCountInStock)
+          each.clearanceCountInStock = p.each.clearanceCountInStock;
+        if (Object.keys(each).length) slim.each = each;
+
+        const box = {};
+        if (p.box?.description) box.description = p.box.description;
+        if (p.box?.wpPrice) box.wpPrice = p.box.wpPrice;
+        if (p.box?.countInStock) box.countInStock = p.box.countInStock;
+        if (p.box?.clearanceCountInStock)
+          box.clearanceCountInStock = p.box.clearanceCountInStock;
+        if (Object.keys(box).length) slim.box = box;
+
+        if (p.clearance?.price) slim.clearance = { price: p.clearance.price };
+
+        return slim;
+      });
     }
   } catch (error) {
     console.error("Error fetching related products for FAQ:", error);
@@ -190,53 +215,13 @@ export default function FAQDetail({ faq, relatedFaqs, relatedProducts }) {
             >
               Related Products
             </h2>
-            <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-              {relatedProducts.map((product) => (
-                <Link
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
+              {relatedProducts.map((product, index) => (
+                <ProductItemPage
                   key={product._id}
-                  href={`/products/${encodeURIComponent(product.manufacturer + "-" + product.name)}`}
-                  title={`${product.manufacturer} ${product.name} - Surgical Product - View Details`}
-                  className='flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group'
-                >
-                  <div className='relative w-full aspect-square bg-gray-50'>
-                    {product.image ?
-                      <Image
-                        src={product.image}
-                        alt={`${product.manufacturer} ${product.name}`}
-                        title={`${product.manufacturer} ${product.name}`}
-                        fill
-                        className='object-contain p-2 group-hover:scale-105 transition-transform duration-300'
-                        sizes='(max-width: 640px) 50vw, 33vw'
-                      />
-                    : <div className='flex items-center justify-center h-full text-gray-400 text-sm'>
-                        No image
-                      </div>
-                    }
-                    {product.hasStock && (
-                      <span className='absolute top-2 right-2 bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded'>
-                        In Stock
-                      </span>
-                    )}
-                  </div>
-                  <div className='p-3 flex flex-col flex-grow'>
-                    <p className='text-xs text-gray-500 uppercase tracking-wide'>
-                      {product.manufacturer}
-                    </p>
-                    <h3 className='text-sm font-semibold text-[#0e355e] mt-1 group-hover:underline line-clamp-2'>
-                      {product.name}
-                    </h3>
-                    {product.description && (
-                      <p className='text-xs text-gray-500 mt-1 line-clamp-2'>
-                        {product.description}
-                      </p>
-                    )}
-                    {product.price > 0 && (
-                      <p className='text-sm font-bold text-[#07783e] mt-auto pt-2'>
-                        ${product.price.toFixed(2)}
-                      </p>
-                    )}
-                  </div>
-                </Link>
+                  product={product}
+                  index={index}
+                />
               ))}
             </div>
             <div className='text-center mt-6'>
