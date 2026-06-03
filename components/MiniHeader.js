@@ -65,7 +65,7 @@ export default function Header() {
           <a
             href='#contact'
             title='Contact Our Team | Surgical Supplies products in Tampa'
-            className='hover:text-green-300 transition-colors'
+            className='hover:text-[#5b8756] transition-colors'
           >
             Contact Us
           </a>
@@ -80,7 +80,7 @@ export default function Header() {
             rel='noopener noreferrer'
             aria-label='Visit our Facebook page'
             title='Connect with Us on Facebook | Trusted Healthcare Equipment'
-            className='hover:text-green-300 transition-colors'
+            className='hover:text-[#5b8756] transition-colors'
           >
             <FacebookIcon />
           </a>
@@ -88,7 +88,7 @@ export default function Header() {
             href='mailto:sales@statsurgicalsupply.com'
             title='Email Our Sales Department | supplies Products'
             aria-label='Send an email to sales@statsurgicalsupply.com'
-            className='hover:text-green-300 transition-colors'
+            className='hover:text-[#5b8756] transition-colors'
           >
             <EnvelopeIcon />
           </a>
@@ -98,7 +98,7 @@ export default function Header() {
             title='Follow Us on LinkedIn | Healthcare Innovation & Solutions'
             rel='noopener noreferrer'
             aria-label='Visit our LinkedIn page'
-            className='hover:text-green-300 transition-colors'
+            className='hover:text-[#5b8756] transition-colors'
           >
             <LinkedInIcon />
           </a>
@@ -108,7 +108,7 @@ export default function Header() {
             rel='noopener noreferrer'
             title='Find Us on Google Maps | Surgical Supply Store in Tampa'
             aria-label='See our location on Google Maps'
-            className='hover:text-green-300 transition-colors'
+            className='hover:text-[#5b8756] transition-colors'
           >
             <MapMarkerIcon />
           </a>
@@ -116,7 +116,7 @@ export default function Header() {
           <a
             href='tel:+18132520727'
             title='Call Our Main Office | Experts in Surgical Supplies'
-            className='hover:text-green-300 transition-colors font-medium'
+            className='hover:text-[#5b8756] transition-colors font-medium'
           >
             (813) 252-0727
           </a>
