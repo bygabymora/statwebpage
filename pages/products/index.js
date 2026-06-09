@@ -10,6 +10,15 @@ import db from "../../utils/db";
 import Product from "../../models/Product";
 import { enrichAndSortForPublic } from "../../utils/productSort";
 
+const DESCRIPTION_MAX_LENGTH = 80;
+
+function clampDescription(text, max = DESCRIPTION_MAX_LENGTH) {
+  if (!text) return "";
+  const clean = String(text).replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  return `${clean.slice(0, max - 3).trimEnd()}...`;
+}
+
 export async function getStaticProps() {
   await db.connect(true);
 
@@ -20,7 +29,6 @@ export async function getStaticProps() {
       image: 1,
       manufacturer: 1,
       "each.description": 1,
-      "box.description": 1,
       "each.countInStock": 1,
       "box.countInStock": 1,
       "each.clearanceCountInStock": 1,
@@ -43,7 +51,9 @@ export async function getStaticProps() {
     };
 
     const each = {};
-    if (p.each?.description) each.description = p.each.description;
+    if (p.each?.description) {
+      each.description = clampDescription(p.each.description);
+    }
     if (p.each?.wpPrice) each.wpPrice = p.each.wpPrice;
     if (p.each?.countInStock) each.countInStock = p.each.countInStock;
     if (p.each?.clearanceCountInStock)
@@ -51,7 +61,6 @@ export async function getStaticProps() {
     if (Object.keys(each).length) slim.each = each;
 
     const box = {};
-    if (p.box?.description) box.description = p.box.description;
     if (p.box?.wpPrice) box.wpPrice = p.box.wpPrice;
     if (p.box?.countInStock) box.countInStock = p.box.countInStock;
     if (p.box?.clearanceCountInStock)
@@ -104,12 +113,7 @@ export default function Products({ products }) {
     if (!query) return byManufacturer;
     const q = String(query).trim().toLowerCase();
     return byManufacturer.filter((p) => {
-      const haystack = [
-        p.name,
-        p.manufacturer,
-        p.each?.description,
-        p.box?.description,
-      ]
+      const haystack = [p.name, p.manufacturer, p.each?.description]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();

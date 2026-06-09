@@ -102,7 +102,9 @@ export const ProductItemPage = ({ product, index }) => {
       setCurrentCountInStock(product.each?.countInStock ?? 0);
     } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
-      setCurrentDescription(product.box?.description || "");
+      setCurrentDescription(
+        product.box?.description || product.each?.description || "",
+      );
       setCurrentCountInStock(product.box?.countInStock ?? 0);
     }
   }, [typeOfPurchase, product]);
@@ -404,7 +406,9 @@ export const ProductItemPage = ({ product, index }) => {
                             } else if (value === "Box" && product.box) {
                               setCurrentPrice(product.box?.wpPrice || 0);
                               setCurrentDescription(
-                                product.box?.description || "",
+                                product.box?.description ||
+                                  product.each?.description ||
+                                  "",
                               );
                               setCurrentCountInStock(
                                 product.box?.countInStock || 0,
