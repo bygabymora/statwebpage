@@ -159,7 +159,7 @@ const Header = () => {
             <Image
               src={Logo2}
               alt='Company Logo - STAT Surgical Supply'
-              title='types Equipment Distributor'
+              title='STAT Surgical Supply is intentionally positioned as a secondary and contingency supplier, designed to mitigate risk when primary distributors are constrained.'
               width={100}
               height={100}
             />

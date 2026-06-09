@@ -80,7 +80,7 @@ export default function AboutScreen() {
           <Image
             src={image}
             alt='STAT Surgical Supply team and facilities - Premium surgical equipment provider serving healthcare professionals nationwide'
-            title='About STAT Surgical Supply - Surgical Equipment Experts'
+            title='STAT Surgical Supply is intentionally positioned as a secondary and contingency supplier, designed to mitigate risk when primary distributors are constrained.'
             className='w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[550px] -mt-10'
             priority
             width={550}
