@@ -185,10 +185,9 @@ const Header = () => {
             <Image
               src={Logo2}
               alt='Company Logo - STAT Surgical Supply'
-              title='Surgical Equipment Distributor'
-              width={80}
-              height={80}
-              className='w-12 h-12 md:w-[7rem] md:h-[7rem] object-contain'
+              title='types Equipment Distributor'
+              width={100}
+              height={100}
             />
           </button>
 

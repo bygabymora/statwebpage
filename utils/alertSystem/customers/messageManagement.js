@@ -8,8 +8,6 @@ export const messageManagement = (
 ) => {
   let emailMessage = {};
 
-  console.log("Account Owner in messageManagement", accountOwner);
-
   switch (actionName) {
     case "Register":
       emailMessage = {
