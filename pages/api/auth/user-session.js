@@ -35,6 +35,7 @@ export default async function handler(req, res) {
         isAdmin: token.isAdmin,
         companyName: token.companyName,
         companyEinCode: token.companyEinCode,
+        registrationNumber: token.registrationNumber,
         active: token.active,
         approved: token.approved,
         restricted: token.restricted,

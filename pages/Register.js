@@ -39,6 +39,10 @@ export default function RegisterScreen() {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   }, []);
 
+  const keepOnlyDigits = useCallback((e) => {
+    e.target.value = e.target.value.replace(/\D/g, "");
+  }, []);
+
   useEffect(() => {
     if (session?.user) router.push(redirect || "/");
   }, [session?.user, redirect, router]);
@@ -80,6 +84,7 @@ export default function RegisterScreen() {
     password,
     companyName,
     companyEinCode,
+    registrationNumber,
   }) => {
     setSubmitting(true);
     try {
@@ -155,6 +160,7 @@ export default function RegisterScreen() {
         password,
         companyName,
         companyEinCode,
+        registrationNumber,
         active: false,
         approved: false,
       });
@@ -180,6 +186,7 @@ export default function RegisterScreen() {
         email: normalizedEmail,
         companyName: companyName || "Not provided",
         companyEinCode: companyEinCode || "Not provided",
+        registrationNumber: registrationNumber || "Not provided",
       };
 
       const emailmessage = messageManagement(contactToEmail, "Register");
@@ -383,14 +390,53 @@ export default function RegisterScreen() {
               type='text'
               inputMode='numeric'
               placeholder='00-0000000'
+              onInput={keepOnlyDigits}
               {...register("companyEinCode", {
                 required: "Please enter company EIN",
+                pattern: {
+                  value: /^\d+$/,
+                  message: "Company EIN must contain numbers only",
+                },
+                setValueAs: (v) =>
+                  typeof v === "string" ? v.replace(/\D/g, "") : v,
               })}
               className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
             {errors.companyEinCode && (
               <p className='text-red-500 text-xs mt-1'>
                 {errors.companyEinCode.message}
+              </p>
+            )}
+          </div>
+
+          <div className='md:col-span-2'>
+            <label
+              htmlFor='registrationNumber'
+              className='block text-sm font-semibold text-gray-700 mb-2'
+            >
+              Number*
+            </label>
+            <input
+              id='registrationNumber'
+              type='text'
+              inputMode='numeric'
+              placeholder='000-000-0000'
+              autoComplete='off'
+              onInput={keepOnlyDigits}
+              {...register("registrationNumber", {
+                required: "Please enter registration number",
+                pattern: {
+                  value: /^\d+$/,
+                  message: "Registration number must contain numbers only",
+                },
+                setValueAs: (v) =>
+                  typeof v === "string" ? v.replace(/\D/g, "") : v,
+              })}
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+            />
+            {errors.registrationNumber && (
+              <p className='text-red-500 text-xs mt-1'>
+                {errors.registrationNumber.message}
               </p>
             )}
           </div>

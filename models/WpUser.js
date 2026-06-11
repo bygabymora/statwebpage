@@ -9,6 +9,7 @@ const wpUserSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, required: true, default: false },
     companyName: { type: String, required: false },
     companyEinCode: { type: String, required: false },
+    registrationNumber: { type: String, required: false },
     active: { type: Boolean, required: true, default: true },
     approved: { type: Boolean, required: true, default: false },
     restricted: { type: Boolean, required: true, default: false },
@@ -33,7 +34,7 @@ const wpUserSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const WpUser = mongoose.models.WpUser || mongoose.model("WpUser", wpUserSchema);

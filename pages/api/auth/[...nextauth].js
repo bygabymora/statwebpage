@@ -57,6 +57,7 @@ export const authOptions = {
           email: user.email,
           companyName: user.companyName,
           companyEinCode: user.companyEinCode,
+          registrationNumber: user.registrationNumber,
           isAdmin: user.isAdmin,
           active: user.active,
           approved: user.approved,
@@ -95,7 +96,7 @@ export const authOptions = {
 
         await db.connect(true);
         const dbUser = await WpUser.findOne({ email }).select(
-          "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin",
+          "_id firstName lastName email active approved restricted companyName companyEinCode registrationNumber isAdmin",
         );
 
         // 1) NOT EXIST → redirect to Register with prefill info
@@ -147,6 +148,7 @@ export const authOptions = {
         token.isAdmin = user.isAdmin || false;
         token.companyName = user.companyName || null;
         token.companyEinCode = user.companyEinCode || null;
+        token.registrationNumber = user.registrationNumber || null;
         token.active = user.active ?? true;
         token.approved = user.approved ?? false;
         token.restricted = user.restricted ?? false;
@@ -200,7 +202,7 @@ export const authOptions = {
         if (account?.provider === "google") {
           await db.connect(true);
           const dbUser = await WpUser.findOne({ email: token.email }).select(
-            "_id firstName lastName email active approved restricted companyName companyEinCode isAdmin",
+            "_id firstName lastName email active approved restricted companyName companyEinCode registrationNumber isAdmin",
           );
           if (dbUser) {
             token._id = dbUser._id;
@@ -209,6 +211,8 @@ export const authOptions = {
             token.companyName = dbUser.companyName ?? token.companyName;
             token.companyEinCode =
               dbUser.companyEinCode ?? token.companyEinCode;
+            token.registrationNumber =
+              dbUser.registrationNumber ?? token.registrationNumber;
             token.isAdmin = !!dbUser.isAdmin;
             token.active = dbUser.active;
             token.approved = dbUser.approved;
@@ -220,12 +224,16 @@ export const authOptions = {
       else if (token._id) {
         await db.connect(true);
         const dbUser = await WpUser.findById(token._id).select(
-          "firstName lastName email active approved restricted",
+          "firstName lastName email active approved restricted companyName companyEinCode registrationNumber",
         );
         if (dbUser) {
           token.firstName = dbUser.firstName;
           token.lastName = dbUser.lastName;
           token.email = dbUser.email;
+          token.companyName = dbUser.companyName ?? token.companyName;
+          token.companyEinCode = dbUser.companyEinCode ?? token.companyEinCode;
+          token.registrationNumber =
+            dbUser.registrationNumber ?? token.registrationNumber;
           token.active = dbUser.active;
           token.approved = dbUser.approved;
           token.restricted = dbUser.restricted;
@@ -246,6 +254,7 @@ export const authOptions = {
         isAdmin: token.isAdmin,
         companyName: token.companyName,
         companyEinCode: token.companyEinCode,
+        registrationNumber: token.registrationNumber,
         active: token.active,
         approved: token.approved,
         restricted: token.restricted,

@@ -6,18 +6,42 @@ async function handler(req, res) {
   if (req.method !== "POST") {
     return;
   }
-  const { firstName, lastName, email, password, companyEinCode, companyName } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    companyEinCode,
+    companyName,
+    registrationNumber,
+  } = req.body;
+
+  const normalizedCompanyEinCode = String(companyEinCode || "").trim();
+  const normalizedRegistrationNumber = String(registrationNumber || "").trim();
+
+  const isOnlyDigits = (value) => /^\d+$/.test(value);
+
   if (
     !firstName ||
     !lastName ||
     !email ||
     !email.includes("@") ||
     !password ||
-    password.trim().length < 5
+    password.trim().length < 5 ||
+    !normalizedRegistrationNumber
   ) {
     res.status(422).json({
       message: "Validation error",
+    });
+    return;
+  }
+
+  if (
+    !isOnlyDigits(normalizedCompanyEinCode) ||
+    !isOnlyDigits(normalizedRegistrationNumber)
+  ) {
+    res.status(422).json({
+      message: "Company EIN and Registration Number must contain numbers only",
     });
     return;
   }
@@ -38,7 +62,8 @@ async function handler(req, res) {
     password: bcryptjs.hashSync(password),
     isAdmin: false,
     companyName,
-    companyEinCode,
+    companyEinCode: normalizedCompanyEinCode,
+    registrationNumber: normalizedRegistrationNumber,
     active: true,
     approved: false,
     restricted: false,
@@ -55,6 +80,7 @@ async function handler(req, res) {
     isAdmin: user.isAdmin,
     companyName: user.companyName,
     companyEinCode: user.companyEinCode,
+    registrationNumber: user.registrationNumber,
   });
 }
 

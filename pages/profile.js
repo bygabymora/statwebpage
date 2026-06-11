@@ -41,7 +41,7 @@ export default function ProfileScreen() {
 
   const togglePasswordVisibility = useCallback(
     () => setShowPassword((p) => !p),
-    []
+    [],
   );
   const toggleModifyForm = useCallback(() => setShowModifyForm((p) => !p), []);
 
@@ -70,7 +70,7 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       toast.error(
-        "We are not able to find your Company's EIN Code, please register again with your Company's complete information"
+        "We are not able to find your Company's EIN Code, please register again with your Company's complete information",
       );
       toast.error(getError(error));
     }
@@ -153,6 +153,7 @@ export default function ProfileScreen() {
             ["Email", user?.email],
             ["Company Name", user?.companyName],
             ["Company EIN", user?.companyEinCode],
+            ["Registration Number", user?.registrationNumber],
           ].map(([label, value]) => (
             <div key={label}>
               <p className='text-sm font-medium text-gray-500 mb-1'>{label}</p>
@@ -164,23 +165,22 @@ export default function ProfileScreen() {
         </div>
 
         <div className='mt-8 text-center'>
-          {isActive ? (
+          {isActive ?
             <Link
               href='/order-history'
               className='inline-block text-[#0e355e] font-medium border border-[#0e355e] px-6 py-2.5 rounded-full hover:bg-[#0e355e] hover:text-white transition-all duration-300'
             >
               View Order History
             </Link>
-          ) : (
-            <p className='text-gray-500 text-sm italic'>
+          : <p className='text-gray-500 text-sm italic'>
               Your account is pending approval or inactive.
             </p>
-          )}
+          }
         </div>
       </section>
 
       {/* Update Form */}
-      {showModifyForm ? (
+      {showModifyForm ?
         <div className='mx-auto max-w-screen-md bg-white p-8 rounded-3xl shadow-lg my-10'>
           <form onSubmit={handleSubmit(submitHandler)} className='space-y-6'>
             <h3 className='text-2xl font-semibold text-[#0e355e] text-center mb-8'>
@@ -237,13 +237,13 @@ export default function ProfileScreen() {
                         i === 0 ? "a password" : "confirm password"
                       }`,
                       validate: (value) =>
-                        i === 0
-                          ? /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(
-                              value
-                            ) ||
-                            "Password must contain uppercase, lowercase, number and symbol."
-                          : value === getValues("password") ||
-                            "Passwords do not match",
+                        i === 0 ?
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(
+                            value,
+                          ) ||
+                          "Password must contain uppercase, lowercase, number and symbol."
+                        : value === getValues("password") ||
+                          "Passwords do not match",
                       minLength: {
                         value: 8,
                         message: "Must be at least 8 characters",
@@ -258,7 +258,9 @@ export default function ProfileScreen() {
                     }}
                     className='absolute inset-y-0 right-3 flex items-center text-gray-500'
                   >
-                    {showPassword ? <RiEyeCloseLine /> : <RiEye2Line />}
+                    {showPassword ?
+                      <RiEyeCloseLine />
+                    : <RiEye2Line />}
                   </button>
                 </div>
                 {errors[id] && (
@@ -279,8 +281,7 @@ export default function ProfileScreen() {
             </div>
           </form>
         </div>
-      ) : (
-        <div className='text-center my-10'>
+      : <div className='text-center my-10'>
           <button
             onClick={toggleModifyForm}
             className='bg-[#0e355e] text-white px-8 py-2.5 rounded-full hover:bg-[#788b9b] transition-all duration-300 shadow-sm hover:shadow-md'
@@ -288,7 +289,7 @@ export default function ProfileScreen() {
             Update Profile or Change Password
           </button>
         </div>
-      )}
+      }
     </Layout>
   );
 }
