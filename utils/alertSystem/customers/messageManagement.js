@@ -46,8 +46,8 @@ export const messageManagement = (
             <td style="padding: 4px 8px;">${contact.companyEinCode}</td>
           </tr>
           <tr>
-            <td style="padding: 4px 8px;"><strong>Registration Number:</strong></td>
-            <td style="padding: 4px 8px;">${contact.registrationNumber}</td>
+            <td style="padding: 4px 8px;"><strong>Phone Number:</strong></td>
+            <td style="padding: 4px 8px;">${contact.phoneNumber}</td>
           </tr>
         </table>
       </div>

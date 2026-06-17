@@ -411,32 +411,32 @@ export default function RegisterScreen() {
 
           <div className='md:col-span-2'>
             <label
-              htmlFor='registrationNumber'
+              htmlFor='phoneNumber'
               className='block text-sm font-semibold text-gray-700 mb-2'
             >
-              Number*
+              Phone Number*
             </label>
             <input
-              id='registrationNumber'
+              id='phoneNumber'
               type='text'
               inputMode='numeric'
               placeholder='000-000-0000'
               autoComplete='off'
               onInput={keepOnlyDigits}
-              {...register("registrationNumber", {
-                required: "Please enter registration number",
+              {...register("phoneNumber", {
+                required: "Please enter phone number",
                 pattern: {
                   value: /^\d+$/,
-                  message: "Registration number must contain numbers only",
+                  message: "Phone number must contain numbers only",
                 },
                 setValueAs: (v) =>
                   typeof v === "string" ? v.replace(/\D/g, "") : v,
               })}
               className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
             />
-            {errors.registrationNumber && (
+            {errors.phoneNumber && (
               <p className='text-red-500 text-xs mt-1'>
-                {errors.registrationNumber.message}
+                {errors.phoneNumber.message}
               </p>
             )}
           </div>

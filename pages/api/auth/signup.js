@@ -13,11 +13,11 @@ async function handler(req, res) {
     password,
     companyEinCode,
     companyName,
-    registrationNumber,
+    phoneNumber,
   } = req.body;
 
   const normalizedCompanyEinCode = String(companyEinCode || "").trim();
-  const normalizedRegistrationNumber = String(registrationNumber || "").trim();
+  const normalizedPhoneNumber = String(phoneNumber || "").trim();
 
   const isOnlyDigits = (value) => /^\d+$/.test(value);
 
@@ -28,7 +28,7 @@ async function handler(req, res) {
     !email.includes("@") ||
     !password ||
     password.trim().length < 5 ||
-    !normalizedRegistrationNumber
+    !normalizedPhoneNumber
   ) {
     res.status(422).json({
       message: "Validation error",
@@ -38,10 +38,10 @@ async function handler(req, res) {
 
   if (
     !isOnlyDigits(normalizedCompanyEinCode) ||
-    !isOnlyDigits(normalizedRegistrationNumber)
+    !isOnlyDigits(normalizedPhoneNumber)
   ) {
     res.status(422).json({
-      message: "Company EIN and Registration Number must contain numbers only",
+      message: "Company EIN and Phone Number must contain numbers only",
     });
     return;
   }
@@ -63,7 +63,7 @@ async function handler(req, res) {
     isAdmin: false,
     companyName,
     companyEinCode: normalizedCompanyEinCode,
-    registrationNumber: normalizedRegistrationNumber,
+    phoneNumber: normalizedPhoneNumber,
     active: true,
     approved: false,
     restricted: false,
@@ -80,7 +80,7 @@ async function handler(req, res) {
     isAdmin: user.isAdmin,
     companyName: user.companyName,
     companyEinCode: user.companyEinCode,
-    registrationNumber: user.registrationNumber,
+    phoneNumber: user.phoneNumber,
   });
 }
 

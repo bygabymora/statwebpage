@@ -153,7 +153,7 @@ export default function ProfileScreen() {
             ["Email", user?.email],
             ["Company Name", user?.companyName],
             ["Company EIN", user?.companyEinCode],
-            ["Registration Number", user?.registrationNumber],
+            ["Phone Number", user?.phoneNumber],
           ].map(([label, value]) => (
             <div key={label}>
               <p className='text-sm font-medium text-gray-500 mb-1'>{label}</p>
