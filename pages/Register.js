@@ -11,7 +11,6 @@ import axios from "axios";
 import CustomAlertModal from "../components/main/CustomAlertModal";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
-import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
 import { BsChevronRight } from "react-icons/bs";
 
 export default function RegisterScreen() {
@@ -31,9 +30,6 @@ export default function RegisterScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [alertMessage, setAlertMessage] = useState({ title: "", body: "" });
   const [shouldRedirect, setShouldRedirect] = useState(false);
-
-  // Nuevo: token de reCAPTCHA v2
-  const [captchaToken, setCaptchaToken] = useState(null);
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -85,72 +81,11 @@ export default function RegisterScreen() {
     companyName,
     companyEinCode,
     registrationNumber,
+    phoneNumber,
   }) => {
     setSubmitting(true);
     try {
-      // 1) Validate reCAPTCHA checked
-      if (!captchaToken) {
-        setAlertMessage({
-          title: "reCAPTCHA required",
-          body: "Please confirm you are not a robot by ticking the checkbox.",
-        });
-        setIsModalOpen(true);
-        setShouldRedirect(false);
-        return;
-      }
-
-      // 2) Verify token with the backend
-      let verifyData = null;
-      try {
-        const verifyRes = await fetch("/api/recaptcha/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token: captchaToken,
-          }),
-        });
-        verifyData = await verifyRes.json();
-      } catch (err) {
-        console.error("[reCAPTCHA verify] network/fetch error:", err);
-        setAlertMessage({
-          title: "Network error",
-          body: "We could not verify the reCAPTCHA. Please check your connection and try again.",
-        });
-        setIsModalOpen(true);
-        setShouldRedirect(false);
-        return;
-      }
-
-      if (!verifyData?.success) {
-        console.warn("[reCAPTCHA verify] failed:", verifyData);
-        const reason = verifyData?.reason;
-
-        let bodyMessage = "reCAPTCHA verification failed. Please try again.";
-
-        if (reason === "server_misconfig") {
-          bodyMessage =
-            "There is a server configuration issue with reCAPTCHA. Please try again later.";
-        } else if (reason === "missing_token") {
-          bodyMessage =
-            "reCAPTCHA token is missing. Please reload the page and try again.";
-        } else if (reason === "google_not_success") {
-          bodyMessage =
-            "reCAPTCHA could not be validated with Google. Please try again.";
-        } else if (reason === "google_parse_error") {
-          bodyMessage =
-            "Unexpected response from Google reCAPTCHA. Please try again.";
-        }
-
-        setAlertMessage({
-          title: "reCAPTCHA error",
-          body: bodyMessage,
-        });
-        setIsModalOpen(true);
-        setShouldRedirect(false);
-        return;
-      }
-
-      // 3) If reCAPTCHA is ok → continue with the registration logic
+      // Proceed with the registration logic
       const normalizedEmail = (email || "").trim().toLowerCase();
 
       await axios.post("/api/auth/signup", {
@@ -161,6 +96,7 @@ export default function RegisterScreen() {
         companyName,
         companyEinCode,
         registrationNumber,
+        phoneNumber,
         active: false,
         approved: false,
       });
@@ -196,7 +132,6 @@ export default function RegisterScreen() {
       if (typeof window !== "undefined" && window.grecaptcha) {
         window.grecaptcha.reset();
       }
-      setCaptchaToken(null);
     } catch (err) {
       setAlertMessage({
         title: "Error",
@@ -541,14 +476,6 @@ export default function RegisterScreen() {
               <span className='font-bold'>We do not sell to individuals.</span>
             </span>
           </label>
-        </div>
-
-        {/* reCAPTCHA v2 visible */}
-        <div className='mb-4'>
-          <ReCaptchaV2Checkbox
-            id='recaptcha-v2-register'
-            onChange={setCaptchaToken}
-          />
         </div>
 
         <button
