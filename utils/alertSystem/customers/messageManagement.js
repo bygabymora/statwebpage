@@ -45,10 +45,6 @@ export const messageManagement = (
             <td style="padding: 4px 8px;"><strong>Company EIN:</strong></td>
             <td style="padding: 4px 8px;">${contact.companyEinCode}</td>
           </tr>
-          <tr>
-            <td style="padding: 4px 8px;"><strong>Phone Number:</strong></td>
-            <td style="padding: 4px 8px;">${contact.phoneNumber}</td>
-          </tr>
         </table>
       </div>
       <div style="font-weight: light; font-size: 15px; color: #333333; margin-top: 25px;">
