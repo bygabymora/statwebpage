@@ -16,6 +16,7 @@ export const ProductItemPage = ({ product, index }) => {
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const { showStatusMessage, fetchUserData, setUser, user, accountOwner } =
     useModalContext();
   const [qty, setQty] = useState(1);
@@ -175,9 +176,9 @@ export const ProductItemPage = ({ product, index }) => {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email };
+    const contactToEmail = { name, email, companyName };
 
-    if (!name || !email) {
+    if (!name || !email || !companyName) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
@@ -194,6 +195,7 @@ export const ProductItemPage = ({ product, index }) => {
     // Clear form fields after submission
     setName("");
     setEmail("");
+    setCompanyName("");
     showStatusMessage("success", "Request sent successfully");
   };
 
@@ -373,6 +375,17 @@ export const ProductItemPage = ({ product, index }) => {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               placeholder='Email'
+              required
+            />
+
+            <input
+              autoComplete='off'
+              type='text'
+              name='company_name'
+              className='contact__form-input mt-2'
+              onChange={(e) => setCompanyName(e.target.value)}
+              value={companyName}
+              placeholder='Company Name'
               required
             />
             <button className='primary-button mt-3' type='submit'>

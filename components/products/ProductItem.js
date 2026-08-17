@@ -42,6 +42,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const { showStatusMessage, fetchUserData, setUser, user } = useModalContext();
 
   const active =
@@ -215,9 +216,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email };
+    const contactToEmail = { name, email, companyName };
 
-    if (!name || !email) {
+    if (!name || !email || !companyName) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
@@ -234,6 +235,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
     // Clear form fields after submission
     setName("");
     setEmail("");
+    setCompanyName("");
   };
 
   useEffect(() => {
@@ -554,6 +556,16 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               placeholder='Email'
+              required
+            />
+            <input
+              autoComplete='off'
+              type='text'
+              name='company_name'
+              className='contact__form-input mt-2'
+              onChange={(e) => setCompanyName(e.target.value)}
+              value={companyName}
+              placeholder='Company Name'
               required
             />
           </form>

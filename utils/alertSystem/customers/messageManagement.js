@@ -73,8 +73,10 @@ export const messageManagement = (
         ...emailMessage,
         subject: `${contact.name} Thank you for your interest in our product!`,
         p1: `<div style="font-size: 17px; color: #333333;">The product you are interested in is:</div>`,
-        p2: `<div style="font-weight: bold; font-size: 18px;">${item.name} by ${item.manufacturer}</div>`,
-        p3: `<div style="font-size: 15px; color: #333333;">We will notify you once the product is available.
+        p2: `<div style="font-weight: bold; font-size: 18px;">${item.name} by ${item.manufacturer}</div>
+            <div style="font-size: 15px; color: #333333; margin-top: 12px;"><strong>Company Name:</strong> ${contact.companyName || "N/A"}</div>
+            <div style="font-size: 15px; color: #333333; margin-top: 6px;"><strong>Email:</strong> ${contact.email}</div>`,
+        p3: `<div style="font-size: 15px; color: #333333; margin-top: 12px;">We will notify you once the product is available.
             <br>
             <strong> Stat Surgical Supply </strong>
             </div>`,
