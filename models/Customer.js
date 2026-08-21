@@ -297,7 +297,7 @@ const customerSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 customerSchema.index({ companyName: "text", notes: "text", aka: "text" });
 const Customer =

@@ -83,16 +83,28 @@ const putHandler = async (req, res) => {
       newApproved: user.approved,
     });
 
-    let customerInDB = null;
+    let customerWarning = null;
     if (customer) {
-      customerInDB = await Customer.findById(customer._id);
+      const customerInDB = await Customer.findById(customer._id);
       if (!customerInDB) {
         return res
           .status(404)
           .json({ type: "error", message: "Customer not found" });
       }
       customerInDB.purchaseExecutive = customer.purchaseExecutive;
-      await customerInDB.save();
+      try {
+        // Only validate the fields we actually touched, so unrelated
+        // legacy data on this customer can't block the link.
+        await customerInDB.save({ validateModifiedOnly: true });
+      } catch (customerError) {
+        console.error(
+          "Error saving customer while linking user (link will proceed):",
+          customerError,
+        );
+        customerWarning =
+          "User was linked, but the customer's contact info could not be saved: " +
+          customerError.message;
+      }
     }
 
     // Update user fields with explicit field checking
@@ -137,8 +149,8 @@ const putHandler = async (req, res) => {
     });
 
     return res.status(200).json({
-      type: "success",
-      message: "User updated successfully",
+      type: customerWarning ? "warning" : "success",
+      message: customerWarning || "User updated successfully",
       user: {
         _id: savedUser._id,
         approved: savedUser.approved,

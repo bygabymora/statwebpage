@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useModalContext } from "../context/ModalContext";
 
 const normalizeValue = (value = "") => value.trim().toLowerCase();
 
@@ -48,6 +49,7 @@ const customerMatchesWpUser = (customer, wpUser) => {
 };
 
 export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
+  const { showStatusMessage } = useModalContext();
   const [keyword, setKeyword] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -202,12 +204,25 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   };
 
   const handleLinkCustomer = async () => {
-    await axios.put(`/api/admin/users/${wpUser._id}`, {
-      user: updatedWpUser,
-      customer: updatedCustomer,
-    });
+    try {
+      const { data } = await axios.put(`/api/admin/users/${wpUser._id}`, {
+        user: updatedWpUser,
+        customer: updatedCustomer,
+      });
 
-    await fetchData();
+      showStatusMessage(
+        data.type === "warning" ? "warning" : "success",
+        data.message || "Customer linked successfully",
+      );
+
+      await fetchData();
+    } catch (err) {
+      console.error("Error linking customer", err);
+      showStatusMessage(
+        "error",
+        err.response?.data?.message || "Error linking customer",
+      );
+    }
   };
 
   return (
