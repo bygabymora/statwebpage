@@ -51,6 +51,16 @@ export const messageManagement = (
         If you have any questions, please contact us.<br>
         <strong>Stat Surgical Supply</strong>
       </div>
+      ${
+        item?.hasCartItems ?
+          `<div style="text-align: center; margin-top: 25px;">
+             <a href="https://statsurgicalsupply.com/Login?redirect=/cart"
+                style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+               Go to Your Cart
+             </a>
+           </div>`
+        : ""
+      }
     `,
       };
       break;

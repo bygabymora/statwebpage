@@ -5,6 +5,7 @@ import React, {
   useState,
   useContext,
 } from "react";
+import Cookies from "js-cookie";
 import CustomAlertModal from "../main/CustomAlertModal";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -13,6 +14,22 @@ import Loading from "../main/Loading";
 
 const ModalContext = createContext();
 export const useModalContext = () => useContext(ModalContext);
+
+const GUEST_CART_COOKIE = "guestCart";
+
+const readGuestCartCookie = () => {
+  try {
+    const raw = Cookies.get(GUEST_CART_COOKIE);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveGuestCartCookie = (cart) => {
+  Cookies.set(GUEST_CART_COOKIE, JSON.stringify(cart), { expires: 30 });
+};
 
 export const ModalProvider = ({ children }) => {
   const { data: session } = useSession();
@@ -29,23 +46,114 @@ export const ModalProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [accountOwner, setAccountOwner] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [guestCart, setGuestCart] = useState([]);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [customer, setCustomer] = useState({});
+
+  // Guest cart is cookie-backed so it survives across page loads pre-login.
+  useEffect(() => {
+    setGuestCart(readGuestCartCookie());
+  }, []);
+
+  const addToGuestCart = useCallback(
+    (productId, typeOfPurchase, quantity, price) => {
+      setGuestCart((prev) => {
+        const index = prev.findIndex(
+          (item) =>
+            item.productId === productId &&
+            item.typeOfPurchase === typeOfPurchase,
+        );
+        const next =
+          index >= 0 ?
+            prev.map((item, i) =>
+              i === index ?
+                { ...item, quantity: item.quantity + Number(quantity), price }
+              : item,
+            )
+          : [
+              ...prev,
+              { productId, typeOfPurchase, quantity: Number(quantity), price },
+            ];
+        saveGuestCartCookie(next);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const updateGuestCartItem = useCallback(
+    (productId, typeOfPurchase, quantity) => {
+      setGuestCart((prev) => {
+        const next = prev.map((item) =>
+          (
+            item.productId === productId &&
+            item.typeOfPurchase === typeOfPurchase
+          ) ?
+            { ...item, quantity: Number(quantity) }
+          : item,
+        );
+        saveGuestCartCookie(next);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const removeFromGuestCart = useCallback((productId, typeOfPurchase) => {
+    setGuestCart((prev) => {
+      const next = prev.filter(
+        (item) =>
+          item.productId !== productId ||
+          item.typeOfPurchase !== typeOfPurchase,
+      );
+      saveGuestCartCookie(next);
+      return next;
+    });
+  }, []);
+
+  const clearGuestCart = useCallback(() => {
+    Cookies.remove(GUEST_CART_COOKIE);
+    setGuestCart([]);
+  }, []);
 
   useEffect(() => {
     const loadUserData = async () => {
       if (session?.user) {
         setContact(session.user);
         const { userData, customerData, accountOwner } = await fetchUserData();
-        setUser(userData);
+        let mergedUserData = userData;
+
+        // Merge any pre-login guest cart into the account's cart, then clear it.
+        const pendingGuestCart = readGuestCartCookie();
+        if (userData?._id && pendingGuestCart.length > 0) {
+          for (const item of pendingGuestCart) {
+            try {
+              await axios.post(`/api/users/${userData._id}/cart`, {
+                productId: item.productId,
+                typeOfPurchase: item.typeOfPurchase,
+                quantity: item.quantity,
+                price: item.price,
+                wpPrice: item.price,
+                unitPrice: item.price,
+              });
+            } catch (error) {
+              console.error("Failed to merge guest cart item:", error);
+            }
+          }
+          clearGuestCart();
+          const refreshed = await fetchUserData();
+          mergedUserData = refreshed.userData;
+        }
+
+        setUser(mergedUserData);
         setCustomer(customerData);
         setAccountOwner(accountOwner || null);
         setHasSeenModal(false); // Reset the state of the modal when the session changes
-        console.log("accountOwner", accountOwner);
       }
     };
     loadUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const fetchUserData = async () => {
@@ -113,6 +221,11 @@ export const ModalProvider = ({ children }) => {
         customer,
         user,
         setUser,
+        guestCart,
+        addToGuestCart,
+        updateGuestCartItem,
+        removeFromGuestCart,
+        clearGuestCart,
         accountOwner,
         setAccountOwner,
         fetchUserData,

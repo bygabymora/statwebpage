@@ -12,9 +12,11 @@ import CustomAlertModal from "../components/main/CustomAlertModal";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { BsChevronRight } from "react-icons/bs";
+import { useModalContext } from "../components/context/ModalContext";
 
 export default function RegisterScreen() {
   const { data: session } = useSession();
+  const { guestCart } = useModalContext();
   const router = useRouter();
 
   const {
@@ -125,7 +127,15 @@ export default function RegisterScreen() {
         registrationNumber: registrationNumber || "Not provided",
       };
 
-      const emailmessage = messageManagement(contactToEmail, "Register");
+      const emailmessage = messageManagement(
+        contactToEmail,
+        "Register",
+        null,
+        null,
+        {
+          hasCartItems: guestCart?.length > 0,
+        },
+      );
       handleSendEmails(emailmessage, contactToEmail);
 
       // Optional: reset the v2 widget

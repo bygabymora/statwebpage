@@ -24,6 +24,7 @@ export default function CartScreen() {
     stopLoading,
     openAlertModal,
     showStatusMessage,
+    guestCart,
   } = useModalContext();
 
   const fetchOrder = async (extraAction) => {
@@ -139,13 +140,53 @@ export default function CartScreen() {
     }
   };
 
+  // Guests aren't capped by real stock; that reconciliation happens after login.
+  const buildGuestOrder = async () => {
+    if (!guestCart || guestCart.length === 0) {
+      setOrder({ orderItems: [] });
+      return;
+    }
+    try {
+      const { data } = await axios.post("/api/cart/updateProducts", {
+        cartItems: guestCart,
+      });
+      const soldOutKeys = new Set(
+        (data.warnings || [])
+          .filter((w) => w.availableQuantity === 0)
+          .map((w) => `${w.productId}-${w.typeOfPurchase}`),
+      );
+      const orderItems = guestCart
+        .filter(
+          (item) =>
+            !soldOutKeys.has(`${item.productId}-${item.typeOfPurchase}`),
+        )
+        .map((item) => {
+          const enriched = data.updatedCart.find(
+            (u) =>
+              u.productId === item.productId &&
+              u.typeOfPurchase === item.typeOfPurchase,
+          );
+          return { ...item, ...enriched, quantity: item.quantity };
+        });
+      const itemsPrice = orderItems.reduce(
+        (a, c) => a + c.quantity * (c.price || 0),
+        0,
+      );
+      setOrder({ orderItems, itemsPrice, totalPrice: itemsPrice });
+    } catch (err) {
+      console.error("Failed to load guest cart:", err);
+      showStatusMessage("error", "Failed to load your cart. Please try again.");
+    }
+  };
+
   useEffect(() => {
     if (session) {
       fetchOrder();
     } else {
-      setOrder({ orderItems: [] });
+      buildGuestOrder();
     }
-  }, [session, activeStep]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, activeStep, guestCart]);
 
   return (
     <Layout title='Cart'>

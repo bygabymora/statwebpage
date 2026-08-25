@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { BsCartX, BsTrash3 } from "react-icons/bs";
 import axios from "axios";
 import { Listbox } from "@headlessui/react";
@@ -12,13 +13,22 @@ import { useModalContext } from "../context/ModalContext";
 const Cart = ({ setActiveStep, order, setOrder }) => {
   const [stockAlert, setStockAlert] = useState(null);
   const { data: session } = useSession();
+  const router = useRouter();
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
   useEffect(() => {
     setMounted(true);
   }, []);
-  const { setUser, fetchUserData, showStatusMessage, user } = useModalContext();
+  const {
+    setUser,
+    fetchUserData,
+    showStatusMessage,
+    user,
+    removeFromGuestCart,
+    updateGuestCartItem,
+  } = useModalContext();
 
   const removeItemHandler = (item) => {
     setProductToRemove(item);
@@ -27,6 +37,16 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
 
   const confirmRemoveItem = async () => {
     if (productToRemove) {
+      if (!session) {
+        removeFromGuestCart(
+          productToRemove.productId,
+          productToRemove.typeOfPurchase,
+        );
+        setShowModal(false);
+        setProductToRemove(null);
+        return;
+      }
+
       try {
         await axios.delete(`/api/users/${session.user?._id}/cart`, {
           data: {
@@ -67,6 +87,12 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     const quantity = Number(qty);
     if (isNaN(quantity) || quantity <= 0) {
       alert("Invalid quantity.");
+      return;
+    }
+
+    // Guests aren't capped by real stock; that reconciliation happens after login.
+    if (!session) {
+      updateGuestCartItem(item.productId, item.typeOfPurchase, quantity);
       return;
     }
 
@@ -189,20 +215,33 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                           <span className='font-semibold mr-2 text-sm'>
                             Qty:
                           </span>
-                          <div className='relative w-[90px]'>
-                            <Listbox
-                              value={item.quantity}
-                              onChange={(value) =>
-                                updateCartHandler(item, value)
+                          {!session ?
+                            // Guests aren't capped by real stock; a plain input avoids
+                            // implying a stock-bound list of options.
+                            <input
+                              type='number'
+                              min={1}
+                              defaultValue={item.quantity}
+                              onBlur={(e) =>
+                                updateCartHandler(item, e.target.value)
                               }
-                            >
-                              <Listbox.Button className='w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]'>
-                                {item.quantity}
-                              </Listbox.Button>
-                              <BiChevronDown className='w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                              <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm custom-scrollbar'>
-                                {[...Array(item.countInStock || 0).keys()].map(
-                                  (x) => (
+                              className='w-[90px] rounded-md py-1.5 px-3 text-sm bg-white shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]'
+                            />
+                          : <div className='relative w-[90px]'>
+                              <Listbox
+                                value={item.quantity}
+                                onChange={(value) =>
+                                  updateCartHandler(item, value)
+                                }
+                              >
+                                <Listbox.Button className='w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]'>
+                                  {item.quantity}
+                                </Listbox.Button>
+                                <BiChevronDown className='w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
+                                <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm custom-scrollbar'>
+                                  {[
+                                    ...Array(item.countInStock || 0).keys(),
+                                  ].map((x) => (
                                     <Listbox.Option
                                       key={x + 1}
                                       value={x + 1}
@@ -223,11 +262,11 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                                         </span>
                                       )}
                                     </Listbox.Option>
-                                  ),
-                                )}
-                              </Listbox.Options>
-                            </Listbox>
-                          </div>
+                                  ))}
+                                </Listbox.Options>
+                              </Listbox>
+                            </div>
+                          }
                         </div>
                       </div>
                       {/* Price */}
@@ -289,7 +328,9 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
               </li>
               <li>
                 <button
-                  onClick={() => setActiveStep(1)}
+                  onClick={() =>
+                    session ? setActiveStep(1) : setShowAuthPrompt(true)
+                  }
                   className='primary-button w-full'
                 >
                   Checkout
@@ -338,6 +379,37 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                   onClick={() => setStockAlert(null)}
                 >
                   OK
+                </button>
+              </div>
+            </div>
+          )}
+          {showAuthPrompt && (
+            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+              <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
+                <h2 className='font-bold text-lg'>Almost there!</h2>
+                <p className='text-[#414b53] mt-2'>
+                  Please log in or create an account to complete your checkout.
+                  Your cart will be right where you left it.
+                </p>
+                <div className='flex justify-center gap-4 mt-4'>
+                  <button
+                    className='px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition'
+                    onClick={() => router.push("/Login?redirect=/cart")}
+                  >
+                    Log In
+                  </button>
+                  <button
+                    className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition'
+                    onClick={() => router.push("/Register")}
+                  >
+                    Register
+                  </button>
+                </div>
+                <button
+                  className='mt-4 text-sm text-gray-500 underline'
+                  onClick={() => setShowAuthPrompt(false)}
+                >
+                  Cancel
                 </button>
               </div>
             </div>

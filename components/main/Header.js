@@ -47,7 +47,8 @@ function SearchIcon({ className }) {
 
 const Header = () => {
   const router = useRouter();
-  const { user, isVisible, statusMessage, messageType } = useModalContext();
+  const { user, guestCart, isVisible, statusMessage, messageType } =
+    useModalContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { status, data: session } = useSession();
@@ -57,7 +58,10 @@ const Header = () => {
     session?.user?.approved &&
     status === "authenticated";
 
-  const cartItemsCount = user?.cart?.reduce((a, c) => a + c.quantity, 0) || 0;
+  const cartItemsCount =
+    session ?
+      user?.cart?.reduce((a, c) => a + c.quantity, 0) || 0
+    : guestCart?.reduce((a, c) => a + c.quantity, 0) || 0;
 
   const handleHomeClick = () => {
     if (router.pathname === "/") {
@@ -201,21 +205,19 @@ const Header = () => {
         </div>
 
         <div className='flex items-center gap-6 relative'>
-          {active && (
-            <Link
-              href='/cart'
-              title='Your Shopping Cart Products'
-              aria-label='Cart'
-              className='relative group'
-            >
-              <CartIcon className='text-3xl text-[#0e355e] transition-transform transform group-hover:scale-110' />
-              {cartItemsCount > 0 && (
-                <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
-                  {cartItemsCount}
-                </span>
-              )}
-            </Link>
-          )}
+          <Link
+            href='/cart'
+            title='Your Shopping Cart Products'
+            aria-label='Cart'
+            className='relative group'
+          >
+            <CartIcon className='text-3xl text-[#0e355e] transition-transform transform group-hover:scale-110' />
+            {cartItemsCount > 0 && (
+              <span className='absolute -top-2 -right-2 bg-[#03793d] text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shadow-lg'>
+                {cartItemsCount}
+              </span>
+            )}
+          </Link>
           <Signupbutton aria-label='Profile' />
           <Navbar />
         </div>
