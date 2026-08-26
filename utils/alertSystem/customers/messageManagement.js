@@ -288,10 +288,17 @@ export const messageManagement = (
         p3: `<div style="font-weight: light; font-size: 15px; color: #333333; ">
                  I'm <strong>${accountOwner?.name || "Stat Surgical Supply"}</strong> and I’ll be the one in charge of any request or support you may need. <br>
                  Please feel free to reach out at any time. <br><br>
-                 <a href="https://statsurgicalsupply.com/" target="_blank" 
-                    style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                   Start Shopping Now
-                 </a><br><br>
+                 ${
+                   item?.hasCartItems ?
+                     `<a href="https://statsurgicalsupply.com/Login?redirect=/cart" target="_blank"
+                        style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Go to Your Cart
+                      </a><br><br>`
+                   : `<a href="https://statsurgicalsupply.com/" target="_blank" 
+                        style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Start Shopping Now
+                      </a><br><br>`
+                 }
                  Thank you for choosing us! <br>
                  <strong>Stat Surgical Supply</strong>
                </div>`,

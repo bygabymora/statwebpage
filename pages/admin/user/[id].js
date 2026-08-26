@@ -158,7 +158,7 @@ export default function AdminUserEditScreen() {
         "Registration approved",
         null,
         null,
-        null,
+        { hasCartItems: wpUser?.cart?.length > 0 },
         wpAccountOwner,
       );
 
