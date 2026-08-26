@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import db from "../../../../utils/db";
 import WpUser from "../../../../models/WpUser";
+import Order from "../../../../models/Order";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -31,7 +32,8 @@ export default async function handler(req, res) {
 
       const index = user.cart.findIndex(
         (item) =>
-          item.productId === productId && item.typeOfPurchase === typeOfPurchase
+          item.productId === productId &&
+          item.typeOfPurchase === typeOfPurchase,
       );
 
       if (index >= 0) {
@@ -69,7 +71,8 @@ export default async function handler(req, res) {
 
       const item = user.cart.find(
         (item) =>
-          item.productId === productId && item.typeOfPurchase === typeOfPurchase
+          item.productId === productId &&
+          item.typeOfPurchase === typeOfPurchase,
       );
 
       if (!item) {
@@ -91,10 +94,21 @@ export default async function handler(req, res) {
 
       user.cart = user.cart.filter(
         (item) =>
-          item.productId !== productId || item.typeOfPurchase !== typeOfPurchase
+          item.productId !== productId ||
+          item.typeOfPurchase !== typeOfPurchase,
       );
 
       await user.save();
+
+      // Keep the in-process Order in sync so an empty cart doesn't get
+      // resurrected from a stale Order.orderItems on the next cart fetch.
+      if (user.cart.length === 0) {
+        await Order.updateOne(
+          { "wpUser.userId": id, status: "In Process" },
+          { $set: { orderItems: [], itemsPrice: 0, totalPrice: 0 } },
+        );
+      }
+
       return res.status(200).json({ cart: user.cart });
     }
 
@@ -105,6 +119,10 @@ export default async function handler(req, res) {
       if (action === "reset" || action === "clear") {
         user.cart = [];
         await user.save();
+        await Order.updateOne(
+          { "wpUser.userId": id, status: "In Process" },
+          { $set: { orderItems: [], itemsPrice: 0, totalPrice: 0 } },
+        );
         return res.status(200).json({ cart: [] });
       }
 

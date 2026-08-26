@@ -61,8 +61,13 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
           cart: updatedUser.userData?.cart,
         }));
 
-        // Optional: If you want to reflect the new cart in the order immediately
-        const updatedOrderItems = updatedUser.userData?.cart || [];
+        // Filter the already-enriched order items instead of swapping in the raw
+        // WpUser cart, which lacks display fields like name/image/manufacturer.
+        const updatedOrderItems = (order.orderItems || []).filter(
+          (oItem) =>
+            oItem.productId !== productToRemove.productId ||
+            oItem.typeOfPurchase !== productToRemove.typeOfPurchase,
+        );
         const itemsPrice = updatedOrderItems.reduce(
           (a, c) => a + c.quantity * c.price,
           0,
