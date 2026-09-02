@@ -69,6 +69,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
                   gtag('js', new Date());
                   gtag('config', 'G-3JJZVPL0B5', {
                     page_path: window.location.pathname,
+                    debug_mode: true,
                   });
                 `}
               </Script>
