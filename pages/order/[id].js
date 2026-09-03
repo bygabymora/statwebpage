@@ -789,97 +789,102 @@ function OrderScreen() {
                       .map((item) => (
                       <div
                         key={item._id}
-                        className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
+                        className='border rounded-lg p-4 shadow-sm'
                       >
-                        {/* Product */}
-                        <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={50}
-                            height={50}
-                            className='rounded-lg'
-                            loading='lazy'
-                          />
-                          <div>
-                            <Link
-                              href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
-                              className='block font-medium text-gray-800'
-                            >
-                              {item.manufacturer}
-                            </Link>
-                            <div className='text-gray-600 text-sm'>
-                              {item.name}
+                        <div className='flex flex-col md:flex-row md:items-center'>
+                          {/* Product */}
+                          <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              width={50}
+                              height={50}
+                              className='rounded-lg'
+                              loading='lazy'
+                            />
+                            <div>
+                              <Link
+                                href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
+                                className='block font-medium text-gray-800'
+                              >
+                                {item.manufacturer}
+                              </Link>
+                              <div className='text-gray-600 text-sm'>
+                                {item.name}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Details grid on mobile; row on md+ */}
+                          <div className='grid grid-cols-2 gap-x-4 gap-y-2 flex-1 md:flex md:items-center md:justify-between'>
+                            {/* Type */}
+                            <div className='flex items-center'>
+                              <span className='font-semibold mr-1'>
+                                U o M:
+                              </span>
+                              <span className='text-gray-700'>
+                                {item.typeOfPurchase === "Box"
+                                  ? "Box"
+                                  : item.typeOfPurchase}
+                              </span>
+                            </div>
+
+                            {/* Quantity */}
+                            <div className='flex items-center'>
+                              <span className='font-semibold mr-1'>Qty:</span>
+                              <span className='text-gray-700'>
+                                {item.quantity}
+                              </span>
+                            </div>
+
+                            {/* Price */}
+                            <div className='flex items-center'>
+                              <span className='font-semibold mr-1'>
+                                Price:
+                              </span>
+                              <span className='text-gray-700'>
+                                $
+                                {new Intl.NumberFormat("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }).format(item.price)}
+                              </span>
+                            </div>
+                            <div className='flex items-center'>
+                              <span className='font-semibold mr-1'>
+                                Total:
+                              </span>
+                              <span className='text-gray-700'>
+                                $
+                                {new Intl.NumberFormat("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }).format(item.price * item.quantity)}
+                              </span>
                             </div>
                           </div>
                         </div>
 
-                        {/* Details grid on mobile; row on md+ */}
-                        <div className='grid grid-cols-2 gap-x-4 gap-y-2 flex-1 md:flex md:items-center md:justify-between'>
-                          {/* Type */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>U o M:</span>
-                            <span className='text-gray-700'>
-                              {item.typeOfPurchase === "Box"
-                                ? "Box"
-                                : item.typeOfPurchase}
-                            </span>
-                          </div>
-
-                          {/* Quantity */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Qty:</span>
-                            <span className='text-gray-700'>
-                              {item.quantity}
-                            </span>
-                          </div>
-
-                          {/* Price */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Price:</span>
-                            <span className='text-gray-700'>
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(item.price)}
-                            </span>
-                          </div>
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Total:</span>
-                            <span className='text-gray-700'>
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(item.price * item.quantity)}
-                            </span>
-                          </div>
-
-                          {/* Tax */}
-                          {item.invoiceItem?.taxed &&
-                            item.invoiceItem?.taxAmount > 0 && (
-                              <div className='flex items-center'>
-                                <span className='font-semibold mr-1'>
-                                  Tax:
-                                </span>
-                                <span className='text-gray-700'>
-                                  ${fmt(item.invoiceItem.taxAmount)}
-                                  {item.invoiceItem.taxDetails?.[0]?.name && (
-                                    <span className='text-xs text-gray-500'>
-                                      {" "}
-                                      ({item.invoiceItem.taxDetails[0].name}
-                                      {item.invoiceItem.taxDetails[0]
-                                        .taxPercent
-                                        ? ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
-                                        : ""}
-                                      )
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            )}
-                        </div>
+                        {/* Tax - full width under the whole item */}
+                        {item.invoiceItem?.taxed &&
+                          item.invoiceItem?.taxAmount > 0 && (
+                            <div className='mt-3 pt-2 border-t flex items-center justify-between md:justify-start md:gap-1'>
+                              <span className='font-semibold mr-1'>Tax:</span>
+                              <span className='text-gray-700'>
+                                ${fmt(item.invoiceItem.taxAmount)}
+                                {item.invoiceItem.taxDetails?.[0]?.name && (
+                                  <span className='text-xs text-gray-500'>
+                                    {" "}
+                                    ({item.invoiceItem.taxDetails[0].name}
+                                    {item.invoiceItem.taxDetails[0].taxPercent
+                                      ? ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
+                                      : ""}
+                                    )
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          )}
                       </div>
                     ))}
                   </div>
