@@ -184,6 +184,7 @@ function OrderScreen() {
   );
   const balanceDiffersFromTotal =
     hasInvoice &&
+    !order.isPaid &&
     typeof invoice.balance === "number" &&
     Math.abs(invoice.balance - grandTotalWithTax) > 0.01;
 
