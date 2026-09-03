@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../components/main/Layout";
 import Image from "next/image";
 import image from "../public/images/assets/about.svg";
-import { useSpring, animated } from "react-spring";
+import { useSpring, animated } from "@react-spring/web";
 import Link from "next/link";
 import { BsChevronRight } from "react-icons/bs";
 import {
