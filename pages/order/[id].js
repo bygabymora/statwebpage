@@ -483,13 +483,12 @@ function OrderScreen() {
   };
 
   const stripeReadyToPay = () => {
-    let readyToPay = false;
-    const allShipmentsWithValue =
-      invoice && invoice?.shippings?.every((shipment) => shipment.price > 0);
-    if (allShipmentsWithValue) {
-      readyToPay = true;
-    }
-    return readyToPay;
+    // An empty list means shipping has not been processed yet, and `every`
+    // would pass vacuously.
+    const shipments = invoice?.shippings ?? [];
+    return (
+      shipments.length > 0 && shipments.every((shipment) => shipment.price > 0)
+    );
   };
 
   const placeOrderHandler = async () => {
