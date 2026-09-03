@@ -1,53 +1,1698 @@
 [
-  { "key": "AL", "value": "AL (Alabama)" },
-  { "key": "AK", "value": "AK (Alaska)" },
-  { "key": "AZ", "value": "AZ (Arizona)" },
-  { "key": "AR", "value": "AR (Arkansas)" },
-  { "key": "CA", "value": "CA (California)" },
-  { "key": "CO", "value": "CO (Colorado)" },
-  { "key": "CT", "value": "CT (Connecticut)" },
-  { "key": "DE", "value": "DE (Delaware)" },
-  { "key": "DC", "value": "DC (District Of Columbia)" },
-  { "key": "FL", "value": "FL (Florida)" },
-  { "key": "GA", "value": "GA (Georgia)" },
-  { "key": "HI", "value": "HI (Hawaii)" },
-  { "key": "ID", "value": "ID (Idaho)" },
-  { "key": "IL", "value": "IL (Illinois)" },
-  { "key": "IN", "value": "IN (Indiana)" },
-  { "key": "IA", "value": "IA (Iowa)" },
-  { "key": "KS", "value": "KS (Kansas)" },
-  { "key": "KY", "value": "KY (Kentucky)" },
-  { "key": "LA", "value": "LA (Louisiana)" },
-  { "key": "ME", "value": "ME (Maine)" },
-  { "key": "MD", "value": "MD (Maryland)" },
-  { "key": "MA", "value": "MA (Massachusetts)" },
-  { "key": "MI", "value": "MI (Michigan)" },
-  { "key": "MN", "value": "MN (Minnesota)" },
-  { "key": "MS", "value": "MS (Mississippi)" },
-  { "key": "MO", "value": "MO (Missouri)" },
-  { "key": "MT", "value": "MT (Montana)" },
-  { "key": "NE", "value": "NE (Nebraska)" },
-  { "key": "NV", "value": "NV (Nevada)" },
-  { "key": "NH", "value": "NH (New Hampshire)" },
-  { "key": "NJ", "value": "NJ (New Jersey)" },
-  { "key": "NM", "value": "NM (New Mexico)" },
-  { "key": "NY", "value": "NY (New York)" },
-  { "key": "NC", "value": "NC (North Carolina)" },
-  { "key": "ND", "value": "ND (North Dakota)" },
-  { "key": "OH", "value": "OH (Ohio)" },
-  { "key": "OK", "value": "OK (Oklahoma)" },
-  { "key": "OR", "value": "OR (Oregon)" },
-  { "key": "PA", "value": "PA (Pennsylvania)" },
-  { "key": "RI", "value": "RI (Rhode Island)" },
-  { "key": "SC", "value": "SC (South Carolina)" },
-  { "key": "SD", "value": "SD (South Dakota)" },
-  { "key": "TN", "value": "TN (Tennessee)" },
-  { "key": "TX", "value": "TX (Texas)" },
-  { "key": "UT", "value": "UT (Utah)" },
-  { "key": "VT", "value": "VT (Vermont)" },
-  { "key": "VA", "value": "VA (Virginia)" },
-  { "key": "WA", "value": "WA (Washington)" },
-  { "key": "WV", "value": "WV (West Virginia)" },
-  { "key": "WI", "value": "WI (Wisconsin)" },
-  { "key": "WY", "value": "WY (Wyoming)" }
+  {
+    "key": "AL",
+    "value": "AL (Alabama)",
+    "agency": false,
+    "nexus": {
+      "amount": 250000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if annual tax liability exceeds $2,400"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "T",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "AK",
+    "value": "AK (Alaska)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "All registered sellers file monthly"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "AZ",
+    "value": "AZ (Arizona)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "hitDate": "March 26 2025",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if estimated annual tax liability exceeds $8,000"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "AR",
+    "value": "AR (Arkansas)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "All registered sellers file monthly"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "CA",
+    "value": "CA (California)",
+    "agency": false,
+    "nexus": {
+      "amount": 500000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly prepayments required if monthly tax liability averages $17,000+"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "CO",
+    "value": "CO (Colorado)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "hitDate": "May 01 2025",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if tax liability exceeds $600 per month"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "CT",
+    "value": "CT (Connecticut)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 17 2024",
+          "end": "Jan 16 2025"
+        },
+        {
+          "start": "Jan 17 2025",
+          "end": "Jan 16 2026"
+        },
+        {
+          "start": "Jan 17 2026",
+          "end": "Jan 16 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity. Monthly filing required if annual tax liability exceeds $4,000."
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "DE",
+    "value": "DE (Delaware)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "none",
+      "sideNotes": "none"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "DC",
+    "value": "DC (District Of Columbia)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the district based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "FL",
+    "value": "FL (Florida)",
+    "agency": true,
+    "nexus": {
+      "hitDate": "Jan 01 2024",
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if estimated annual tax liability exceeds $1,000"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "GA",
+    "value": "GA (Georgia)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Quarterly filing allowed if average liability is under $200 per month"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "HI",
+    "value": "HI (Hawaii)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "ID",
+    "value": "ID (Idaho)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Quarterly filing allowed if tax liability is under $750 per quarter"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "IL",
+    "value": "IL (Illinois)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "hitDate": "April 01 2025",
+      "ranges": [
+        {
+          "start": "Feb 10 2024",
+          "end": "Feb 09 2025"
+        },
+        {
+          "start": "Feb 10 2025",
+          "end": "Feb 09 2026"
+        },
+        {
+          "start": "Feb 10 2026",
+          "end": "Feb 09 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Frequencies are now evaluated on a rolling quarterly basis based on the preceding 12 months of activity. Monthly if tax liability > $200/mo."
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "T",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "IN",
+    "value": "IN (Indiana)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Monthly Filers for sales tax and companion taxes are defined as those having less than $1,000 average monthly tax liability for the prior fiscal year ending on June 30 of the previous calendar year."
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "IA",
+    "value": "IA (Iowa)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Monthly filing required if annual sales and use tax exceeds $1,200"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "KS",
+    "value": "KS (Kansas)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "KY",
+    "value": "KY (Kentucky)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "LA",
+    "value": "LA (Louisiana)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "ME",
+    "value": "ME (Maine)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "MD",
+    "value": "MD (Maryland)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "MA",
+    "value": "MA (Massachusetts)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "MI",
+    "value": "MI (Michigan)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "MN",
+    "value": "MN (Minnesota)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 15 2024",
+          "end": "Jan 14 2025"
+        },
+        {
+          "start": "Jan 15 2025",
+          "end": "Jan 14 2026"
+        },
+        {
+          "start": "Jan 15 2026",
+          "end": "Jan 14 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "MS",
+    "value": "MS (Mississippi)",
+    "agency": false,
+    "nexus": {
+      "amount": 250000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 22 2024",
+          "end": "Jan 21 2025"
+        },
+        {
+          "start": "Jan 22 2025",
+          "end": "Jan 21 2026"
+        },
+        {
+          "start": "Jan 22 2026",
+          "end": "Jan 21 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Monthly filing required if annual tax remittance exceeds $3,599"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "MO",
+    "value": "MO (Missouri)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 27 2024",
+          "end": "Jan 26 2025"
+        },
+        {
+          "start": "Jan 27 2025",
+          "end": "Jan 26 2026"
+        },
+        {
+          "start": "Jan 27 2026",
+          "end": "Jan 26 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "MT",
+    "value": "MT (Montana)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "none",
+      "sideNotes": "none"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "NE",
+    "value": "NE (Nebraska)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned based on prior sales or tax liability"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "T",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "NV",
+    "value": "NV (Nevada)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Note: Starting Jan 2026, NV sales and use tax returns are due on the 20th. Monthly if taxable sales exceed $10,000/mo; quarterly if under $10,000; annual if under $1,500 in prior-year sales."
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "NH",
+    "value": "NH (New Hampshire)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "none",
+      "sideNotes": "none"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "NJ",
+    "value": "NJ (New Jersey)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "hitDate": "Nov 13 2025",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if prior-year sales tax collected exceeds $30,000"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "NM",
+    "value": "NM (New Mexico)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Monthly filing required if tax liability exceeds $200 per month"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "T",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "NY",
+    "value": "NY (New York)",
+    "agency": true,
+    "nexus": {
+      "amount": 500000,
+      "qty": 100,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Feb 04 2024",
+          "end": "Feb 03 2025"
+        },
+        {
+          "start": "Feb 04 2025",
+          "end": "Feb 03 2026"
+        },
+        {
+          "start": "Feb 04 2026",
+          "end": "Feb 03 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Monthly filing required if annual tax liability exceeds $2,400"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "NC",
+    "value": "NC (North Carolina)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Monthly filing required if monthly tax liability is consistently more than $100 but less than $20,000 per month"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "ND",
+    "value": "ND (North Dakota)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "OH",
+    "value": "OH (Ohio)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "OK",
+    "value": "OK (Oklahoma)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "OR",
+    "value": "OR (Oregon)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "none",
+      "sideNotes": "none"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "PA",
+    "value": "PA (Pennsylvania)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "RI",
+    "value": "RI (Rhode Island)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "SC",
+    "value": "SC (South Carolina)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "SD",
+    "value": "SD (South Dakota)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "TN",
+    "value": "TN (Tennessee)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "TX",
+    "value": "TX (Texas)",
+    "agency": true,
+    "nexus": {
+      "amount": 500000,
+      "qty": 0,
+      "hitDate": "May 01 2026",
+      "ranges": [
+        {
+          "start": "Feb 17 2024",
+          "end": "Feb 16 2025"
+        },
+        {
+          "start": "Feb 17 2025",
+          "end": "Feb 16 2026"
+        },
+        {
+          "start": "Feb 17 2026",
+          "end": "Feb 16 2027"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "quarterly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "UT",
+    "value": "UT (Utah)",
+    "agency": false,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "VT",
+    "value": "VT (Vermont)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "E",
+      "EUC-06130103-V1-00040000": "E",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "VA",
+    "value": "VA (Virginia)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  },
+  {
+    "key": "WA",
+    "value": "WA (Washington)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "WV",
+    "value": "WV (West Virginia)",
+    "agency": false,
+    "nexus": {
+      "amount": 0,
+      "qty": 0,
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "WI",
+    "value": "WI (Wisconsin)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 200,
+      "hitDate": "Aug 13 2024",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "T"
+    }
+  },
+  {
+    "key": "WY",
+    "value": "WY (Wyoming)",
+    "agency": true,
+    "nexus": {
+      "amount": 100000,
+      "qty": 0,
+      "hitDate": "Dec 12 2025",
+      "ranges": [
+        {
+          "start": "Jan 01 2024",
+          "end": "Dec 31 2024"
+        },
+        {
+          "start": "Jan 01 2025",
+          "end": "Dec 31 2025"
+        },
+        {
+          "start": "Jan 01 2026",
+          "end": "Dec 31 2026"
+        }
+      ]
+    },
+    "conditions": {
+      "frequency": "monthly",
+      "sideNotes": "Filing frequency assigned by the state based on prior activity"
+    },
+    "taxability": {
+      "EUC-06090102-V1-00040000": "E",
+      "EUC-06130102-V1-00040000": "T",
+      "EUC-06130103-V1-00040000": "T",
+      "EUC-13010203-V1-00100000": "E"
+    }
+  }
 ]

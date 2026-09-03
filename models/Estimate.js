@@ -22,7 +22,8 @@ const estimateSchema = new mongoose.Schema(
       quickbooksInvoiceId: { type: String, required: false },
       status: { type: String, required: false },
     },
-
+    customerLabelFileId: { type: String, required: false },
+    customerLabelFileName: { type: String, required: false },
     signedFile: {
       acceptedBy: {
         signature: { type: String, required: false },
@@ -60,7 +61,7 @@ const estimateSchema = new mongoose.Schema(
         shipped: { type: Number, required: false },
         sentOverNight: { type: Boolean, required: false },
         noExpirationDate: { type: Boolean, required: false },
-        designatedLots: [
+        sentLots: [
           {
             gtin: { type: String, required: false },
             countInStock: { type: Number, required: false },
@@ -97,17 +98,24 @@ const estimateSchema = new mongoose.Schema(
             },
           },
         ],
+        taxCodeRef: { type: String, required: false },
+        taxClassificationRef: {
+          value: { type: String, required: false },
+          name: { type: String, required: false },
+          code: { type: String, required: false },
+        },
         unitPrice: { type: Number, required: false },
         salePrice: { type: Number, required: false },
+        promoPrice: { type: Boolean, required: false },
+        promoPriceValue: { type: Number, required: false },
         minSalePrice: { type: Number, required: false },
         totalPrice: { type: Number, required: false },
         productSearchQuery: { type: String, required: false },
         quickBooksItemId: { type: String, required: false },
         quickBooksItemIdProduction: { type: String, required: false },
-        quickBooksQuantityOnHandProduction: { type: Number, required: false },
+        countInStock: { type: Number, required: false },
         heldStock: { type: Number, required: false },
         customerPrice: { type: Number, required: false },
-        countInStock: { type: Number, required: false },
         floatingStock: { type: Number, required: false },
         each: {
           countInStock: { type: Number, required: false },
@@ -116,10 +124,11 @@ const estimateSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -137,10 +146,11 @@ const estimateSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -158,10 +168,11 @@ const estimateSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -177,13 +188,20 @@ const estimateSchema = new mongoose.Schema(
     shippingMethod: { type: String, required: false },
     otherShippingBilling: { type: String, required: false },
     shippingBilling: { type: String, required: false },
+    shippingEstimateCost: { type: Number, required: false },
     customer: {
       _id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer",
         required: false,
       },
-
+      taxes: {
+        taxable: { type: Boolean, required: false, default: false },
+        taxExemptionReasonId: { type: String, required: false },
+        exemptionFileId: { type: String, required: false },
+        exemptionFileName: { type: String, required: false },
+        defaultTaxCodeRef: { type: String, required: false },
+      },
       needFactCheck: { type: Boolean, required: false, default: false },
       arFactCheck: {
         payablesInfo: { type: Boolean, required: false, default: false },
@@ -193,6 +211,12 @@ const estimateSchema = new mongoose.Schema(
           required: false,
           default: false,
         },
+        taxExemptionStatusRegistered: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+        idnStatusRegistered: { type: Boolean, required: false, default: false },
       },
       user: {
         userId: {
@@ -316,15 +340,25 @@ const estimateSchema = new mongoose.Schema(
     fileId: { type: String, required: false },
     fileName: { type: String, required: false },
     active: { type: Boolean, required: false, default: true },
-    linkedWpOrderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
-      required: false,
+    taxes: {
+      totalTaxAmount: { type: Number, required: false },
+      taxCodeRef: { type: String, required: false },
+      name: { type: String, required: false },
+      taxDetails: [
+        {
+          rateRef: { type: String, required: false },
+          name: { type: String, required: false },
+          percentageBased: { type: Number, required: false },
+          amount: { type: Number, required: false },
+          taxPercent: { type: Number, required: false },
+          netAmountTaxable: { type: Number, required: false },
+        },
+      ],
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Estimate =
