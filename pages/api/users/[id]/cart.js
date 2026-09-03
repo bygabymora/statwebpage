@@ -9,6 +9,10 @@ export default async function handler(req, res) {
   const token = await getToken({ req });
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
+  if (String(token._id) !== String(id)) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   await db.connect(true);
 
   const user = await WpUser.findById(id);
@@ -31,7 +35,8 @@ export default async function handler(req, res) {
 
       const index = user.cart.findIndex(
         (item) =>
-          item.productId === productId && item.typeOfPurchase === typeOfPurchase
+          item.productId === productId &&
+          item.typeOfPurchase === typeOfPurchase,
       );
 
       if (index >= 0) {
@@ -69,7 +74,8 @@ export default async function handler(req, res) {
 
       const item = user.cart.find(
         (item) =>
-          item.productId === productId && item.typeOfPurchase === typeOfPurchase
+          item.productId === productId &&
+          item.typeOfPurchase === typeOfPurchase,
       );
 
       if (!item) {
@@ -91,7 +97,8 @@ export default async function handler(req, res) {
 
       user.cart = user.cart.filter(
         (item) =>
-          item.productId !== productId || item.typeOfPurchase !== typeOfPurchase
+          item.productId !== productId ||
+          item.typeOfPurchase !== typeOfPurchase,
       );
 
       await user.save();

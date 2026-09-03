@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Cookies from "js-cookie";
 import { useModalContext } from "../context/ModalContext";
+import { determineOrderTaxStatus } from "../../utils/functions/salesTax";
 import axios from "axios";
 
 export default function PaymentMethod({
@@ -17,6 +18,16 @@ export default function PaymentMethod({
   const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const taxStatus = useMemo(
+    () =>
+      determineOrderTaxStatus({
+        orderItems: order?.orderItems,
+        shippingAddress: order?.shippingAddress,
+        customer,
+      }),
+    [order?.orderItems, order?.shippingAddress, customer],
+  );
 
   const handleInputChange = (field, value) => {
     if (field === "paymentMethod") {
@@ -135,6 +146,26 @@ export default function PaymentMethod({
         <h1 className='text-3xl font-bold text-center text-[#0e355e] mb-6'>
           Select a Payment Method
         </h1>
+        {taxStatus.pending && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+            <p className='font-semibold text-amber-900'>
+              Sales tax applies to this order in {taxStatus.state}.
+            </p>
+            <p className='text-amber-800 mt-1'>
+              Your order will be held until the tax is calculated. Payment will
+              be collected against the invoice with the final total
+              {(
+                order.paymentMethod === "Stripe" ||
+                order.paymentMethod === "PayPal"
+              ) ?
+                ", so no charge is made online at this moment"
+              : order.paymentMethod === "Pay By Wire" ?
+                ", so no payment should be made at this moment"
+              : ""}
+              .
+            </p>
+          </div>
+        )}
         <div className='mx-auto max-w-lg bg-white shadow-lg rounded-2xl p-6 my-5'>
           <div className='p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg flex flex-col md:justify-between'>
             <div className='grid grid-cols-1 bg-white p-2 rounded-md sm:grid-cols-2 gap-4 '>

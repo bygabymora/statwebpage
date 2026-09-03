@@ -1,36 +1,41 @@
-import { defineConfig } from "eslint/config";
 import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default defineConfig([{
-    extends: compat.extends("next/core-web-vitals", "eslint:recommended"),
-
+// eslint-config-next 16 already exports flat config; routing it through
+// FlatCompat's legacy validator throws on the plugin object's circular refs.
+export default [
+  {
+    ignores: [".next/**", "out/**", "build/**"],
+  },
+  js.configs.recommended,
+  ...nextCoreWebVitals,
+  {
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-            ...globals.serviceworker,
-            importScripts: "readonly",
-            workbox: "readonly",
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.serviceworker,
+        importScripts: "readonly",
+        workbox: "readonly",
+      },
     },
 
     rules: {
-        "no-console": ["warn", {
-            allow: ["warn", "error"],
-        }],
+      "no-console": [
+        "warn",
+        {
+          allow: ["warn", "error"],
+        },
+      ],
 
-        "react-hooks/exhaustive-deps": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
-}]);
+  },
+  {
+    files: ["**/*.test.js", "**/__tests__/**"],
+    languageOptions: {
+      globals: globals.jest,
+    },
+  },
+];

@@ -23,16 +23,35 @@ const handler = async (req, res) => {
     const updatedOrders = await Promise.all(
       orders.map(async (order) => {
         const updatedOrder = order.toObject(); // convert to plain JS object
-        const estimate = await Estimate.findOne({
-          linkedWpOrderId: order._id,
-        });
-        console.log("estimate", estimate);
+
+        let estimate =
+          (order.estimateId ?
+            await Estimate.findById(order.estimateId)
+          : null) || (await Estimate.findOne({ linkedWpOrderId: order._id }));
+
+        let invoice = null;
+        if (estimate) {
+          invoice =
+            (estimate.invoice?.invoiceId ?
+              await Invoice.findById(estimate.invoice.invoiceId)
+            : null) || (await Invoice.findOne({ estimate: estimate._id }));
+        }
+        // Invoice stores the order id as a string, unlike Estimate.
+        if (!invoice) {
+          invoice = await Invoice.findOne({
+            linkedWpOrderId: String(order._id),
+          });
+        }
+        if (invoice && !estimate && invoice.estimate) {
+          estimate = await Estimate.findById(invoice.estimate);
+        }
+
         if (estimate) {
           updatedOrder.estimate = estimate;
 
           if (estimate.customer?.user?.userId) {
             const accountOwner = await User.findById(
-              estimate.customer.user.userId
+              estimate.customer.user.userId,
             );
             if (accountOwner) {
               updatedOrder.accountOwner = {
@@ -42,17 +61,14 @@ const handler = async (req, res) => {
               };
             }
           }
+        }
 
-          if (estimate.invoice?.invoiceId) {
-            const invoice = await Invoice.findById(estimate.invoice.invoiceId);
-            if (invoice) {
-              updatedOrder.invoice = invoice;
-            }
-          }
+        if (invoice) {
+          updatedOrder.invoice = invoice;
         }
 
         return updatedOrder;
-      })
+      }),
     );
 
     res.send(updatedOrders);

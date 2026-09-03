@@ -150,23 +150,45 @@ export const messageManagement = (
               border-radius: 6px;
               margin-bottom: ;
             ">
-              ${
-                (
+              ${(() => {
+                const reasons = [];
+                if (order.tax?.pending) {
+                  reasons.push(
+                    `<li style="margin-bottom: 4px;"><strong>${
+                      order.tax?.state ?
+                        `${order.tax.state} sales tax`
+                      : "Sales tax"
+                    }</strong> will be added.</li>`,
+                  );
+                }
+                if (
                   order.paymentMethod === "Stripe" &&
-                  order.shippingPreferences.paymentMethod === "Bill Me"
-                ) ?
-                  `<div style="
+                  order.shippingPreferences?.paymentMethod === "Bill Me"
+                ) {
+                  reasons.push(
+                    `<li style="margin-bottom: 4px;"><strong>Shipping cost</strong> will be added (Bill Me).</li>`,
+                  );
+                }
+                if (reasons.length === 0) return "";
+
+                return `<div style="
                       background-color: #fff3cd;
+                      border-left: 4px solid #f0ad4e;
                       color: #856404;
                       padding: 12px;
                       border-radius: 4px;
                       margin-bottom: 20px;
                       font-size: 14px;
                     ">
-                      You selected the “Bill Me” option for Shipping Payment. You will receive an email when your order is ready to ship, including the shipment cost so you can complete payment, and we can ship it.
-                    </div>`
-                : ""
-              }
+                      <div style="font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                        Your total will change
+                      </div>
+                      <ul style="margin: 0 0 8px 0; padding-left: 18px;">${reasons.join(
+                        "",
+                      )}</ul>
+                      <div>No payment is taken now. We will email your final total.</div>
+                    </div>`;
+              })()}
       
               <table width="100%" style="border-collapse: collapse; font-size: 16px; color: #333;">
                 <tr>
@@ -179,6 +201,14 @@ export const messageManagement = (
                   <th align="left" style="padding: 8px 0; font-weight: 600;">Total</th>
                   <td align="right" style="padding: 8px 0;">$${
                     order.totalPrice
+                  }${
+                    (
+                      order.tax?.pending ||
+                      (order.paymentMethod === "Stripe" &&
+                        order.shippingPreferences?.paymentMethod === "Bill Me")
+                    ) ?
+                      ` <br><span style="font-size: 12px; color: #856404;">Final total pending</span>`
+                    : ""
                   }</td>
                 </tr>
                 <tr style="border-top: 1px solid #ddd;">

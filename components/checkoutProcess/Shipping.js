@@ -46,9 +46,6 @@ export default function Shipping({
     if (!shippingAddress.address?.trim()) {
       errors.address = "Address is required";
     }
-    if (!shippingAddress.suiteNumber?.trim()) {
-      errors.suiteNumber = "Suite number is required";
-    }
     if (!shippingAddress.city?.trim()) {
       errors.city = "City is required";
     }
@@ -578,7 +575,7 @@ export default function Shipping({
                   )}
                 </div>
                 <div>
-                  <label className='block font-medium'>Suite Number*</label>
+                  <label className='block font-medium'>Suite Number</label>
                   <input
                     autoComplete='off'
                     className='w-full contact__form-input'
@@ -594,11 +591,6 @@ export default function Shipping({
                     placeholder='Suite Number'
                     autoCapitalize='true'
                   />
-                  {validationErrors.suiteNumber && (
-                    <p className='text-xs text-red-500 mt-1'>
-                      {validationErrors.suiteNumber}
-                    </p>
-                  )}
                 </div>
                 <div className='col-span-1 sm:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4'>
                   <div>

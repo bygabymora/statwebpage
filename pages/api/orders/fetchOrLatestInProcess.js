@@ -4,6 +4,8 @@ import db from "../../../utils/db";
 import Order from "../../../models/Order";
 import WpUser from "../../../models/WpUser";
 import Product from "../../../models/Product";
+import Customer from "../../../models/Customer";
+import { determineOrderTaxStatus } from "../../../utils/functions/salesTax";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -20,12 +22,12 @@ export default async function handler(req, res) {
 
     // 2) Load or create the “In Process” order
     let order =
-      orderId && mongoose.Types.ObjectId.isValid(orderId)
-        ? await Order.findById(orderId)
-        : await Order.findOne({
-            "wpUser.userId": userId,
-            status: "In Process",
-          }).sort({ updatedAt: -1 });
+      orderId && mongoose.Types.ObjectId.isValid(orderId) ?
+        await Order.findById(orderId)
+      : await Order.findOne({
+          "wpUser.userId": userId,
+          status: "In Process",
+        }).sort({ updatedAt: -1 });
 
     if (!order) {
       const [last] = await Order.aggregate([
@@ -74,13 +76,10 @@ export default async function handler(req, res) {
       const prod = products.find((p) => p._id.toString() === item.productId);
 
       const info =
-        item.typeOfPurchase === "Each"
-          ? prod.each
-          : item.typeOfPurchase === "Box"
-          ? prod.box
-          : item.typeOfPurchase === "Clearance"
-          ? prod.clearance
-          : {};
+        item.typeOfPurchase === "Each" ? prod.each
+        : item.typeOfPurchase === "Box" ? prod.box
+        : item.typeOfPurchase === "Clearance" ? prod.clearance
+        : {};
 
       const available = info.countInStock || 0;
 
@@ -126,6 +125,8 @@ export default async function handler(req, res) {
         description: info.description ?? prod.description,
         price: info.wpPrice ?? info.price ?? prod.price,
         countInStock: info.countInStock ?? prod.countInStock,
+        taxable: prod.taxable !== false,
+        taxClassificationRef: prod.taxClassificationRef ?? {},
         updatedAt: prod.updatedAt,
       });
     }
@@ -140,6 +141,8 @@ export default async function handler(req, res) {
       price: it.price,
       wpPrice: it.wpPrice,
       unitPrice: it.unitPrice,
+      taxable: it.taxable,
+      taxClassificationRef: it.taxClassificationRef,
       totalPrice: Number(it.quantity) * Number(it.price),
     }));
 
@@ -152,6 +155,35 @@ export default async function handler(req, res) {
       return acc + Number(item.price) * Number(item.quantity) || 0;
     }, 0);
 
+    // 7d) Sales tax: only determine whether tax applies -- the amount comes
+    // from the invoice generated outside this app.
+    const customer =
+      wpUser.customerId ?
+        await Customer.findById(wpUser.customerId).select("taxable").lean()
+      : null;
+
+    const taxStatus = determineOrderTaxStatus({
+      orderItems: updatedCart,
+      shippingAddress: order.shippingAddress,
+      customer,
+    });
+
+    order.orderItems.forEach((item, index) => {
+      item.taxTreatment = taxStatus.items[index]?.taxTreatment;
+    });
+
+    order.tax = {
+      pending: taxStatus.pending,
+      state: taxStatus.state,
+      hasAgency: taxStatus.hasAgency,
+      customerTaxable: taxStatus.customerTaxable,
+      taxableItemCount: taxStatus.taxableItemCount,
+      unclassifiedItemCount: taxStatus.unclassifiedItemCount,
+      shippingTaxTreatment: taxStatus.shippingTaxTreatment,
+      determinedAt: new Date(),
+      resolvedAt: order.tax?.resolvedAt,
+    };
+
     order.status = "In Process";
 
     await order.save();
@@ -160,7 +192,7 @@ export default async function handler(req, res) {
 
     const responseOrder = {
       ...orderToSend._doc,
-      orderItems: updatedCart.map((it) => ({
+      orderItems: updatedCart.map((it, idx) => ({
         productId: it.productId,
         typeOfPurchase: it.typeOfPurchase,
         quantity: it.quantity,
@@ -181,6 +213,9 @@ export default async function handler(req, res) {
         minSalePrice: it.minSalePrice,
         countInStock: it.countInStock,
         description: it.description,
+        taxable: it.taxable,
+        taxClassificationRef: it.taxClassificationRef,
+        taxTreatment: taxStatus.items[idx]?.taxTreatment,
         updatedAt: it.updatedAt,
         status: "In Process",
       })),

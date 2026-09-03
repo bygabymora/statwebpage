@@ -41,18 +41,27 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
           cart: updatedUser.userData?.cart,
         }));
 
-        // Optional: If you want to reflect the new cart in the order immediately
-        const updatedOrderItems = updatedUser.userData?.cart || [];
-        const itemsPrice = updatedOrderItems.reduce(
-          (a, c) => a + c.quantity * c.price,
-          0,
-        );
-        setOrder((prev) => ({
-          ...prev,
-          orderItems: updatedOrderItems,
-          itemsPrice,
-          totalPrice: itemsPrice,
-        }));
+        // Filter the enriched orderItems instead of swapping in the raw cart,
+        // which lacks the product data (name, image, tax classification).
+        setOrder((prev) => {
+          const updatedOrderItems = (prev?.orderItems || []).filter(
+            (oItem) =>
+              !(
+                oItem.productId === productToRemove.productId &&
+                oItem.typeOfPurchase === productToRemove.typeOfPurchase
+              ),
+          );
+          const itemsPrice = updatedOrderItems.reduce(
+            (a, c) => a + c.quantity * c.price,
+            0,
+          );
+          return {
+            ...prev,
+            orderItems: updatedOrderItems,
+            itemsPrice,
+            totalPrice: itemsPrice,
+          };
+        });
       } catch (error) {
         console.error("Error removing item from cart:", error);
         showStatusMessage("error", "Failed to remove item from cart");

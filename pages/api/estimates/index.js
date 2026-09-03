@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import db from "../../../utils/db";
 import moment from "moment";
 import Estimate from "../../../models/Estimate";
+import Order from "../../../models/Order";
 import Product from "../../../models/Product";
 
 const handler = async (req, res) => {
@@ -26,7 +27,7 @@ const handler = async (req, res) => {
     const currentTime = new Date();
     const onHoldTime = currentTime;
     const timerEnd = new Date(
-      currentTime.getTime() + timePeriod * 60 * 60 * 1000
+      currentTime.getTime() + timePeriod * 60 * 60 * 1000,
     );
 
     const newEstimate = new Estimate({
@@ -40,6 +41,14 @@ const handler = async (req, res) => {
     });
 
     const savedEstimate = await newEstimate.save();
+
+    // Link from the order too, so the pair survives even if the estimate's own
+    // linkedWpOrderId is missing.
+    if (rest.linkedWpOrderId) {
+      await Order.findByIdAndUpdate(rest.linkedWpOrderId, {
+        estimateId: savedEstimate._id,
+      });
+    }
 
     if (Array.isArray(estimateItems)) {
       for (const item of estimateItems) {

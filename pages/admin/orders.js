@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useReducer, useCallback } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
+import { getInvoiceTaxTotal } from "../../utils/functions/salesTax";
 import {
   FaEye,
   FaCreditCard,
@@ -44,7 +45,7 @@ const fmt = (n) =>
 
 const orderTaxTotal = (order) => {
   const invoice = order?.invoice;
-  return invoice && invoice._id ? invoice.taxes?.totalTaxAmount || 0 : 0;
+  return invoice && invoice._id ? getInvoiceTaxTotal(invoice) : 0;
 };
 
 const orderGrandTotal = (order) => {
@@ -53,15 +54,15 @@ const orderGrandTotal = (order) => {
     return Number(order?.totalPrice || 0);
   }
   const shippingCost =
-    invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice"
-      ? invoice.shippingCost
-      : 0;
+    invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice" ?
+      invoice.shippingCost
+    : 0;
   return Number(
     (
       Number(invoice.itemsPrice || 0) +
       Number(shippingCost || 0) +
       Number(orderTaxTotal(order) || 0)
-    ).toFixed(2)
+    ).toFixed(2),
   );
 };
 
@@ -252,6 +253,11 @@ export default function AdminOrderScreen() {
                           <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
                             ${fmt(orderGrandTotal(order))}
                           </span>
+                          {order?.tax?.pending && !order?.invoice?._id && (
+                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800'>
+                              Sales tax pending
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

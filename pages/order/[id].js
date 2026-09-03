@@ -16,6 +16,12 @@ import { messageManagement } from "../../utils/alertSystem/customers/messageMana
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
+import {
+  getInvoiceTaxTotal,
+  getStateTaxProfile,
+  isItemTaxPending,
+  resolveShippingTaxTreatment,
+} from "../../utils/functions/salesTax";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
 const stripePromise = loadStripe(
@@ -169,7 +175,7 @@ function OrderScreen() {
     ) ?
       invoice.shippingCost
     : 0;
-  const invoiceTaxTotal = hasInvoice ? invoice.taxes?.totalTaxAmount || 0 : 0;
+  const invoiceTaxTotal = hasInvoice ? getInvoiceTaxTotal(invoice) : 0;
   const grandTotalWithTax = Number(
     (hasInvoice ?
       Number(itemsPrice || 0) +
@@ -194,6 +200,19 @@ function OrderScreen() {
     hasInvoice ?
       invoice.invoiceItems?.find((ii) => String(ii._id) === String(itemId))
     : null;
+
+  const isTaxPending = Boolean(order.tax?.pending) && !hasInvoice;
+
+  // Derived from the address rather than the stored flags so the labels stay
+  // right even if the order was saved under older tax rules.
+  const stateTaxProfile = getStateTaxProfile(shippingAddress?.state);
+  const customerTaxable = order.tax?.customerTaxable !== false;
+  const showItemTaxability =
+    !hasInvoice && Boolean(stateTaxProfile?.agency) && customerTaxable;
+  const isShippingTaxable =
+    showItemTaxability &&
+    isItemTaxPending(resolveShippingTaxTreatment(stateTaxProfile));
+  const taxStateLabel = stateTaxProfile?.key || order.tax?.state || "";
 
   //----Email----//
 
@@ -693,6 +712,20 @@ function OrderScreen() {
                       {shippingPreferences?.paymentMethod}
                     </div>
                   )}
+                  {isShippingTaxable ?
+                    <div className='mt-2'>
+                      <span className='inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                        Shipping is taxable in {taxStateLabel} — tax pending
+                        calculation
+                      </span>
+                    </div>
+                  : showItemTaxability ?
+                    <div className='mt-2'>
+                      <span className='inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                        Shipping is non taxable in {taxStateLabel}
+                      </span>
+                    </div>
+                  : null}
                   {invoice?.shippingTax?.taxed &&
                     invoice?.shippingTax?.taxAmount > 0 && (
                       <div className='mb-2 px-3 flex gap-4 text-xs text-gray-500'>
@@ -815,6 +848,14 @@ function OrderScreen() {
                                 <div className='text-gray-600 text-sm'>
                                   {item.name}
                                 </div>
+                                {showItemTaxability &&
+                                  (isItemTaxPending(item.taxTreatment) ?
+                                    <span className='mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                                      Taxable in {taxStateLabel}
+                                    </span>
+                                  : <span className='mt-1 inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                                      Non taxable
+                                    </span>)}
                               </div>
                             </div>
 
@@ -869,28 +910,33 @@ function OrderScreen() {
                           </div>
 
                           {/* Tax - full width under the whole item */}
-                          {item.invoiceItem?.taxed &&
-                            item.invoiceItem?.taxAmount > 0 && (
+                          {isTaxPending &&
+                            isItemTaxPending(item.taxTreatment) && (
                               <div className='mt-3 pt-2 border-t flex items-center justify-between md:justify-start md:gap-1'>
                                 <span className='font-semibold mr-1'>Tax:</span>
-                                <span className='text-gray-700'>
-                                  ${fmt(item.invoiceItem.taxAmount)}
-                                  {item.invoiceItem.taxDetails?.[0]?.name && (
-                                    <span className='text-xs text-gray-500'>
-                                      {" "}
-                                      ({item.invoiceItem.taxDetails[0].name}
-                                      {(
-                                        item.invoiceItem.taxDetails[0]
-                                          .taxPercent
-                                      ) ?
-                                        ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
-                                      : ""}
-                                      )
-                                    </span>
-                                  )}
+                                <span className='italic text-gray-600'>
+                                  Pending calculation
                                 </span>
                               </div>
                             )}
+                          {item.invoiceItem?.taxAmount > 0 && (
+                            <div className='mt-3 pt-2 border-t flex items-center justify-between md:justify-start md:gap-1'>
+                              <span className='font-semibold mr-1'>Tax:</span>
+                              <span className='text-gray-700'>
+                                ${fmt(item.invoiceItem.taxAmount)}
+                                {item.invoiceItem.taxDetails?.[0]?.name && (
+                                  <span className='text-xs text-gray-500'>
+                                    {" "}
+                                    ({item.invoiceItem.taxDetails[0].name}
+                                    {item.invoiceItem.taxDetails[0].taxPercent ?
+                                      ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
+                                    : ""}
+                                    )
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ))}
                   </div>
@@ -922,6 +968,17 @@ function OrderScreen() {
                     </div>
                   </li>
                 )}
+                {isTaxPending && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between text-gray-600'>
+                      <div>
+                        Sales Tax
+                        {order.tax?.state ? ` (${order.tax.state})` : ""}
+                      </div>
+                      <div className='italic'>Pending</div>
+                    </div>
+                  </li>
+                )}
                 {invoiceTaxTotal > 0 && (
                   <li>
                     <div className='mb-2 px-3 flex justify-between'>
@@ -948,6 +1005,15 @@ function OrderScreen() {
                     <div>${fmt(grandTotalWithTax)}</div>
                   </div>
                 </li>
+                {isTaxPending && (
+                  <li>
+                    <div className='mb-2 mx-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded text-sm text-amber-800'>
+                      This order is on hold while the applicable sales tax is
+                      calculated. The total above does not include tax yet —
+                      your invoice will show the final amount due.
+                    </div>
+                  </li>
+                )}
                 {balanceDiffersFromTotal && (
                   <li>
                     <div className='mb-2 px-3 flex justify-between font-semibold'>
@@ -959,11 +1025,12 @@ function OrderScreen() {
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
                     {(
-                      (paymentMethod === "Stripe" &&
+                      !isTaxPending &&
+                      ((paymentMethod === "Stripe" &&
                         shippingPreferences?.paymentMethod !== "Bill Me") ||
-                      (paymentMethod === "Stripe" &&
-                        shippingPreferences?.paymentMethod === "Bill Me" &&
-                        stripeReadyToPay())
+                        (paymentMethod === "Stripe" &&
+                          shippingPreferences?.paymentMethod === "Bill Me" &&
+                          stripeReadyToPay()))
                     ) ?
                       <div className='buttons-container text-center mx-auto'>
                         <button

@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from "react";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
 import formatDateWithMonthInLetters from "../utils/dateWithMonthInLetters";
+import { getInvoiceTaxTotal } from "../utils/functions/salesTax";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useModalContext } from "../components/context/ModalContext";
@@ -164,7 +165,7 @@ function OrderHistoryScreen() {
 
   const orderTaxTotal = (order) => {
     const invoice = order.invoice;
-    return invoice && invoice._id ? invoice.taxes?.totalTaxAmount || 0 : 0;
+    return invoice && invoice._id ? getInvoiceTaxTotal(invoice) : 0;
   };
 
   const orderGrandTotal = (order) => {
@@ -173,15 +174,15 @@ function OrderHistoryScreen() {
       return Number(order.totalPrice || 0);
     }
     const shippingCost =
-      invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice"
-        ? invoice.shippingCost
-        : 0;
+      invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice" ?
+        invoice.shippingCost
+      : 0;
     return Number(
       (
         Number(invoice.itemsPrice || 0) +
         Number(shippingCost || 0) +
         Number(orderTaxTotal(order) || 0)
-      ).toFixed(2)
+      ).toFixed(2),
     );
   };
 
@@ -339,6 +340,11 @@ function OrderHistoryScreen() {
                   {orderTaxTotal(order) > 0 && (
                     <div className='text-gray-500 text-xs'>
                       (incl. ${fmt(orderTaxTotal(order))} tax)
+                    </div>
+                  )}
+                  {order.tax?.pending && !order.invoice?._id && (
+                    <div className='text-amber-700 text-xs'>
+                      Sales tax pending
                     </div>
                   )}
                 </div>

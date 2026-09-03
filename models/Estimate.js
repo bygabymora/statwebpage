@@ -99,6 +99,7 @@ const estimateSchema = new mongoose.Schema(
           },
         ],
         taxCodeRef: { type: String, required: false },
+        taxable: { type: Boolean, required: false, default: true },
         taxClassificationRef: {
           value: { type: String, required: false },
           name: { type: String, required: false },
@@ -333,6 +334,14 @@ const estimateSchema = new mongoose.Schema(
     quickBooksEstimateSyncToken: { type: String, required: false },
     createdInQuickbooks: { type: Boolean, required: false, default: false },
     docNumber: { type: String, required: false },
+    // ObjectId here, but String on Invoice -- the two collections genuinely
+    // store this field differently, so the casts must not be unified.
+    linkedWpOrderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+      required: false,
+      index: true,
+    },
     paymentTerms: { type: String, required: false },
     onHoldTime: { type: Date, required: false },
     timerEnd: { type: Date, required: false, default: null },
