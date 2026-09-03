@@ -154,6 +154,44 @@ function OrderScreen() {
   } = order;
   const discountAmount = itemsPrice * 0.015;
 
+  const fmt = (n) =>
+    new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(n || 0);
+
+  const hasInvoice = Boolean(invoice && invoice._id);
+  const invoiceShippingCost =
+    hasInvoice &&
+    invoice.shippingCost > 0 &&
+    invoice.shippingBilling === "Bill Invoice"
+      ? invoice.shippingCost
+      : 0;
+  const invoiceTaxTotal = hasInvoice ? invoice.taxes?.totalTaxAmount || 0 : 0;
+  const grandTotalWithTax = Number(
+    (hasInvoice
+      ? Number(itemsPrice || 0) +
+        Number(invoiceShippingCost || 0) +
+        Number(invoiceTaxTotal || 0)
+      : Number(totalPrice || 0)
+    ).toFixed(2)
+  );
+  const amountDue = Number(
+    (hasInvoice && typeof invoice.balance === "number"
+      ? invoice.balance
+      : grandTotalWithTax
+    ).toFixed(2)
+  );
+  const balanceDiffersFromTotal =
+    hasInvoice &&
+    typeof invoice.balance === "number" &&
+    Math.abs(invoice.balance - grandTotalWithTax) > 0.01;
+
+  const findInvoiceItem = (itemId) =>
+    hasInvoice
+      ? invoice.invoiceItems?.find((ii) => String(ii._id) === String(itemId))
+      : null;
+
   //----Email----//
 
   useEffect(() => {
@@ -162,10 +200,10 @@ function OrderScreen() {
       setEmailName(shippingAddress.fullName);
       setEmailPhone(shippingAddress.phone);
       setEmailPaymentMethod(paymentMethod);
-      setEmailTotalOrder(totalPrice);
+      setEmailTotalOrder(amountDue);
       setSpecialNotes(shippingAddress.notes);
     }
-  }, [paymentMethod, order, totalPrice]);
+  }, [paymentMethod, order, amountDue]);
 
   const sendEmail = useCallback(() => {
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
@@ -254,7 +292,7 @@ function OrderScreen() {
         purchase_units: [
           {
             amount: {
-              value: totalPrice,
+              value: amountDue,
             },
           },
         ],
@@ -448,7 +486,7 @@ function OrderScreen() {
         }
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: Number(totalPrice),
+          totalPrice: amountDue,
           orderId: order._id,
         });
         setOrder((prev) => ({
@@ -743,7 +781,12 @@ function OrderScreen() {
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                 <div className='flex flex-col md:flex-row md:justify-between bg-white p-2 rounded-md gap-4 '>
                   <div className='w-full space-y-4'>
-                    {order.orderItems?.map((item) => (
+                    {order.orderItems
+                      ?.map((item) => ({
+                        ...item,
+                        invoiceItem: findInvoiceItem(item._id),
+                      }))
+                      .map((item) => (
                       <div
                         key={item._id}
                         className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
@@ -812,6 +855,30 @@ function OrderScreen() {
                               }).format(item.price * item.quantity)}
                             </span>
                           </div>
+
+                          {/* Tax */}
+                          {item.invoiceItem?.taxed &&
+                            item.invoiceItem?.taxAmount > 0 && (
+                              <div className='flex items-center'>
+                                <span className='font-semibold mr-1'>
+                                  Tax:
+                                </span>
+                                <span className='text-gray-700'>
+                                  ${fmt(item.invoiceItem.taxAmount)}
+                                  {item.invoiceItem.taxDetails?.[0]?.name && (
+                                    <span className='text-xs text-gray-500'>
+                                      {" "}
+                                      ({item.invoiceItem.taxDetails[0].name}
+                                      {item.invoiceItem.taxDetails[0]
+                                        .taxPercent
+                                        ? ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
+                                        : ""}
+                                      )
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            )}
                         </div>
                       </div>
                     ))}
@@ -836,34 +903,55 @@ function OrderScreen() {
                     </div>
                   </li>
                 ) : null}
-                {invoice &&
-                  invoice?.shippingCost > 0 &&
-                  invoice.shippingBilling === "Bill Invoice" && (
-                    <li>
-                      <div className='mb-2 px-3 flex justify-between'>
-                        <div>Shipping</div>
-                        <div>
-                          $
-                          {new Intl.NumberFormat("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(invoice?.shippingCost)}
+                {invoiceShippingCost > 0 && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between'>
+                      <div>Shipping</div>
+                      <div>${fmt(invoiceShippingCost)}</div>
+                    </div>
+                    {invoice?.shippingTax?.taxed &&
+                      invoice?.shippingTax?.taxAmount > 0 && (
+                        <div className='mb-2 px-3 flex justify-between text-xs text-gray-500'>
+                          <div>Shipping Tax</div>
+                          <div>${fmt(invoice.shippingTax.taxAmount)}</div>
                         </div>
+                      )}
+                  </li>
+                )}
+                {invoiceTaxTotal > 0 && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between'>
+                      <div>Sales Tax</div>
+                      <div>${fmt(invoiceTaxTotal)}</div>
+                    </div>
+                    {invoice?.taxes?.taxDetails?.map((detail) => (
+                      <div
+                        key={detail._id || detail.rateRef}
+                        className='mb-1 px-3 flex justify-between text-xs text-gray-500'
+                      >
+                        <div>
+                          {detail.name}
+                          {detail.taxPercent ? ` (${detail.taxPercent}%)` : ""}
+                        </div>
+                        <div>${fmt(detail.amount)}</div>
                       </div>
-                    </li>
-                  )}
+                    ))}
+                  </li>
+                )}
                 <li>
                   <div className='mb-2  px-3 flex justify-between'>
                     <div>Total</div>
-                    <div>
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(totalPrice)}
-                    </div>
+                    <div>${fmt(grandTotalWithTax)}</div>
                   </div>
                 </li>
+                {balanceDiffersFromTotal && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between font-semibold'>
+                      <div>Balance Due</div>
+                      <div>${fmt(amountDue)}</div>
+                    </div>
+                  </li>
+                )}
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
                     {(paymentMethod === "Stripe" &&
@@ -930,7 +1018,7 @@ function OrderScreen() {
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
-                          forceReRender={[totalPrice]}
+                          forceReRender={[amountDue]}
                         ></PayPalButtons>
                       )
                     ) : null}

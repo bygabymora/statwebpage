@@ -33,17 +33,56 @@ const customerSchema = new mongoose.Schema(
       country: { type: String, required: false },
       quickBooksAddressId: { type: String, required: false },
     },
-    idn: { type: String, required: false },
-    partnerIdn: { type: String, required: false },
-    gpo: { type: String, required: false },
+    idn: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "IdnGpo",
+        required: false,
+      },
+      name: { type: String, required: false },
+    },
+    partnerIdn: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "IdnGpo",
+        required: false,
+      },
+      name: { type: String, required: false },
+    },
+    gpo: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "IdnGpo",
+        required: false,
+      },
+      name: { type: String, required: false },
+    },
+    // Lets a buyer's other locations/facilities roll up to the account they
+    // primarily purchase through, mirroring IdnGpo's parentOrganizationId.
+    parentAccountId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+      required: false,
+    },
+    parentAccountName: { type: String, required: false },
+    // Denormalized so list/card views can tell whether an account has any
+    // linked child accounts without a query per row -- kept in sync whenever
+    // a customer's parentAccountId changes (see syncHasChildAccountsFlag).
+    hasChildAccounts: { type: Boolean, required: false, default: false },
     creditLimit: { type: Number, required: false },
     facilityType: [{ name: { type: String, required: false } }],
     leadStage: { type: String, required: false },
     mailChimpId: { type: String, required: false },
-    taxable: { type: Boolean, required: false, default: false },
     mailChimpUniqueEmailId: { type: String, required: false },
     opOutEmail: { type: Boolean, required: false, default: false },
     notes: { type: String, required: false },
+    accountNotes: [
+      {
+        value: { type: String, required: false },
+        createdAt: { type: Date, required: false },
+        updatedAt: { type: Date, required: false },
+      },
+    ],
     upsAccountNumber: { type: String, required: false },
     fedexAccountNumber: { type: String, required: false },
     billInvoice: { type: Boolean, required: false, default: false },
@@ -55,7 +94,19 @@ const customerSchema = new mongoose.Schema(
       payablesInfo: { type: Boolean, required: false, default: false },
       correctEmail: { type: Boolean, required: false, default: false },
       correctRemitToAddress: { type: Boolean, required: false, default: false },
+      taxExemptionStatusRegistered: {
+        type: Boolean,
+        required: false,
+        default: false,
+      },
+      idnStatusRegistered: { type: Boolean, required: false, default: false },
     },
+    exemptionFileId: { type: String, required: false },
+    exemptionFileName: { type: String, required: false },
+    taxable: { type: Boolean, required: false, default: true },
+    defaultTaxCodeRef: { type: String, required: false },
+    taxExemptionReasonId: { type: String, required: false },
+    exemptionFileExpirationDate: { type: Date, required: false },
     category: {
       name: { type: String, required: false },
       subcategory: [
@@ -77,6 +128,36 @@ const customerSchema = new mongoose.Schema(
       ],
       default: ["Monday", "Thursday"],
     },
+    followUpChat: {
+      messages: [
+        {
+          sender: {
+            userId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+              required: false,
+            },
+            name: { type: String, required: false },
+            userQuickBooksId: { type: String, required: false },
+          },
+
+          text: { type: String, required: false },
+          timestamp: { type: Date, required: false },
+        },
+      ],
+      readBy: [
+        {
+          userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+          },
+          name: { type: String, required: false },
+          userQuickBooksId: { type: String, required: false },
+        },
+      ],
+      dueDate: { type: Date, required: false },
+    },
     active: { type: Boolean, required: false, default: true },
     status: { type: String, required: false, default: "Normal" },
     phone: { type: String, required: false },
@@ -94,7 +175,6 @@ const customerSchema = new mongoose.Schema(
     purchaseExecutive: [
       {
         title: { type: String, required: false },
-        wpId: { type: String, required: false },
         role: { type: String, required: false },
         opOutEmail: { type: Boolean, required: false, default: false },
         name: { type: String, required: false },
@@ -123,6 +203,15 @@ const customerSchema = new mongoose.Schema(
           required: false,
           default: false,
         },
+        createdBy: {
+          userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+          },
+          name: { type: String, required: false },
+          userQuickBooksId: { type: String, required: false },
+        },
       },
     ],
     products: [
@@ -144,11 +233,6 @@ const customerSchema = new mongoose.Schema(
     ],
     wishlist: [
       {
-        wishListProductId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "WishListProduct",
-          required: false,
-        },
         productId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
@@ -225,6 +309,7 @@ const customerSchema = new mongoose.Schema(
           mobile: { type: String, required: false },
         },
         type: { type: String, required: false },
+        manuallyLogged: { type: Boolean, required: false, default: false },
         message: { type: String, required: false },
         notes: { type: String, required: false },
         date: { type: Date, required: false },
@@ -292,6 +377,93 @@ const customerSchema = new mongoose.Schema(
             unit: { type: String, required: false },
           },
         },
+        // Email thread fields (type === "EmailThread")
+        emailThreadId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "EmailThread",
+          required: false,
+        },
+        gmailThreadId: { type: String, required: false },
+        subject: { type: String, required: false },
+        snippet: { type: String, required: false },
+        participants: [{ type: String }],
+        messageCount: { type: Number, required: false, default: 0 },
+        readBy: [
+          {
+            userId: { type: mongoose.Schema.Types.ObjectId, required: false },
+            isUnread: { type: Boolean, required: false, default: false },
+            name: { type: String, required: false },
+            viewedAt: { type: Date, required: false },
+          },
+        ],
+      },
+    ],
+    specialProducts: [
+      {
+        _id: { type: String, required: false },
+        productId: { type: String, required: false },
+        productSearchQuery: { type: String, required: false },
+        name: { type: String, required: false },
+        manufacturer: { type: String, required: false },
+        typeOfPurchase: { type: String, required: false },
+        specialPrice: { type: Number, required: false },
+        each: {
+          price: { type: Number, required: false },
+          countInStock: { type: Number, required: false },
+          floatingStock: { type: Number, required: false },
+          quickBooksItemId: { type: String, required: false },
+          description: { type: String, required: false },
+          gtin: { type: String, required: false },
+          quickBooksItemIdProduction: { type: String, required: false },
+          customerPrice: { type: Number, required: false },
+          minSalePrice: { type: Number, required: false },
+          heldStock: { type: Number, required: false },
+        },
+        box: {
+          price: { type: Number, required: false },
+          countInStock: { type: Number, required: false },
+          floatingStock: { type: Number, required: false },
+          description: { type: String, required: false },
+          quickBooksItemId: { type: String, required: false },
+          gtin: { type: String, required: false },
+          quickBooksItemIdProduction: { type: String, required: false },
+          customerPrice: { type: Number, required: false },
+          minSalePrice: { type: Number, required: false },
+          heldStock: { type: Number, required: false },
+        },
+        loose: {
+          price: { type: Number, required: false },
+          countInStock: { type: Number, required: false },
+          floatingStock: { type: Number, required: false },
+          description: { type: String, required: false },
+          quickBooksItemId: { type: String, required: false },
+          gtin: { type: String, required: false },
+          quickBooksItemIdProduction: { type: String, required: false },
+          customerPrice: { type: Number, required: false },
+          minSalePrice: { type: Number, required: false },
+          heldStock: { type: Number, required: false },
+        },
+        createdAt: { type: Date, required: false },
+        updatedAt: { type: Date, required: false },
+      },
+    ],
+    // Pipeline/CRM tracking fields
+    pipelinePosition: { type: Number, required: false, default: 0 },
+    pipelineStageChangedAt: { type: Date, required: false },
+    pipelineHistory: [
+      {
+        fromStage: { type: String, required: false },
+        toStage: { type: String, required: false },
+        changedBy: {
+          userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+          },
+          name: { type: String, required: false },
+        },
+        changedAt: { type: Date, required: false, default: Date.now },
+        notes: { type: String, required: false },
       },
     ],
   },
@@ -300,6 +472,36 @@ const customerSchema = new mongoose.Schema(
   },
 );
 customerSchema.index({ companyName: "text", notes: "text", aka: "text" });
+customerSchema.index({ "user.userId": 1, leadStage: 1 }); // For lead stage follow-up queries
+customerSchema.index({ "user.userId": 1, leadStage: 1, pipelinePosition: 1 }); // For pipeline queries
+customerSchema.index({ status: 1 }); // For status filtering (Normal, Road Blocked, etc.)
+customerSchema.index({ "user.userId": 1, status: 1 }); // For user + status queries
+customerSchema.index({ "idn.id": 1 });
+customerSchema.index({ "partnerIdn.id": 1 });
+customerSchema.index({ "gpo.id": 1 });
+customerSchema.index({ parentAccountId: 1 });
+
+/**
+ * ATLAS SEARCH INDEX: "default"
+ * Configured in MongoDB Atlas for text search on:
+ * - companyName (my_ngram analyzer, 2-15 char edge grams, lowercase)
+ * - aka (my_ngram analyzer)
+ * - email (my_ngram analyzer)
+ * - finalName (my_ngram analyzer)
+ * - phone, mobile (my_ngram analyzer)
+ * - notes (my_ngram analyzer)
+ * - purchaseExecutive.name, purchaseExecutive.email (my_ngram analyzer)
+ *
+ * Use $search aggregation stage for case-insensitive text matching
+ * Example:
+ *   Customer.aggregate([
+ *     { $search: {
+ *       index: "default",
+ *       text: { query: "company name", path: "companyName" }
+ *     }}
+ *   ])
+ */
+
 const Customer =
   mongoose.models.Customer || mongoose.model("Customer", customerSchema);
 
@@ -326,6 +528,7 @@ const customerFields = [
   "createdInQuickbooks",
   "purchaseExecutive",
   "products",
+  "specialProducts",
   "createdAt",
   "updatedAt",
   "_id",

@@ -17,7 +17,41 @@ const invoiceSchema = new mongoose.Schema(
     },
 
     warning: { type: String, required: false },
-
+    linkedWpOrderId: { type: String, required: false },
+    commission: {
+      commissionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Commission",
+        required: false,
+      },
+      startDate: { type: Date, required: false },
+      endDate: { type: Date, required: false },
+      paid: { type: Boolean, default: false, required: false },
+      paidDate: { type: Date, required: false },
+      value: { type: Number, required: false },
+    },
+    commissions: [
+      {
+        commissionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Commission",
+          required: false,
+        },
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: false,
+        },
+        userName: { type: String, required: false },
+        startDate: { type: Date, required: false },
+        endDate: { type: Date, required: false },
+        paid: { type: Boolean, default: false, required: false },
+        paidDate: { type: Date, required: false },
+        value: { type: Number, required: false },
+      },
+    ],
+    customerLabelFileId: { type: String, required: false },
+    customerLabelFileName: { type: String, required: false },
     shippings: [
       {
         confirmationSent: { type: Boolean, default: false, required: false },
@@ -29,10 +63,13 @@ const invoiceSchema = new mongoose.Schema(
         shippingMethod: { type: String, required: false },
         sendingDate: { type: Date, required: false },
         deliveryEstimatedDate: { type: Date, required: false },
+        trackerDeliveryEstimatedDate: { type: Date, required: false },
         labelUrl: { type: String, required: false },
         labelId: { type: String, required: false },
         labelFile: { type: String, required: false },
         emailSent: { type: Boolean, default: false, required: false },
+        proofPhotoFileId: { type: String, required: false },
+        proofPhotoFileName: { type: String, required: false },
         parcels: [
           {
             easyPostId: { type: String, required: false },
@@ -40,6 +77,7 @@ const invoiceSchema = new mongoose.Schema(
             trackingNumber: { type: String, required: false },
             sendingDate: { type: Date, required: false },
             deliveryEstimatedDate: { type: Date, required: false },
+            trackerDeliveryEstimatedDate: { type: Date, required: false },
             deliveryDate: { type: Date, required: false },
             trackerId: { type: String, required: false },
             trackerStatus: { type: String, required: false },
@@ -125,7 +163,7 @@ const invoiceSchema = new mongoose.Schema(
                 ref: "Product",
                 required: false,
               },
-              designatedLots: [
+              sentLots: [
                 {
                   gtin: { type: String, required: false },
                   quantity: { type: Number, required: false },
@@ -140,51 +178,27 @@ const invoiceSchema = new mongoose.Schema(
     ],
     lastSentDate: { type: Date, required: false },
     shippingCost: { type: Number, required: false },
+    shippingTax: {
+      taxed: { type: Boolean, required: false },
+      taxAmount: { type: Number, required: false },
+      taxDetails: [
+        {
+          rateRef: { type: String, required: false },
+          name: { type: String, required: false },
+          percentageBased: { type: Boolean, required: false },
+          amount: { type: Number, required: false },
+          taxPercent: { type: Number, required: false },
+        },
+      ],
+    },
+
+    signature: { type: String, required: false },
+    signatureDate: { type: Date, required: false },
     signedFile: {
-      acceptedBy: {
-        signature: { type: String, required: false },
-        signer: { type: String, required: false },
-        signatureDate: { type: Date, required: false },
-        ip: { type: String, required: false },
-      },
-      approvedBy: {
-        signature: { type: String, required: false },
-        signer: { type: String, required: false },
-        signatureDate: { type: Date, required: false },
-        ip: { type: String, required: false },
-      },
+      acceptedBy: { type: String, required: false },
       fileId: { type: String, required: false },
       fileName: { type: String, required: false },
     },
-    scannedBulks: [
-      {
-        linkedShipment: { type: String, required: false },
-        scannedItems: [
-          {
-            noExpirationDate: {
-              type: Boolean,
-              default: false,
-              required: false,
-            },
-            gtin: { type: String, required: false },
-            name: { type: String, required: false },
-            quantity: { type: Number, required: false },
-            quantityToScan: { type: Number, required: false },
-            typeOfPurchase: { type: String, required: false },
-            manufacturer: { type: String, required: false },
-            lot: { type: String, required: false },
-            expirationDate: { type: Date, required: false },
-            eachCount: { type: Number, default: 0, required: false },
-            registeredOnInventory: { type: Boolean, required: false },
-            productId: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "Product",
-              required: false,
-            },
-          },
-        ],
-      },
-    ],
 
     invoiceItems: [
       {
@@ -204,9 +218,12 @@ const invoiceSchema = new mongoose.Schema(
         baseCost: { type: Number, required: false },
         onThisScan: { type: Number, required: false },
         shipped: { type: Number, required: false },
+        shippedFinal: { type: Number, required: false },
         sentOverNight: { type: Boolean, required: false },
         noExpirationDate: { type: Boolean, required: false },
-        designatedLots: [
+        promoPrice: { type: Boolean, required: false },
+        promoPriceValue: { type: Number, required: false },
+        sentLots: [
           {
             gtin: { type: String, required: false },
             countInStock: { type: Number, required: false },
@@ -215,6 +232,18 @@ const invoiceSchema = new mongoose.Schema(
             lot: { type: String, required: false },
             purchasePrice: { type: Number, required: false },
             heldStock: { type: Number, required: false },
+            qualityflag: { type: Boolean, required: false },
+            qualityflagDetails: {
+              description: { type: String, required: false },
+              severity: { type: String, required: false },
+              type: { type: String, required: false },
+              imageIds: [{ type: String, required: false }],
+              sellingMinSalePrice: {
+                type: Number,
+                required: false,
+                min: 0,
+              },
+            },
             headquarter: {
               _id: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -225,6 +254,7 @@ const invoiceSchema = new mongoose.Schema(
             },
           },
         ],
+
         lots: [
           {
             gtin: { type: String, required: false },
@@ -243,6 +273,23 @@ const invoiceSchema = new mongoose.Schema(
             },
           },
         ],
+        taxCodeRef: { type: String, required: false },
+        taxClassificationRef: {
+          value: { type: String, required: false },
+          name: { type: String, required: false },
+          code: { type: String, required: false },
+        },
+        taxDetails: [
+          {
+            rateRef: { type: String, required: false },
+            name: { type: String, required: false },
+            percentageBased: { type: Boolean, required: false },
+            amount: { type: Number, required: false },
+            taxPercent: { type: Number, required: false },
+          },
+        ],
+        taxAmount: { type: Number, required: false },
+        taxed: { type: Boolean, required: false },
         unitPrice: { type: Number, required: false },
         salePrice: { type: Number, required: false },
         minSalePrice: { type: Number, required: false },
@@ -250,10 +297,9 @@ const invoiceSchema = new mongoose.Schema(
         productSearchQuery: { type: String, required: false },
         quickBooksItemId: { type: String, required: false },
         quickBooksItemIdProduction: { type: String, required: false },
-        quickBooksQuantityOnHandProduction: { type: Number, required: false },
+        countInStock: { type: Number, required: false },
         heldStock: { type: Number, required: false },
         customerPrice: { type: Number, required: false },
-        countInStock: { type: Number, required: false },
         floatingStock: { type: Number, required: false },
         each: {
           countInStock: { type: Number, required: false },
@@ -262,10 +308,11 @@ const invoiceSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -283,10 +330,11 @@ const invoiceSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -304,10 +352,11 @@ const invoiceSchema = new mongoose.Schema(
           quickBooksItemIdProduction: { type: String, required: false },
           description: { type: String, required: false },
           gtin: { type: String, required: false },
-          quickBooksQuantityOnHandProduction: { type: Number, required: false },
           customerPrice: { type: Number, required: false },
           heldStock: { type: Number, required: false },
           minSalePrice: { type: Number, required: false },
+          promoPrice: { type: Number, required: false },
+          promoPriceValue: { type: Number, required: false },
           lots: [
             {
               countInStock: { type: Number, required: false },
@@ -317,6 +366,11 @@ const invoiceSchema = new mongoose.Schema(
               heldStock: { type: Number, required: false },
             },
           ],
+        },
+        commission: {
+          grossProffitOnItem: { type: Number, required: false },
+          commissionRate: { type: Number, required: false },
+          commissionValue: { type: Number, required: false },
         },
       },
     ],
@@ -329,7 +383,13 @@ const invoiceSchema = new mongoose.Schema(
         ref: "Customer",
         required: false,
       },
-
+      taxes: {
+        taxable: { type: Boolean, required: false, default: true },
+        taxExemptionReasonId: { type: String, required: false },
+        exemptionFileId: { type: String, required: false },
+        exemptionFileName: { type: String, required: false },
+        defaultTaxCodeRef: { type: String, required: false },
+      },
       needFactCheck: { type: Boolean, required: false, default: false },
       arFactCheck: {
         payablesInfo: { type: Boolean, required: false, default: false },
@@ -339,6 +399,12 @@ const invoiceSchema = new mongoose.Schema(
           required: false,
           default: false,
         },
+        taxExemptionStatusRegistered: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+        idnStatusRegistered: { type: Boolean, required: false, default: false },
       },
       user: {
         userId: {
@@ -411,6 +477,13 @@ const invoiceSchema = new mongoose.Schema(
         },
       ],
     },
+    payments: [
+      {
+        paymentIdProduction: { type: String, required: true, unique: false }, // QBO Payment ID
+        paymentDate: { type: Date, required: true }, // actual date of that payment
+        paymentAmount: { type: Number, required: true }, // how much was paid in that transaction
+      },
+    ],
     approved: { type: Boolean, required: false },
     status: { type: String, required: false },
     hasBeenApproved: { type: Boolean, required: false },
@@ -428,6 +501,12 @@ const invoiceSchema = new mongoose.Schema(
     amount: { type: Number, required: false },
     discount: { type: Number, required: false },
     subtotal: { type: Number, required: false },
+    otherFees: [
+      {
+        name: { type: String, required: false },
+        amount: { type: Number, required: false },
+      },
+    ],
     quickBooksInvoiceId: { type: String, required: false },
     quickBooksInvoiceSyncToken: { type: String, required: false },
     createdInQuickbooks: { type: Boolean, required: false, default: false },
@@ -446,11 +525,12 @@ const invoiceSchema = new mongoose.Schema(
     paymentMethod: { type: String, required: false },
     dueDate: { type: Date, required: false },
     paymentDate: { type: Date, required: false },
+    paymentsLastSynced: { type: Date, required: false }, // Track when payments were last synced from QB
     fileId: { type: String, required: false },
     fileName: { type: String, required: false },
     active: { type: Boolean, required: false, default: false },
     balance: { type: Number, required: false },
-    viewStatus: { type: String, required: false },
+    viewStatus: { type: String, required: false, default: "Unknown" }, // Unknown, Sent, Viewed, Paid, Overdue
     chat: {
       messages: [
         {
@@ -481,13 +561,72 @@ const invoiceSchema = new mongoose.Schema(
       ],
       dueDate: { type: Date, required: false },
     },
+    taxes: {
+      totalTaxAmount: { type: Number, required: false },
+      taxCodeRef: { type: String, required: false },
+      name: { type: String, required: false },
+      taxDetails: [
+        {
+          rateRef: { type: String, required: false },
+          name: { type: String, required: false },
+          percentageBased: { type: Boolean, required: false },
+          amount: { type: Number, required: false },
+          taxPercent: { type: Number, required: false },
+          netAmountTaxable: { type: Number, required: false },
+        },
+      ],
+      filed: { type: Boolean, required: false, default: false },
+      filingDate: { type: Date, required: false },
+    },
+    totalAfterTax: { type: Number, required: false },
   },
   {
     timestamps: true,
-  }
+  },
 );
+
+// CRITICAL INDEX: Optimize productsBought API query
+// Compound index for customer lookups sorted by date
+invoiceSchema.index({ "customer._id": 1, createdAt: -1 });
+
+// Additional indexes for common queries
+invoiceSchema.index({ quickBooksInvoiceId: 1 });
+invoiceSchema.index({ "user.userId": 1, createdAt: -1 });
+invoiceSchema.index({ docNumber: 1 });
+
+// Index for lastPurchasedPrices query (customer + balance + products)
+invoiceSchema.index({
+  "customer._id": 1,
+  balance: 1,
+  "invoiceItems.productId": 1,
+});
+
+// Index for delinquent invoices query (customer + status lookups)
+// Enables efficient filtering on status field without regex
+invoiceSchema.index({ "customer._id": 1, status: 1 });
+
+/**
+ * ATLAS SEARCH INDEX: "default"
+ * Configured in MongoDB Atlas for text search on:
+ * - docNumber (default_ngram analyzer, 2-20 char edge grams, lowercase)
+ * - poNumber (default_ngram analyzer)
+ * - customer.companyName (default_ngram analyzer)
+ * - customer.user.name (default_ngram analyzer)
+ * - user.name (default_ngram analyzer)
+ * - invoiceItems.name, invoiceItems.manufacturer (default_ngram analyzer)
+ *
+ * Use $search aggregation stage for case-insensitive text matching
+ * Example:
+ *   Invoice.aggregate([
+ *     { $search: {
+ *       index: "default",
+ *       text: { query: "INV-123", path: "docNumber" }
+ *     }}
+ *   ])
+ */
+
 const Invoice =
-  mongoose.models.Invoice || mongoose.model("Invoice", invoiceSchema);
+  mongoose.models?.Invoice || mongoose.model("Invoice", invoiceSchema);
 
 const invoiceFields = [
   "user",
@@ -509,6 +648,7 @@ const invoiceFields = [
   "createdAt",
   "updatedAt",
   "_id",
+  "totalAfterTax",
 ];
 
 export { Invoice, invoiceFields };
