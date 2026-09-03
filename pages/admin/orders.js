@@ -36,6 +36,35 @@ const formatYMD = (val) => {
   }
 };
 
+const fmt = (n) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n || 0);
+
+const orderTaxTotal = (order) => {
+  const invoice = order?.invoice;
+  return invoice && invoice._id ? invoice.taxes?.totalTaxAmount || 0 : 0;
+};
+
+const orderGrandTotal = (order) => {
+  const invoice = order?.invoice;
+  if (!invoice || !invoice._id) {
+    return Number(order?.totalPrice || 0);
+  }
+  const shippingCost =
+    invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice"
+      ? invoice.shippingCost
+      : 0;
+  return Number(
+    (
+      Number(invoice.itemsPrice || 0) +
+      Number(shippingCost || 0) +
+      Number(orderTaxTotal(order) || 0)
+    ).toFixed(2)
+  );
+};
+
 const paymentAmountStatus = (invoice) => {
   if (!invoice) return "Not Paid";
   let status = "";
@@ -221,11 +250,7 @@ export default function AdminOrderScreen() {
                             {createdAt || "No Date"}
                           </span>
                           <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
-                            $
-                            {new Intl.NumberFormat("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).format(order?.totalPrice ?? 0)}
+                            ${fmt(orderGrandTotal(order))}
                           </span>
                         </div>
                       </div>
@@ -388,12 +413,13 @@ export default function AdminOrderScreen() {
                           </div>
                           <div className='col-span-1'>
                             <div className='font-semibold text-xs sm:text-xs lg:text-sm text-gray-900'>
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(order?.totalPrice ?? 0)}
+                              ${fmt(orderGrandTotal(order))}
                             </div>
+                            {orderTaxTotal(order) > 0 && (
+                              <div className='text-xs text-gray-500'>
+                                (incl. ${fmt(orderTaxTotal(order))} tax)
+                              </div>
+                            )}
                           </div>
                           <div className='col-span-2'>
                             <div className='text-xs sm:text-xs lg:text-sm'>
