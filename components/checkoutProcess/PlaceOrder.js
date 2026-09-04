@@ -82,18 +82,19 @@ export default function PlaceOrder({
     [itemsPrice, discountAmount],
   );
 
-  // Recomputed here rather than read off order.tax so the shipping state the
-  // user just picked is reflected without waiting for a refetch.
-  const taxStatus = useMemo(
-    () =>
-      determineOrderTaxStatus({
-        orderItems: order?.orderItems,
-        shippingAddress: order?.shippingAddress,
-        customer,
-      }),
-    [order?.orderItems, order?.shippingAddress, customer],
-  );
+  // Recomputed on every render (rather than read off order.tax) so the
+  // shipping state the user just picked is reflected without waiting for a
+  // refetch. Cheap enough over an order's item list that memoizing isn't
+  // worth it.
+  const taxStatus = determineOrderTaxStatus({
+    orderItems: order?.orderItems,
+    shippingAddress: order?.shippingAddress,
+    customer,
+  });
   const isTaxPending = taxStatus.pending;
+  const hasExemptionFileOnFile = Boolean(
+    customer?.exemptionFileId && customer?.exemptionFileName,
+  );
   const isShippingBillMe =
     order?.paymentMethod === "Stripe" &&
     order?.shippingPreferences?.paymentMethod === "Bill Me";
@@ -507,6 +508,14 @@ export default function PlaceOrder({
       <h1 className='mb-6 text-2xl font-bold text-[#0e355e] text-center'>
         Confirm Your Order
       </h1>
+
+      <div className='mx-auto max-w-2xl p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+        <p className='font-semibold text-amber-900'>
+          This order includes items taxable in {taxStatus.state}.
+        </p>
+        <p className='text-amber-800 mt-1'></p>
+      </div>
+
       {order?.orderItems?.length === 0 ?
         <div className='text-center text-gray-600 text-lg my-5'>
           Your cart is empty.{" "}
@@ -919,7 +928,7 @@ export default function PlaceOrder({
                   <div className='w-full space-y-4'>
                     {order.orderItems?.map((item, index) => (
                       <div
-                        key={item._id}
+                        key={item._id || `${item.productId}-${index}`}
                         className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
                       >
                         {/* Product */}
@@ -1130,6 +1139,17 @@ export default function PlaceOrder({
                           </li>
                         )}
                       </ul>
+                      <hr className='p-2' />
+                      {isTaxPending && !hasExemptionFileOnFile && (
+                        <p>
+                          If your organization is tax-exempt,once your order is
+                          confirmed, you can upload your exemption certificate
+                          from the order confirmation page, and our accounting
+                          team will review it and update your account.
+                        </p>
+                      )}
+                      <hr className='p-2' />
+
                       <p className='mt-1'>
                         No payment is taken now. We&apos;ll email your final
                         total.

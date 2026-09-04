@@ -301,7 +301,7 @@
   {
     "key": "FL",
     "value": "FL (Florida)",
-    "agency": true,
+    "agency": false,
     "nexus": {
       "hitDate": "Jan 01 2024",
       "amount": 0,
@@ -1064,7 +1064,7 @@
   {
     "key": "NY",
     "value": "NY (New York)",
-    "agency": true,
+    "agency": false,
     "nexus": {
       "amount": 500000,
       "qty": 100,

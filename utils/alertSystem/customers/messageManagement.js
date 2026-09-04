@@ -295,6 +295,28 @@ export const messageManagement = (
           `,
       };
       break;
+    case "Exemption File Uploaded":
+      emailMessage = {
+        ...emailMessage,
+        subject: `Tax Exemption Certificate Uploaded – ${item?.companyName || "Customer"}`,
+        p1: `<div style="font-weight: bold; font-size: 20px; color: #144e8b;">
+                 A customer has uploaded a tax exemption certificate.
+               </div>`,
+        p2: `<div style="font-weight: light; font-size: 16px; color: #333333; line-height: 1.6;">
+                 <strong>Company:</strong> ${item?.companyName || "N/A"}<br>
+                 <strong>Order #:</strong> ${item?.orderDocNumber || "N/A"}<br>
+                 <strong>Uploaded By:</strong> ${item?.uploadedByName || "N/A"} (${item?.uploadedByEmail || "N/A"})<br>
+                 <strong>File Name:</strong> ${item?.fileName || "N/A"}
+               </div>
+               <div style="font-weight: light; font-size: 15px; color: #333333; margin-top: 15px;">
+                 The certificate is attached to this email for review. Please verify the exemption and update the customer's taxability status accordingly.
+               </div>`,
+        p3: `<div style="font-weight: light; font-size: 14px; color: #666666;">
+                 This order is currently on hold pending sales tax determination. Updating the customer's tax status will allow it to proceed.
+               </div>`,
+      };
+      break;
+
     case "Registration approved":
       emailMessage = {
         ...emailMessage,

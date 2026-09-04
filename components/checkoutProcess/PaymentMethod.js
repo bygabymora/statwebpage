@@ -29,6 +29,18 @@ export default function PaymentMethod({
     [order?.orderItems, order?.shippingAddress, customer],
   );
 
+  // Would otherwise be taxable in this state, but the customer's exemption
+  // is suppressing it -- without this, "no warning" looks identical to
+  // "tax wasn't determined" and is easy to mistake for a bug.
+  const isExemptFromStateTax =
+    !taxStatus.pending && taxStatus.hasAgency && !taxStatus.customerTaxable;
+  const exemptionExpired =
+    customer?.exemptionFileExpirationDate &&
+    new Date(customer.exemptionFileExpirationDate) < new Date();
+  const hasExemptionFileOnFile = Boolean(
+    customer?.exemptionFileId && customer?.exemptionFileName,
+  );
+
   const handleInputChange = (field, value) => {
     if (field === "paymentMethod") {
       setSelectedMethod(value);
@@ -163,6 +175,32 @@ export default function PaymentMethod({
                 ", so no payment should be made at this moment"
               : ""}
               .
+            </p>
+          </div>
+        )}
+        {taxStatus.pending && !hasExemptionFileOnFile && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+            <p className='font-semibold text-amber-900'>Are you tax-exempt?</p>
+            <p className='text-amber-800 mt-1'>
+              Once your order is confirmed, you can upload your exemption
+              certificate from the order confirmation page, and our accounting
+              team will review it and update your account.
+            </p>
+          </div>
+        )}
+        {isExemptFromStateTax && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-blue-50 border-l-4 border-blue-500 rounded-lg'>
+            <p className='font-semibold text-blue-900'>
+              No sales tax is being charged on this order.
+            </p>
+            <p className='text-blue-800 mt-1'>
+              This account is on file as tax-exempt in {taxStatus.state}
+              {customer?.exemptionFileName ?
+                ` (certificate: ${customer.exemptionFileName})`
+              : ""}
+              .
+              {exemptionExpired &&
+                " This exemption certificate is past its expiration date — please confirm it's still valid before this order ships."}
             </p>
           </div>
         )}

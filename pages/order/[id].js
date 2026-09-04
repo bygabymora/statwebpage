@@ -23,6 +23,7 @@ import {
   resolveShippingTaxTreatment,
 } from "../../utils/functions/salesTax";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
+import ExemptionFileUploader from "../../components/orders/ExemptionFileUploader";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
@@ -77,17 +78,17 @@ function OrderScreen() {
   const orderId = query.id;
   const [showShippingId, setShowShippingId] = useState(null);
   const [message] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const { showStatusMessage, startLoading, stopLoading } = useModalContext();
-  const [email, setEmail] = useState("");
-  const [emailName, setEmailName] = useState("");
+  const {
+    showStatusMessage,
+    startLoading,
+    stopLoading,
+    customer,
+    setCustomer,
+    user,
+  } = useModalContext();
   const [estimate, setEstimate] = useState({});
   const [invoice, setInvoice] = useState({});
   const [accountOwner, setAccountOwner] = useState({});
-  const [emailPhone, setEmailPhone] = useState("");
-  const [emailTotalOrder, setEmailTotalOrder] = useState("");
-  const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
 
   const [{ loading, error, successPay, loadingPay, successDeliver }, dispatch] =
     useReducer(reducer, {
@@ -122,6 +123,7 @@ function OrderScreen() {
 
   useEffect(() => {
     if (!order._id || successPay || successDeliver || order._id !== orderId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- fetching the order on mount/id change, not derived state
       fetchOrder();
     }
 
@@ -203,6 +205,15 @@ function OrderScreen() {
 
   const isTaxPending = Boolean(order.tax?.pending) && !hasInvoice;
 
+  // Whether this order was ever subject to sales tax and the customer has
+  // not yet supplied a certificate -- stays true after invoicing too, since
+  // accounting may still credit the tax back once the exemption is verified.
+  const orderWasTaxable = Boolean(order.tax?.pending);
+  const hasExemptionFileOnFile = Boolean(
+    customer?.exemptionFileId && customer?.exemptionFileName,
+  );
+  const showExemptionUploader = orderWasTaxable && !hasExemptionFileOnFile;
+
   // Derived from the address rather than the stored flags so the labels stay
   // right even if the order was saved under older tax rules.
   const stateTaxProfile = getStateTaxProfile(shippingAddress?.state);
@@ -214,20 +225,14 @@ function OrderScreen() {
     isItemTaxPending(resolveShippingTaxTreatment(stateTaxProfile));
   const taxStateLabel = stateTaxProfile?.key || order.tax?.state || "";
 
-  //----Email----//
-
-  useEffect(() => {
-    if (order && order.shippingAddress) {
-      setEmail(shippingAddress.email);
-      setEmailName(shippingAddress.fullName);
-      setEmailPhone(shippingAddress.phone);
-      setEmailPaymentMethod(paymentMethod);
-      setEmailTotalOrder(amountDue);
-      setSpecialNotes(shippingAddress.notes);
-    }
-  }, [paymentMethod, order, amountDue]);
-
   const sendEmail = useCallback(() => {
+    const emailName = shippingAddress?.fullName;
+    const email = shippingAddress?.email;
+    const emailPhone = shippingAddress?.phone;
+    const emailPaymentMethod = paymentMethod;
+    const emailTotalOrder = amountDue;
+    const specialNotes = shippingAddress?.notes;
+
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage(
         "error",
@@ -258,16 +263,12 @@ function OrderScreen() {
 
     handleSendEmails(emailmessage, contactToEmail);
   }, [
-    emailName,
-    email,
-    emailPhone,
-    emailTotalOrder,
-    emailPaymentMethod,
-    specialNotes,
+    shippingAddress,
+    paymentMethod,
+    amountDue,
     orderItems,
     message,
     showStatusMessage,
-    handleSendEmails,
   ]);
 
   const handleCheckout = async () => {
@@ -440,24 +441,15 @@ function OrderScreen() {
     handlePayment();
   };
 
-  const dueDateHandler = (terms) => {
-    const date =
-      invoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
-    const daysToAdd = parseInt(terms.split(" ")[1]);
-    console.log("daysToAdd", daysToAdd);
-    date.setDate(date.getDate() + daysToAdd);
-    return date;
-  };
-  useEffect(() => {
+  const dueDate = (() => {
+    const baseDate =
+      hasInvoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
     if (order.defaultTerm && order.paymentMethod === "PO Number") {
-      const date = dueDateHandler(order.defaultTerm);
-      setDueDate(date);
-    } else {
-      const date =
-        invoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
-      setDueDate(date);
+      const daysToAdd = parseInt(order.defaultTerm.split(" ")[1], 10);
+      baseDate.setDate(baseDate.getDate() + daysToAdd);
     }
-  }, [order.defaultTerm, order.paymentMethod]);
+    return baseDate;
+  })();
 
   const paymentAmountStatus = () => {
     console.log("Calculating payment status...", invoice, order);
@@ -653,6 +645,15 @@ function OrderScreen() {
         </div>
       </div>
 
+      {showExemptionUploader && (
+        <ExemptionFileUploader
+          customer={customer}
+          setCustomer={setCustomer}
+          order={order}
+          user={user}
+        />
+      )}
+
       {/* Loading and error messages */}
       {loading ?
         <div className='alert-info'>Loading...</div>
@@ -821,9 +822,9 @@ function OrderScreen() {
                         ...item,
                         invoiceItem: findInvoiceItem(item._id),
                       }))
-                      .map((item) => (
+                      .map((item, index) => (
                         <div
-                          key={item._id}
+                          key={item._id || `${item.productId}-${index}`}
                           className='border rounded-lg p-4 shadow-sm'
                         >
                           <div className='flex flex-col md:flex-row md:items-center'>
