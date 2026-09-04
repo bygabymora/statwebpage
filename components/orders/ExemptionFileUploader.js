@@ -13,10 +13,19 @@ const fileToBase64 = (file) =>
     reader.readAsDataURL(file);
   });
 
-const ExemptionFileUploader = ({ customer, setCustomer, order, user }) => {
+const ExemptionFileUploader = ({
+  customer,
+  setCustomer,
+  order,
+  user,
+  allowReupload = false,
+}) => {
   const { showStatusMessage } = useModalContext();
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const hasCertificateOnFile = Boolean(customer?.exemptionFileName);
+  const isTaxExempt = customer?.taxable === false;
+  const showUploadForm = allowReupload || !hasCertificateOnFile;
 
   const handleFileChange = (e) => {
     e.preventDefault();
@@ -117,21 +126,31 @@ const ExemptionFileUploader = ({ customer, setCustomer, order, user }) => {
       <h2 className='mb-2 text-xl font-semibold text-[#0e355e]'>
         Tax Exemption Certificate
       </h2>
-      {customer?.exemptionFileName ?
-        <div className='p-3 bg-green-50 border-l-4 border-green-500 rounded-lg text-green-800'>
-          <p className='font-semibold'>
-            Certificate on file: {customer.exemptionFileName}
-          </p>
-          <p className='text-sm mt-1'>
-            Our accounting team is reviewing it and will update your
-            account&apos;s tax status once verified.
-          </p>
-        </div>
-      : <>
+      {hasCertificateOnFile &&
+        (isTaxExempt ?
+          <div className='p-3 mb-3 bg-green-50 border-l-4 border-green-500 rounded-lg text-green-800'>
+            <p className='font-semibold'>You are tax exempt.</p>
+            <p className='text-sm mt-1'>
+              Your account is on file as tax-exempt (certificate:{" "}
+              {customer.exemptionFileName}).
+            </p>
+          </div>
+        : <div className='p-3 mb-3 bg-blue-50 border-l-4 border-blue-500 rounded-lg text-blue-800'>
+            <p className='font-semibold'>
+              Certificate on file: {customer.exemptionFileName}
+            </p>
+            <p className='text-sm mt-1'>
+              Our accounting team is reviewing it and will update your
+              account&apos;s tax status once verified.
+            </p>
+          </div>)}
+      {showUploadForm && (
+        <>
           <p className='text-gray-600 mb-3'>
-            If your organization is tax-exempt, upload your exemption
-            certificate here. Our accounting team will review it and update
-            your account&apos;s tax status.
+            {hasCertificateOnFile ?
+              "Need to upload a new or updated certificate? Select a file below."
+            : "If your organization is tax-exempt, upload your exemption certificate here. Our accounting team will review it and update your account's tax status."
+            }
           </p>
           <div className='flex flex-col sm:flex-row gap-2'>
             <input
@@ -150,7 +169,7 @@ const ExemptionFileUploader = ({ customer, setCustomer, order, user }) => {
             </button>
           </div>
         </>
-      }
+      )}
     </div>
   );
 };

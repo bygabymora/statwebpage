@@ -7,15 +7,132 @@ import axios from "axios";
 import Layout from "../components/main/Layout";
 import Link from "next/link";
 import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
+import { useModalContext } from "../components/context/ModalContext";
+import ExemptionFileUploader from "../components/orders/ExemptionFileUploader";
+import states from "../utils/states.json";
+import formatPhoneNumber from "../utils/functions/phoneModified";
+
+const ADDRESS_FIELDS = [
+  ["address", "Address", "text"],
+  ["suiteNumber", "Suite Number", "text"],
+  ["city", "City", "text"],
+  ["postalCode", "Zip Code", "text"],
+];
+
+function AddressSummaryCard({ title, address }) {
+  const hasAddress = Boolean(address?.address);
+  return (
+    <div className='bg-gray-50 rounded-xl p-4 border border-gray-100'>
+      <h3 className='font-semibold text-gray-700 mb-2'>{title}</h3>
+      {hasAddress ?
+        <p className='text-sm text-gray-800 leading-relaxed'>
+          {address.address}
+          {address.suiteNumber ? `, ${address.suiteNumber}` : ""}
+          <br />
+          {[address.city, address.state, address.postalCode]
+            .filter(Boolean)
+            .join(", ")}
+        </p>
+      : <p className='text-sm text-gray-400 italic'>No address on file</p>}
+    </div>
+  );
+}
+
+function AddressFormCard({ title, type, value, onChange }) {
+  return (
+    <div className='border border-gray-200 p-4 rounded-xl'>
+      <h3 className='font-semibold text-gray-700 mb-3'>{title}</h3>
+      <div className='space-y-3'>
+        {ADDRESS_FIELDS.map(([field, label, inputType]) => (
+          <div key={field}>
+            <label className='block mb-1 text-xs font-semibold text-gray-500'>
+              {label}
+            </label>
+            <input
+              autoComplete='off'
+              type={inputType}
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
+              value={value?.[field] || ""}
+              onChange={(e) => onChange(type, field, e.target.value)}
+            />
+          </div>
+        ))}
+        <div>
+          <label className='block mb-1 text-xs font-semibold text-gray-500'>
+            State
+          </label>
+          <select
+            autoComplete='off'
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
+            value={value?.state || ""}
+            onChange={(e) => onChange(type, "state", e.target.value)}
+          >
+            <option value=''>Select...</option>
+            {states.map((state) => (
+              <option key={state.key} value={state.key}>
+                {state.value}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function ProfileScreen() {
   const { data: session, status } = useSession();
+  const { customer, setCustomer, user: wpUser } = useModalContext();
 
   // status: 'loading' | 'authenticated' | 'unauthenticated'
   const isLoading = status === "loading";
   const isAuthed = status === "authenticated" && !!session?.user;
   const isActive =
     !!session?.user?.active && !!session?.user?.approved && isAuthed;
+
+  const [editingAddresses, setEditingAddresses] = useState(false);
+  const [savingAddresses, setSavingAddresses] = useState(false);
+  const [addressForm, setAddressForm] = useState({ location: {}, billAddr: {} });
+
+  const toggleEditAddresses = () => {
+    if (!editingAddresses) {
+      setAddressForm({
+        location: { ...(customer?.location || {}) },
+        billAddr: { ...(customer?.billAddr || {}) },
+      });
+    }
+    setEditingAddresses((prev) => !prev);
+  };
+
+  const handleAddressChange = (type, field, value) => {
+    setAddressForm((prev) => ({
+      ...prev,
+      [type]: { ...prev[type], [field]: value, country: "USA" },
+    }));
+  };
+
+  const saveAddresses = async () => {
+    if (!customer?._id) return;
+    setSavingAddresses(true);
+    try {
+      const { data } = await axios.put(
+        `/api/customer/${customer._id}/updateAddresses`,
+        {
+          customer: {
+            location: addressForm.location,
+            billAddr: addressForm.billAddr,
+          },
+        },
+      );
+      setCustomer((prev) => ({ ...prev, ...(data?.customer || {}) }));
+      setEditingAddresses(false);
+      toast.success("Addresses updated successfully");
+    } catch (error) {
+      toast.error(getError(error));
+    } finally {
+      setSavingAddresses(false);
+    }
+  };
 
   const {
     handleSubmit,
@@ -178,6 +295,85 @@ export default function ProfileScreen() {
           }
         </div>
       </section>
+
+      {/* Company & Addresses */}
+      <section className='max-w-screen-md mx-auto bg-white p-8 rounded-3xl shadow-lg mt-8'>
+        <div className='flex items-center justify-between mb-8'>
+          <h2 className='text-2xl font-semibold text-[#0e355e]'>
+            Company & Addresses
+          </h2>
+          {customer?._id && (
+            <button
+              type='button'
+              onClick={toggleEditAddresses}
+              className='text-sm font-medium text-[#0e355e] underline underline-offset-2 hover:text-[#144e8b]'
+            >
+              {editingAddresses ? "Cancel" : "Edit Addresses"}
+            </button>
+          )}
+        </div>
+
+        <div className='grid md:grid-cols-2 gap-8 text-[#414b53] mb-8'>
+          {[
+            ["Company Name", customer?.companyName],
+            ["Company Phone", formatPhoneNumber(customer?.phone)],
+            ["Company Email", customer?.email],
+            ["Account Terms", customer?.defaultTerm],
+          ].map(([label, value]) => (
+            <div key={label}>
+              <p className='text-sm font-medium text-gray-500 mb-1'>{label}</p>
+              <p className='text-base font-semibold text-gray-800 bg-gray-50 rounded-xl px-4 py-2 border border-gray-100'>
+                {value || "-"}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {editingAddresses ?
+          <div className='space-y-6'>
+            <div className='grid md:grid-cols-2 gap-6'>
+              <AddressFormCard
+                title='Shipping Address'
+                type='location'
+                value={addressForm.location}
+                onChange={handleAddressChange}
+              />
+              <AddressFormCard
+                title='Billing Address'
+                type='billAddr'
+                value={addressForm.billAddr}
+                onChange={handleAddressChange}
+              />
+            </div>
+            <div className='text-center pt-2'>
+              <button
+                type='button'
+                disabled={savingAddresses}
+                onClick={saveAddresses}
+                className='bg-[#0e355e] text-white px-8 py-2.5 rounded-full hover:bg-[#22517e] transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                {savingAddresses ? "Saving..." : "Save Addresses"}
+              </button>
+            </div>
+          </div>
+        : <div className='grid md:grid-cols-2 gap-6'>
+            <AddressSummaryCard title='Shipping Address' address={customer?.location} />
+            <AddressSummaryCard title='Billing Address' address={customer?.billAddr} />
+          </div>
+        }
+      </section>
+
+      {/* Tax Exemption */}
+      {customer?._id && (
+        <section className='max-w-screen-md mx-auto mt-8'>
+          <ExemptionFileUploader
+            customer={customer}
+            setCustomer={setCustomer}
+            user={wpUser}
+            allowReupload
+          />
+        </section>
+      )}
 
       {/* Update Form */}
       {showModifyForm ?
