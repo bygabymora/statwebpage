@@ -110,6 +110,7 @@ const sampleOrder = {
   itemsPrice: 45,
   totalPrice: 57,
   total: "$57",
+  tax: { pending: true, state: "FL" },
   isPaid: false,
   isDelivered: false,
   isAtCostumers: false,
@@ -140,7 +141,7 @@ export default function EmailPreview() {
     message,
     sampleOrder,
     sampleItem,
-    sampleStatRep
+    sampleStatRep,
   );
   const html = DocumentComponent({
     message: emailMessage,

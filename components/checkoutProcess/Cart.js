@@ -19,6 +19,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
   const {
@@ -61,23 +62,27 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
           cart: updatedUser.userData?.cart,
         }));
 
-        // Filter the already-enriched order items instead of swapping in the raw
-        // WpUser cart, which lacks display fields like name/image/manufacturer.
-        const updatedOrderItems = (order.orderItems || []).filter(
-          (oItem) =>
-            oItem.productId !== productToRemove.productId ||
-            oItem.typeOfPurchase !== productToRemove.typeOfPurchase,
-        );
-        const itemsPrice = updatedOrderItems.reduce(
-          (a, c) => a + c.quantity * c.price,
-          0,
-        );
-        setOrder((prev) => ({
-          ...prev,
-          orderItems: updatedOrderItems,
-          itemsPrice,
-          totalPrice: itemsPrice,
-        }));
+        // Filter the enriched orderItems instead of swapping in the raw cart,
+        // which lacks the product data (name, image, tax classification).
+        setOrder((prev) => {
+          const updatedOrderItems = (prev?.orderItems || []).filter(
+            (oItem) =>
+              !(
+                oItem.productId === productToRemove.productId &&
+                oItem.typeOfPurchase === productToRemove.typeOfPurchase
+              ),
+          );
+          const itemsPrice = updatedOrderItems.reduce(
+            (a, c) => a + c.quantity * c.price,
+            0,
+          );
+          return {
+            ...prev,
+            orderItems: updatedOrderItems,
+            itemsPrice,
+            totalPrice: itemsPrice,
+          };
+        });
       } catch (error) {
         console.error("Error removing item from cart:", error);
         showStatusMessage("error", "Failed to remove item from cart");

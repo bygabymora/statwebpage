@@ -1,5 +1,15 @@
 import mailchimp from "@mailchimp/mailchimp_transactional";
 
+// Base64-encoded attachments (e.g. an exemption certificate) run well past
+// the default 1mb API route body limit.
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
 const normalizeText = (value) =>
   (value || "").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
 
@@ -39,7 +49,7 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { toEmail, fromEmail, subject, htmlContent, headers, attachment } =
+  const { toEmail, fromEmail, subject, htmlContent, headers, attachment, bcc } =
     req.body;
 
   const normalizedToEmail = normalizeText(toEmail).toLowerCase();
@@ -131,6 +141,18 @@ export default async function handler(req, res) {
     if (normalizedFromEmail) {
       bccRecipients.push(normalizedFromEmail);
     }
+    const extraBcc = Array.isArray(bcc) ? bcc : bcc ? [bcc] : [];
+    extraBcc.forEach((email) => {
+      const normalized = normalizeText(email).toLowerCase();
+      if (
+        normalized &&
+        isValidEmail(normalized) &&
+        normalized !== normalizedToEmail &&
+        !bccRecipients.includes(normalized)
+      ) {
+        bccRecipients.push(normalized);
+      }
+    });
 
     const message = {
       from_email: normalizedFromEmail || "sales@statsurgicalsupply.com",

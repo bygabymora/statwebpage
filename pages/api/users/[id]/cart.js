@@ -10,6 +10,10 @@ export default async function handler(req, res) {
   const token = await getToken({ req });
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
+  if (String(token._id) !== String(id)) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   await db.connect(true);
 
   const user = await WpUser.findById(id);

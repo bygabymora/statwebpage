@@ -17,7 +17,13 @@ const extractMeaningfulText = (value) =>
       .replace(/\s+/g, " "),
   );
 
-const handleSendEmails = async (message, contact, accountOwner) => {
+const handleSendEmails = async (
+  message,
+  contact,
+  accountOwner,
+  attachment,
+  bcc,
+) => {
   let response;
   const headersToSend = "X-WpEmail";
   const toEmail = normalizeText(contact?.email || "").toLowerCase();
@@ -99,6 +105,12 @@ const handleSendEmails = async (message, contact, accountOwner) => {
           [headersToSend]: true,
         },
       };
+    }
+    if (attachment) {
+      payload = { ...payload, attachment };
+    }
+    if (bcc) {
+      payload = { ...payload, bcc };
     }
 
     response = await fetch("/api/emails/send-email", {

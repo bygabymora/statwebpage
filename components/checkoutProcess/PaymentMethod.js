@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Cookies from "js-cookie";
 import { useModalContext } from "../context/ModalContext";
+import { determineOrderTaxStatus } from "../../utils/functions/salesTax";
 import axios from "axios";
 
 export default function PaymentMethod({
@@ -17,6 +18,28 @@ export default function PaymentMethod({
   const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const taxStatus = useMemo(
+    () =>
+      determineOrderTaxStatus({
+        orderItems: order?.orderItems,
+        shippingAddress: order?.shippingAddress,
+        customer,
+      }),
+    [order?.orderItems, order?.shippingAddress, customer],
+  );
+
+  // Would otherwise be taxable in this state, but the customer's exemption
+  // is suppressing it -- without this, "no warning" looks identical to
+  // "tax wasn't determined" and is easy to mistake for a bug.
+  const isExemptFromStateTax =
+    !taxStatus.pending && taxStatus.hasAgency && !taxStatus.customerTaxable;
+  const exemptionExpired =
+    customer?.exemptionFileExpirationDate &&
+    new Date(customer.exemptionFileExpirationDate) < new Date();
+  const hasExemptionFileOnFile = Boolean(
+    customer?.exemptionFileId && customer?.exemptionFileName,
+  );
 
   const handleInputChange = (field, value) => {
     if (field === "paymentMethod") {
@@ -135,6 +158,52 @@ export default function PaymentMethod({
         <h1 className='text-3xl font-bold text-center text-[#0e355e] mb-6'>
           Select a Payment Method
         </h1>
+        {taxStatus.pending && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+            <p className='font-semibold text-amber-900'>
+              Sales tax applies to this order in {taxStatus.state}.
+            </p>
+            <p className='text-amber-800 mt-1'>
+              Your order will be held until the tax is calculated. Payment will
+              be collected against the invoice with the final total
+              {(
+                order.paymentMethod === "Stripe" ||
+                order.paymentMethod === "PayPal"
+              ) ?
+                ", so no charge is made online at this moment"
+              : order.paymentMethod === "Pay By Wire" ?
+                ", so no payment should be made at this moment"
+              : ""}
+              .
+            </p>
+          </div>
+        )}
+        {taxStatus.pending && !hasExemptionFileOnFile && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+            <p className='font-semibold text-amber-900'>Are you tax-exempt?</p>
+            <p className='text-amber-800 mt-1'>
+              Once your order is confirmed, you can upload your exemption
+              certificate from the order confirmation page, and our accounting
+              team will review it and update your account.
+            </p>
+          </div>
+        )}
+        {isExemptFromStateTax && (
+          <div className='mx-auto max-w-lg p-4 mb-5 bg-blue-50 border-l-4 border-blue-500 rounded-lg'>
+            <p className='font-semibold text-blue-900'>
+              No sales tax is being charged on this order.
+            </p>
+            <p className='text-blue-800 mt-1'>
+              This account is on file as tax-exempt in {taxStatus.state}
+              {customer?.exemptionFileName ?
+                ` (certificate: ${customer.exemptionFileName})`
+              : ""}
+              .
+              {exemptionExpired &&
+                " This exemption certificate is past its expiration date — please confirm it's still valid before this order ships."}
+            </p>
+          </div>
+        )}
         <div className='mx-auto max-w-lg bg-white shadow-lg rounded-2xl p-6 my-5'>
           <div className='p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg flex flex-col md:justify-between'>
             <div className='grid grid-cols-1 bg-white p-2 rounded-md sm:grid-cols-2 gap-4 '>

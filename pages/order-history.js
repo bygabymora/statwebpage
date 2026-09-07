@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from "react";
 import Layout from "../components/main/Layout";
 import { getError } from "../utils/error";
 import formatDateWithMonthInLetters from "../utils/dateWithMonthInLetters";
+import { getInvoiceTaxTotal } from "../utils/functions/salesTax";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useModalContext } from "../components/context/ModalContext";
@@ -156,6 +157,35 @@ function OrderHistoryScreen() {
     return null;
   };
 
+  const fmt = (n) =>
+    new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(n || 0);
+
+  const orderTaxTotal = (order) => {
+    const invoice = order.invoice;
+    return invoice && invoice._id ? getInvoiceTaxTotal(invoice) : 0;
+  };
+
+  const orderGrandTotal = (order) => {
+    const invoice = order.invoice;
+    if (!invoice || !invoice._id) {
+      return Number(order.totalPrice || 0);
+    }
+    const shippingCost =
+      invoice.shippingCost > 0 && invoice.shippingBilling === "Bill Invoice" ?
+        invoice.shippingCost
+      : 0;
+    return Number(
+      (
+        Number(invoice.itemsPrice || 0) +
+        Number(shippingCost || 0) +
+        Number(orderTaxTotal(order) || 0)
+      ).toFixed(2),
+    );
+  };
+
   const paymentAmountStatus = (invoice) => {
     let status = "";
     invoice.balance === 0 && invoice.quickBooksInvoiceIdProduction ?
@@ -306,13 +336,17 @@ function OrderHistoryScreen() {
                   <div className='text-gray-500 text-xs uppercase tracking-wide font-medium mb-1'>
                     TOTAL
                   </div>
-                  <div>
-                    $
-                    {new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }).format(order.totalPrice)}
-                  </div>
+                  <div>${fmt(orderGrandTotal(order))}</div>
+                  {orderTaxTotal(order) > 0 && (
+                    <div className='text-gray-500 text-xs'>
+                      (incl. ${fmt(orderTaxTotal(order))} tax)
+                    </div>
+                  )}
+                  {order.tax?.pending && !order.invoice?._id && (
+                    <div className='text-amber-700 text-xs'>
+                      Sales tax pending
+                    </div>
+                  )}
                 </div>
                 {/* ACTION */}
                 <div className='flex gap-2 h-full justify-center items-center text-center'>

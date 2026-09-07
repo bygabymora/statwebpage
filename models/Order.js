@@ -28,6 +28,13 @@ const orderSchema = new mongoose.Schema(
           type: String,
           required: false,
         },
+        taxable: { type: Boolean, required: false, default: true },
+        taxClassificationRef: {
+          value: { type: String, required: false },
+          name: { type: String, required: false },
+          code: { type: String, required: false },
+        },
+        taxTreatment: { type: String, required: false },
         unitPrice: { type: Number, required: false },
         _id: {
           type: String,
@@ -36,6 +43,11 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     docNumber: { type: String, required: false },
+    estimateId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Estimate",
+      required: false,
+    },
     shippingAddress: {
       contactInfo: {
         firstName: { type: String, required: false },
@@ -92,6 +104,18 @@ const orderSchema = new mongoose.Schema(
     },
     itemsPrice: { type: Number, required: false },
     totalPrice: { type: Number, required: false },
+    taxPrice: { type: Number, required: false, default: 0 },
+    tax: {
+      pending: { type: Boolean, required: false, default: false },
+      state: { type: String, required: false },
+      hasAgency: { type: Boolean, required: false, default: false },
+      customerTaxable: { type: Boolean, required: false, default: true },
+      taxableItemCount: { type: Number, required: false, default: 0 },
+      unclassifiedItemCount: { type: Number, required: false, default: 0 },
+      shippingTaxTreatment: { type: String, required: false },
+      determinedAt: { type: Date, required: false },
+      resolvedAt: { type: Date, required: false },
+    },
     isPaid: { type: Boolean, required: false, default: false },
     paymentId: { type: String, required: false },
     isDelivered: { type: Boolean, required: false, default: false },
@@ -106,7 +130,7 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);

@@ -16,10 +16,17 @@ import { messageManagement } from "../../utils/alertSystem/customers/messageMana
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
+import {
+  getInvoiceTaxTotal,
+  getStateTaxProfile,
+  isItemTaxPending,
+  resolveShippingTaxTreatment,
+} from "../../utils/functions/salesTax";
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
+import ExemptionFileUploader from "../../components/orders/ExemptionFileUploader";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 );
 
 function reducer(state, action) {
@@ -71,17 +78,17 @@ function OrderScreen() {
   const orderId = query.id;
   const [showShippingId, setShowShippingId] = useState(null);
   const [message] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const { showStatusMessage, startLoading, stopLoading } = useModalContext();
-  const [email, setEmail] = useState("");
-  const [emailName, setEmailName] = useState("");
+  const {
+    showStatusMessage,
+    startLoading,
+    stopLoading,
+    customer,
+    setCustomer,
+    user,
+  } = useModalContext();
   const [estimate, setEstimate] = useState({});
   const [invoice, setInvoice] = useState({});
   const [accountOwner, setAccountOwner] = useState({});
-  const [emailPhone, setEmailPhone] = useState("");
-  const [emailTotalOrder, setEmailTotalOrder] = useState("");
-  const [emailPaymentMethod, setEmailPaymentMethod] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
 
   const [{ loading, error, successPay, loadingPay, successDeliver }, dispatch] =
     useReducer(reducer, {
@@ -104,7 +111,7 @@ function OrderScreen() {
         data.accountOwner ||
           data.order?.accountOwner ||
           data.estimate?.accountOwner ||
-          {}
+          {},
       );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
@@ -116,6 +123,7 @@ function OrderScreen() {
 
   useEffect(() => {
     if (!order._id || successPay || successDeliver || order._id !== orderId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- fetching the order on mount/id change, not derived state
       fetchOrder();
     }
 
@@ -154,24 +162,81 @@ function OrderScreen() {
   } = order;
   const discountAmount = itemsPrice * 0.015;
 
-  //----Email----//
+  const fmt = (n) =>
+    new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(n || 0);
 
-  useEffect(() => {
-    if (order && order.shippingAddress) {
-      setEmail(shippingAddress.email);
-      setEmailName(shippingAddress.fullName);
-      setEmailPhone(shippingAddress.phone);
-      setEmailPaymentMethod(paymentMethod);
-      setEmailTotalOrder(totalPrice);
-      setSpecialNotes(shippingAddress.notes);
-    }
-  }, [paymentMethod, order, totalPrice]);
+  const hasInvoice = Boolean(invoice && invoice._id);
+  const invoiceShippingCost =
+    (
+      hasInvoice &&
+      invoice.shippingCost > 0 &&
+      invoice.shippingBilling === "Bill Invoice"
+    ) ?
+      invoice.shippingCost
+    : 0;
+  const invoiceTaxTotal = hasInvoice ? getInvoiceTaxTotal(invoice) : 0;
+  const grandTotalWithTax = Number(
+    (hasInvoice ?
+      Number(itemsPrice || 0) +
+      Number(invoiceShippingCost || 0) +
+      Number(invoiceTaxTotal || 0)
+    : Number(totalPrice || 0)
+    ).toFixed(2),
+  );
+  const amountDue = Number(
+    (hasInvoice && typeof invoice.balance === "number" ?
+      invoice.balance
+    : grandTotalWithTax
+    ).toFixed(2),
+  );
+  const balanceDiffersFromTotal =
+    hasInvoice &&
+    !order.isPaid &&
+    typeof invoice.balance === "number" &&
+    Math.abs(invoice.balance - grandTotalWithTax) > 0.01;
+
+  const findInvoiceItem = (itemId) =>
+    hasInvoice ?
+      invoice.invoiceItems?.find((ii) => String(ii._id) === String(itemId))
+    : null;
+
+  const isTaxPending = Boolean(order.tax?.pending) && !hasInvoice;
+
+  // Whether this order was ever subject to sales tax and the customer has
+  // not yet supplied a certificate -- stays true after invoicing too, since
+  // accounting may still credit the tax back once the exemption is verified.
+  const orderWasTaxable = Boolean(order.tax?.pending);
+  const hasExemptionFileOnFile = Boolean(
+    customer?.exemptionFileId && customer?.exemptionFileName,
+  );
+  const showExemptionUploader = orderWasTaxable && !hasExemptionFileOnFile;
+
+  // Derived from the address rather than the stored flags so the labels stay
+  // right even if the order was saved under older tax rules.
+  const stateTaxProfile = getStateTaxProfile(shippingAddress?.state);
+  const customerTaxable = order.tax?.customerTaxable !== false;
+  const showItemTaxability =
+    !hasInvoice && Boolean(stateTaxProfile?.agency) && customerTaxable;
+  const isShippingTaxable =
+    showItemTaxability &&
+    isItemTaxPending(resolveShippingTaxTreatment(stateTaxProfile));
+  const taxStateLabel = stateTaxProfile?.key || order.tax?.state || "";
 
   const sendEmail = useCallback(() => {
+    const emailName = shippingAddress?.fullName;
+    const email = shippingAddress?.email;
+    const emailPhone = shippingAddress?.phone;
+    const emailPaymentMethod = paymentMethod;
+    const emailTotalOrder = amountDue;
+    const specialNotes = shippingAddress?.notes;
+
     if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
       showStatusMessage(
         "error",
-        "Please fill all the fields before sending the email."
+        "Please fill all the fields before sending the email.",
       );
       return;
     }
@@ -193,21 +258,17 @@ function OrderScreen() {
     const emailmessage = messageManagement(
       contactToEmail,
       "Order Confirmation",
-      message
+      message,
     );
 
     handleSendEmails(emailmessage, contactToEmail);
   }, [
-    emailName,
-    email,
-    emailPhone,
-    emailTotalOrder,
-    emailPaymentMethod,
-    specialNotes,
+    shippingAddress,
+    paymentMethod,
+    amountDue,
     orderItems,
     message,
     showStatusMessage,
-    handleSendEmails,
   ]);
 
   const handleCheckout = async () => {
@@ -244,7 +305,7 @@ function OrderScreen() {
     if (!actions || !actions.order) {
       showStatusMessage(
         "error",
-        "PayPal SDK is not loaded properly. Please refresh the page."
+        "PayPal SDK is not loaded properly. Please refresh the page.",
       );
       return;
     }
@@ -254,7 +315,7 @@ function OrderScreen() {
         purchase_units: [
           {
             amount: {
-              value: totalPrice,
+              value: amountDue,
             },
           },
         ],
@@ -268,7 +329,7 @@ function OrderScreen() {
         dispatch({ type: "PAY_REQUEST" });
         const { data } = await axios.put(
           `/api/orders/${order._id}/pay`,
-          details
+          details,
         );
         dispatch({ type: "PAY_SUCCESS", payload: data });
         toast.success("Order is paid successfully");
@@ -292,7 +353,7 @@ function OrderScreen() {
     try {
       dispatch({ type: "PAY_REQUEST" });
       const { data } = await axios.put(
-        `/api/orders/${order._id}/pay`
+        `/api/orders/${order._id}/pay`,
         // Include any necessary payload here
       );
       dispatch({ type: "PAY_SUCCESS", payload: data });
@@ -351,7 +412,7 @@ function OrderScreen() {
           window.history.replaceState(
             {},
             document.title,
-            window.location.pathname + (newQuery ? "?" + newQuery : "")
+            window.location.pathname + (newQuery ? "?" + newQuery : ""),
           );
 
           await fetchOrder(); // refresh order data
@@ -380,26 +441,15 @@ function OrderScreen() {
     handlePayment();
   };
 
-  const dueDateHandler = (terms) => {
-    const date = invoice
-      ? new Date(invoice.createdAt)
-      : new Date(order.createdAt);
-    const daysToAdd = parseInt(terms.split(" ")[1]);
-    console.log("daysToAdd", daysToAdd);
-    date.setDate(date.getDate() + daysToAdd);
-    return date;
-  };
-  useEffect(() => {
+  const dueDate = (() => {
+    const baseDate =
+      hasInvoice ? new Date(invoice.createdAt) : new Date(order.createdAt);
     if (order.defaultTerm && order.paymentMethod === "PO Number") {
-      const date = dueDateHandler(order.defaultTerm);
-      setDueDate(date);
-    } else {
-      const date = invoice
-        ? new Date(invoice.createdAt)
-        : new Date(order.createdAt);
-      setDueDate(date);
+      const daysToAdd = parseInt(order.defaultTerm.split(" ")[1], 10);
+      baseDate.setDate(baseDate.getDate() + daysToAdd);
     }
-  }, [order.defaultTerm, order.paymentMethod]);
+    return baseDate;
+  })();
 
   const paymentAmountStatus = () => {
     console.log("Calculating payment status...", invoice, order);
@@ -409,30 +459,28 @@ function OrderScreen() {
     } else if (invoice && order.isPaid) {
       status = "Paid";
     } else if (invoice && !order.isPaid) {
-      order.isPaid
-        ? (status = "Paid")
-        : invoice.balance === invoice?.totalPrice
-        ? (status = "Not Paid")
-        : invoice?.balance > 0 &&
-          invoice?.balance <
-            invoice.totalPrice -
-              (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-        ? (status = "Partial Payment")
-        : invoice.balance < 0
-        ? (status = "Over Payment")
-        : (status = "Not Paid");
+      order.isPaid ? (status = "Paid")
+      : invoice.balance === invoice?.totalPrice ? (status = "Not Paid")
+      : (
+        invoice?.balance > 0 &&
+        invoice?.balance <
+          invoice.totalPrice -
+            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+      ) ?
+        (status = "Partial Payment")
+      : invoice.balance < 0 ? (status = "Over Payment")
+      : (status = "Not Paid");
     }
     return status;
   };
 
   const stripeReadyToPay = () => {
-    let readyToPay = false;
-    const allShipmentsWithValue =
-      invoice && invoice?.shippings?.every((shipment) => shipment.price > 0);
-    if (allShipmentsWithValue) {
-      readyToPay = true;
-    }
-    return readyToPay;
+    // An empty list means shipping has not been processed yet, and `every`
+    // would pass vacuously.
+    const shipments = invoice?.shippings ?? [];
+    return (
+      shipments.length > 0 && shipments.every((shipment) => shipment.price > 0)
+    );
   };
 
   const placeOrderHandler = async () => {
@@ -448,7 +496,7 @@ function OrderScreen() {
         }
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
-          totalPrice: Number(totalPrice),
+          totalPrice: amountDue,
           orderId: order._id,
         });
         setOrder((prev) => ({
@@ -464,14 +512,14 @@ function OrderScreen() {
         if (result.error) {
           showStatusMessage(
             "error",
-            result.error.message || "An error occurred with Stripe checkout."
+            result.error.message || "An error occurred with Stripe checkout.",
           );
         }
       } catch (error) {
         console.error("Error placing order:", error);
         showStatusMessage(
           "error",
-          getError(error) || "An error occurred while placing the order."
+          getError(error) || "An error occurred while placing the order.",
         );
         stopLoading();
       }
@@ -481,9 +529,9 @@ function OrderScreen() {
   return (
     <Layout
       title={`Order ${
-        typeof orderId === "string" && orderId.length >= 8
-          ? orderId.substring(orderId.length - 8).toUpperCase()
-          : ""
+        typeof orderId === "string" && orderId.length >= 8 ?
+          orderId.substring(orderId.length - 8).toUpperCase()
+        : ""
       }`}
     >
       <div className='flex-1 bg-white rounded-lg p-2 flex flex-col md:flex-row'>
@@ -512,15 +560,13 @@ function OrderScreen() {
             </div>
             <div>
               <h2 className='text-lg font-bold'>Payment Method</h2>
-              {paymentMethod === "Stripe" ? (
+              {paymentMethod === "Stripe" ?
                 <div>Credit Card (Powered by Stripe)</div>
-              ) : paymentMethod === "PO Number" ? (
+              : paymentMethod === "PO Number" ?
                 <div>
                   {paymentMethod} - {order.poNumber}
                 </div>
-              ) : (
-                <div>{paymentMethod}</div>
-              )}
+              : <div>{paymentMethod}</div>}
               {order.paymentMethod === "PO Number" && order.defaultTerm && (
                 <div>
                   <span className='font-semibold'>Terms: </span>
@@ -557,9 +603,9 @@ function OrderScreen() {
               </div>
               <div
                 className={`${
-                  paymentAmountStatus() === "Not Paid"
-                    ? "bg-red-100"
-                    : "bg-green-100"
+                  paymentAmountStatus() === "Not Paid" ? "bg-red-100" : (
+                    "bg-green-100"
+                  )
                 } p-2 rounded-lg text-xl`}
               >
                 {console.log("Payment Status:", paymentAmountStatus())}
@@ -578,7 +624,7 @@ function OrderScreen() {
         <div className='flex flex-col md:flex-row gap-4'>
           <div className='mt-3 flex-1 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
             <h2 className='text-lg font-bold'>Shipping Status</h2>
-            {invoice && invoice.shippings?.length > 0 ? (
+            {invoice && invoice.shippings?.length > 0 ?
               <div className='w-full mt-3'>
                 {invoice.shippings?.map((shipping) => (
                   <div key={shipping._id}>
@@ -591,27 +637,34 @@ function OrderScreen() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className='p-4 bg-white rounded-lg text-center text-[#0e355e] font-semibold'>
+            : <div className='p-4 bg-white rounded-lg text-center text-[#0e355e] font-semibold'>
                 Not shipped yet
               </div>
-            )}
+            }
           </div>
         </div>
       </div>
 
+      {showExemptionUploader && (
+        <ExemptionFileUploader
+          customer={customer}
+          setCustomer={setCustomer}
+          order={order}
+          user={user}
+        />
+      )}
+
       {/* Loading and error messages */}
-      {loading ? (
+      {loading ?
         <div className='alert-info'>Loading...</div>
-      ) : error ? (
+      : error ?
         <div className='alert-error'>{error}</div>
-      ) : paymentComplete ? (
+      : paymentComplete ?
         <div className='alert-success flex items-center gap-2'>
           <AiOutlineCheckCircle className='text-green-500 text-2xl' />
           Payment completed successfully. Reloading...
         </div>
-      ) : (
-        <div className='grid md:grid-cols-4 md:gap-4'>
+      : <div className='grid md:grid-cols-4 md:gap-4'>
           <div className='overflow-x-auto md:col-span-3'>
             <div className=''>
               <div className='mt-4 bg-white shadow-lg p-6 rounded-lg border'>
@@ -659,6 +712,27 @@ function OrderScreen() {
                       {shippingPreferences?.paymentMethod}
                     </div>
                   )}
+                  {isShippingTaxable ?
+                    <div className='mt-2'>
+                      <span className='inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                        Shipping is taxable in {taxStateLabel} — tax pending
+                        calculation
+                      </span>
+                    </div>
+                  : showItemTaxability ?
+                    <div className='mt-2'>
+                      <span className='inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                        Shipping is non taxable in {taxStateLabel}
+                      </span>
+                    </div>
+                  : null}
+                  {invoice?.shippingTax?.taxed &&
+                    invoice?.shippingTax?.taxAmount > 0 && (
+                      <div className='mb-2 px-3 flex gap-4 text-xs text-gray-500'>
+                        <div>Shipping Tax</div>
+                        <div>${fmt(invoice.shippingTax.taxAmount)}</div>
+                      </div>
+                    )}
                   <div>{shippingAddress?.notes}</div>
                 </div>
               </div>
@@ -678,9 +752,9 @@ function OrderScreen() {
                         )}
                         {formatPhoneNumber(shippingAddress?.phone)} <br />
                         {shippingAddress?.address}
-                        {shippingAddress?.suiteNumber
-                          ? "," + shippingAddress?.suiteNumber
-                          : ""}{" "}
+                        {shippingAddress?.suiteNumber ?
+                          "," + shippingAddress?.suiteNumber
+                        : ""}{" "}
                         <br /> {shippingAddress?.state}, {shippingAddress?.city}
                         , {shippingAddress?.postalCode}
                       </div>
@@ -713,9 +787,9 @@ function OrderScreen() {
                         )}
                         {formatPhoneNumber(billingAddress?.phone)} <br />
                         {billingAddress?.address}
-                        {billingAddress?.suiteNumber
-                          ? "," + billingAddress?.suiteNumber
-                          : ""}{" "}
+                        {billingAddress?.suiteNumber ?
+                          "," + billingAddress?.suiteNumber
+                        : ""}{" "}
                         <br /> {billingAddress?.state}, {billingAddress?.city},{" "}
                         {billingAddress?.postalCode}
                       </div>
@@ -743,78 +817,128 @@ function OrderScreen() {
               <div className='mt-3 p-3 bg-gray-100 border-l-4 border-[#03793d] rounded-lg '>
                 <div className='flex flex-col md:flex-row md:justify-between bg-white p-2 rounded-md gap-4 '>
                   <div className='w-full space-y-4'>
-                    {order.orderItems?.map((item) => (
-                      <div
-                        key={item._id}
-                        className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
-                      >
-                        {/* Product */}
-                        <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={50}
-                            height={50}
-                            className='rounded-lg'
-                            loading='lazy'
-                          />
-                          <div>
-                            <Link
-                              href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
-                              className='block font-medium text-gray-800'
-                            >
-                              {item.manufacturer}
-                            </Link>
-                            <div className='text-gray-600 text-sm'>
-                              {item.name}
+                    {order.orderItems
+                      ?.map((item) => ({
+                        ...item,
+                        invoiceItem: findInvoiceItem(item._id),
+                      }))
+                      .map((item, index) => (
+                        <div
+                          key={item._id || `${item.productId}-${index}`}
+                          className='border rounded-lg p-4 shadow-sm'
+                        >
+                          <div className='flex flex-col md:flex-row md:items-center'>
+                            {/* Product */}
+                            <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={50}
+                                height={50}
+                                className='rounded-lg'
+                                loading='lazy'
+                              />
+                              <div>
+                                <Link
+                                  href={`/products/${item.manufacturer}-${item.name}?pId=${item.productId}`}
+                                  className='block font-medium text-gray-800'
+                                >
+                                  {item.manufacturer}
+                                </Link>
+                                <div className='text-gray-600 text-sm'>
+                                  {item.name}
+                                </div>
+                                {showItemTaxability &&
+                                  (isItemTaxPending(item.taxTreatment) ?
+                                    <span className='mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                                      Taxable in {taxStateLabel}
+                                    </span>
+                                  : <span className='mt-1 inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                                      Non taxable
+                                    </span>)}
+                              </div>
+                            </div>
+
+                            {/* Details grid on mobile; row on md+ */}
+                            <div className='grid grid-cols-2 gap-x-4 gap-y-2 flex-1 md:flex md:items-center md:justify-between'>
+                              {/* Type */}
+                              <div className='flex items-center'>
+                                <span className='font-semibold mr-1'>
+                                  U o M:
+                                </span>
+                                <span className='text-gray-700'>
+                                  {item.typeOfPurchase === "Box" ?
+                                    "Box"
+                                  : item.typeOfPurchase}
+                                </span>
+                              </div>
+
+                              {/* Quantity */}
+                              <div className='flex items-center'>
+                                <span className='font-semibold mr-1'>Qty:</span>
+                                <span className='text-gray-700'>
+                                  {item.quantity}
+                                </span>
+                              </div>
+
+                              {/* Price */}
+                              <div className='flex items-center'>
+                                <span className='font-semibold mr-1'>
+                                  Price:
+                                </span>
+                                <span className='text-gray-700'>
+                                  $
+                                  {new Intl.NumberFormat("en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }).format(item.price)}
+                                </span>
+                              </div>
+                              <div className='flex items-center'>
+                                <span className='font-semibold mr-1'>
+                                  Total:
+                                </span>
+                                <span className='text-gray-700'>
+                                  $
+                                  {new Intl.NumberFormat("en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }).format(item.price * item.quantity)}
+                                </span>
+                              </div>
                             </div>
                           </div>
+
+                          {/* Tax - full width under the whole item */}
+                          {isTaxPending &&
+                            isItemTaxPending(item.taxTreatment) && (
+                              <div className='mt-3 pt-2 border-t flex items-center justify-between md:justify-start md:gap-1'>
+                                <span className='font-semibold mr-1'>Tax:</span>
+                                <span className='italic text-gray-600'>
+                                  Pending calculation
+                                </span>
+                              </div>
+                            )}
+                          {item.invoiceItem?.taxAmount > 0 && (
+                            <div className='mt-3 pt-2 border-t flex items-center justify-between md:justify-start md:gap-1'>
+                              <span className='font-semibold mr-1'>Tax:</span>
+                              <span className='text-gray-700'>
+                                ${fmt(item.invoiceItem.taxAmount)}
+                                {item.invoiceItem.taxDetails?.[0]?.name && (
+                                  <span className='text-xs text-gray-500'>
+                                    {" "}
+                                    ({item.invoiceItem.taxDetails[0].name}
+                                    {item.invoiceItem.taxDetails[0].taxPercent ?
+                                      ` ${item.invoiceItem.taxDetails[0].taxPercent}%`
+                                    : ""}
+                                    )
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          )}
                         </div>
-
-                        {/* Details grid on mobile; row on md+ */}
-                        <div className='grid grid-cols-2 gap-x-4 gap-y-2 flex-1 md:flex md:items-center md:justify-between'>
-                          {/* Type */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>U o M:</span>
-                            <span className='text-gray-700'>
-                              {item.typeOfPurchase === "Box"
-                                ? "Box"
-                                : item.typeOfPurchase}
-                            </span>
-                          </div>
-
-                          {/* Quantity */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Qty:</span>
-                            <span className='text-gray-700'>
-                              {item.quantity}
-                            </span>
-                          </div>
-
-                          {/* Price */}
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Price:</span>
-                            <span className='text-gray-700'>
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(item.price)}
-                            </span>
-                          </div>
-                          <div className='flex items-center'>
-                            <span className='font-semibold mr-1'>Total:</span>
-                            <span className='text-gray-700'>
-                              $
-                              {new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(item.price * item.quantity)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </div>
@@ -828,49 +952,86 @@ function OrderScreen() {
                   <div>Items</div>
                   <div>${itemsPrice.toFixed(2)}</div>
                 </div>
-                {paymentMethod === "Pay By Wire" ? (
+                {paymentMethod === "Pay By Wire" ?
                   <li>
                     <div className='mb-2 px-3 flex justify-between'>
                       <div>Discount</div>
                       <div>- ${discountAmount.toFixed(2)}</div>
                     </div>
                   </li>
-                ) : null}
-                {invoice &&
-                  invoice?.shippingCost > 0 &&
-                  invoice.shippingBilling === "Bill Invoice" && (
-                    <li>
-                      <div className='mb-2 px-3 flex justify-between'>
-                        <div>Shipping</div>
-                        <div>
-                          $
-                          {new Intl.NumberFormat("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(invoice?.shippingCost)}
-                        </div>
+                : null}
+                {invoiceShippingCost > 0 && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between'>
+                      <div>Shipping</div>
+                      <div>${fmt(invoiceShippingCost)}</div>
+                    </div>
+                  </li>
+                )}
+                {isTaxPending && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between text-gray-600'>
+                      <div>
+                        Sales Tax
+                        {order.tax?.state ? ` (${order.tax.state})` : ""}
                       </div>
-                    </li>
-                  )}
+                      <div className='italic'>Pending</div>
+                    </div>
+                  </li>
+                )}
+                {invoiceTaxTotal > 0 && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between'>
+                      <div>Sales Tax</div>
+                      <div>${fmt(invoiceTaxTotal)}</div>
+                    </div>
+                    {invoice?.taxes?.taxDetails?.map((detail) => (
+                      <div
+                        key={detail._id || detail.rateRef}
+                        className='mb-1 px-3 flex justify-between text-xs text-gray-500'
+                      >
+                        <div>
+                          {detail.name}
+                          {detail.taxPercent ? ` (${detail.taxPercent}%)` : ""}
+                        </div>
+                        <div>${fmt(detail.amount)}</div>
+                      </div>
+                    ))}
+                  </li>
+                )}
                 <li>
                   <div className='mb-2  px-3 flex justify-between'>
                     <div>Total</div>
-                    <div>
-                      $
-                      {new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(totalPrice)}
-                    </div>
+                    <div>${fmt(grandTotalWithTax)}</div>
                   </div>
                 </li>
+                {isTaxPending && (
+                  <li>
+                    <div className='mb-2 mx-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded text-sm text-amber-800'>
+                      This order is on hold while the applicable sales tax is
+                      calculated. The total above does not include tax yet —
+                      your invoice will show the final amount due.
+                    </div>
+                  </li>
+                )}
+                {balanceDiffersFromTotal && (
+                  <li>
+                    <div className='mb-2 px-3 flex justify-between font-semibold'>
+                      <div>Balance Due</div>
+                      <div>${fmt(amountDue)}</div>
+                    </div>
+                  </li>
+                )}
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
-                    {(paymentMethod === "Stripe" &&
-                      shippingPreferences?.paymentMethod !== "Bill Me") ||
-                    (paymentMethod === "Stripe" &&
-                      shippingPreferences?.paymentMethod === "Bill Me" &&
-                      stripeReadyToPay()) ? (
+                    {(
+                      !isTaxPending &&
+                      ((paymentMethod === "Stripe" &&
+                        shippingPreferences?.paymentMethod !== "Bill Me") ||
+                        (paymentMethod === "Stripe" &&
+                          shippingPreferences?.paymentMethod === "Bill Me" &&
+                          stripeReadyToPay()))
+                    ) ?
                       <div className='buttons-container text-center mx-auto'>
                         <button
                           onClick={placeOrderHandler}
@@ -891,7 +1052,7 @@ function OrderScreen() {
                           />
                         </button>
                       </div>
-                    ) : paymentMethod === "Pay By Wire" ? (
+                    : paymentMethod === "Pay By Wire" ?
                       <div>
                         {session.user.isAdmin && (
                           <button
@@ -921,19 +1082,18 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    ) : paymentMethod === "PayPal" ? (
-                      isPending ? (
+                    : paymentMethod === "PayPal" ?
+                      isPending ?
                         <div>Loading...</div>
-                      ) : (
-                        <PayPalButtons
+                      : <PayPalButtons
                           className='fit-content mt-3'
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
-                          forceReRender={[totalPrice]}
+                          forceReRender={[amountDue]}
                         ></PayPalButtons>
-                      )
-                    ) : null}
+
+                    : null}
                     {loadingPay && <div>Loading...</div>}
                     {paymentMethod === "Stripe" &&
                       shippingPreferences?.paymentMethod === "Bill Me" &&
@@ -979,7 +1139,7 @@ function OrderScreen() {
             </div>
           </div>
         </div>
-      )}
+      }
     </Layout>
   );
 }

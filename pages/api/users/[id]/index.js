@@ -24,15 +24,16 @@ const handler = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Missing user ID" });
     }
-    console.log("Fetching WpUser id:", id);
+
+    if (String(authUser._id) !== String(id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
 
     // 3. Fetch the WpUser record
-    const wpUser = await WpUser.findById(id);
+    const wpUser = await WpUser.findById(id).select("-password");
     if (!wpUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    console.log("Found WpUser:", wpUser);
 
     let customer = null;
     let accountOwner = null;

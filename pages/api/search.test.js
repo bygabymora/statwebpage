@@ -14,6 +14,10 @@ jest.mock("../../models/Product");
 jest.mock("../../models/WpUser");
 jest.mock("next-auth/jwt");
 
+// Handler ignores ids that are not valid ObjectIds, so these must be real hex ids.
+const RESTRICTED_USER_ID = "507f1f77bcf86cd799439011";
+const NON_RESTRICTED_USER_ID = "507f1f77bcf86cd799439012";
+
 describe("/api/search", () => {
   let mockProducts;
 
@@ -92,11 +96,11 @@ describe("/api/search", () => {
 
   // Test Scenario 1: All products returned for restricted users
   test("should return all products for restricted users, regardless of active status", async () => {
-    getToken.mockResolvedValue({ _id: "restrictedUserId" });
+    getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
     WpUser.findById = jest.fn().mockReturnValue({
       lean: jest
         .fn()
-        .mockResolvedValue({ _id: "restrictedUserId", restricted: true }),
+        .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
 
     const { req, res } = createMocks({
@@ -117,11 +121,11 @@ describe("/api/search", () => {
 
   // Test Scenario 2: countInStock adjustment for protected products (restricted user)
   test("should adjust countInStock to 0 for protected products for restricted users", async () => {
-    getToken.mockResolvedValue({ _id: "restrictedUserId" });
+    getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
     WpUser.findById = jest.fn().mockReturnValue({
       lean: jest
         .fn()
-        .mockResolvedValue({ _id: "restrictedUserId", restricted: true }),
+        .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
 
     // Ensure Product.find().lean() returns products with quantities
@@ -151,11 +155,11 @@ describe("/api/search", () => {
 
   // Test Scenario 3: countInStock unchanged for non-protected products (restricted user)
   test("should not change countInStock for non-protected products for restricted users", async () => {
-    getToken.mockResolvedValue({ _id: "restrictedUserId" });
+    getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
     WpUser.findById = jest.fn().mockReturnValue({
       lean: jest
         .fn()
-        .mockResolvedValue({ _id: "restrictedUserId", restricted: true }),
+        .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
 
     Product.find.mockReturnValue({
@@ -186,11 +190,11 @@ describe("/api/search", () => {
 
   // Test Scenario 4: countInStock unchanged (non-restricted user)
   test("should not change countInStock for any product for non-restricted users", async () => {
-    getToken.mockResolvedValue({ _id: "nonRestrictedUserId" });
+    getToken.mockResolvedValue({ _id: NON_RESTRICTED_USER_ID });
     WpUser.findById = jest.fn().mockReturnValue({
       lean: jest
         .fn()
-        .mockResolvedValue({ _id: "nonRestrictedUserId", restricted: false }), // Non-restricted user
+        .mockResolvedValue({ _id: NON_RESTRICTED_USER_ID, restricted: false }), // Non-restricted user
     });
 
     Product.find.mockReturnValue({

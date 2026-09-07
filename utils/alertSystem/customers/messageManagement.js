@@ -150,23 +150,45 @@ export const messageManagement = (
               border-radius: 6px;
               margin-bottom: ;
             ">
-              ${
-                (
+              ${(() => {
+                const reasons = [];
+                if (order.tax?.pending) {
+                  reasons.push(
+                    `<li style="margin-bottom: 4px;"><strong>${
+                      order.tax?.state ?
+                        `${order.tax.state} sales tax`
+                      : "Sales tax"
+                    }</strong> will be added.</li>`,
+                  );
+                }
+                if (
                   order.paymentMethod === "Stripe" &&
-                  order.shippingPreferences.paymentMethod === "Bill Me"
-                ) ?
-                  `<div style="
+                  order.shippingPreferences?.paymentMethod === "Bill Me"
+                ) {
+                  reasons.push(
+                    `<li style="margin-bottom: 4px;"><strong>Shipping cost</strong> will be added (Bill Me).</li>`,
+                  );
+                }
+                if (reasons.length === 0) return "";
+
+                return `<div style="
                       background-color: #fff3cd;
+                      border-left: 4px solid #f0ad4e;
                       color: #856404;
                       padding: 12px;
                       border-radius: 4px;
                       margin-bottom: 20px;
                       font-size: 14px;
                     ">
-                      You selected the “Bill Me” option for Shipping Payment. You will receive an email when your order is ready to ship, including the shipment cost so you can complete payment, and we can ship it.
-                    </div>`
-                : ""
-              }
+                      <div style="font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                        Your total will change
+                      </div>
+                      <ul style="margin: 0 0 8px 0; padding-left: 18px;">${reasons.join(
+                        "",
+                      )}</ul>
+                      <div>No payment is taken now. We will email your final total.</div>
+                    </div>`;
+              })()}
       
               <table width="100%" style="border-collapse: collapse; font-size: 16px; color: #333;">
                 <tr>
@@ -179,6 +201,14 @@ export const messageManagement = (
                   <th align="left" style="padding: 8px 0; font-weight: 600;">Total</th>
                   <td align="right" style="padding: 8px 0;">$${
                     order.totalPrice
+                  }${
+                    (
+                      order.tax?.pending ||
+                      (order.paymentMethod === "Stripe" &&
+                        order.shippingPreferences?.paymentMethod === "Bill Me")
+                    ) ?
+                      ` <br><span style="font-size: 12px; color: #856404;">Final total pending</span>`
+                    : ""
                   }</td>
                 </tr>
                 <tr style="border-top: 1px solid #ddd;">
@@ -265,6 +295,33 @@ export const messageManagement = (
           `,
       };
       break;
+    case "Exemption File Uploaded": {
+      const uploadedFromOrder = Boolean(item?.orderDocNumber);
+      emailMessage = {
+        ...emailMessage,
+        subject: `Tax Exemption Certificate Uploaded – ${item?.companyName || "Customer"}`,
+        p1: `<div style="font-weight: bold; font-size: 20px; color: #144e8b;">
+                 A customer has uploaded a tax exemption certificate.
+               </div>`,
+        p2: `<div style="font-weight: light; font-size: 16px; color: #333333; line-height: 1.6;">
+                 <strong>Company:</strong> ${item?.companyName || "N/A"}<br>
+                 ${uploadedFromOrder ? `<strong>Order #:</strong> ${item.orderDocNumber}<br>` : ""}
+                 <strong>Uploaded By:</strong> ${item?.uploadedByName || "N/A"} (${item?.uploadedByEmail || "N/A"})<br>
+                 <strong>File Name:</strong> ${item?.fileName || "N/A"}
+               </div>
+               <div style="font-weight: light; font-size: 15px; color: #333333; margin-top: 15px;">
+                 The certificate is attached to this email for review. Please verify the exemption and update the customer's taxability status accordingly.
+               </div>`,
+        p3:
+          uploadedFromOrder ?
+            `<div style="font-weight: light; font-size: 14px; color: #666666;">
+                 This order is currently on hold pending sales tax determination. Updating the customer's tax status will allow it to proceed.
+               </div>`
+          : "",
+      };
+      break;
+    }
+
     case "Registration approved":
       emailMessage = {
         ...emailMessage,
