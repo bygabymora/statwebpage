@@ -85,6 +85,7 @@ export default function ProductScreen({ product }) {
 
   useEffect(() => {
     if (product.countInStock || 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
@@ -97,6 +98,7 @@ export default function ProductScreen({ product }) {
     const boxStock = product.box?.countInStock ?? 0;
 
     if (eachStock === 0 && boxStock === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentDescription(product.each?.description || "No description");
       setCurrentCountInStock(0);
     }
@@ -104,6 +106,7 @@ export default function ProductScreen({ product }) {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? null);
@@ -123,6 +126,7 @@ export default function ProductScreen({ product }) {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? 0);
@@ -212,6 +216,7 @@ export default function ProductScreen({ product }) {
 
   useEffect(() => {
     if (product) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmailName(product.name || "");
       setEmailManufacturer(product.manufacturer || "");
     }
@@ -244,6 +249,7 @@ export default function ProductScreen({ product }) {
   useEffect(() => {
     if (!active) {
       if (product.each?.description) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentDescription(product.each.description);
       } else if (product.box?.description) {
         setCurrentDescription(product.box.description);

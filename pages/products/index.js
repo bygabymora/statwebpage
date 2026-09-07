@@ -87,6 +87,7 @@ export default function Products({ products }) {
   const productsPerPage = 24;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (manufacturer) setSelectedManufacturer(decodeURIComponent(manufacturer));
     else setSelectedManufacturer(null);
   }, [manufacturer]);

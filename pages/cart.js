@@ -181,11 +181,11 @@ export default function CartScreen() {
 
   useEffect(() => {
     if (session) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchOrder();
     } else {
       buildGuestOrder();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, activeStep, guestCart]);
 
   return (
