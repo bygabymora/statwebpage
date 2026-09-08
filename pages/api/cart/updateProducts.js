@@ -1,6 +1,7 @@
 // pages/api/cart/updateProducts.js
 import db from "../../../utils/db";
 import Product from "../../../models/Product";
+import { getAvailableStock } from "../../../utils/functions/stock";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -32,16 +33,13 @@ export default async function handler(req, res) {
 
       // pick the correct sub-doc (Each / Box / Clearance)
       const updatedInfo =
-        item.typeOfPurchase === "Each"
-          ? product.each
-          : item.typeOfPurchase === "Box"
-          ? product.box
-          : item.typeOfPurchase === "Clearance"
-          ? product.clearance
-          : {};
+        item.typeOfPurchase === "Each" ? product.each
+        : item.typeOfPurchase === "Box" ? product.box
+        : item.typeOfPurchase === "Clearance" ? product.clearance
+        : {};
 
-      // determine available stock
-      const available = updatedInfo.countInStock ?? 0;
+      // determine available stock, net of anything held for pending orders
+      const available = getAvailableStock(updatedInfo);
 
       // 1) sold-out? → warn & remove
       if (available === 0) {
@@ -86,7 +84,7 @@ export default async function handler(req, res) {
           product.quickBooksItemIdProduction,
         minSalePrice:
           updatedInfo.minSalePrice ?? updatedInfo.price ?? product.minSalePrice,
-        countInStock: updatedInfo.countInStock,
+        countInStock: available,
         description: updatedInfo.description ?? product.description,
         price: updatedInfo.wpPrice ?? updatedInfo.price ?? product.price,
         updatedAt: product.updatedAt,

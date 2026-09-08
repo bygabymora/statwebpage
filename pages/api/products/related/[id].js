@@ -2,6 +2,7 @@
 
 import db from "../../../../utils/db";
 import Product from "../../../../models/Product";
+import { getAvailableStock } from "../../../../utils/functions/stock";
 
 const handler = async (req, res) => {
   if (req.method !== "GET") {
@@ -27,7 +28,7 @@ const handler = async (req, res) => {
     // Escape special regex characters in manufacturer name
     const escapedManufacturer = currentProduct.manufacturer.replace(
       /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
+      "\\$&",
     );
 
     // Find products from the same manufacturer, excluding the current product
@@ -41,12 +42,22 @@ const handler = async (req, res) => {
       ],
     })
       .select(
-        "name manufacturer image each box clearance keywords information sentOverNight"
+        "name manufacturer image each box clearance keywords information sentOverNight",
       )
       .limit(5) // Get up to 5 products
       .lean(); // Use lean() for better performance
 
-    return res.status(200).json(relatedProducts);
+    // Held stock is reserved for pending orders and isn't actually available.
+    const availableRelatedProducts = relatedProducts.map((p) => ({
+      ...p,
+      each:
+        p.each ?
+          { ...p.each, countInStock: getAvailableStock(p.each) }
+        : p.each,
+      box: p.box ? { ...p.box, countInStock: getAvailableStock(p.box) } : p.box,
+    }));
+
+    return res.status(200).json(availableRelatedProducts);
   } catch (error) {
     console.error("Error fetching related products:", error);
     return res.status(500).json({

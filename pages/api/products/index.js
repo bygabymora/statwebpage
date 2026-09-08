@@ -2,6 +2,7 @@ import Product from "../../../models/Product";
 import WpUser from "../../../models/WpUser";
 import db from "../../../utils/db";
 import { getToken } from "next-auth/jwt";
+import { getAvailableStock } from "../../../utils/functions/stock";
 
 const handler = async (req, res) => {
   // Only allow GET
@@ -36,8 +37,8 @@ const handler = async (req, res) => {
     // If not logged in or not approved: minimal info + sort by name A→Z
     if (!loggedIn || !userApproved) {
       const minimal = products.map((p) => {
-        const eachStock = p.each?.countInStock || 0;
-        const boxStock = p.box?.countInStock || 0;
+        const eachStock = getAvailableStock(p.each);
+        const boxStock = getAvailableStock(p.box);
         const eachPrice = p.each?.wpPrice || 0;
         const boxPrice = p.box?.wpPrice || 0;
 
@@ -87,9 +88,9 @@ const handler = async (req, res) => {
     // Logged in & approved → full info sorted by stock, price, name
     products.sort((a, b) => {
       const aInStock =
-        (a.each?.countInStock || 0) > 0 || (a.box?.countInStock || 0) > 0;
+        getAvailableStock(a.each) > 0 || getAvailableStock(a.box) > 0;
       const bInStock =
-        (b.each?.countInStock || 0) > 0 || (b.box?.countInStock || 0) > 0;
+        getAvailableStock(b.each) > 0 || getAvailableStock(b.box) > 0;
       if (aInStock && !bInStock) return -1;
       if (!aInStock && bInStock) return 1;
 
@@ -102,7 +103,8 @@ const handler = async (req, res) => {
       return nameA.localeCompare(nameB);
     });
 
-    // Map full info, zeroing out on-hand counts for restricted users on protected products
+    // Map full info, zeroing out on-hand counts for restricted users on protected products,
+    // and reducing everyone else's countInStock by whatever is held for pending orders.
     const full = products.map((p) => {
       if (userRestricted && p.protected) {
         return {
@@ -111,7 +113,15 @@ const handler = async (req, res) => {
           box: p.box ? { ...p.box, countInStock: 0 } : p.box,
         };
       }
-      return p;
+      return {
+        ...p,
+        each:
+          p.each ?
+            { ...p.each, countInStock: getAvailableStock(p.each) }
+          : p.each,
+        box:
+          p.box ? { ...p.box, countInStock: getAvailableStock(p.box) } : p.box,
+      };
     });
 
     return res.status(200).json(full);

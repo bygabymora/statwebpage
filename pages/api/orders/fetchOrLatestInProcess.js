@@ -4,6 +4,7 @@ import db from "../../../utils/db";
 import Order from "../../../models/Order";
 import WpUser from "../../../models/WpUser";
 import Product from "../../../models/Product";
+import { getAvailableStock } from "../../../utils/functions/stock";
 import Customer from "../../../models/Customer";
 import { determineOrderTaxStatus } from "../../../utils/functions/salesTax";
 
@@ -81,7 +82,7 @@ export default async function handler(req, res) {
         : item.typeOfPurchase === "Clearance" ? prod.clearance
         : {};
 
-      const available = info.countInStock || 0;
+      const available = getAvailableStock(info);
 
       // sold out → skip & warn
       if (available === 0) {
@@ -124,7 +125,7 @@ export default async function handler(req, res) {
         minSalePrice: info.minSalePrice ?? info.price ?? prod.minSalePrice,
         description: info.description ?? prod.description,
         price: info.wpPrice ?? info.price ?? prod.price,
-        countInStock: info.countInStock ?? prod.countInStock,
+        countInStock: available,
         taxable: prod.taxable !== false,
         taxClassificationRef: prod.taxClassificationRef ?? {},
         updatedAt: prod.updatedAt,

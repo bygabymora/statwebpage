@@ -3,6 +3,7 @@ import WpUser from "../../../../models/WpUser";
 import db from "../../../../utils/db";
 import { getToken } from "next-auth/jwt";
 import { Types } from "mongoose";
+import { getAvailableStock } from "../../../../utils/functions/stock";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -71,20 +72,20 @@ export default async function handler(req, res) {
         createdAt: product.createdAt,
         each: {
           description: product.each?.description || null,
-          countInStock: product.each?.countInStock || 0,
+          countInStock: getAvailableStock(product.each),
           clearanceCountInStock: product.each?.clearanceCountInStock || 0,
           wpPrice: product.each?.wpPrice || null,
           customerPrice: product.each?.customerPrice || null,
         },
         box: {
           description: product.box?.description || null,
-          countInStock: product.box?.countInStock || 0,
+          countInStock: getAvailableStock(product.box),
           clearanceCountInStock: product.box?.clearanceCountInStock || 0,
           wpPrice: product.box?.wpPrice || null,
           customerPrice: product.box?.customerPrice || null,
         },
         loose: {
-          countInStock: product.loose?.countInStock || 0,
+          countInStock: getAvailableStock(product.loose),
         },
       };
       return res.status(200).json(minimal);
@@ -98,6 +99,18 @@ export default async function handler(req, res) {
         each:
           product.each ? { ...product.each, countInStock: 0 } : product.each,
         box: product.box ? { ...product.box, countInStock: 0 } : product.box,
+      };
+    } else {
+      result = {
+        ...product,
+        each:
+          product.each ?
+            { ...product.each, countInStock: getAvailableStock(product.each) }
+          : product.each,
+        box:
+          product.box ?
+            { ...product.box, countInStock: getAvailableStock(product.box) }
+          : product.box,
       };
     }
 

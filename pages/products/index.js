@@ -31,6 +31,8 @@ export async function getStaticProps() {
       "each.description": 1,
       "each.countInStock": 1,
       "box.countInStock": 1,
+      "each.heldStock": 1,
+      "box.heldStock": 1,
       "each.clearanceCountInStock": 1,
       "box.clearanceCountInStock": 1,
       "each.wpPrice": 1,

@@ -5,6 +5,7 @@ import Product from "../../models/Product";
 import mongoose from "mongoose";
 import { getToken } from "next-auth/jwt";
 import WpUser from "../../models/WpUser";
+import { getAvailableStock } from "../../utils/functions/stock";
 
 function escapeRegex(str) {
   // Escapes: . * + ? ^ $ { } ( ) | [ ] \ /
@@ -87,9 +88,9 @@ export default async function handler(req, res) {
     // 5. Sort in-stock / priced / name
     products.sort((a, b) => {
       const aInStock =
-        (a.each?.countInStock || 0) > 0 || (a.box?.countInStock || 0) > 0;
+        getAvailableStock(a.each) > 0 || getAvailableStock(a.box) > 0;
       const bInStock =
-        (b.each?.countInStock || 0) > 0 || (b.box?.countInStock || 0) > 0;
+        getAvailableStock(b.each) > 0 || getAvailableStock(b.box) > 0;
       if (aInStock !== bInStock) return aInStock ? -1 : 1;
 
       const aHasPrice = (a.each?.wpPrice || 0) > 0 || (a.box?.wpPrice || 0) > 0;

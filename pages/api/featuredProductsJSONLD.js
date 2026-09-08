@@ -1,6 +1,7 @@
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import { generateProductJSONLD } from "../../utils/seo";
+import { withAvailableStock } from "../../utils/functions/stock";
 
 const handleRequest = async (req, res) => {
   try {
@@ -8,7 +9,12 @@ const handleRequest = async (req, res) => {
     const products = await Product.find().lean();
 
     const jsonldData = products.map((product) =>
-      generateProductJSONLD(product)
+      generateProductJSONLD({
+        ...product,
+        each: withAvailableStock(product.each),
+        box: withAvailableStock(product.box),
+        loose: withAvailableStock(product.loose),
+      }),
     );
 
     res.setHeader("Content-Type", "application/ld+json");
