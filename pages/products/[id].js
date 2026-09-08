@@ -122,12 +122,6 @@ export default function ProductScreen({ product }) {
     setQty(1);
   }, [product?._id]);
 
-  React.useEffect(() => {
-    console.warn("Product updatedAt:", product?.updatedAt);
-    console.warn("Product createdAt:", product?.createdAt);
-    console.warn("inventoryLastUpdated state:", inventoryLastUpdated);
-  }, [product, inventoryLastUpdated]);
-
   useEffect(() => {
     if (product.countInStock || 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -338,15 +332,13 @@ export default function ProductScreen({ product }) {
   };
 
   useEffect(() => {
-    const checkInventoryUpdates = async () => {
+    const checkInventoryUpdates = async (signal) => {
       try {
-        const response = await fetch(`/api/products/${product._id}`);
+        const response = await fetch(`/api/products/${product._id}`, {
+          signal,
+        });
         if (response.ok) {
           const updatedProduct = await response.json();
-          console.warn(
-            "Fetched updated product updatedAt:",
-            updatedProduct.updatedAt,
-          );
 
           // Ensure we have a valid updatedAt field
           const updatedAtValue =
@@ -393,14 +385,23 @@ export default function ProductScreen({ product }) {
           }
         }
       } catch (error) {
-        console.error("Error checking inventory updates:", error);
+        if (error.name !== "AbortError") {
+          console.error("Error checking inventory updates:", error);
+        }
       }
     };
 
     // Only check for updates if user is active
     if (active) {
-      const inventoryTimer = setInterval(checkInventoryUpdates, 30000); // Check every 30 seconds
-      return () => clearInterval(inventoryTimer);
+      const controller = new AbortController();
+      const inventoryTimer = setInterval(
+        () => checkInventoryUpdates(controller.signal),
+        30000, // Check every 30 seconds
+      );
+      return () => {
+        clearInterval(inventoryTimer);
+        controller.abort();
+      };
     }
   }, [product._id, inventoryLastUpdated, typeOfPurchase, active]);
 

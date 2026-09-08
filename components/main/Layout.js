@@ -31,7 +31,13 @@ export default function Layout({
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+  }, []);
   const defaultOgImage =
     "https://www.statsurgicalsupply.com/images/assets/StaticBanner.png";
 
@@ -413,9 +419,7 @@ export default function Layout({
         }}
       />
 
-      {typeof window !== "undefined" && (
-        <ToastContainer position='bottom-center' limit={1} />
-      )}
+      {isMounted && <ToastContainer position='bottom-center' limit={1} />}
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
         <main
