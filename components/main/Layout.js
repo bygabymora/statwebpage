@@ -72,6 +72,7 @@ export default function Layout({
     const { approved, active } = session.user;
 
     if (approved === false) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setApprovalPending(true); // Mark as pending
       showStatusMessage("error", approvalMessage.body, "warning");
       openAlertModal(approvalMessage);
@@ -100,6 +101,7 @@ export default function Layout({
     const { approved } = session.user;
 
     if (approved === true && approvalPending) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setApprovalPending(false);
       showStatusMessage("success", "Your account has been approved.");
     }
@@ -412,6 +414,7 @@ export default function Layout({
         onLoad={() => {
           window.dataLayer = window.dataLayer || [];
           function gtag() {
+            // eslint-disable-next-line no-undef
             dataLayer.push(arguments);
           }
           gtag("js", new Date());
