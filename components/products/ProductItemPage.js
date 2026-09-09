@@ -8,6 +8,7 @@ import { useModalContext } from "../context/ModalContext";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import LCPProductImage from "./LCPProductImage";
+import AvailabilityNotice from "../ui/AvailabilityNotice";
 
 export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -562,6 +563,9 @@ export const ProductItemPage = ({ product, index }) => {
                 </>
               }
             </div>
+          )}
+          {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
+            <AvailabilityNotice className='mt-2 text-center' />
           )}
           {!active && (
             <div className='mb-2 flex flex-col justify-center gap-2 m-2 text-center items-center'>
