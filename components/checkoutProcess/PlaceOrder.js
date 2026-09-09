@@ -21,6 +21,7 @@ import { HiOutlineExclamationTriangle } from "react-icons/hi2";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
+import AvailabilityNotice from "../ui/AvailabilityNotice";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
@@ -1062,6 +1063,9 @@ export default function PlaceOrder({
                       maximumFractionDigits: 2,
                     }).format(totalPrice)}
                   </span>
+                </li>
+                <li className='mb-3'>
+                  <AvailabilityNotice />
                 </li>
                 <li>
                   {(

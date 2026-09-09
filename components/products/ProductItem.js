@@ -8,6 +8,7 @@ import { Listbox } from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
 import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import AvailabilityNotice from "../ui/AvailabilityNotice";
 
 export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -53,6 +54,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? null);
@@ -72,6 +74,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   useEffect(() => {
     if (product.countInStock === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || "");
@@ -101,6 +104,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       boxStock === 0 &&
       (clearanceStockEach > 0 || clearanceStockBox > 0)
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Clearance");
 
       setCurrentPrice(
@@ -129,6 +133,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? null);
@@ -137,6 +142,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
   useEffect(() => {
     if (clearanceTypeOfPurchase) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Clearance");
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.clearance?.description || "No description");
@@ -244,6 +250,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   useEffect(() => {
     if (!active) {
       if (product.each?.description) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentDescription(product.each.description);
       } else if (product.box?.description) {
         setCurrentDescription(product.box.description);
@@ -560,6 +567,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
             required
           />
         </form>
+      )}
+      {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
+        <AvailabilityNotice className='mt-2 text-center' />
       )}
       {!active && (
         <div className='mb-2 flex flex-col justify-center gap-2 m-2 text-center items-center'>

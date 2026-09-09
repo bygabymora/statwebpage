@@ -91,6 +91,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
         .filter(Boolean)
         .join(" ");
       if (fullName) setName(fullName);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (contact.email) setEmail(contact.email);
     }
   }, [contact]);

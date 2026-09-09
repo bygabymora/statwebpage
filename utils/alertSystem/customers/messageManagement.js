@@ -266,6 +266,11 @@ export const messageManagement = (
                       .join("")}
                   </tbody>
                 </table>
+                <p style="font-size: 13px; color: #788b9b; margin-top: 10px;">
+                  Quantities and pricing shown are subject to availability at
+                  the time your order is processed. We will contact you if any
+                  item needs to be adjusted.
+                </p>
               </div>
             </div>
           `,

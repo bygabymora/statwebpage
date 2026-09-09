@@ -9,12 +9,15 @@ import { Listbox } from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
+import AvailabilityNotice from "../ui/AvailabilityNotice";
 
 const Cart = ({ setActiveStep, order, setOrder }) => {
   const [stockAlert, setStockAlert] = useState(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showPendingApprovalPrompt, setShowPendingApprovalPrompt] =
+    useState(false);
   const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
@@ -30,6 +33,23 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
     removeFromGuestCart,
     updateGuestCartItem,
   } = useModalContext();
+
+  const isApproved =
+    status === "authenticated" &&
+    session?.user?.active &&
+    session?.user?.approved;
+
+  const checkoutHandler = () => {
+    if (!session) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    if (!isApproved) {
+      setShowPendingApprovalPrompt(true);
+      return;
+    }
+    setActiveStep(1);
+  };
 
   const removeItemHandler = (item) => {
     setProductToRemove(item);
@@ -338,13 +358,14 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
               </li>
               <li>
                 <button
-                  onClick={() =>
-                    session ? setActiveStep(1) : setShowAuthPrompt(true)
-                  }
+                  onClick={checkoutHandler}
                   className='primary-button w-full'
                 >
                   Checkout
                 </button>
+              </li>
+              <li>
+                <AvailabilityNotice className='mt-3 text-center' />
               </li>
             </ul>
           </div>
@@ -420,6 +441,24 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                   onClick={() => setShowAuthPrompt(false)}
                 >
                   Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {showPendingApprovalPrompt && (
+            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+              <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
+                <h2 className='font-bold text-lg'>Account Pending Approval</h2>
+                <p className='text-[#414b53] mt-2'>
+                  Your account is still being reviewed, so checkout isn&apos;t
+                  available yet. You can keep adding items to your cart, and
+                  we&apos;ll notify you as soon as you&apos;re approved.
+                </p>
+                <button
+                  className='mt-4 px-4 py-2 bg-[#144e8b] text-white rounded-lg hover:bg-[#788b9b] transition'
+                  onClick={() => setShowPendingApprovalPrompt(false)}
+                >
+                  Got it
                 </button>
               </div>
             </div>

@@ -51,12 +51,7 @@ const Header = () => {
     useModalContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const { status, data: session } = useSession();
-
-  const active =
-    session?.user?.active &&
-    session?.user?.approved &&
-    status === "authenticated";
+  const { data: session } = useSession();
 
   const cartItemsCount =
     session ?
