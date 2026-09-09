@@ -70,6 +70,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (product.countInStock || 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
@@ -83,6 +84,7 @@ export const ProductItemPage = ({ product, index }) => {
     const clearanceStock = product.each?.clearanceCountInStock ?? 0;
 
     if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Clearance");
       setCurrentPrice(
         product.clearance?.price ?
@@ -96,6 +98,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? null);
@@ -104,6 +107,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? 0);
@@ -210,6 +214,7 @@ export const ProductItemPage = ({ product, index }) => {
   useEffect(() => {
     if (!active) {
       if (product.each?.description) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentDescription(product.each.description);
       } else if (product.box?.description) {
         setCurrentDescription(product.box.description);
