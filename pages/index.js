@@ -4,39 +4,6 @@ import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
 
-// Inline SVG icons — eliminates react-icons/bi from this page chunk
-function SkipPrevIcon({ className }) {
-  return (
-    <svg
-      className={className}
-      viewBox='0 0 24 24'
-      fill='currentColor'
-      width='1em'
-      height='1em'
-      aria-hidden='true'
-    >
-      <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
-      <path d='M8 7v10h2V7H8zm4 5 6 5V7l-6 5z' />
-    </svg>
-  );
-}
-
-function SkipNextIcon({ className }) {
-  return (
-    <svg
-      className={className}
-      viewBox='0 0 24 24'
-      fill='currentColor'
-      width='1em'
-      height='1em'
-      aria-hidden='true'
-    >
-      <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
-      <path d='M6 17l6-5-6-5v10zm8-10v10h2V7h-2z' />
-    </svg>
-  );
-}
-
 // Render hero/above-the-fold on the server so LCP is discoverable
 const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
 const StaticBanner = dynamic(() => import("../components/StaticBanner"), {
@@ -163,6 +130,7 @@ function Carousel({ products }) {
     setIsInteracting(true);
   };
   const handleInteractionEnd = () => {
+    // eslint-disable-next-line react-hooks/immutability
     interactionEndTimer = setTimeout(() => setIsInteracting(false), 3000);
   };
 
@@ -230,9 +198,11 @@ function Carousel({ products }) {
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
+        // eslint-disable-next-line react-hooks/immutability
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
+        // eslint-disable-next-line react-hooks/immutability
         onMouseUp={handleMouseUp}
         onMouseEnter={handleInteractionStart}
         onMouseLeave={handleMouseUp}

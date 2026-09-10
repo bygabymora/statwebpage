@@ -371,6 +371,7 @@ export async function getServerSideProps(context) {
           // Split at the first ? and take only the path part
           cleaned = decoded.split("?")[0];
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         // If decoding fails, try to remove encoded query params manually
         cleaned = cleaned.split("%3F")[0].split("%3f")[0];

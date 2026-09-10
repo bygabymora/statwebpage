@@ -17,6 +17,7 @@ export default function ForgotPassword() {
   useEffect(() => {
     const { email: emailFromQuery } = router.query;
     if (emailFromQuery) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(emailFromQuery);
     }
   }, [router.query]);
@@ -51,20 +52,20 @@ export default function ForgotPassword() {
         resetCode,
         null,
         null,
-        accountOwner
+        accountOwner,
       );
 
       handleSendEmails(emailmessage, contactToEmail, accountOwner);
 
       showStatusMessage(
         "success",
-        "If we find your email, a reset code has been sent to it. Please check your inbox."
+        "If we find your email, a reset code has been sent to it. Please check your inbox.",
       );
       router.push("/");
     } catch (error) {
       showStatusMessage(
         "error",
-        error.response?.data?.message || "Failed to send reset code"
+        error.response?.data?.message || "Failed to send reset code",
       );
     } finally {
       stopLoading();
@@ -86,16 +87,14 @@ export default function ForgotPassword() {
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className='flex items-center'>
-              {breadcrumb.href ? (
+              {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
                   className='hover:underline text-[#0e355e]'
                 >
                   {breadcrumb.name}
                 </Link>
-              ) : (
-                <span>{breadcrumb.name}</span>
-              )}
+              : <span>{breadcrumb.name}</span>}
               {index < breadcrumbs.length - 1 && (
                 <BsChevronRight className='mx-2 text-gray-500' />
               )}

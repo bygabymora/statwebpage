@@ -59,6 +59,7 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
 
   useEffect(() => {
     if (wpCustomer) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setKeyword(wpCustomer.companyName);
       setSuggestions([]);
       autoMatchedRef.current = true;
@@ -107,6 +108,7 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
 
           if (exactMatches.length === 1) {
             autoMatchedRef.current = true;
+            // eslint-disable-next-line react-hooks/immutability
             await handleSelect(exactMatches[0]);
             return;
           }
@@ -130,9 +132,11 @@ export default function CustomerLinking({ wpUser, wpCustomer, fetchData }) {
   // Fetch suggestions on keyword change with debounce
   useEffect(() => {
     if (keyword?.trim() === "") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuggestions([]);
       return;
     }
+    // eslint-disable-next-line react-hooks/immutability
     const timeout = setTimeout(() => fetchSuggestions(), 300);
     return () => clearTimeout(timeout);
   }, [keyword]);

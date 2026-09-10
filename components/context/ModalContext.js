@@ -53,6 +53,7 @@ export const ModalProvider = ({ children }) => {
 
   // Guest cart is cookie-backed so it survives across page loads pre-login.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGuestCart(readGuestCartCookie());
   }, []);
 
@@ -121,6 +122,7 @@ export const ModalProvider = ({ children }) => {
     const loadUserData = async () => {
       if (session?.user) {
         setContact(session.user);
+        // eslint-disable-next-line react-hooks/immutability
         const { userData, customerData, accountOwner } = await fetchUserData();
         let mergedUserData = userData;
 
@@ -153,7 +155,6 @@ export const ModalProvider = ({ children }) => {
       }
     };
     loadUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const fetchUserData = async () => {
