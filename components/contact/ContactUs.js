@@ -222,6 +222,7 @@ const ContactUs = () => {
 
   useEffect(() => {
     if (contact) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(contact.name || "");
       setEmail((contact.email || "").toLowerCase());
     }

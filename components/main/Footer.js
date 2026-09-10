@@ -33,6 +33,7 @@ export default function Footer() {
 
   useEffect(() => {
     if (user?.isApproved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(user.name || "");
       setEmail(user.email || "");
     }
