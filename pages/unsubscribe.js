@@ -17,6 +17,7 @@ export default function Unsubscribe() {
 
     // Check for access parameter
     if (access === "allowed") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAccess(true);
     } else {
       setHasAccess(false);
@@ -165,8 +166,6 @@ export default function Unsubscribe() {
   const handleCancel = () => {
     setIsConfirmOpen(false);
   };
-
-  const isComplete = status === "success";
 
   // Show access denied if no proper access parameter
   if (!hasAccess) {
