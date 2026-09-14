@@ -33,21 +33,36 @@ function TruckIcon({ className }) {
 }
 
 /**
- * Returns { hours, minutes, seconds } in America/New_York timezone.
+ * Returns { hours, minutes, seconds, isWeekend } in America/New_York timezone.
  * Uses native Intl API — replaces moment-timezone (~300 KB parsed).
  */
 function getNewYorkTime() {
+  const now = new Date();
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
     hour: "numeric",
     minute: "numeric",
     second: "numeric",
     hour12: false,
-  }).formatToParts(new Date());
+  }).formatToParts(now);
 
   const get = (type) =>
     parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
-  return { hours: get("hour"), minutes: get("minute"), seconds: get("second") };
+
+  // Weekday name (e.g. "Sat", "Sun") in the same NY timezone, so weekend
+  // detection lines up with the hours/minutes/seconds used for the cutoff.
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short",
+  }).format(now);
+  const isWeekend = weekday === "Sat" || weekday === "Sun";
+
+  return {
+    hours: get("hour"),
+    minutes: get("minute"),
+    seconds: get("second"),
+    isWeekend,
+  };
 }
 
 export default function ShippingCutoffTimer() {
@@ -56,7 +71,14 @@ export default function ShippingCutoffTimer() {
 
   useEffect(() => {
     const updateTimer = () => {
-      const { hours: h, minutes: m, seconds: s } = getNewYorkTime();
+      const { hours: h, minutes: m, seconds: s, isWeekend } = getNewYorkTime();
+
+      // Never show the banner on Saturdays or Sundays.
+      if (isWeekend) {
+        setShowTimer(false);
+        return;
+      }
+
       const nowSec = h * 3600 + m * 60 + s;
       const cutoffSec = 15 * 3600 + 30 * 60; // 3:30 PM ET
 
