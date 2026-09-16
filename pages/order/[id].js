@@ -452,24 +452,23 @@ function OrderScreen() {
   })();
 
   const paymentAmountStatus = () => {
-    console.log("Calculating payment status...", invoice, order);
     let status = "";
-    if (!invoice && !order.isPaid) {
-      status = "Not Paid";
-    } else if (invoice && order.isPaid) {
+    if (order.isPaid) {
       status = "Paid";
-    } else if (invoice && !order.isPaid) {
-      order.isPaid ? (status = "Paid")
-      : invoice.balance === invoice?.totalPrice ? (status = "Not Paid")
-      : (
-        invoice?.balance > 0 &&
-        invoice?.balance <
-          invoice.totalPrice -
-            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-      ) ?
-        (status = "Partial Payment")
-      : invoice.balance < 0 ? (status = "Over Payment")
-      : (status = "Not Paid");
+    } else if (!invoice) {
+      status = "Not Paid";
+    } else {
+      status =
+        invoice.balance === invoice?.totalPrice ? "Not Paid"
+        : (
+          invoice?.balance > 0 &&
+          invoice?.balance <
+            invoice.totalPrice -
+              (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+        ) ?
+          "Partial Payment"
+        : invoice.balance < 0 ? "Over Payment"
+        : "Not Paid";
     }
     return status;
   };
@@ -1082,7 +1081,9 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    : paymentMethod === "PayPal" ?
+                    : paymentMethod === "PayPal" &&
+                      (shippingPreferences?.paymentMethod !== "Bill Me" ||
+                        stripeReadyToPay()) ?
                       isPending ?
                         <div>Loading...</div>
                       : <PayPalButtons
@@ -1095,7 +1096,7 @@ function OrderScreen() {
 
                     : null}
                     {loadingPay && <div>Loading...</div>}
-                    {paymentMethod === "Stripe" &&
+                    {(paymentMethod === "Stripe" || paymentMethod === "PayPal") &&
                       shippingPreferences?.paymentMethod === "Bill Me" &&
                       stripeReadyToPay() === false && (
                         <div>

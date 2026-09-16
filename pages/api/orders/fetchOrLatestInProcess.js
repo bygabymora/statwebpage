@@ -144,6 +144,11 @@ export default async function handler(req, res) {
       taxable: it.taxable,
       taxClassificationRef: it.taxClassificationRef,
       totalPrice: Number(it.quantity) * Number(it.price),
+      name: it.name,
+      manufacturer: it.manufacturer,
+      image: it.image,
+      slug: it.slug,
+      sentOverNight: it.sentOverNight,
     }));
 
     // 7c) Recalc totals
