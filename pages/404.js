@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Layout from "../components/main/Layout";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import animationData from "../public/404-Ilustration.json";
 import { BiHome, BiSearch, BiPhone } from "react-icons/bi";
 import { FaStethoscope } from "react-icons/fa";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function Custom404() {
   return (
