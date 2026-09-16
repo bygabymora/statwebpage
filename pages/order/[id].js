@@ -482,6 +482,14 @@ function OrderScreen() {
     );
   };
 
+  // Shared gate for any online payment button (Stripe, PayPal): tax must be
+  // resolved, and if shipping is "Bill Me" the shipment must be priced first.
+  // Both payment methods must use this same check so neither one can let a
+  // customer pay before the order is actually ready.
+  const canPayNow = () =>
+    !isTaxPending &&
+    (shippingPreferences?.paymentMethod !== "Bill Me" || stripeReadyToPay());
+
   const placeOrderHandler = async () => {
     if (order?.paymentMethod === "Stripe") {
       try {
@@ -1023,14 +1031,7 @@ function OrderScreen() {
                 )}
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
-                    {(
-                      !isTaxPending &&
-                      ((paymentMethod === "Stripe" &&
-                        shippingPreferences?.paymentMethod !== "Bill Me") ||
-                        (paymentMethod === "Stripe" &&
-                          shippingPreferences?.paymentMethod === "Bill Me" &&
-                          stripeReadyToPay()))
-                    ) ?
+                    {paymentMethod === "Stripe" && canPayNow() ?
                       <div className='buttons-container text-center mx-auto'>
                         <button
                           onClick={placeOrderHandler}
@@ -1081,9 +1082,7 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    : paymentMethod === "PayPal" &&
-                      (shippingPreferences?.paymentMethod !== "Bill Me" ||
-                        stripeReadyToPay()) ?
+                    : paymentMethod === "PayPal" && canPayNow() ?
                       isPending ?
                         <div>Loading...</div>
                       : <PayPalButtons

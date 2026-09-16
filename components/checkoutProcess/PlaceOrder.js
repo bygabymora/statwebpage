@@ -101,6 +101,13 @@ export default function PlaceOrder({
   const isShippingBillMe =
     (order?.paymentMethod === "Stripe" || order?.paymentMethod === "PayPal") &&
     order?.shippingPreferences?.paymentMethod === "Bill Me";
+  // Shared gate for any online payment button (Stripe, PayPal): tax must be
+  // resolved, and shipping can't be "Bill Me" (no shipment exists yet at this
+  // step, so there's nothing to be "ready" -- Bill Me always defers here).
+  // Both payment methods must use this same check so neither one can let a
+  // customer pay before the order is actually ready.
+  const canPayNow =
+    !isTaxPending && order?.shippingPreferences?.paymentMethod !== "Bill Me";
 
   useEffect(() => {
     if (order._id && !order.isPaid && !window.paypal) {
@@ -1113,11 +1120,7 @@ export default function PlaceOrder({
                   </span>
                 </li>
                 <li>
-                  {(
-                    order?.paymentMethod === "Stripe" &&
-                    !isTaxPending &&
-                    order?.shippingPreferences?.paymentMethod !== "Bill Me"
-                  ) ?
+                  {order?.paymentMethod === "Stripe" && canPayNow ?
                     <div className='buttons-container text-center mx-auto'>
                       <button
                         onClick={placeOrderHandler}
@@ -1138,9 +1141,7 @@ export default function PlaceOrder({
                         />
                       </button>
                     </div>
-                  : order?.paymentMethod === "PayPal" &&
-                    !isTaxPending &&
-                    order?.shippingPreferences?.paymentMethod !== "Bill Me" ?
+                  : order?.paymentMethod === "PayPal" && canPayNow ?
                     isPending ?
                       <div>Loading...</div>
                     : <PayPalButtons
