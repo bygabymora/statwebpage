@@ -452,24 +452,23 @@ function OrderScreen() {
   })();
 
   const paymentAmountStatus = () => {
-    console.log("Calculating payment status...", invoice, order);
     let status = "";
-    if (!invoice && !order.isPaid) {
-      status = "Not Paid";
-    } else if (invoice && order.isPaid) {
+    if (order.isPaid) {
       status = "Paid";
-    } else if (invoice && !order.isPaid) {
-      order.isPaid ? (status = "Paid")
-      : invoice.balance === invoice?.totalPrice ? (status = "Not Paid")
-      : (
-        invoice?.balance > 0 &&
-        invoice?.balance <
-          invoice.totalPrice -
-            (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
-      ) ?
-        (status = "Partial Payment")
-      : invoice.balance < 0 ? (status = "Over Payment")
-      : (status = "Not Paid");
+    } else if (!invoice) {
+      status = "Not Paid";
+    } else {
+      status =
+        invoice.balance === invoice?.totalPrice ? "Not Paid"
+        : (
+          invoice?.balance > 0 &&
+          invoice?.balance <
+            invoice.totalPrice -
+              (invoice?.creditCardFee ? invoice?.creditCardFee : 0)
+        ) ?
+          "Partial Payment"
+        : invoice.balance < 0 ? "Over Payment"
+        : "Not Paid";
     }
     return status;
   };
@@ -482,6 +481,14 @@ function OrderScreen() {
       shipments.length > 0 && shipments.every((shipment) => shipment.price > 0)
     );
   };
+
+  // Shared gate for any online payment button (Stripe, PayPal): tax must be
+  // resolved, and if shipping is "Bill Me" the shipment must be priced first.
+  // Both payment methods must use this same check so neither one can let a
+  // customer pay before the order is actually ready.
+  const canPayNow = () =>
+    !isTaxPending &&
+    (shippingPreferences?.paymentMethod !== "Bill Me" || stripeReadyToPay());
 
   const placeOrderHandler = async () => {
     if (order?.paymentMethod === "Stripe") {
@@ -1024,14 +1031,7 @@ function OrderScreen() {
                 )}
                 {!isPaid && (
                   <li className='buttons-container text-center mx-auto'>
-                    {(
-                      !isTaxPending &&
-                      ((paymentMethod === "Stripe" &&
-                        shippingPreferences?.paymentMethod !== "Bill Me") ||
-                        (paymentMethod === "Stripe" &&
-                          shippingPreferences?.paymentMethod === "Bill Me" &&
-                          stripeReadyToPay()))
-                    ) ?
+                    {paymentMethod === "Stripe" && canPayNow() ?
                       <div className='buttons-container text-center mx-auto'>
                         <button
                           onClick={placeOrderHandler}
@@ -1082,7 +1082,7 @@ function OrderScreen() {
                           </div>
                         )}
                       </div>
-                    : paymentMethod === "PayPal" ?
+                    : paymentMethod === "PayPal" && canPayNow() ?
                       isPending ?
                         <div>Loading...</div>
                       : <PayPalButtons
@@ -1095,7 +1095,7 @@ function OrderScreen() {
 
                     : null}
                     {loadingPay && <div>Loading...</div>}
-                    {paymentMethod === "Stripe" &&
+                    {(paymentMethod === "Stripe" || paymentMethod === "PayPal") &&
                       shippingPreferences?.paymentMethod === "Bill Me" &&
                       stripeReadyToPay() === false && (
                         <div>

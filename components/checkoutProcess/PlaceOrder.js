@@ -96,9 +96,19 @@ export default function PlaceOrder({
   const hasExemptionFileOnFile = Boolean(
     customer?.exemptionFileId && customer?.exemptionFileName,
   );
+  // "Bill Me" shipping means the shipping cost isn't known yet, so payment
+  // has to wait until the shipment is priced -- applies to any payment
+  // method that would otherwise charge immediately (Stripe, PayPal).
   const isShippingBillMe =
-    order?.paymentMethod === "Stripe" &&
+    (order?.paymentMethod === "Stripe" || order?.paymentMethod === "PayPal") &&
     order?.shippingPreferences?.paymentMethod === "Bill Me";
+  // Shared gate for any online payment button (Stripe, PayPal): tax must be
+  // resolved, and shipping can't be "Bill Me" (no shipment exists yet at this
+  // step, so there's nothing to be "ready" -- Bill Me always defers here).
+  // Both payment methods must use this same check so neither one can let a
+  // customer pay before the order is actually ready.
+  const canPayNow =
+    !isTaxPending && order?.shippingPreferences?.paymentMethod !== "Bill Me";
 
   useEffect(() => {
     if (order._id && !order.isPaid && !window.paypal) {
@@ -436,6 +446,51 @@ export default function PlaceOrder({
       });
   };
 
+  // Every other payment method reaches this via placeOrderAction()'s
+  // `action()`, but the PayPal buttons above capture payment directly and
+  // call onApprove instead of placeOrderHandler -- so PayPal has to run the
+  // same completion steps (estimate, status, cart, addresses, email) itself
+  // once the payment PUT succeeds.
+  const completeOrderAfterPayment = async () => {
+    try {
+      const orderToPlace = { ...(order ?? {}), status: "Completed" };
+      await axios.post("/api/orders", { order: orderToPlace });
+
+      await baseAction();
+
+      const userId = session?.user?._id;
+      if (userId) {
+        await axios.patch(`/api/users/${userId}/cart`, { action: "clear" });
+      }
+
+      const customerId = customer?._id ?? user?.customer?._id ?? null;
+      if (customerId) {
+        await axios.put(`/api/customer/${customerId}/updateAddresses`, {
+          customer,
+        });
+      }
+
+      const updatedUser = await fetchUserData();
+      setUser((u) => ({ ...u, cart: updatedUser?.userData?.cart ?? [] }));
+
+      router.push(`/order/${order?._id}`);
+      Cookies.remove("orderId");
+      setOrder((o) => ({
+        ...(o ?? {}),
+        orderItems: [],
+        itemsPrice: 0,
+        totalPrice: 0,
+      }));
+      sendConfirmationEmail();
+    } catch (error) {
+      console.error("Error completing order after PayPal payment:", error);
+      showStatusMessage(
+        "error",
+        "Payment succeeded, but we could not finish processing your order. Please contact support.",
+      );
+    }
+  };
+
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
@@ -453,6 +508,7 @@ export default function PlaceOrder({
           paidAt: data.paidAt,
           paymentResult: data.paymentResult,
         }));
+        await completeOrderAfterPayment();
       } catch (error) {
         showStatusMessage(
           "error",
@@ -1068,11 +1124,7 @@ export default function PlaceOrder({
                   <AvailabilityNotice />
                 </li>
                 <li>
-                  {(
-                    order?.paymentMethod === "Stripe" &&
-                    !isTaxPending &&
-                    order?.shippingPreferences?.paymentMethod !== "Bill Me"
-                  ) ?
+                  {order?.paymentMethod === "Stripe" && canPayNow ?
                     <div className='buttons-container text-center mx-auto'>
                       <button
                         onClick={placeOrderHandler}
@@ -1093,7 +1145,7 @@ export default function PlaceOrder({
                         />
                       </button>
                     </div>
-                  : order?.paymentMethod === "PayPal" && !isTaxPending ?
+                  : order?.paymentMethod === "PayPal" && canPayNow ?
                     isPending ?
                       <div>Loading...</div>
                     : <PayPalButtons
@@ -1108,8 +1160,7 @@ export default function PlaceOrder({
                     isTaxPending ||
                     order?.paymentMethod === "PO Number" ||
                     order?.paymentMethod === "Pay By Wire" ||
-                    (order?.paymentMethod === "Stripe" &&
-                      order?.shippingPreferences?.paymentMethod === "Bill Me")
+                    isShippingBillMe
                   ) ?
                     <button
                       disabled={loading}

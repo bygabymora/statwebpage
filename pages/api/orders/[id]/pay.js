@@ -27,10 +27,6 @@ export default async function handler(req, res) {
   if (!orderId)
     return res.status(400).json({ message: "Missing order id in URL" });
 
-  if (!stripeSecret) {
-    return res.status(500).json({ message: "Missing STRIPE_SECRET_KEY" });
-  }
-
   const user = await getToken({ req }).catch(() => null);
   if (!user) return res.status(401).send("Error: signin required");
 
@@ -42,14 +38,7 @@ export default async function handler(req, res) {
       .json({ message: "Service unavailable: Database connection failed" });
   }
 
-  const stripe = new Stripe(stripeSecret, { apiVersion: "2022-11-15" });
-
-  // Lee identificadores posibles
   const body = safeBody(req);
-  const sessionIdFromBody = body.sessionId || body.session_id || null;
-  const piIdFromBody = body.paymentIntentId || body.payment_intent || null;
-  const sessionIdFromQuery = req.query.session_id || null;
-  const piIdFromQuery = req.query.payment_intent || null;
 
   // 1) Buscar orden
   let order;
@@ -66,12 +55,101 @@ export default async function handler(req, res) {
   if (!order)
     return res.status(404).json({ message: "Error: order not found" });
 
+  if (!user.isAdmin && String(order.wpUser?.userId) !== String(user._id)) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   // Idempotencia: si ya está pagada, 200
   if (order.isPaid) {
     return res
       .status(200)
       .json({ message: "Payment already processed", order });
   }
+
+  // PayPal capture: the client PUTs the raw `details` object returned by
+  // actions.order.capture(), which has no Stripe paymentIntentId/sessionId.
+  if (order.paymentMethod === "PayPal") {
+    const captureId = body.id;
+    const status = body.status;
+    if (!captureId || status !== "COMPLETED") {
+      return res
+        .status(400)
+        .json({ message: "Invalid or incomplete PayPal capture" });
+    }
+
+    const capture = body.purchase_units?.[0]?.payments?.captures?.[0];
+
+    try {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.paymentId = captureId;
+      order.paymentResult = {
+        id: captureId,
+        status,
+        email_address: body.payer?.email_address || null,
+        payment_method: "paypal",
+        amount:
+          capture?.amount?.value !== undefined ?
+            Number(capture.amount.value)
+          : undefined,
+        currency: capture?.amount?.currency_code || undefined,
+        created:
+          capture?.create_time ?
+            Math.floor(new Date(capture.create_time).getTime() / 1000)
+          : Math.floor(Date.now() / 1000),
+      };
+
+      const paidOrder = await order.save();
+      return res
+        .status(200)
+        .json({ message: "order paid successfully", order: paidOrder });
+    } catch {
+      return res
+        .status(500)
+        .json({ message: "Error while processing the order" });
+    }
+  }
+
+  // Pay By Wire: an admin manually confirms the wire was received, so there
+  // is no external payment processor to verify against.
+  if (order.paymentMethod === "Pay By Wire") {
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "Admin required" });
+    }
+
+    try {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.paymentId = order.paymentId || `wire-${order._id}`;
+      order.paymentResult = {
+        id: order.paymentId,
+        status: "COMPLETED",
+        payment_method: "wire",
+        created: Math.floor(Date.now() / 1000),
+      };
+
+      const paidOrder = await order.save();
+      return res
+        .status(200)
+        .json({ message: "order paid successfully", order: paidOrder });
+    } catch {
+      return res
+        .status(500)
+        .json({ message: "Error while processing the order" });
+    }
+  }
+
+  // Everything else (Stripe) below.
+  if (!stripeSecret) {
+    return res.status(500).json({ message: "Missing STRIPE_SECRET_KEY" });
+  }
+  const stripe = new Stripe(stripeSecret, { apiVersion: "2022-11-15" });
+
+  // Lee identificadores posibles
+  const sessionIdFromBody = body.sessionId || body.session_id || null;
+  const piIdFromBody = body.paymentIntentId || body.payment_intent || null;
+  const sessionIdFromQuery = req.query.session_id || null;
+  const piIdFromQuery = req.query.payment_intent || null;
 
   // 2) Resolver paymentIntentId (SIN depender de order.paymentId)
   let paymentIntentId = piIdFromBody || piIdFromQuery || null;
