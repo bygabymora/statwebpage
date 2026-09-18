@@ -17,6 +17,7 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
   const [phone, setPhone] = useState("");
   const { contact, showStatusMessage, accountOwner } = useModalContext();
   const [uom, setUom] = useState("");
+  const [showRequestForm, setShowRequestForm] = useState(false);
   const uomOptions = ["Box", "Each"];
 
   const tab = <>&nbsp;&nbsp;</>;
@@ -40,8 +41,6 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       showStatusMessage("error", getError(err) || "Something went wrong");
     }
   };
-
-  //-------------Email-------------//
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -96,24 +95,75 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
     }
   }, [contact]);
 
-  //----------//
-
   return (
     <div className='max-w-4xl mx-auto p-5 md:col-span-2 lg:col-span-3'>
-      <>
-        <div className='text-center'>
-          <h2 className='section__subtitle'>No products found</h2>
-          <p className='section__text text-center font-semibold'>
-            Kindly provide your contact details, and we will reach out to you
-            once the product becomes available.
-          </p>{" "}
+      <div className='text-center mb-8'>
+        <h2 className='section__subtitle'>
+          We don’t list “{searchedWord || "that item"}” online — we can still
+          help
+        </h2>
+        <p className='section__text text-center max-w-2xl mx-auto mt-3'>
+          A missing catalog result does not mean the product is unavailable.
+          STAT Surgical Supply routinely sources OEM-sealed disposables, reviews
+          clinically equivalent substitutes, and prepares a quote for hospitals
+          and surgery centers.
+        </p>
+      </div>
+
+      <div className='grid gap-4 md:grid-cols-3 mb-8'>
+        <div className='rounded-lg border border-gray-200 bg-white p-4 text-left'>
+          <p className='font-semibold text-[#0e355e] mb-1'>Source it</p>
+          <p className='text-sm text-gray-600'>
+            We search U.S. hospital and ASC inventory for factory-sealed,
+            in-date OEM product.
+          </p>
         </div>
-        <form
+        <div className='rounded-lg border border-gray-200 bg-white p-4 text-left'>
+          <p className='font-semibold text-[#0e355e] mb-1'>Substitute it</p>
+          <p className='text-sm text-gray-600'>
+            If the exact SKU is constrained, we can propose an equivalent
+            reference your team can review.
+          </p>
+        </div>
+        <div className='rounded-lg border border-gray-200 bg-white p-4 text-left'>
+          <p className='font-semibold text-[#0e355e] mb-1'>Quote it</p>
+          <p className='text-sm text-gray-600'>
+            Tell us the reference and quantity. We reply with availability and
+            pricing — usually the same business day.
+          </p>
+        </div>
+      </div>
+
+      <div className='flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 text-sm text-gray-700'>
+        <span>Need it urgently? Call (813) 252-0727 · Mon–Fri 8AM–5PM EST</span>
+        <span className='hidden sm:inline'>·</span>
+        <span>New, unused, original manufacturer packaging</span>
+      </div>
+
+      {!showRequestForm ?
+        <div className='text-center'>
+          <button
+            type='button'
+            className='button button--flex btn-contact inline-flex items-center justify-center'
+            onClick={() => setShowRequestForm(true)}
+          >
+            <span className='text-white'>
+              Request a source, substitute, or quote
+            </span>
+          </button>
+          <p className='mt-3 text-sm text-gray-500'>
+            Takes about one minute. No account required.
+          </p>
+        </div>
+      : <form
           className='contact__form_searched-div'
           ref={form}
           onSubmit={submitHandler}
         >
-          <div className='mb-4 font-bold text-[#0e355e]'>Product Needed</div>
+          <div className='mb-4 font-bold text-[#0e355e]'>
+            Product request — we will source, substitute, or quote
+          </div>
+
           <div className='contact__form-div' hidden>
             <label className='contact__form-tag'>Searched Word</label>
             <input
@@ -125,12 +175,13 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               value={searchedWord}
             />
           </div>
+
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Reference*</label>
             <input
               autoComplete='off'
               type='text'
-              placeholder='Please enter the product reference'
+              placeholder='Catalog / REF number'
               name='searchedWord'
               className='contact__form-input'
               onChange={(e) => setSearchedWord(e.target.value)}
@@ -138,12 +189,13 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               required
             />
           </div>
+
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Manufacturer*</label>
             <input
               autoComplete='off'
               type='text'
-              placeholder='Please enter the manufacturer'
+              placeholder='Manufacturer name'
               name='manufacturer'
               className='contact__form-input'
               onChange={(e) => setManufacturer(e.target.value)}
@@ -151,25 +203,26 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               required
             />
           </div>
+
           <div className='contact__form-div'>
-            <div className='contact__form-div'>
-              <label className='contact__form-tag'>Quantity Needed</label>
-              <input
-                autoComplete='off'
-                type='number'
-                min='0'
-                step='1'
-                placeholder='Please enter the quantity needed'
-                name='quantity'
-                className='contact__form-input'
-                onChange={(e) => setQuantity(e.target.value)}
-                value={quantity}
-              />
-            </div>
+            <label className='contact__form-tag'>Quantity needed*</label>
+            <input
+              autoComplete='off'
+              type='number'
+              min='0'
+              step='1'
+              placeholder='Quantity'
+              name='quantity'
+              className='contact__form-input'
+              onChange={(e) => setQuantity(e.target.value)}
+              value={quantity}
+              required
+            />
           </div>
+
           <div className='contact__form-div w-full z-50'>
             <label className='contact__form-tag'>
-              Unit of Measure (Box or Each)*
+              Unit of measure (Box or Each)*
             </label>
             <Listbox value={uom} onChange={setUom}>
               <div className='relative'>
@@ -202,12 +255,13 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               </div>
             </Listbox>
           </div>
+
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Name*</label>
             <input
               autoComplete='off'
               type='text'
-              placeholder='Please enter your name'
+              placeholder='Your name'
               name='Name'
               className='contact__form-input'
               onChange={(e) => setName(e.target.value)}
@@ -215,25 +269,27 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
               required={!contact}
             />
           </div>
+
           <div className='contact__form-div'>
             <label className='contact__form-tag'>Email*</label>
             <input
               autoComplete='off'
               type='email'
-              placeholder='Please enter your email'
+              placeholder='Work email'
               name='email'
-              className='contact__form-input '
+              className='contact__form-input'
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               required={!contact}
             />
           </div>
+
           <div className='contact__form-div'>
-            <label className='contact__form-tag'>Phone</label>
+            <label className='contact__form-tag'>Phone*</label>
             <input
               autoComplete='off'
-              type='phone'
-              placeholder='Please enter your phone number'
+              type='tel'
+              placeholder='Direct phone'
               name='phone'
               className='contact__form-input'
               onChange={(e) => setPhone(e.target.value)}
@@ -243,21 +299,30 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
           </div>
 
           <div className='contact__form-div'>
-            <label className='contact__form-tag'>Message*</label>
+            <label className='contact__form-tag'>
+              What do you need? (source / substitute / quote)*
+            </label>
             <textarea
               name='message'
               className='contact__form-input contact__message'
+              placeholder='Example: Need 4 boxes of REF XXXXX for cases next week. Open to equivalent if exact SKU is backordered.'
               onChange={(e) => setMessage(e.target.value)}
               value={message}
               required
             />
           </div>
+
+          <p className='text-xs text-gray-500 mb-3'>
+            Submitting this form does not place an order. A specialist will
+            confirm availability, dating, and price before anything ships.
+          </p>
+
           <button className='button button--flex btn-contact w-full flex items-center justify-center'>
-            <span className='text-white'>Send Your Request {tab} </span>
+            <span className='text-white'>Send request {tab}</span>
             <BiMessageAdd className='text-white ml-2' />
           </button>
         </form>
-      </>
+      }
     </div>
   );
 };
