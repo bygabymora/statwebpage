@@ -31,7 +31,7 @@ const StaticBanner = () => {
             width={500}
             height={500}
             title='Quality Surgical Solutions'
-            src='/images/assets/StaticBanner.png'
+            src='/images/assets/Banner.png'
             alt='Seasonal Discounts on Healthcare Products'
             loading='lazy'
             className='rounded-xl shadow-lg'

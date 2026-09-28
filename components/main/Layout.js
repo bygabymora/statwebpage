@@ -39,7 +39,7 @@ export default function Layout({
     setIsMounted(true);
   }, []);
   const defaultOgImage =
-    "https://www.statsurgicalsupply.com/images/assets/StaticBanner.png";
+    "https://www.statsurgicalsupply.com/images/assets/Banner.png";
 
   const approvalMessage = useMemo(
     () => ({

@@ -8,14 +8,14 @@ export default function GoogleLoginButton({ callbackUrl = "/" }) {
   const handleGoogle = async () => {
     try {
       setLoading(true);
-      // Lanza el flujo de Google (NextAuth → /api/auth/signin/google)
+      // Initiates the Google flow (NextAuth → /api/auth/signin/google)
       await signIn("google", {
         callbackUrl,
-        // prompt: "select_account", // descomenta si quieres forzar selector de cuentas
+        // prompt: "select_account", // uncomment if you want to force the account selector
       });
     } catch {
       setLoading(false);
-      // Si algo falla, como fallback manda a la página nativa de NextAuth
+      // If something fails, it redirects to the native NextAuth page as a fallback.
       window.location.href = "/api/auth/signin";
     }
   };

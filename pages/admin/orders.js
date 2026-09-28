@@ -66,6 +66,13 @@ const orderGrandTotal = (order) => {
   );
 };
 
+const getCustomerName = (order) => {
+  const ci = order?.shippingAddress?.contactInfo;
+  const name = [ci?.firstName, ci?.lastName].filter(Boolean).join(" ").trim();
+  if (name) return name;
+  return ci?.email || order?.wpUser?.email || "—";
+};
+
 const paymentAmountStatus = (invoice) => {
   if (!invoice) return "Not Paid";
   let status = "";
@@ -244,7 +251,7 @@ export default function AdminOrderScreen() {
                           {order?._id ? String(order._id).slice(-6) : "No ID"}
                         </h3>
                         <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
-                          {order?.wpUser?.firstName || "DELETED USER"}
+                          {getCustomerName(order)}
                         </p>
                         <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
                           <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
@@ -409,7 +416,7 @@ export default function AdminOrderScreen() {
                           </div>
                           <div className='col-span-2'>
                             <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
-                              {order?.wpUser?.firstName || "DELETED USER"}
+                              {getCustomerName(order)}
                             </div>
                           </div>
                           <div className='col-span-1'>
