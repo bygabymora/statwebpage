@@ -73,6 +73,7 @@ export default async function handler(req, res) {
           description: product.each?.description || null,
           countInStock: product.each?.countInStock || 0,
           clearanceCountInStock: product.each?.clearanceCountInStock || 0,
+          heldStock: product.each?.heldStock || 0,
           wpPrice: product.each?.wpPrice || null,
           customerPrice: product.each?.customerPrice || null,
         },
@@ -80,11 +81,13 @@ export default async function handler(req, res) {
           description: product.box?.description || null,
           countInStock: product.box?.countInStock || 0,
           clearanceCountInStock: product.box?.clearanceCountInStock || 0,
+          heldStock: product.box?.heldStock || 0,
           wpPrice: product.box?.wpPrice || null,
           customerPrice: product.box?.customerPrice || null,
         },
         loose: {
           countInStock: product.loose?.countInStock || 0,
+          heldStock: product.loose?.heldStock || 0,
         },
       };
       return res.status(200).json(minimal);

@@ -8,6 +8,7 @@ import { Listbox } from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
+import { MdExpandMore, MdExpandLess } from "react-icons/md";
 
 const Cart = ({ setActiveStep, order, setOrder }) => {
   const [stockAlert, setStockAlert] = useState(null);
@@ -15,14 +16,62 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
   const [mounted, setMounted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
+  const [heldStockData, setHeldStockData] = useState({});
+  const [expandedItems, setExpandedItems] = useState({});
+  const [allStockData, setAllStockData] = useState({});
   useEffect(() => {
     setMounted(true);
   }, []);
   const { setUser, fetchUserData, showStatusMessage, user } = useModalContext();
 
+  useEffect(() => {
+    const fetchHeldStockData = async () => {
+      const stockData = {};
+      const allStock = {};
+      for (const item of order.orderItems || []) {
+        const key = `${item.productId}-${item.typeOfPurchase}`;
+        try {
+          const { data: product } = await axios.get(
+            `/api/products/${item.productId}`,
+          );
+          const heldStock =
+            item.typeOfPurchase === "Each" ? (product.each?.heldStock ?? 0)
+            : item.typeOfPurchase === "Box" ? (product.box?.heldStock ?? 0)
+            : item.typeOfPurchase === "Clearance" ?
+              (product.each?.heldStock ?? 0)
+            : 0;
+          stockData[key] = heldStock;
+          allStock[key] = {
+            each: product.each?.heldStock ?? 0,
+            box: product.box?.heldStock ?? 0,
+            loose: product.loose?.heldStock ?? 0,
+          };
+        } catch (error) {
+          console.error("Error fetching held stock:", error);
+          stockData[key] = 0;
+          allStock[key] = { each: 0, box: 0, loose: 0 };
+        }
+      }
+      setHeldStockData(stockData);
+      setAllStockData(allStock);
+    };
+
+    if (mounted && order.orderItems?.length > 0) {
+      fetchHeldStockData();
+    }
+  }, [order.orderItems, mounted]);
+
   const removeItemHandler = (item) => {
     setProductToRemove(item);
     setShowModal(true);
+  };
+
+  const toggleExpandStock = (productId, typeOfPurchase) => {
+    const key = `${productId}-${typeOfPurchase}`;
+    setExpandedItems((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   const confirmRemoveItem = async () => {
@@ -237,6 +286,48 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                               </Listbox.Options>
                             </Listbox>
                           </div>
+                        </div>
+
+                        {/* Held Stock */}
+                        <div className='flex flex-1 flex-col text-sm mt-2'>
+                          <button
+                            onClick={() =>
+                              toggleExpandStock(item.productId, item.typeOfPurchase)
+                            }
+                            className='flex items-center font-semibold text-gray-700 hover:text-[#0e355e] transition'
+                          >
+                            <span className='mr-2'>Stock Levels:</span>
+                            <span className='text-gray-700'>
+                              {heldStockData[`${item.productId}-${item.typeOfPurchase}`] || 0}{" "}
+                              {item.typeOfPurchase === "Box" ? "boxes" : "units"} held
+                            </span>
+                            {expandedItems[`${item.productId}-${item.typeOfPurchase}`] ?
+                              <MdExpandLess className='ml-1 h-5 w-5' />
+                            : <MdExpandMore className='ml-1 h-5 w-5' />}
+                          </button>
+
+                          {expandedItems[`${item.productId}-${item.typeOfPurchase}`] && (
+                            <div className='mt-2 pl-4 border-l-2 border-[#0e355e] space-y-1'>
+                              <div className='flex justify-between text-gray-600'>
+                                <span>Unit (each):</span>
+                                <span className='font-semibold'>
+                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.each || 0}
+                                </span>
+                              </div>
+                              <div className='flex justify-between text-gray-600'>
+                                <span>Case (box):</span>
+                                <span className='font-semibold'>
+                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.box || 0}
+                                </span>
+                              </div>
+                              <div className='flex justify-between text-gray-600'>
+                                <span>Loose:</span>
+                                <span className='font-semibold'>
+                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.loose || 0}
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                       {/* Price */}
