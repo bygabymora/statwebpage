@@ -9,6 +9,10 @@ import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
 import LCPProductImage from "./LCPProductImage";
 
+function getAvailableStock(countInStock, heldStock) {
+  return Math.max(0, (countInStock || 0) - (heldStock || 0));
+}
+
 export const ProductItemPage = ({ product, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
   const [isOutOfStockBox, setIsOutOfStockBox] = useState();
@@ -21,9 +25,13 @@ export const ProductItemPage = ({ product, index }) => {
     useModalContext();
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
-    if ((product.box?.countInStock ?? 0) > 0) {
+    if (
+      getAvailableStock(product.box?.countInStock, product.box?.heldStock) > 0
+    ) {
       return "Box";
-    } else if ((product.each?.countInStock ?? 0) > 0) {
+    } else if (
+      getAvailableStock(product.each?.countInStock, product.each?.heldStock) > 0
+    ) {
       return "Each";
     } else if (
       product.each?.clearanceCountInStock > 0 ||
@@ -41,7 +49,7 @@ export const ProductItemPage = ({ product, index }) => {
     product.each?.description || "",
   );
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock ?? null,
+    getAvailableStock(product.each?.countInStock, product.each?.heldStock),
   );
   const [showModal, setShowModal] = useState(false);
   const hasPrice = currentPrice !== null && currentPrice !== 0;
@@ -52,8 +60,16 @@ export const ProductItemPage = ({ product, index }) => {
     status === "authenticated";
 
   const availableTypes = [
-    ...(product.each?.countInStock > 0 ? ["Each"] : []),
-    ...(product.box?.countInStock > 0 ? ["Box"] : []),
+    ...((
+      getAvailableStock(product.each?.countInStock, product.each?.heldStock) > 0
+    ) ?
+      ["Each"]
+    : []),
+    ...((
+      getAvailableStock(product.box?.countInStock, product.box?.heldStock) > 0
+    ) ?
+      ["Box"]
+    : []),
     ...((
       product.each?.clearanceCountInStock > 0 ||
       product.box?.clearanceCountInStock > 0
@@ -64,6 +80,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (product.countInStock || 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Box");
       setCurrentPrice(product.box?.wpPrice || 0);
       setCurrentDescription(product.box?.description || "");
@@ -77,6 +94,7 @@ export const ProductItemPage = ({ product, index }) => {
     const clearanceStock = product.each?.clearanceCountInStock ?? 0;
 
     if (eachStock === 0 && boxStock === 0 && clearanceStock > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeOfPurchase("Clearance");
       setCurrentPrice(
         product.clearance?.price ?
@@ -90,6 +108,7 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
       setCurrentCountInStock(product.each?.countInStock ?? null);
@@ -98,15 +117,20 @@ export const ProductItemPage = ({ product, index }) => {
 
   useEffect(() => {
     if (typeOfPurchase === "Each") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(product.each?.countInStock ?? 0);
+      setCurrentCountInStock(
+        getAvailableStock(product.each?.countInStock, product.each?.heldStock),
+      );
     } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(
         product.box?.description || product.each?.description || "",
       );
-      setCurrentCountInStock(product.box?.countInStock ?? 0);
+      setCurrentCountInStock(
+        getAvailableStock(product.box?.countInStock, product.box?.heldStock),
+      );
     }
   }, [typeOfPurchase, product]);
 
@@ -120,14 +144,15 @@ export const ProductItemPage = ({ product, index }) => {
 
     if (
       typeOfPurchase === "Each" &&
-      (data.each?.countInStock ?? 0) < quantity
+      getAvailableStock(data.each?.countInStock, data.each?.heldStock) <
+        quantity
     ) {
       setShowModal(true);
       setIsOutOfStock(true);
       return;
     } else if (
       typeOfPurchase === "Box" &&
-      (data.box?.countInStock ?? 0) < quantity
+      getAvailableStock(data.box?.countInStock, data.box?.heldStock) < quantity
     ) {
       setShowModal(true);
       setIsOutOfStockBox(true);
@@ -202,6 +227,7 @@ export const ProductItemPage = ({ product, index }) => {
   useEffect(() => {
     if (!active) {
       if (product.each?.description) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentDescription(product.each.description);
       } else if (product.box?.description) {
         setCurrentDescription(product.box.description);
@@ -396,7 +422,16 @@ export const ProductItemPage = ({ product, index }) => {
       {!isOutOfStock && !isOutOfStockBox && !isOutOfStockClearance && (
         <div>
           {
-            product.each?.countInStock > 0 || product.box?.countInStock > 0 ?
+            (
+              getAvailableStock(
+                product.each?.countInStock,
+                product.each?.heldStock,
+              ) > 0 ||
+              getAvailableStock(
+                product.box?.countInStock,
+                product.box?.heldStock,
+              ) > 0
+            ) ?
               typeOfPurchase === "Each" || typeOfPurchase === "Box" ?
                 <div className='flex justify-between items-center gap-2 mx-10 mt-5'>
                   {active === "loading" ?
@@ -414,7 +449,10 @@ export const ProductItemPage = ({ product, index }) => {
                                 product.each?.description || "",
                               );
                               setCurrentCountInStock(
-                                product.each?.countInStock || 0,
+                                getAvailableStock(
+                                  product.each?.countInStock,
+                                  product.each?.heldStock,
+                                ),
                               );
                             } else if (value === "Box" && product.box) {
                               setCurrentPrice(product.box?.wpPrice || 0);
@@ -424,7 +462,10 @@ export const ProductItemPage = ({ product, index }) => {
                                   "",
                               );
                               setCurrentCountInStock(
-                                product.box?.countInStock || 0,
+                                getAvailableStock(
+                                  product.box?.countInStock,
+                                  product.box?.heldStock,
+                                ),
                               );
                             } else if (
                               value === "Clearance" &&
@@ -508,8 +549,14 @@ export const ProductItemPage = ({ product, index }) => {
               ))
 
           }
-          {(product.each?.countInStock > 0 ||
-            product.box?.countInStock > 0) && (
+          {(getAvailableStock(
+            product.each?.countInStock,
+            product.each?.heldStock,
+          ) > 0 ||
+            getAvailableStock(
+              product.box?.countInStock,
+              product.box?.heldStock,
+            ) > 0) && (
             <div className='mb-2 flex justify-center gap-5 m-2 text-center items-center'>
               <div className='flex-column'>
                 <div className='font-bold'>Status</div>
