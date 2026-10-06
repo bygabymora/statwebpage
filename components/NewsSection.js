@@ -83,7 +83,10 @@ const NewsSection = ({ news = [] }) => {
         >
           {news.slice(0, 4).map((item) => (
             <motion.div key={item.slug} variants={itemVariants}>
-              <NewsItem news={item} />
+              <NewsItem
+                news={item}
+                sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
+              />
             </motion.div>
           ))}
         </motion.div>
