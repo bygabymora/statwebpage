@@ -30,8 +30,8 @@ export async function getStaticProps() {
       manufacturer: 1,
       "each.description": 1,
       "each.countInStock": 1,
-      "box.countInStock": 1,
       "each.heldStock": 1,
+      "box.countInStock": 1,
       "box.heldStock": 1,
       "each.clearanceCountInStock": 1,
       "box.clearanceCountInStock": 1,
@@ -58,6 +58,7 @@ export async function getStaticProps() {
     }
     if (p.each?.wpPrice) each.wpPrice = p.each.wpPrice;
     if (p.each?.countInStock) each.countInStock = p.each.countInStock;
+    if (p.each?.heldStock) each.heldStock = p.each.heldStock;
     if (p.each?.clearanceCountInStock)
       each.clearanceCountInStock = p.each.clearanceCountInStock;
     if (Object.keys(each).length) slim.each = each;
@@ -65,6 +66,7 @@ export async function getStaticProps() {
     const box = {};
     if (p.box?.wpPrice) box.wpPrice = p.box.wpPrice;
     if (p.box?.countInStock) box.countInStock = p.box.countInStock;
+    if (p.box?.heldStock) box.heldStock = p.box.heldStock;
     if (p.box?.clearanceCountInStock)
       box.clearanceCountInStock = p.box.clearanceCountInStock;
     if (Object.keys(box).length) slim.box = box;

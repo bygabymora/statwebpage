@@ -224,8 +224,9 @@ export default function Newscreen({
                 src={news.imageUrl}
                 alt={news.title}
                 title={news.title}
-                layout='fill'
-                objectFit='cover'
+                fill
+                sizes='(max-width: 1400px) 100vw, 1400px'
+                className='object-cover'
                 priority
               />
             </div>
@@ -279,9 +280,9 @@ export default function Newscreen({
                           src={article.imageUrl}
                           alt={article.title}
                           title={article.title}
-                          layout='fill'
-                          objectFit='cover'
-                          className='transition-transform duration-300 hover:scale-105'
+                          fill
+                          sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw'
+                          className='object-cover transition-transform duration-300 hover:scale-105'
                         />
                       </div>
                       <div className='p-4'>

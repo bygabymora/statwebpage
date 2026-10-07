@@ -35,6 +35,10 @@ function getNewYorkSeconds() {
   return get("hour") * 3600 + get("minute") * 60 + get("second");
 }
 
+function getAvailableStock(countInStock, heldStock) {
+  return Math.max(0, (countInStock || 0) - (heldStock || 0));
+}
+
 export default function ProductScreen({ product }) {
   const router = useRouter();
   const [showPopup, setShowPopup] = useState(false);
@@ -49,7 +53,7 @@ export default function ProductScreen({ product }) {
   );
   const [nowTampaSec, setNowTampaSec] = useState(() => getNewYorkSeconds());
   const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock || null,
+    getAvailableStock(product.each?.countInStock, product.each?.heldStock),
   );
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -66,9 +70,13 @@ export default function ProductScreen({ product }) {
     session?.user?.approved &&
     status === "authenticated";
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
-    if ((product.box?.countInStock ?? 0) > 0) {
+    if (
+      getAvailableStock(product.box?.countInStock, product.box?.heldStock) > 0
+    ) {
       return "Box";
-    } else if ((product.each?.countInStock ?? 0) > 0) {
+    } else if (
+      getAvailableStock(product.each?.countInStock, product.each?.heldStock) > 0
+    ) {
       return "Each";
     }
     return "Each";
@@ -114,8 +122,16 @@ export default function ProductScreen({ product }) {
   }, [typeOfPurchase, product.each]);
 
   const availableTypes = [
-    ...(product.each?.countInStock > 0 ? ["Each"] : []),
-    ...(product.box?.countInStock > 0 ? ["Box"] : []),
+    ...((
+      getAvailableStock(product.each?.countInStock, product.each?.heldStock) > 0
+    ) ?
+      ["Each"]
+    : []),
+    ...((
+      getAvailableStock(product.box?.countInStock, product.box?.heldStock) > 0
+    ) ?
+      ["Box"]
+    : []),
     ...((
       product.each?.clearanceCountInStock > 0 ||
       product.box?.clearanceCountInStock > 0
@@ -129,11 +145,15 @@ export default function ProductScreen({ product }) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPrice(product.each?.wpPrice ?? null);
       setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(product.each?.countInStock ?? 0);
+      setCurrentCountInStock(
+        getAvailableStock(product.each?.countInStock, product.each?.heldStock),
+      );
     } else if (typeOfPurchase === "Box") {
       setCurrentPrice(product.box?.wpPrice ?? null);
       setCurrentDescription(product.box?.description || "");
-      setCurrentCountInStock(product.box?.countInStock ?? 0);
+      setCurrentCountInStock(
+        getAvailableStock(product.box?.countInStock, product.box?.heldStock),
+      );
     } else if (typeOfPurchase === "Clearance") {
       setCurrentPrice(product.clearance?.price ?? null);
       setCurrentDescription(product.each?.description || "No description");
@@ -151,14 +171,15 @@ export default function ProductScreen({ product }) {
 
     if (
       typeOfPurchase === "Each" &&
-      (data.each?.countInStock ?? 0) < quantity
+      getAvailableStock(data.each?.countInStock, data.each?.heldStock) <
+        quantity
     ) {
       setShowModal(true);
       setIsOutOfStock(true);
       return;
     } else if (
       typeOfPurchase === "Box" &&
-      (data.box?.countInStock ?? 0) < quantity
+      getAvailableStock(data.box?.countInStock, data.box?.heldStock) < quantity
     ) {
       setShowModal(true);
       setIsOutOfStockBox(true);
