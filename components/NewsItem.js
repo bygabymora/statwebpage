@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export const NewsItem = ({ news }) => {
+// Default `sizes` matches the 1 / sm:2 / lg:3 column grids on /news and /news/video
+export const NewsItem = ({
+  news,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
 
@@ -45,6 +49,7 @@ export const NewsItem = ({ news }) => {
           alt={news.title}
           title={news.title}
           fill
+          sizes={sizes}
           className={`object-cover transition-all duration-300 ${
             news.hasVideo && isHovered ?
               "opacity-0 scale-105"
