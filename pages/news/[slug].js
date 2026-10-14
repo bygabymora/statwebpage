@@ -47,46 +47,98 @@ export default function Newscreen({
   // Generate schema markup (will include VideoObject if video present)
   const schemaMarkup = generateJSONLD(news);
 
-  const contentWithImages = news.content.split("\n").map((para, idx) => {
+  const paragraphs = news.content.split("\n");
+
+  // Body images 1 & 2 are auto-positioned within the article based on its
+  // length, alternating sides so the layout stays visually balanced.
+  const bodyImages = [news.embeddedImageUrl, news.embeddedImageUrl2].filter(
+    (url) => url && url !== news.imageUrl,
+  );
+  const bodyImagePositions = new Map();
+  if (bodyImages.length && paragraphs.length > 1) {
+    const slots = bodyImages.length;
+    bodyImages.forEach((url, i) => {
+      const position = Math.min(
+        paragraphs.length - 1,
+        Math.max(1, Math.round(((i + 1) * paragraphs.length) / (slots + 1))),
+      );
+      bodyImagePositions.set(position, {
+        url,
+        float: i % 2 === 0 ? "right" : "left",
+      });
+    });
+  }
+
+  const contentWithImages = paragraphs.flatMap((para, idx) => {
     const imageRegex = /\[(https?:\/\/[^\s\]]+)\]/;
     const match = para.match(imageRegex);
     const text = para.replace(imageRegex, "").trim();
+    const nodes = [];
+
+    const bodyImage = bodyImagePositions.get(idx);
+    if (bodyImage) {
+      nodes.push(
+        <div
+          key={`${idx}-body-image`}
+          className={`mb-6 w-full max-w-[14rem] mx-auto sm:w-72 sm:max-w-none sm:mx-0 ${bodyImage.float === "right" ? "sm:float-right sm:ml-5" : "sm:float-left sm:mr-5"}`}
+        >
+          <Image
+            src={bodyImage.url}
+            alt={news.title}
+            title={news.title}
+            width={288}
+            height={200}
+            className='w-full h-auto rounded-lg object-cover'
+          />
+        </div>,
+      );
+    }
 
     if (match) {
-      return (
-        <div key={idx} className='mb-6 clear-both justify-center items-center'>
+      nodes.push(
+        <div
+          key={idx}
+          className='mb-6 clear-both flex flex-col items-center sm:block'
+        >
           <Image
             src={match[1]}
             alt={`Image ${idx}`}
             title={`Image ${news.title}`}
             width={288}
             height={100}
-            className='float-left w-72 h-auto mr-5 mb-4 rounded-lg object-cover'
+            className='w-48 h-auto mx-auto sm:float-left sm:w-72 sm:mr-5 sm:mb-4 sm:mx-0 rounded-lg object-cover'
           />
-          {text && <p className='text-gray-700 leading-relaxed'>{text}</p>}
-        </div>
+          {text && (
+            <p className='text-center sm:text-left text-gray-700 leading-relaxed mt-3 sm:mt-0'>
+              {text}
+            </p>
+          )}
+        </div>,
       );
+      return nodes;
     }
 
     if (para.startsWith("#")) {
-      return (
+      nodes.push(
         <h2
           key={idx}
           className='text-2xl font-bold text-[#0e355e] clear-both my-6'
         >
           {para.substring(1)}
-        </h2>
+        </h2>,
       );
+      return nodes;
     }
 
-    return (
+    nodes.push(
       <h3
         key={idx}
         className='text-base text-[#414b53] mb-6 max-w-base font-normal leading-relaxed'
       >
         {para}
-      </h3>
+      </h3>,
     );
+    return nodes;
   });
 
   return (
@@ -123,7 +175,7 @@ export default function Newscreen({
           href='/news'
           className='flex items-center text-[#0e355e] hover:text-[#144e8b] mb-4'
         >
-          <BsBackspace className='mr-2' /> Back to News
+          <BsBackspace className='mr-2 my-7' /> Back to News
         </Link>
 
         <h1 className='text-3xl font-extrabold text-[#0e355e] mb-3'>
@@ -372,6 +424,7 @@ export async function getServerSideProps(context) {
           // Split at the first ? and take only the path part
           cleaned = decoded.split("?")[0];
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         // If decoding fails, try to remove encoded query params manually
         cleaned = cleaned.split("%3F")[0].split("%3f")[0];
@@ -471,13 +524,14 @@ export async function getServerSideProps(context) {
     ...s,
     _id: s._id.toString(),
   }));
-
   return {
     props: {
       news: {
         ...doc,
         _id: doc._id.toString(),
         imageUrl: doc.imageUrl || "",
+        embeddedImageUrl: doc.embeddedImageUrl || "",
+        embeddedImageUrl2: doc.embeddedImageUrl2 || "",
         videoUrl: doc.videoUrl || null,
         hasVideo: doc.hasVideo || false,
         videoType: doc.videoType || null,

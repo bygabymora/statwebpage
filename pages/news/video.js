@@ -6,7 +6,7 @@ import Layout from "../../components/main/Layout";
 import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
-import { BsChevronRight } from "react-icons/bs";
+import { BsChevronRight, BsPlay } from "react-icons/bs";
 import { generateNewsPageJSONLD } from "../../utils/seo";
 
 export default function VideoNews({ news }) {
@@ -86,8 +86,8 @@ export default function VideoNews({ news }) {
               No Video News Available
             </h3>
             <p className='text-gray-500 mb-6'>
-              We're currently working on bringing you video content. Check back
-              soon!
+              We&apos;re currently working on bringing you video content. Check
+              back soon!
             </p>
             <Link
               href='/news'

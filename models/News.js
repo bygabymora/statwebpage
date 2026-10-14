@@ -10,6 +10,8 @@ const newsSchema = new mongoose.Schema(
     category: { type: String, required: true },
     tags: [{ type: String }],
     imageUrl: { type: String, required: true },
+    embeddedImageUrl: { type: String },
+    embeddedImageUrl2: { type: String },
     videoUrl: { type: String },
     hasVideo: { type: Boolean, default: false },
     videoType: { type: String, enum: ["mp4", "webm", "youtube", "vimeo"] },
@@ -29,7 +31,7 @@ const newsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const News = mongoose.models.News || mongoose.model("News", newsSchema);

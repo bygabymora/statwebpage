@@ -90,6 +90,7 @@ export default function AdminNewsEditScreen() {
     tags: "",
     imageUrl: "",
     embeddedImageUrl: "",
+    embeddedImageUrl2: "",
     videoUrl: "",
     hasVideo: false,
     videoType: "mp4",
@@ -112,6 +113,7 @@ export default function AdminNewsEditScreen() {
         tags: (data.tags || []).join(", "),
         imageUrl: data.imageUrl || "",
         embeddedImageUrl: data.embeddedImageUrl || "",
+        embeddedImageUrl2: data.embeddedImageUrl2 || "",
         videoUrl: data.videoUrl || "",
         hasVideo: data.hasVideo || false,
         videoType: data.videoType || "mp4",
@@ -398,7 +400,12 @@ export default function AdminNewsEditScreen() {
 
             {/* Media */}
             <Card icon={<BiImage size={22} />} title='Media'>
-              <div className='grid sm:grid-cols-2 gap-6'>
+              <p className='text-sm text-gray-500 mb-4 -mt-2'>
+                The main image is the article hero. Body images 1 and 2 are
+                optional and, when set, are automatically placed within the
+                article text based on its length.
+              </p>
+              <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
                 <div>
                   <label htmlFor='imageUrl' className='block font-medium mb-1'>
                     Main Image URL <RequiredMark />
@@ -443,7 +450,7 @@ export default function AdminNewsEditScreen() {
                     htmlFor='embeddedImageUrl'
                     className='block font-medium mb-1'
                   >
-                    Embedded Image URL
+                    Body Image 1 URL
                   </label>
                   <input
                     id='embeddedImageUrl'
@@ -456,7 +463,7 @@ export default function AdminNewsEditScreen() {
                     htmlFor='embeddedImageFile'
                     className='block font-medium mt-3 mb-1'
                   >
-                    Upload Embedded Image
+                    Upload Body Image 1
                   </label>
                   <input
                     id='embeddedImageFile'
@@ -473,7 +480,48 @@ export default function AdminNewsEditScreen() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={newsData.embeddedImageUrl}
-                      alt='Embedded image preview'
+                      alt='Body image 1 preview'
+                      className='mt-3 w-full h-40 object-cover rounded-lg border border-gray-200'
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor='embeddedImageUrl2'
+                    className='block font-medium mb-1'
+                  >
+                    Body Image 2 URL
+                  </label>
+                  <input
+                    id='embeddedImageUrl2'
+                    value={newsData.embeddedImageUrl2}
+                    onChange={handleChange}
+                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  />
+
+                  <label
+                    htmlFor='embeddedImageFile2'
+                    className='block font-medium mt-3 mb-1'
+                  >
+                    Upload Body Image 2
+                  </label>
+                  <input
+                    id='embeddedImageFile2'
+                    type='file'
+                    accept='image/*'
+                    onChange={(e) => uploadHandler(e, "embeddedImageUrl2")}
+                    className='w-full text-sm'
+                  />
+                  {loadingUpload && (
+                    <p className='text-sm text-gray-500 mt-1'>Uploading…</p>
+                  )}
+
+                  {newsData.embeddedImageUrl2 && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={newsData.embeddedImageUrl2}
+                      alt='Body image 2 preview'
                       className='mt-3 w-full h-40 object-cover rounded-lg border border-gray-200'
                     />
                   )}
