@@ -36,6 +36,8 @@ const putHandler = async (req, res) => {
     news.category = req.body.category;
     news.tags = req.body.tags;
     news.imageUrl = req.body.imageUrl;
+    news.embeddedImageUrl = req.body.embeddedImageUrl;
+    news.embeddedImageUrl2 = req.body.embeddedImageUrl2;
     news.videoUrl = req.body.videoUrl;
     news.hasVideo = req.body.hasVideo;
     news.videoType = req.body.videoType;
