@@ -233,12 +233,6 @@ export const messageManagement = (
                        </tr>`
                   : ""
                 }
-                <tr style="border-top: 1px solid #ddd;">
-                  <th align="left" style="padding: 8px 0; font-weight: 600;">Terms</th>
-                  <td align="right" style="padding: 8px 0;">${
-                    order.defaultTerm
-                  }</td>
-                </tr>
               </table>
       
               <!-- Items Ordered Table -->
