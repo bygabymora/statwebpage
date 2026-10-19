@@ -8,8 +8,9 @@ import {
   FaEye,
   FaCreditCard,
   FaFileInvoice,
-  FaTruck,
   FaBox,
+  FaClock,
+  FaCheckCircle,
 } from "react-icons/fa";
 import { RiLoopLeftFill } from "react-icons/ri";
 
@@ -90,6 +91,74 @@ const paymentAmountStatus = (invoice) => {
   return status;
 };
 
+// Uses the database "status" field
+// Uses the database "status" field
+const getOrderProgress = (order) => {
+  const status = (order?.status || "").toString().toLowerCase().trim();
+
+  // Completed / processed / delivered
+  if (
+    status.includes("complete") ||
+    status.includes("completed") ||
+    status.includes("delivered") ||
+    status === "done" ||
+    status === "finished"
+  ) {
+    return {
+      label: order.status || "Completed",
+      color: "emerald",
+      icon: FaCheckCircle,
+      highlight: false,
+    };
+  }
+
+  // In progress / in process / processing
+  if (
+    status.includes("progress") ||
+    status.includes("process") || // catches "In Process"
+    status.includes("processing") ||
+    status.includes("in progress") ||
+    status.includes("in process") ||
+    status === "pending" ||
+    status === "active"
+  ) {
+    return {
+      label: order.status || "In Process",
+      color: "amber",
+      icon: FaClock,
+      highlight: true,
+    };
+  }
+
+  // Fallback
+  return {
+    label: order.status || "Unknown",
+    color: "gray",
+    icon: FaClock,
+    highlight: false,
+  };
+};
+
+const StatusBadge = ({ progress }) => {
+  const { label, color, icon: Icon } = progress;
+  const colorMap = {
+    emerald: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    amber: "bg-amber-100 text-amber-800 border-amber-300",
+    gray: "bg-gray-100 text-gray-700 border-gray-200",
+    blue: "bg-blue-100 text-blue-800 border-blue-200",
+  };
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+        colorMap[color] || colorMap.gray
+      }`}
+    >
+      <Icon className='w-3 h-3' />
+      {label}
+    </span>
+  );
+};
+
 export default function AdminOrderScreen() {
   const [{ loading, error, orders = [] }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -106,9 +175,6 @@ export default function AdminOrderScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Manual refresh: ${data.length} orders at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -139,9 +205,12 @@ export default function AdminOrderScreen() {
     { href: "/admin/news", label: "News" },
   ];
 
+  const inProgressCount = orders.filter(
+    (o) => getOrderProgress(o).highlight,
+  ).length;
+
   return (
     <Layout title='Admin Orders'>
-      {/* Enhanced Navigation */}
       <div className='bg-white shadow-sm border-b'>
         <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
@@ -161,9 +230,8 @@ export default function AdminOrderScreen() {
           </nav>
         </div>
       </div>
-      {/* Main Content */}
+
       <div className='mx-auto px-1 sm:px-2 md:px-4 lg:px-8 xl:px-12 py-2 sm:py-4 md:py-6'>
-        {/* Header Section */}
         <div className='mb-3 sm:mb-6 md:mb-8'>
           <div className='flex flex-col gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-4 md:mb-6'>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
@@ -182,7 +250,7 @@ export default function AdminOrderScreen() {
               >
                 <RiLoopLeftFill
                   className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                ></RiLoopLeftFill>
+                />
                 {loading ? "Refreshing..." : "Refresh"}
               </button>
             </div>
@@ -192,6 +260,10 @@ export default function AdminOrderScreen() {
                 <span className='font-semibold text-gray-700'>
                   {orders.length}
                 </span>
+              </div>
+              <div className='text-xs sm:text-sm text-amber-700 bg-amber-50 px-2 py-1 sm:px-3 sm:py-2 rounded-lg border border-amber-200'>
+                In Progress:{" "}
+                <span className='font-semibold'>{inProgressCount}</span>
               </div>
             </div>
           </div>
@@ -204,10 +276,8 @@ export default function AdminOrderScreen() {
           </div>
         : error ?
           <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
-            <div className='flex items-center'>
-              <div className='text-red-600 font-medium'>
-                Error loading orders:
-              </div>
+            <div className='text-red-600 font-medium'>
+              Error loading orders:
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
@@ -219,12 +289,11 @@ export default function AdminOrderScreen() {
             </div>
           </div>
         : <>
-            {/* Mobile Card Layout */}
-            <div className='grid gap-1 sm:gap-2 md:gap-3 md:hidden'>
+            {/* Mobile Cards */}
+            <div className='grid gap-2 sm:gap-3 md:hidden'>
               {orders.map((order) => {
                 const createdAt = formatYMD(order?.createdAt);
                 const paidAt = formatYMD(order?.paidAt);
-
                 const invoiceStatus = paymentAmountStatus(order?.invoice);
                 const isPaidByFlag = !!order?.isPaid;
                 const paidStatus =
@@ -233,150 +302,94 @@ export default function AdminOrderScreen() {
                     : "Paid"
                   : invoiceStatus;
 
+                const progress = getOrderProgress(order);
+
                 return (
                   <div
                     key={order?._id}
-                    className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
+                    className={`bg-white shadow-sm rounded-lg p-3 border transition-all duration-200 ${
+                      progress.highlight ?
+                        "border-l-4 border-l-amber-500 bg-amber-50/50 border-amber-100"
+                      : "border-gray-100 hover:shadow-md"
+                    }`}
                   >
-                    {/* Mobile Card Header */}
-                    <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='flex-shrink-0 relative'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
-                          <FaBox />
-                        </div>
+                    <div className='flex items-start gap-3 mb-3'>
+                      <div className='w-10 h-10 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white shadow-md flex-shrink-0'>
+                        <FaBox className='w-4 h-4' />
                       </div>
                       <div className='min-w-0 flex-1'>
-                        <h3 className='font-bold text-gray-900 text-xs sm:text-sm md:text-lg leading-tight mb-1'>
-                          Order #
-                          {order?._id ? String(order._id).slice(-6) : "No ID"}
-                        </h3>
-                        <p className='text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate'>
+                        <div className='flex items-center justify-between gap-2 mb-1'>
+                          <h3 className='font-bold text-gray-900 text-sm leading-tight'>
+                            Order #
+                            {order?._id ? String(order._id).slice(-6) : "No ID"}
+                          </h3>
+                          <StatusBadge progress={progress} />
+                        </div>
+                        <p className='text-gray-600 text-xs font-medium truncate mb-1'>
                           {getCustomerName(order)}
                         </p>
-                        <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
-                          <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
+                        <div className='flex flex-wrap items-center gap-1.5 text-xs'>
+                          <span className='text-gray-500'>
                             {createdAt || "No Date"}
                           </span>
-                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
+                          <span className='font-semibold text-gray-900'>
                             ${fmt(orderGrandTotal(order))}
                           </span>
-                          {order?.tax?.pending && !order?.invoice?._id && (
-                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800'>
-                              Sales tax pending
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Payment Status */}
-                    <div className='mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='bg-gray-50 rounded p-1.5 sm:p-2 md:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1'>
-                          Payment Status
-                        </div>
-                        <div className='font-semibold text-xs sm:text-sm text-gray-900'>
-                          {paidStatus}
-                        </div>
-                        <div className='text-xs text-gray-600 mt-1'>
-                          {order?.paymentMethod === "Stripe" ?
-                            <div className='flex items-center gap-1'>
-                              <FaCreditCard className='w-3 h-3' />
-                              Credit Card (Stripe)
-                            </div>
-                          : <div className='flex items-center gap-1'>
-                              <FaFileInvoice className='w-3 h-3' />
-                              {order?.paymentMethod || "—"}
-                            </div>
-                          }
-                        </div>
+                    <div className='bg-gray-50 rounded-md p-2.5 mb-3 text-xs'>
+                      <div className='text-gray-500 uppercase tracking-wide font-semibold mb-1'>
+                        Payment
+                      </div>
+                      <div className='font-semibold text-gray-900'>
+                        {paidStatus}
+                      </div>
+                      <div className='text-gray-600 mt-1 flex items-center gap-1'>
+                        {order?.paymentMethod === "Stripe" ?
+                          <>
+                            <FaCreditCard className='w-3 h-3' /> Credit Card
+                          </>
+                        : <>
+                            <FaFileInvoice className='w-3 h-3' />
+                            {order?.paymentMethod || "—"}
+                          </>
+                        }
                       </div>
                     </div>
 
-                    {/* Status Grid */}
-                    <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
-                          Processed
-                        </div>
-                        <div className='flex justify-center'>
-                          {order?.isDelivered ?
-                            <FaTruck className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          : <span className='text-gray-400 text-xs'>
-                              Pending
-                            </span>
-                          }
-                        </div>
-                      </div>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
-                        <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
-                          Delivered
-                        </div>
-                        <div className='flex justify-center'>
-                          {order?.isAtCostumers ?
-                            <FaBox className='text-green-600 text-xs sm:text-sm md:text-lg' />
-                          : <span className='text-gray-400 text-xs'>
-                              Pending
-                            </span>
-                          }
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
-                      <Link
-                        href={`/order/${order?._id}`}
-                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
-                      >
-                        <FaEye
-                          size={10}
-                          className='sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
-                        />
-                        <span className='hidden xs:inline sm:inline'>
-                          View Details
-                        </span>
-                      </Link>
-                    </div>
+                    <Link
+                      href={`/order/${order?._id}`}
+                      className='flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#0e355e] hover:bg-[#144e8b] text-white text-sm font-medium rounded-lg transition-colors'
+                    >
+                      <FaEye className='w-3.5 h-3.5' />
+                      View Details
+                    </Link>
                   </div>
                 );
               })}
             </div>
 
-            {/* Desktop Table Layout */}
+            {/* Desktop Table */}
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto custom-scrollbar'>
-                <div className='min-w-full' style={{ minWidth: "700px" }}>
+              <div className='overflow-x-auto'>
+                <div className='min-w-full' style={{ minWidth: "800px" }}>
                   <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Order Info
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Customer
-                      </div>
-                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Date
-                      </div>
-                      <div className='col-span-1 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Total
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Payment
-                      </div>
-                      <div className='col-span-2 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Status
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Actions
-                      </div>
+                    <div className='grid grid-cols-12 gap-2 px-4 py-3 items-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
+                      <div className='col-span-2'>Order</div>
+                      <div className='col-span-2'>Customer</div>
+                      <div className='col-span-1'>Date</div>
+                      <div className='col-span-1'>Total</div>
+                      <div className='col-span-2'>Payment</div>
+                      <div className='col-span-2 text-center'>Status</div>
+                      <div className='col-span-2'>Actions</div>
                     </div>
                   </div>
-                  <div className='divide-y divide-gray-200'>
-                    {orders.map((order, index) => {
+                  <div className='divide-y divide-gray-100'>
+                    {orders.map((order) => {
                       const createdAt = formatYMD(order?.createdAt);
                       const paidAt = formatYMD(order?.paidAt);
-
                       const invoiceStatus = paymentAmountStatus(order?.invoice);
                       const isPaidByFlag = !!order?.isPaid;
                       const paidStatus =
@@ -385,115 +398,73 @@ export default function AdminOrderScreen() {
                           : "Paid"
                         : invoiceStatus;
 
+                      const progress = getOrderProgress(order);
+
                       return (
                         <div
                           key={order?._id}
-                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
-                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                          className={`grid grid-cols-12 gap-2 px-4 py-3 items-center transition-colors ${
+                            progress.highlight ?
+                              "bg-amber-50/60 border-l-4 border-l-amber-500"
+                            : "hover:bg-gray-50"
                           }`}
                         >
-                          <div className='col-span-2'>
-                            <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
-                              <div className='flex-shrink-0 relative'>
-                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
-                                  <FaBox />
-                                </div>
+                          <div className='col-span-2 flex items-center gap-3'>
+                            <div className='w-9 h-9 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white flex-shrink-0'>
+                              <FaBox className='w-4 h-4' />
+                            </div>
+                            <div>
+                              <div className='font-semibold text-sm text-gray-900'>
+                                #
+                                {order?._id ? String(order._id).slice(-6) : "—"}
                               </div>
-                              <div className='min-w-0 flex-1'>
-                                <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1'>
-                                  #
-                                  {order?._id ?
-                                    String(order._id).slice(-6)
-                                  : "No ID"}
-                                </div>
-                                <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
-                                  {order?._id ?
-                                    String(order._id).slice(-12)
-                                  : "No ID"}
-                                </div>
+                              <div className='text-xs text-gray-400 font-mono'>
+                                {order?._id ? String(order._id).slice(-12) : ""}
                               </div>
                             </div>
                           </div>
-                          <div className='col-span-2'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
-                              {getCustomerName(order)}
-                            </div>
+                          <div className='col-span-2 text-sm text-gray-900 truncate'>
+                            {getCustomerName(order)}
+                          </div>
+                          <div className='col-span-1 text-sm text-gray-700'>
+                            {createdAt || "—"}
                           </div>
                           <div className='col-span-1'>
-                            <div className='text-xs sm:text-xs lg:text-sm text-gray-900'>
-                              {createdAt || "No Date"}
-                            </div>
-                          </div>
-                          <div className='col-span-1'>
-                            <div className='font-semibold text-xs sm:text-xs lg:text-sm text-gray-900'>
+                            <div className='font-semibold text-sm text-gray-900'>
                               ${fmt(orderGrandTotal(order))}
                             </div>
                             {orderTaxTotal(order) > 0 && (
                               <div className='text-xs text-gray-500'>
-                                (incl. ${fmt(orderTaxTotal(order))} tax)
+                                +${fmt(orderTaxTotal(order))} tax
                               </div>
                             )}
                           </div>
-                          <div className='col-span-2'>
-                            <div className='text-xs sm:text-xs lg:text-sm'>
-                              <div className='font-semibold text-gray-900 mb-1'>
-                                {paidStatus}
-                              </div>
-                              <div className='text-gray-600 flex items-center gap-1'>
-                                {order?.paymentMethod === "Stripe" ?
-                                  <>
-                                    <FaCreditCard className='w-3 h-3' />
-                                    <span>Card</span>
-                                  </>
-                                : <>
-                                    <FaFileInvoice className='w-3 h-3' />
-                                    <span>{order?.paymentMethod || "—"}</span>
-                                  </>
-                                }
-                              </div>
+                          <div className='col-span-2 text-sm'>
+                            <div className='font-medium text-gray-900'>
+                              {paidStatus}
+                            </div>
+                            <div className='text-gray-600 flex items-center gap-1 text-xs mt-0.5'>
+                              {order?.paymentMethod === "Stripe" ?
+                                <>
+                                  <FaCreditCard className='w-3 h-3' /> Card
+                                </>
+                              : <>
+                                  <FaFileInvoice className='w-3 h-3' />
+                                  {order?.paymentMethod || "—"}
+                                </>
+                              }
                             </div>
                           </div>
-                          <div className='col-span-2 text-center'>
-                            <div className='flex flex-col gap-1'>
-                              <div className='flex justify-center'>
-                                {order?.isDelivered ?
-                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <FaTruck className='text-green-600 text-xs sm:text-sm lg:text-lg' />
-                                  </div>
-                                : <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <span className='text-gray-400 text-xs'>
-                                      P
-                                    </span>
-                                  </div>
-                                }
-                              </div>
-                              <div className='flex justify-center'>
-                                {order?.isAtCostumers ?
-                                  <div className='bg-green-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <FaBox className='text-green-600 text-xs sm:text-sm lg:text-lg' />
-                                  </div>
-                                : <div className='bg-gray-100 p-1 sm:p-1.5 lg:p-2 rounded-full'>
-                                    <span className='text-gray-400 text-xs'>
-                                      D
-                                    </span>
-                                  </div>
-                                }
-                              </div>
-                            </div>
+                          <div className='col-span-2 flex justify-center'>
+                            <StatusBadge progress={progress} />
                           </div>
                           <div className='col-span-2'>
                             <Link
                               href={`/order/${order?._id}`}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
-                              title='View Order Details'
+                              className='inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0e355e] hover:bg-[#144e8b] text-white text-xs font-medium rounded-lg transition-colors'
                             >
-                              <FaEye
-                                size={12}
-                                className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
-                              />
-                              <span className='hidden md:inline text-xs'>
-                                Details
-                              </span>
+                              <FaEye className='w-3.5 h-3.5' />
+                              Details
                             </Link>
                           </div>
                         </div>
