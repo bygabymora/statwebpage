@@ -7,6 +7,17 @@ import { describeVisitor } from "./utils/botSignals";
 export function proxy(request) {
   const log = describeVisitor(request);
   if (log.visitor !== "browser") console.warn(JSON.stringify(log));
+
+  // Product pages take one path segment (a name with "/" arrives as %2F, and
+  // the pathname here stays encoded), so anything after it comes from broken
+  // links on other sites, like /products/75100519/%22%22.
+  const product = request.nextUrl.pathname.match(/^\/products\/([^/]+)\/./);
+  if (product) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/products/${product[1]}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   return NextResponse.next();
 }
 

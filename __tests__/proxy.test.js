@@ -1,6 +1,7 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+import { NextRequest } from "next/server";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
-import { config } from "../proxy";
+import { config, proxy } from "../proxy";
 
 const runsOn = (url, headers) =>
   unstable_doesMiddlewareMatch({ config, url, headers });
@@ -31,5 +32,28 @@ describe("proxy matcher", () => {
       expect(runsOn(url), url).toBe(false);
     }
     expect(runsOn("/products", { "x-nextjs-data": "1" })).toBe(false);
+  });
+});
+
+describe("product redirects", () => {
+  const SITE = "https://www.statsurgicalsupply.com";
+  const locationFor = (path) => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    return proxy(new NextRequest(`${SITE}${path}`)).headers.get("location");
+  };
+
+  test("drops path segments after the product name", () => {
+    expect(locationFor("/products/75100519/%22%22")).toBe(
+      `${SITE}/products/75100519`,
+    );
+    expect(locationFor("/products/EGIA45AVM/a/b?pId=1")).toBe(
+      `${SITE}/products/EGIA45AVM?pId=1`,
+    );
+  });
+
+  test("leaves product names alone, including ones with an encoded slash", () => {
+    for (const path of ["/products/EGIA45AVM", "/products/A%2FB", "/products"]) {
+      expect(locationFor(path), path).toBeNull();
+    }
   });
 });

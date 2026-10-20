@@ -23,6 +23,11 @@ User-agent: CCBot
 Allow: /
 Disallow: /admin/
 
+# SEO tool crawlers build backlink databases for other companies; they don't
+# send visitors. A bot with its own group ignores the rules above.
+User-agent: SERankingBacklinksBot
+Disallow: /
+
 # Plain-text site guide for AI assistants: https://www.statsurgicalsupply.com/llms.txt
 Sitemap: https://www.statsurgicalsupply.com/sitemap.xml
 Sitemap: https://www.statsurgicalsupply.com/news-sitemap.xml
