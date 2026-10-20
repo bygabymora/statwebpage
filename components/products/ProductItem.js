@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useModalContext } from "../context/ModalContext";
+import { productPath } from "../../utils/seo";
 import {
   Listbox,
   ListboxButton,
@@ -224,7 +225,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
       <div className='flex flex-row justify-between'>
         <Link
-          href={`/products/${product.name}`}
+          href={productPath(product.name)}
           title={`${product.name} - ${
             product.manufacturer
           } -${product.each?.description?.slice(0, 50)}`}
@@ -254,7 +255,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
         <div className='flex flex-col justify-center items-center px-2 flex-1'>
           <Link
-            href={`/products/${product.name}`}
+            href={productPath(product.name)}
             className='justify-center items-center text-center'
           >
             <div className='max-w-full'>

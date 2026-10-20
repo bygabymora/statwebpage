@@ -41,8 +41,12 @@ const Banner = dynamic(() => import("../components/Banner"), { ssr: true });
 const StaticBanner = dynamic(() => import("../components/StaticBanner"), {
   ssr: true,
 });
-// This one can stay client-side if it's below the fold
-const Benefits = dynamic(() => import("./slider"), { ssr: false });
+// Server-rendered so crawlers that don't run JavaScript (most AI crawlers)
+// still read the value proposition; framer-motion already ships with
+// StaticBanner, NewsSection and Contact on this page
+const Benefits = dynamic(() => import("../components/BenefitsSection"), {
+  ssr: true,
+});
 const Contact = dynamic(() => import("../components/contact/Contact"), {
   ssr: true,
 });
@@ -55,6 +59,11 @@ import db from "../utils/db";
 import Product from "../models/Product";
 import News from "../models/News";
 import { enrichAndSortForPublic } from "../utils/productSort";
+import {
+  generateMainPageJSONLD,
+  generateOrganizationJSONLD,
+  newsPlainText,
+} from "../utils/seo";
 import ShippingCutoffTimer from "../components/timer";
 
 export async function getStaticProps() {
@@ -106,7 +115,8 @@ export async function getStaticProps() {
     createdAt: news.createdAt.toISOString(),
     excerpt:
       news.content ?
-        news.content.replace(/<[^>]*>/g, "").slice(0, 150) + "..."
+        newsPlainText(news.content.replace(/<[^>]*>/g, "")).slice(0, 150) +
+        "..."
       : "",
   }));
 
@@ -277,6 +287,8 @@ export default function Home({ products, news = [] }) {
       <Layout
         title='Premium Surgical Supplies & Surgical Equipment | STAT Surgical Supply'
         description='Discover premium surgical supplies and surgical equipment trusted by 150+ healthcare facilities. Save up to 50% on surgical disposables with same-day shipping nationwide. Stay updated with the latest healthcare news and industry insights.'
+        keywords='sterile surgical disposables, surgical disposables for surgery, types of surgical equipment, buy surgical supplies online'
+        schema={[generateMainPageJSONLD(), generateOrganizationJSONLD()]}
       >
         <div>
           <div className='my-5 -mt-2'>

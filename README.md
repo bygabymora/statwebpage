@@ -226,7 +226,6 @@ SessionProvider (NextAuth)
 ├── /privacy-policy      → Privacy policy
 ├── /return-policy       → Return policy
 ├── /terms-of-use        → Terms and conditions
-├── /slider              → Product slider/carousel
 ├── /ManufacturerForm    → Contact form for manufacturers
 └── /unsubscribe         → Email list unsubscribe
 ```
@@ -506,12 +505,16 @@ Extended customer profile linked to QuickBooks.
 
 ### Content & SEO
 
-| Endpoint            | Method | Description          |
-| ------------------- | ------ | -------------------- |
-| `/api/news`         | GET    | News article listing |
-| `/api/news-sitemap` | GET    | News sitemap XML     |
-| `/api/sitemap`      | GET    | Full sitemap XML     |
-| `/api/rss`          | GET    | RSS feed             |
+The crawler-facing endpoints are served at conventional URLs through rewrites in `next.config.js`; link to those, not to `/api/...`.
+
+| Public URL          | Endpoint            | Description                                        |
+| ------------------- | ------------------- | -------------------------------------------------- |
+| —                   | `/api/news`         | News article listing                               |
+| `/sitemap.xml`      | `/api/sitemap`      | Sitemap: static pages, catalog products, all news  |
+| `/news-sitemap.xml` | `/api/news-sitemap` | Google News sitemap (articles from the last 2 days) |
+| `/rss.xml`          | `/api/rss`          | RSS feed, latest 50 articles with full text        |
+| `/llms.txt`         | `/api/llms`         | Site guide for AI assistants (llmstxt.org)         |
+| `/llms-full.txt`    | `/api/llms-full`    | Full product list, FAQs and news for AI assistants |
 
 ### Other
 
@@ -719,16 +722,24 @@ MongoDB connection management with:
 - Socket timeout: 5 minutes
 - Activity tracking
 
-### `utils/seo.js` — SEO Schema Generators
+### `utils/seo.js` — SEO Helpers and Schema Generators
+
+The single source for the site URL, company facts (`BUSINESS`: address, phone, emails, hours, social profiles), the return policy used in structured data, product and news URLs (`productPath`, `productUrl`, `newsUrl`) and the list of pages kept out of search results (`isNoindexRoute`). When a company fact or the return policy changes, update it here and on its page.
 
 JSON-LD structured data generators for:
 
-- `generateJSONLD()` — News articles (Article schema)
-- `generateProductJSONLD()` — Product pages (Product schema)
-- `generateNewsPageJSONLD()` — News listing page
-- `generateAboutPageJSONLD()` — About page (Organization schema)
-- `generateOrganizationJSONLD()` — Organization details
+- `generateJSONLD()` — News articles (NewsArticle, plus VideoObject for video news)
+- `generateProductJSONLD()` — Product pages (Product schema; offers only the public web price)
+- `generateMainPageJSONLD()` — Home page (WebSite schema)
+- `generateNewsPageJSONLD()` — News listing pages
+- `generateProductsPageJSONLD()` — Catalog page (CollectionPage schema)
+- `generateAboutPageJSONLD()` / `generateContactPageJSONLD()` — About and Support pages
+- `generateOrganizationJSONLD()` — Organization details (home, about, support)
 - `generateBreadcrumbJSONLD()` — Breadcrumb navigation
+
+### `utils/llmsTxt.js` and `utils/faqData.js`
+
+`llmsTxt.js` builds `/llms.txt` and `/llms-full.txt` from the catalog, the latest news and the facts in `seo.js`. `faqData.js` holds the FAQ questions and answers shown on `/faqs` and `/support`, so the pages and the AI guide say the same thing.
 
 ### `utils/productSort.js` — Product Sorting
 
@@ -787,12 +798,13 @@ Counters live in the `ratelimits` MongoDB collection (the `RateLimit` model): on
 
 ### SEO
 
-- Dynamic `<title>` and `<meta>` tags via Layout.js
-- JSON-LD structured data for products, news, organization, breadcrumbs
-- XML Sitemap (`/api/sitemap`)
-- News Sitemap (`/api/news-sitemap`)
-- RSS Feed (`/api/rss`)
-- `robots.txt` in `/public`
+- `<title>`, description, robots, canonical, Open Graph and Twitter tags for every page come from `Layout.js` (props: `title`, `description`, `keywords`, `schema`, `image`, `url`, `noindex`). Pages don't add their own head tags, so there is never a second canonical.
+- Canonical URLs drop query strings; product pages are canonical at `/products/<encoded name>` whichever URL form was used to reach them
+- JSON-LD structured data for products, news, organization, website, catalog, FAQs and breadcrumbs (see `utils/seo.js`)
+- Pages kept out of search results: private, transactional and placeholder pages (`isNoindexRoute`), products outside the public catalog, and the server placeholders of signed-in-only and PayPal pages (`_app.js`). `/api/*` responses carry `X-Robots-Tag: noindex`.
+- Content that crawlers must see is server-rendered: AI crawlers don't run JavaScript, so collapsed FAQ answers stay in the HTML (`hidden`) and home-page sections render on the server
+- Sitemap (`/sitemap.xml`), Google News sitemap (`/news-sitemap.xml`), RSS feed (`/rss.xml`) and AI guides (`/llms.txt`, `/llms-full.txt`)
+- `robots.txt` in `/public` welcomes search engines and AI crawlers by name and lists both sitemaps
 - Canonical news URLs: `/news/[slug]` permanently redirects variant slugs to the canonical one
 
 ### Performance Optimizations

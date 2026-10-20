@@ -12,7 +12,7 @@ import {
 import Layout from "../components/main/Layout";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
-import Head from "next/head";
+import { SITE_URL } from "../utils/seo";
 
 export default function SecureBuyingSelling() {
   const breadcrumbs = [
@@ -44,9 +44,10 @@ export default function SecureBuyingSelling() {
         <FaUndoAlt className='text-5xl text-[#07783e] group-hover:animate-bounce transition-all duration-300' />
       ),
       title: "Hassle-Free Returns",
+      // Must match pages/return-policy.js
       description:
-        "30-day return policy with free shipping for defective or misrepresented items.",
-      highlight: "30-Day Guarantee",
+        "14-day returns for store credit on new, unused items with manufacturer seals intact.",
+      highlight: "14-Day Returns",
     },
     {
       icon: (
@@ -92,7 +93,7 @@ export default function SecureBuyingSelling() {
     provider: {
       "@type": "Organization",
       name: "STAT Surgical Supply",
-      url: "https://statsurgicalsupply.com",
+      url: SITE_URL,
     },
     serviceType: "Medical Equipment Trading",
     areaServed: "United States",
@@ -112,44 +113,10 @@ export default function SecureBuyingSelling() {
 
   return (
     <>
-      <Head>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <meta name='robots' content='index, follow' />
-        <meta
-          name='keywords'
-          content='secure medical equipment, surgical supplies, verified suppliers, buyer protection, medical device trading'
-        />
-        <link rel='canonical' href='https://statsurgicalsupply.com/selling' />
-        <meta property='og:type' content='website' />
-        <meta
-          property='og:title'
-          content='Secure Buying & Selling | STAT Surgical Supply'
-        />
-        <meta
-          property='og:description'
-          content='Safe and secure surgical equipment transactions with verified suppliers, buyer protection, and hassle-free returns.'
-        />
-        <meta
-          property='og:url'
-          content='https://statsurgicalsupply.com/selling'
-        />
-        <meta name='twitter:card' content='summary_large_image' />
-        <meta
-          name='twitter:title'
-          content='Secure Buying & Selling | STAT Surgical Supply'
-        />
-        <meta
-          name='twitter:description'
-          content='Safe and secure surgical equipment transactions with verified suppliers, buyer protection, and hassle-free returns.'
-        />
-      </Head>
-
       <Layout
         title='Secure Buying & Selling | STAT Surgical Supply'
         description='Safe and secure surgical equipment transactions with verified suppliers, buyer protection, and hassle-free returns for healthcare professionals.'
+        keywords='secure medical equipment, surgical supplies, verified suppliers, buyer protection, medical device trading'
         schema={[structuredData]}
       >
         {/* Breadcrumb Navigation */}

@@ -4,6 +4,10 @@ import db from "../../../../utils/db";
 import { getToken } from "next-auth/jwt";
 import { Types } from "mongoose";
 
+function escapeRegex(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
@@ -41,15 +45,16 @@ export default async function handler(req, res) {
       const [manufacturer, ...rest] = rawId.split("-");
       const name = rest.join("-");
       product = await Product.findOne({
-        manufacturer: { $regex: `^${manufacturer}$`, $options: "i" },
-        name: { $regex: `^${name}$`, $options: "i" },
+        manufacturer: { $regex: `^${escapeRegex(manufacturer)}$`, $options: "i" },
+        name: { $regex: `^${escapeRegex(name)}$`, $options: "i" },
       }).lean();
     }
 
-    // 3) Finally, try matching just “name”
+    // 3) Finally, try matching just “name”. Names such as "ABC (10)" or
+    // "XY+2" must match literally, not as regex syntax.
     if (!product) {
       product = await Product.findOne({
-        name: { $regex: `^${rawId}$`, $options: "i" },
+        name: { $regex: `^${escapeRegex(rawId)}$`, $options: "i" },
       }).lean();
     }
 
@@ -64,6 +69,10 @@ export default async function handler(req, res) {
         _id: product._id,
         manufacturer: product.manufacturer,
         image: product.image,
+        // Public listing status and identifiers for the page's SEO tags
+        approved: product.approved === true,
+        active: product.active === true,
+        gtin: product.gtin || product.each?.gtin || product.box?.gtin || null,
         sentOvernight: product.sentOvernight,
         keywords: product.keywords || product.name || [],
         information: product.information || "",

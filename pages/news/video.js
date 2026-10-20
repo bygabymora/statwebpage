@@ -7,7 +7,7 @@ import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
 import { BsChevronRight, BsPlay } from "react-icons/bs";
-import { generateNewsPageJSONLD } from "../../utils/seo";
+import { generateNewsPageJSONLD, newsPlainText } from "../../utils/seo";
 
 export default function VideoNews({ news }) {
   // Sort the news array by createdAt in descending order (latest first)
@@ -23,7 +23,6 @@ export default function VideoNews({ news }) {
     <Layout
       title='Video News | Latest Health Industry Videos | Stat Surgical Supply'
       description='Watch the latest video news and updates from the health and medical device industry. Stay informed with visual content from FDA alerts and industry updates.'
-      news={news}
       schema={generateNewsPageJSONLD(news)}
     >
       <nav className='text-sm text-gray-700'>
@@ -137,7 +136,7 @@ export async function getServerSideProps() {
     // Generate an excerpt of maximum 250 characters
     const excerpt =
       content ?
-        content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 250) + "..."
+        newsPlainText(content).slice(0, 250) + "..."
       : "";
 
     return {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { deliveryPromise, newYorkClock } from "../utils/shippingCutoff";
 
 // Inline SVG icons — eliminates react-icons/fa from this bundle chunk
 function ClockIcon({ className }) {
@@ -33,39 +34,6 @@ function TruckIcon({ className }) {
 }
 
 /**
- * Returns { hours, minutes, seconds, isWeekend } in America/New_York timezone.
- * Uses native Intl API — replaces moment-timezone (~300 KB parsed).
- */
-function getNewYorkTime() {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: false,
-  }).formatToParts(now);
-
-  const get = (type) =>
-    parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
-
-  // Weekday name (e.g. "Sat", "Sun") in the same NY timezone, so weekend
-  // detection lines up with the hours/minutes/seconds used for the cutoff.
-  const weekday = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    weekday: "short",
-  }).format(now);
-  const isWeekend = weekday === "Sat" || weekday === "Sun";
-
-  return {
-    hours: get("hour"),
-    minutes: get("minute"),
-    seconds: get("second"),
-    isWeekend,
-  };
-}
-
-/**
  * "1 hour and 5 minutes", "40 minutes", "2 hours" — skips zero units so the
  * copy never reads "0 hours and 40 minutes". Under a minute reads "minute".
  */
@@ -78,41 +46,21 @@ function formatTimeLeft({ hours, minutes }) {
 }
 
 export default function ShippingCutoffTimer() {
-  const [timeRemaining, setTimeRemaining] = useState(null);
-  const [showTimer, setShowTimer] = useState(false);
+  // Next-day countdown before 2 PM ET, 48-hour delivery after it, nothing
+  // when delivery would fall on a weekend (see utils/shippingCutoff.js)
+  const [promise, setPromise] = useState(null);
 
   useEffect(() => {
-    const updateTimer = () => {
-      const { hours: h, minutes: m, seconds: s, isWeekend } = getNewYorkTime();
-
-      // Never show the banner on Saturdays or Sundays.
-      if (isWeekend) {
-        setShowTimer(false);
-        return;
-      }
-
-      const nowSec = h * 3600 + m * 60 + s;
-      const cutoffSec = 15 * 3600 + 30 * 60; // 3:30 PM ET
-
-      if (nowSec < cutoffSec) {
-        const diff = cutoffSec - nowSec;
-        setTimeRemaining({
-          hours: Math.floor(diff / 3600),
-          minutes: Math.floor((diff % 3600) / 60),
-          seconds: diff % 60,
-        });
-        setShowTimer(true);
-      } else {
-        setShowTimer(false);
-      }
-    };
+    const updateTimer = () => setPromise(deliveryPromise(newYorkClock()));
 
     updateTimer();
     const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  if (!showTimer || !timeRemaining) return null;
+  if (!promise) return null;
+  const isNextDay = promise.kind === "nextDay";
+  const timeRemaining = promise.remaining;
 
   return (
     <section className='w-full bg-linear-to-r/srgb from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg -mt-2'>
@@ -126,10 +74,14 @@ export default function ShippingCutoffTimer() {
             </div>
             <div>
               <h3 className='text-lg font-bold mb-1'>
-                Next-Day Delivery Available!
+                {isNextDay ?
+                  "Next-Day Delivery Available!"
+                : "48-Hour Delivery Available!"}
               </h3>
               <p className='text-sm opacity-90'>
-                Get your medical supplies by tomorrow
+                {isNextDay ?
+                  "Get your medical supplies by tomorrow"
+                : "Get your medical supplies within 48 hours"}
               </p>
             </div>
           </div>
@@ -137,33 +89,41 @@ export default function ShippingCutoffTimer() {
           {/* Center - Timer (CSS pulse replaces framer-motion animate) */}
           <div className='flex flex-col items-center space-y-2'>
             <span className='text-sm font-medium opacity-90'>
-              Order within:
+              {isNextDay ? "Order within:" : "Delivered within:"}
             </span>
             <div className='flex items-center space-x-3'>
-              <div className='animate-timer-pulse bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
-                <div className='text-xl font-bold text-[#0e355e]'>
-                  {timeRemaining.hours.toString().padStart(2, "0")}
+              {isNextDay ?
+                <>
+                  <div className='animate-timer-pulse bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
+                    <div className='text-xl font-bold text-[#0e355e]'>
+                      {timeRemaining.hours.toString().padStart(2, "0")}
+                    </div>
+                    <div className='text-xs opacity-80'>HOURS</div>
+                  </div>
+
+                  <span className='text-2xl font-bold opacity-60'>:</span>
+
+                  <div className='animate-timer-pulse [animation-delay:0.5s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
+                    <div className='text-xl font-bold text-[#0e355e]'>
+                      {timeRemaining.minutes.toString().padStart(2, "0")}
+                    </div>
+                    <div className='text-xs opacity-80'>MIN</div>
+                  </div>
+
+                  <span className='text-2xl font-bold opacity-60'>:</span>
+
+                  <div className='animate-timer-pulse [animation-delay:1s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
+                    <div className='text-xl font-bold text-[#0e355e]'>
+                      {timeRemaining.seconds.toString().padStart(2, "0")}
+                    </div>
+                    <div className='text-xs opacity-80'>SEC</div>
+                  </div>
+                </>
+              : <div className='animate-timer-pulse bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
+                  <div className='text-xl font-bold text-[#0e355e]'>48</div>
+                  <div className='text-xs opacity-80'>HOURS</div>
                 </div>
-                <div className='text-xs opacity-80'>HOURS</div>
-              </div>
-
-              <span className='text-2xl font-bold opacity-60'>:</span>
-
-              <div className='animate-timer-pulse [animation-delay:0.5s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
-                <div className='text-xl font-bold text-[#0e355e]'>
-                  {timeRemaining.minutes.toString().padStart(2, "0")}
-                </div>
-                <div className='text-xs opacity-80'>MIN</div>
-              </div>
-
-              <span className='text-2xl font-bold opacity-60'>:</span>
-
-              <div className='animate-timer-pulse [animation-delay:1s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
-                <div className='text-xl font-bold text-[#0e355e]'>
-                  {timeRemaining.seconds.toString().padStart(2, "0")}
-                </div>
-                <div className='text-xs opacity-80'>SEC</div>
-              </div>
+              }
             </div>
           </div>
 
@@ -188,11 +148,24 @@ export default function ShippingCutoffTimer() {
         {/* Bottom Message */}
         <div className='text-center mt-4 pt-4 border-t border-gray-200'>
           <p className='text-sm opacity-90'>
-            <span className='font-semibold text-[#03793d]'>
-              Want it by tomorrow?
-            </span>{" "}
-            Complete your order within the next {formatTimeLeft(timeRemaining)},
-            then select overnight shipping at checkout.
+            {isNextDay ?
+              <>
+                <span className='font-semibold text-[#03793d]'>
+                  Want it by tomorrow?
+                </span>{" "}
+                Complete your order within the next{" "}
+                {formatTimeLeft(timeRemaining)}, then select overnight shipping
+                at checkout.
+              </>
+            : <>
+                <span className='font-semibold text-[#03793d]'>
+                  Want it within 48 hours?
+                </span>{" "}
+                Complete your order now, then select overnight shipping at
+                checkout. Orders placed before 2 PM ET, Monday to Thursday,
+                arrive the next day.
+              </>
+            }
           </p>
         </div>
       </div>

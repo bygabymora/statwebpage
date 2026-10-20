@@ -10,6 +10,7 @@ import {
 } from "@headlessui/react";
 import { BiCheck, BiChevronDown } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
+import { productPath } from "../../utils/seo";
 import requestEmail, {
   emailErrorMessage,
 } from "../../utils/alertSystem/requestEmail";
@@ -270,7 +271,7 @@ export const ProductItemPage = ({ product, index }) => {
       <div className='flex flex-row justify-between'>
         {typeof product._id === "string" && product._id.trim() !== "" && (
           <Link
-            href={`/products/${product.name}`}
+            href={productPath(product.name)}
             title={`${product.manufacturer} ${product.name} ${
               product.each?.description?.slice(0, 43) || ""
             }`}
@@ -297,7 +298,7 @@ export const ProductItemPage = ({ product, index }) => {
         <div className='flex flex-col justify-center items-center px-2 flex-1'>
           {typeof product._id === "string" && product._id.trim() !== "" && (
             <Link
-              href={`/products/${product.name}`}
+              href={productPath(product.name)}
               prefetch={false}
               className='justify-center items-center text-center'
             >

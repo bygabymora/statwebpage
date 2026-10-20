@@ -7,7 +7,12 @@ import { FaFacebookF, FaLinkedinIn, FaEnvelope } from "react-icons/fa";
 import db from "../../utils/db";
 import News from "../../models/News";
 import Image from "next/image";
-import { generateJSONLD } from "../../utils/seo";
+import {
+  generateJSONLD,
+  newsPlainText,
+  newsUrl,
+  truncateText,
+} from "../../utils/seo";
 
 export default function Newscreen({
   news,
@@ -30,7 +35,11 @@ export default function Newscreen({
 
   if (!news) return <p className='p-8 text-center'>News not found</p>;
 
-  const pageTitle = `${news.title.slice(0, 40)}... | STAT Surgical Supply`;
+  // Keep the whole headline when it fits; the brand only for short ones
+  const pageTitle =
+    news.title.length <= 45 ?
+      `${news.title} | STAT Surgical Supply`
+    : truncateText(news.title, 70);
 
   // Enhanced title for video content
   const enhancedTitle =
@@ -38,11 +47,13 @@ export default function Newscreen({
       `Watch: ${news.title} | Video News | STAT Surgical Supply`
     : pageTitle;
 
+  const plainContent = newsPlainText(news.content);
+
   // Enhanced description for video content
   const enhancedDescription =
     news.hasVideo && news.videoUrl ?
-      `Watch this video about ${news.title}. ${news.content?.slice(0, 120)}... Latest health industry video news from STAT Surgical Supply.`
-    : `${news.content?.slice(0, 160)}...`;
+      `Watch this video about ${news.title}. ${truncateText(plainContent, 120)} Latest health industry video news from STAT Surgical Supply.`
+    : truncateText(plainContent, 160);
 
   // Generate schema markup (will include VideoObject if video present)
   const schemaMarkup = generateJSONLD(news);
@@ -130,13 +141,16 @@ export default function Newscreen({
       return nodes;
     }
 
+    // Body text is a paragraph, not a heading, so search engines and AI
+    // parsers read the article outline from the "#" subheadings alone. The
+    // div+ margin keeps the spacing the prose h3 rule gave after images.
     nodes.push(
-      <h3
+      <p
         key={idx}
-        className='text-base text-[#414b53] mb-6 max-w-base font-normal leading-relaxed'
+        className='text-base text-[#414b53] mb-6 max-w-base font-normal leading-relaxed [div+&]:mt-[1.6666667em]'
       >
         {para}
-      </h3>,
+      </p>,
     );
     return nodes;
   });
@@ -147,23 +161,8 @@ export default function Newscreen({
       news={news}
       description={enhancedDescription}
       image={news.imageUrl}
-      url={`https://www.statsurgicalsupply.com/news/${news.slug}`}
+      url={newsUrl(news.slug)}
       schema={schemaMarkup}
-      // Add video-specific meta tags
-      additionalMetaTags={
-        news.hasVideo && news.videoUrl ?
-          [
-            { property: "og:video", content: news.videoUrl },
-            {
-              property: "og:video:type",
-              content: `video/${news.videoType || "mp4"}`,
-            },
-            { property: "og:type", content: "video.other" },
-            { name: "twitter:card", content: "player" },
-            { name: "twitter:player", content: news.videoUrl },
-          ]
-        : []
-      }
     >
       <div
         className='fixed top-0 left-0 h-1 bg-linear-to-r/srgb from-[#0e355e] to-[#67b7dc] z-50'

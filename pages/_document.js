@@ -4,6 +4,19 @@ export default function Document() {
   return (
     <Html lang='en-US'>
       <Head>
+        {/* Feed autodiscovery for readers, aggregators and AI crawlers */}
+        <link
+          rel='alternate'
+          type='application/rss+xml'
+          title='STAT Surgical Supply News'
+          href='/rss.xml'
+        />
+        <link
+          rel='apple-touch-icon'
+          sizes='180x180'
+          href='/favicon_io/apple-touch-icon.png'
+        />
+        <link rel='manifest' href='/favicon_io/site.webmanifest' />
         <link
           rel='preconnect'
           href='https://fonts.googleapis.com'

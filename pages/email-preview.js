@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import NoIndex from "../components/NoIndex";
 import DocumentComponent from "../components/mailChimp/document/Component";
 import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
 import ContactTemplate from "../components/mailChimp/ContactTemplate";
@@ -156,6 +157,8 @@ export default function EmailPreview() {
 
   return (
     <main className='min-h-screen bg-gray-50 p-6'>
+      {/* Internal tool with sample data; not for search results */}
+      <NoIndex />
       <div className='max-w-3xl mx-auto'>
         <header className='mb-6'>
           <h1 className='text-2xl font-semibold mb-4'>

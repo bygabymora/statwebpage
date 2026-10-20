@@ -7,7 +7,7 @@ import { NewsItem } from "../../components/NewsItem";
 import New from "../../models/News.js";
 import db from "../../utils/db";
 import { BsChevronRight, BsPlay } from "react-icons/bs";
-import { generateNewsPageJSONLD } from "../../utils/seo";
+import { generateNewsPageJSONLD, newsPlainText } from "../../utils/seo";
 
 export default function News({ news }) {
   // Sort the news array by createdAt in descending order (latest first)
@@ -18,7 +18,7 @@ export default function News({ news }) {
   return (
     <Layout
       title='News Of Health | Stat Surgical Supply'
-      news={news}
+      description='Stay updated with the latest news and insights in healthcare and surgical technology: FDA alerts, recalls, medical device updates, and industry news from STAT Surgical Supply.'
       schema={generateNewsPageJSONLD(news)}
     >
       <nav className='text-sm text-gray-700'>
@@ -101,7 +101,7 @@ export async function getServerSideProps() {
   const newsWithModifiedFields = news.map((newsItem) => {
     const excerptText =
       newsItem.content ?
-        newsItem.content.replace(/(\r\n|\n|\r)/gm, " ").slice(0, 180)
+        newsPlainText(newsItem.content).slice(0, 180)
       : "";
 
     return {

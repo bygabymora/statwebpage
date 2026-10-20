@@ -4,6 +4,10 @@ import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import HeroSection from "../components/support/HeroSection";
+import {
+  generateContactPageJSONLD,
+  generateOrganizationJSONLD,
+} from "../utils/seo";
 
 // Dynamic imports for non-critical components
 const HeroEnhancements = dynamic(
@@ -97,7 +101,7 @@ export default function Support() {
     <Layout
       title='Customer Support | STAT Surgical Supply'
       description='Get in touch with STAT Surgical Supply customer support for assistance with surgical and medical supplies. Contact us via phone, email, or visit our location for expert help and answers to your questions.'
-      schema={[]}
+      schema={[generateContactPageJSONLD(), generateOrganizationJSONLD()]}
     >
       <nav className='text-sm text-gray-700'>
         <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>

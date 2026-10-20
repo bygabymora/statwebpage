@@ -25,26 +25,20 @@ import { useModalContext } from "../../components/context/ModalContext";
 import requestEmail, {
   emailErrorMessage,
 } from "../../utils/alertSystem/requestEmail";
-import { generateProductJSONLD } from "../../utils/seo";
+import {
+  SITE_URL,
+  generateBreadcrumbJSONLD,
+  generateProductJSONLD,
+  isPubliclyListed,
+  productPath,
+  truncateText,
+} from "../../utils/seo";
 import {
   findManufacturerProfile,
   manufacturerProfiles,
 } from "../../utils/manufacturerProfiles";
 import RelatedProducts from "../../components/products/RelatedProducts";
-
-// Native timezone helpers — replaces moment-timezone (~500 KB parsed)
-function getNYSecondsSinceMidnight() {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: false,
-  }).formatToParts(new Date());
-  const get = (type) =>
-    parseInt(parts.find((p) => p.type === type)?.value || "0", 10);
-  return get("hour") * 3600 + get("minute") * 60 + get("second");
-}
+import { deliveryPromise, newYorkClock } from "../../utils/shippingCutoff";
 
 function getAvailableStock(countInStock, heldStock) {
   return Math.max(0, (countInStock || 0) - (heldStock || 0));
@@ -63,8 +57,6 @@ function formatDateShort(dateStr) {
     hour12: true,
   }).format(d);
 }
-
-const CUTOFF_SECONDS = 15 * 3600 + 30 * 60; // 3:30 PM ET
 
 export default function ProductScreen({ product }) {
   const router = useRouter();
@@ -85,7 +77,8 @@ export default function ProductScreen({ product }) {
   const [currentDescription, setCurrentDescription] = useState(
     product.each?.description || "",
   );
-  const [nySec] = useState(() => getNYSecondsSinceMidnight());
+  // Same rule as the home-page banner (utils/shippingCutoff.js)
+  const [delivery] = useState(() => deliveryPromise(newYorkClock()));
   const [currentCountInStock, setCurrentCountInStock] = useState(
     getAvailableStock(product.each?.countInStock, product.each?.heldStock),
   );
@@ -470,9 +463,6 @@ export default function ProductScreen({ product }) {
     }
   }, [product._id, inventoryLastUpdated, typeOfPurchase, active]);
 
-  // Whether we're before the 3:30 PM ET shipping cutoff
-  const isBeforeCutoff = nySec < CUTOFF_SECONDS;
-
   if (!product) {
     // in case getServerSideProps returned no product
     return <div>Product not found</div>;
@@ -480,7 +470,8 @@ export default function ProductScreen({ product }) {
 
   const getProductTitle = (product) => {
     const base = `${product.name} - ${product.manufacturer}`;
-    return `${base} | ${product.each?.description ? product.each.description.slice(0, 39) : ""}...`;
+    const description = truncateText(product.each?.description, 42);
+    return description ? `${base} | ${description}` : base;
   };
 
   // Tab content components
@@ -589,30 +580,31 @@ export default function ProductScreen({ product }) {
                 : <span>Inventory status: Loading...</span>}
               </div>
             </li>
-            <h4 className='font-medium text-gray-800'>
-              Shipping Cutoff
-            </h4>
-            <li>
-              {isBeforeCutoff ?
-                (() => {
-                  const diffSec = CUTOFF_SECONDS - nySec;
-                  const hours = Math.floor(diffSec / 3600);
-                  const minutes = Math.floor((diffSec % 3600) / 60);
-                  return (
-                    <td className='py-2 px-4 border-b text-sm text-gray-600'>
-                      Want it by tomorrow? Place your order within the next{" "}
-                      {hours} hour{hours !== 1 && "s"} and {minutes} minute
-                      {minutes !== 1 && "s"} and select overnight shipping at
-                      checkout.
+            {/* No note when delivery would fall on a weekend */}
+            {delivery && (
+              <>
+                <h4 className='font-medium text-gray-800'>Shipping Cutoff</h4>
+                <li>
+                  {delivery.kind === "nextDay" ?
+                    (() => {
+                      const { hours, minutes } = delivery.remaining;
+                      return (
+                        <td className='py-2 px-4 border-b text-sm text-gray-600'>
+                          Want it by tomorrow? Place your order within the
+                          next {hours} hour{hours !== 1 && "s"} and {minutes}{" "}
+                          minute{minutes !== 1 && "s"} and select overnight
+                          shipping at checkout.
+                        </td>
+                      );
+                    })()
+                  : <td className='py-2 px-4 border-b text-sm text-gray-600'>
+                      The cutoff for next-day shipping has passed. Orders
+                      placed now will arrive in two days.
                     </td>
-                  );
-                })()
-              : <td className='py-2 px-4 border-b text-sm text-gray-600'>
-                  The cutoff for next-day shipping has passed. Orders placed now
-                  will arrive in two days.
-                </td>
-              }
-            </li>
+                  }
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
@@ -814,7 +806,18 @@ export default function ProductScreen({ product }) {
     <Layout
       title={getProductTitle(product)}
       product={product}
-      schema={generateProductJSONLD(product)}
+      schema={[
+        generateProductJSONLD(product),
+        generateBreadcrumbJSONLD(
+          breadcrumbs.map((breadcrumb) => ({
+            name: breadcrumb.name,
+            url: `${SITE_URL}${breadcrumb.href ?? productPath(product.name)}`,
+          })),
+        ),
+      ]}
+      // Products outside the public catalog stay reachable by link but
+      // are kept out of search results, like they are kept out of the sitemap
+      noindex={!isPubliclyListed(product)}
       image={product.image}
       keywords={`${product.manufacturer}, ${product.name}, surgical supplies, healthcare equipment`}
     >

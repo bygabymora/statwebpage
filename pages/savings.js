@@ -63,7 +63,8 @@ export default function GuaranteedSavings() {
         name: faq.question,
         acceptedAnswer: {
           "@type": "Answer",
-          text: faq.answer,
+          // Plain text: the ** marks are bold styling on the page
+          text: faq.answer.replace(/\*\*/g, ""),
         },
       })),
     },
@@ -334,18 +335,21 @@ export default function GuaranteedSavings() {
                         <FaChevronDown className='text-[#07783e] shrink-0' />
                       )}
                     </button>
-                    {expandedFAQ === index && (
-                      <div className='px-6 pb-4 text-[#414b53] leading-relaxed border-t border-gray-100 pt-4 mt-2'>
-                        <p
-                          dangerouslySetInnerHTML={{
-                            __html: faq.answer.replace(
-                              /\*\*(.*?)\*\*/g,
-                              '<strong class="text-[#07783e]">$1</strong>'
-                            ),
-                          }}
-                        ></p>
-                      </div>
-                    )}
+                    {/* Always in the HTML (hidden while collapsed) so crawlers
+                        that don't click or run JavaScript read every answer */}
+                    <div
+                      hidden={expandedFAQ !== index}
+                      className='px-6 pb-4 text-[#414b53] leading-relaxed border-t border-gray-100 pt-4 mt-2'
+                    >
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: faq.answer.replace(
+                            /\*\*(.*?)\*\*/g,
+                            '<strong class="text-[#07783e]">$1</strong>'
+                          ),
+                        }}
+                      ></p>
+                    </div>
                   </div>
                 ))}
               </div>

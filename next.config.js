@@ -30,6 +30,28 @@ const nextConfig = {
     ],
   },
 
+  // Conventional URLs for the sitemaps, feed and AI guide (served by API routes)
+  async rewrites() {
+    return [
+      { source: "/sitemap.xml", destination: "/api/sitemap" },
+      { source: "/news-sitemap.xml", destination: "/api/news-sitemap" },
+      { source: "/rss.xml", destination: "/api/rss" },
+      { source: "/llms.txt", destination: "/api/llms" },
+      { source: "/llms-full.txt", destination: "/api/llms-full" },
+    ];
+  },
+
+  // API responses are data, not pages. Matched on the requested path, so
+  // the rewritten URLs above stay indexable.
+  async headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+    ];
+  },
+
   images: {
     deviceSizes: [320, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

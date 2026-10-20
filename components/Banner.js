@@ -54,55 +54,10 @@ const Banner = () => {
     return () => clearInterval(interval);
   }, [banners.length]);
 
-  // Organization Schema for enhanced SEO
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "STAT Surgical Supply",
-    url: "https://www.statsurgicalsupply.com",
-    logo: "https://www.statsurgicalsupply.com/images/assets/logo.png",
-    description:
-      "Your trusted source for surgical supplies. High-quality surgical disposables, implants, and instruments at unmatched prices.",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "US",
-    },
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "customer service",
-      availableLanguage: "English",
-    },
-    sameAs: ["https://www.statsurgicalsupply.com"],
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.statsurgicalsupply.com",
-      },
-    ],
-  };
-
+  // The home page's Organization schema comes from Layout (utils/seo.js)
   return (
     <>
       <Head>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
-          }}
-        />
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbSchema),
-          }}
-        />
         {/* Preload only the first banner image for LCP */}
         <link
           rel='preload'

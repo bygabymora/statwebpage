@@ -3,7 +3,20 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
 import { useRouter } from "next/router";
-import { generateJSONLD, generateProductJSONLD } from "../../utils/seo";
+import {
+  DEFAULT_SHARE_IMAGE,
+  SITE_NAME,
+  SITE_URL,
+  generateJSONLD,
+  generateProductJSONLD,
+  isNoindexRoute,
+  jsonLd,
+  newsPlainText,
+  newsUrl,
+  productUrl,
+  truncateText,
+  videoEmbedUrl,
+} from "../../utils/seo";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 
@@ -38,13 +51,13 @@ export default function Layout({
   description,
   image,
   url,
+  keywords,
+  noindex = false,
 }) {
   const { data: session } = useSession();
   const { showStatusMessage, openAlertModal } = useModalContext();
   const [approvalPending, setApprovalPending] = useState(false);
   const router = useRouter();
-  const defaultOgImage =
-    "https://www.statsurgicalsupply.com/images/assets/Banner.png";
 
   const approvalMessage = useMemo(
     () => ({
@@ -116,7 +129,13 @@ export default function Layout({
   const productDescription = useMemo(() => {
     if (!product) return null;
 
-    const base = `${product.information?.slice(0, 200)}`;
+    const base = truncateText(
+      product.information ||
+        product.each?.description ||
+        product.box?.description ||
+        `${product.manufacturer} ${product.name}`,
+      200,
+    );
     const manufacturer = product.manufacturer?.toLowerCase() || "";
 
     const manufacturerDescriptions = {
@@ -136,281 +155,145 @@ export default function Layout({
 
   const productKeywords = useMemo(() => {
     if (!product) return null;
-    const baseKeywords = [
-      product.keywords ?
+    // The public product API falls back to the name (a string) when a
+    // product has no keyword list
+    const productTerms =
+      Array.isArray(product.keywords) && product.keywords.length > 0 ?
         product.keywords.join(", ")
-      : `${product.name}, ${product.manufacturer}`,
-      "surgical supplies",
-    ];
+      : `${product.name}, ${product.manufacturer}`;
 
-    return product.keywords && product.keywords.length > 0 ?
-        baseKeywords.join(", ")
-      : baseKeywords.join(", ");
+    return `${productTerms}, surgical supplies`;
   }, [product]);
+
+  const hidden = noindex || isNoindexRoute(router.pathname);
+  const isVideoNews = Boolean(news?.hasVideo && news?.videoUrl);
+  const pageTitle = title || "Stat Surgical Supply | Buy Surgical Supplies";
+
+  const canonicalUrl =
+    url ||
+    (product ? productUrl(product.name)
+    : news?.slug ? newsUrl(news.slug)
+    : `${SITE_URL}${router.asPath.split(/[?#]/)[0]}`);
+
+  const metaDescription =
+    description ||
+    productDescription ||
+    (news ?
+      truncateText(newsPlainText(news.content), 160) ||
+      "Stay up to date with important news and insights in the surgical and healthcare industry. Trusted updates from Stat Surgical Supply."
+    : "Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.");
+
+  const metaKeywords =
+    keywords ||
+    productKeywords ||
+    (news ?
+      news.tags?.join(", ") ||
+      "surgical news, healthcare, health updates, surgery, innovation, patient care, hospital news"
+    : null);
+
+  const ogTitle =
+    product ? `${product.manufacturer} - ${product.name}` : pageTitle;
+  const ogType =
+    product ? "product"
+    : isVideoNews ? "video.other"
+    : news ? "article"
+    : "website";
+
+  // Declare dimensions only for the default image, whose size is known
+  const shareImageUrl = image || product?.image || news?.imageUrl;
+  const shareImage =
+    shareImageUrl ? { url: shareImageUrl } : DEFAULT_SHARE_IMAGE;
+
+  const structuredData = [
+    schema ??
+      (product ? generateProductJSONLD(product)
+      : news ? generateJSONLD(news)
+      : null),
+  ]
+    .flat()
+    .filter(Boolean);
 
   return (
     <div className='w-full' lang='en-US'>
       <Head>
-        <title>
-          {title ? `${title}` : "Stat Surgical Supply | Buy Surgical Supplies"}
-        </title>
-        <meta name='googlebot' content='index, follow' />
-        <meta name='googlebot' content='index,follow' />
-        <meta name='bingbot' content='index, follow' />
-        <meta name='robots' content='max-image-preview:large' />
+        <title>{pageTitle}</title>
+        <meta name='description' content={metaDescription} />
+        {metaKeywords && <meta name='keywords' content={metaKeywords} />}
+        <meta
+          name='robots'
+          content={
+            hidden ? "noindex, follow" : (
+              "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+            )
+          }
+        />
         <meta name='author' content='Stat Surgical Supply' />
         <meta name='publisher' content='Stat Surgical Supply' />
         <link rel='icon' href='/favicon.ico' />
+        {!hidden && <link rel='canonical' href={canonicalUrl} />}
 
-        {product ?
+        <meta property='og:site_name' content={SITE_NAME} />
+        <meta property='og:locale' content='en_US' />
+        <meta property='og:type' content={ogType} />
+        <meta property='og:title' content={ogTitle} />
+        <meta property='og:description' content={metaDescription} />
+        <meta property='og:url' content={canonicalUrl} />
+        <meta property='og:image' content={shareImage.url} />
+        {shareImage.width && (
           <>
-            <meta name='description' content={productDescription} />
-            <meta name='keywords' content={productKeywords} />
-            <meta property='og:type' content='product' />
-            <meta
-              property='og:title'
-              content={`${product.manufacturer} - ${product.name}`}
-            />
-            <meta
-              property='og:description'
-              content={product.information?.slice(0, 200)}
-            />
-            <meta
-              property='og:image'
-              content={product.image || defaultOgImage}
-            />
-            <meta property='og:image:width' content='1200' />
-            <meta property='og:image:height' content='630' />
-            <meta
-              property='og:url'
-              content={`https://www.statsurgicalsupply.com/products/${product.name}`}
-            />
-
-            <meta name='twitter:card' content='summary_large_image' />
-            <meta
-              name='twitter:title'
-              content={`${product.manufacturer} - ${product.name}`}
-            />
-            <meta
-              name='twitter:description'
-              content={product.information?.slice(0, 200)}
-            />
-            <meta
-              name='twitter:image'
-              content={product.image || defaultOgImage}
-            />
-
-            <link
-              rel='canonical'
-              href={`https://www.statsurgicalsupply.com/products/${product.name}`}
-            />
-            <link rel='image_src' href={product.image || defaultOgImage} />
-
-            <script
-              type='application/ld+json'
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(
-                  schema || generateProductJSONLD(product),
-                ),
-              }}
-            />
+            <meta property='og:image:width' content={shareImage.width} />
+            <meta property='og:image:height' content={shareImage.height} />
           </>
-        : news ?
+        )}
+
+        <meta
+          name='twitter:card'
+          content={isVideoNews ? "player" : "summary_large_image"}
+        />
+        <meta name='twitter:title' content={ogTitle} />
+        <meta name='twitter:description' content={metaDescription} />
+        <meta name='twitter:image' content={shareImage.url} />
+
+        {/* Video-specific meta tags */}
+        {isVideoNews && (
           <>
+            <meta property='og:video' content={videoEmbedUrl(news)} />
             <meta
-              name='description'
+              property='og:video:type'
               content={
-                description ||
-                news.content?.slice(0, 160) ||
-                "Stay up to date with important news and insights in the surgical and healthcare industry. Trusted updates from Stat Surgical Supply."
+                news.videoType === "youtube" || news.videoType === "vimeo" ?
+                  "text/html"
+                : `video/${news.videoType || "mp4"}`
               }
             />
-            <meta
-              name='keywords'
-              content={
-                news.tags?.join(", ") ||
-                "surgical news, healthcare, health updates, surgery, innovation, patient care, hospital news"
-              }
-            />
-
-            {/* Video-specific meta tags */}
-            {news.hasVideo && news.videoUrl ?
-              <>
-                <meta property='og:type' content='video.other' />
-                <meta property='og:video' content={news.videoUrl} />
-                <meta
-                  property='og:video:type'
-                  content={`video/${news.videoType || "mp4"}`}
-                />
-                <meta property='og:video:width' content='1280' />
-                <meta property='og:video:height' content='720' />
-                <meta name='twitter:card' content='player' />
-                <meta name='twitter:player' content={news.videoUrl} />
-                <meta name='twitter:player:width' content='1280' />
-                <meta name='twitter:player:height' content='720' />
-              </>
-            : <meta property='og:type' content='article' />}
-
-            <meta property='og:title' content={title || news.title} />
-            <meta
-              property='og:description'
-              content={description || news.content?.slice(0, 200)}
-            />
-            <meta
-              property='og:image'
-              content={image || news.imageUrl || defaultOgImage}
-            />
-            <meta property='og:image:width' content='1200' />
-            <meta property='og:image:height' content='630' />
-            <meta
-              property='og:url'
-              content={
-                url || `https://www.statsurgicalsupply.com/news/${news.slug}`
-              }
-            />
-            {news.createdAt && (
-              <meta
-                property='article:published_time'
-                content={new Date(news.createdAt).toISOString()}
-              />
-            )}
-
-            <meta
-              name='twitter:card'
-              content={news.hasVideo ? "player" : "summary_large_image"}
-            />
-            <meta name='twitter:title' content={title || news.title} />
-            <meta
-              name='twitter:description'
-              content={description || news.content?.slice(0, 200)}
-            />
-            <meta
-              name='twitter:image'
-              content={image || news.imageUrl || defaultOgImage}
-            />
-
-            <link
-              rel='canonical'
-              href={
-                url && url.trim() !== "" ? url
-                : news?.slug ?
-                  `https://www.statsurgicalsupply.com/news/${news.slug}`
-                : "https://www.statsurgicalsupply.com/news"
-              }
-            />
-            <link
-              rel='image_src'
-              href={image || news.imageUrl || defaultOgImage}
-            />
-
-            <script
-              type='application/ld+json'
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(schema || generateJSONLD(news)),
-              }}
-            />
+            <meta property='og:video:width' content='1280' />
+            <meta property='og:video:height' content='720' />
+            <meta name='twitter:player' content={videoEmbedUrl(news)} />
+            <meta name='twitter:player:width' content='1280' />
+            <meta name='twitter:player:height' content='720' />
           </>
-        : schema ?
-          <>
-            <meta
-              name='description'
-              content={
-                description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services. Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
-              }
-            />
-            <meta
-              name='keywords'
-              content='FAQs, surgical supplies, sterilization, expiration, order timeline'
-            />
-            <meta property='og:type' content='website' />
-            <meta
-              property='og:title'
-              content={title || "Frequently Asked Questions"}
-            />
-            <meta
-              property='og:description'
-              content={
-                description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
-              }
-            />
-            <meta property='og:image' content={defaultOgImage} />
-            <meta property='og:image:width' content='1200' />
-            <meta property='og:image:height' content='630' />
-            <meta
-              property='og:url'
-              content={`https://www.statsurgicalsupply.com${router.asPath}`}
-            />
+        )}
 
-            <meta name='twitter:card' content='summary_large_image' />
-            <meta
-              name='twitter:title'
-              content={title || "Frequently Asked Questions"}
-            />
-            <meta
-              name='twitter:description'
-              content={
-                description ||
-                "Find answers to the most frequently asked questions about our surgical supplies and services.Get quick answers to common inquiries about surgical procedures and ordering surgical tools."
-              }
-            />
-            <meta name='twitter:image' content={defaultOgImage} />
+        {news?.createdAt && (
+          <meta
+            property='article:published_time'
+            content={new Date(news.createdAt).toISOString()}
+          />
+        )}
+        {news?.updatedAt && (
+          <meta
+            property='article:modified_time'
+            content={new Date(news.updatedAt).toISOString()}
+          />
+        )}
 
-            <link
-              rel='canonical'
-              href={`https://www.statsurgicalsupply.com${router.asPath}`}
-            />
-            <link rel='image_src' href={defaultOgImage} />
-
-            {(Array.isArray(schema) ? schema : [schema]).map((entry, i) => (
-              <script
-                key={i}
-                type='application/ld+json'
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
-              />
-            ))}
-          </>
-        : <>
-            {/* Default (homepage, or fallback) */}
-            <meta
-              name='description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
-            />
-            <meta property='og:type' content='website' />
-            <meta property='og:site_name' content='STAT Surgical Supply' />
-            <meta
-              property='og:url'
-              content='https://www.statsurgicalsupply.com/'
-            />
-            <meta
-              name='keywords'
-              content='sterile surgical disposables, surgical disposables for surgery, types of surgical equipment, buy surgical supplies online'
-            />
-            <meta
-              property='og:title'
-              content='Buy Healthcare & Surgical Products | STAT Surgical Supply'
-            />
-            <meta
-              property='og:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
-            />
-            <meta property='og:image' content={defaultOgImage} />
-            <meta property='og:image:width' content='1200' />
-            <meta property='og:image:height' content='630' />
-            <meta name='twitter:card' content='summary_large_image' />
-            <meta
-              name='twitter:title'
-              content='Buy Healthcare & Surgical Products | STAT Surgical Supply'
-            />
-            <meta
-              name='twitter:description'
-              content='Buy healthcare & surgical products at Stat Surgical Supply. Shop Surgical Supplies and disposables with fast shipping and easy returns.'
-            />
-            <meta name='twitter:image' content={defaultOgImage} />
-            <link rel='image_src' href={defaultOgImage} />
-          </>
-        }
+        {structuredData.map((entry, i) => (
+          <script
+            key={`ld-${i}`}
+            type='application/ld+json'
+            dangerouslySetInnerHTML={{ __html: jsonLd(entry) }}
+          />
+        ))}
       </Head>
 
       <Script

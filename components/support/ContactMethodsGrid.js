@@ -42,7 +42,7 @@ export default function ContactMethodsGrid() {
             </a>
             <div className='flex items-center justify-center mt-2 text-xs text-gray-500'>
               <FaClock className='mr-1' />
-              Mon-Fri 8AM-5PM EST
+              Mon-Fri 8AM-5PM ET
             </div>
           </div>
         </div>

@@ -1,20 +1,180 @@
+export const SITE_URL = "https://www.statsurgicalsupply.com";
+export const SITE_NAME = "STAT Surgical Supply";
+
+const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const WEBSITE_ID = `${SITE_URL}/#website`;
+
+const LOGO = {
+  "@type": "ImageObject",
+  url: `${SITE_URL}/images/assets/logo.png`,
+  width: 500,
+  height: 500,
+};
+
+// Share image for pages that have none of their own: logo + products at the
+// 1200x630 size link previews use
+export const DEFAULT_SHARE_IMAGE = {
+  url: `${SITE_URL}/images/assets/share-card.jpg`,
+  width: 1200,
+  height: 630,
+};
+
+// Company facts used by the structured data and /llms.txt. Keep them in step
+// with the contact section, support page and policy pages.
+export const BUSINESS = {
+  legalName: "STAT Surgical Supply LLC",
+  telephone: "+1-813-252-0727",
+  salesEmail: "sales@statsurgicalsupply.com",
+  supportEmail: "centralsales@statsurgicalsupply.com",
+  address: {
+    streetAddress: "100 South Ashley Drive, Suite 600",
+    addressLocality: "Tampa",
+    addressRegion: "FL",
+    postalCode: "33602",
+    addressCountry: "US",
+  },
+  hours: "Monday to Friday, 8 AM to 5 PM Eastern",
+  sameAs: [
+    "https://www.linkedin.com/company/statsurgicalsupply",
+    "https://www.facebook.com/statsurgicalsupply",
+  ],
+};
+
+// Mirrors pages/return-policy.js: returns within 14 days, store credit only,
+// buyer pays return shipping. Google compares this with the policy page, so
+// change both together.
+const RETURN_POLICY = {
+  "@type": "MerchantReturnPolicy",
+  applicableCountry: "US",
+  returnPolicyCountry: "US",
+  returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+  merchantReturnDays: 14,
+  returnMethod: "https://schema.org/ReturnByMail",
+  returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+  refundType: "https://schema.org/StoreCreditRefund",
+};
+
+const PUBLISHER = {
+  "@type": "Organization",
+  "@id": ORGANIZATION_ID,
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: LOGO,
+};
+
+// Private, transactional and placeholder pages kept out of search results and
+// AI answers. Pages behind `Component.auth` are also covered in _app.js.
+const NOINDEX_ROUTES = new Set([
+  "/404",
+  "/authenticateCode",
+  "/cart",
+  "/order-history",
+  "/order/[id]",
+  "/payment",
+  "/profile",
+  "/recoverAccess",
+  "/search",
+  "/tracking",
+  "/unauthorized",
+  "/unsubscribe",
+]);
+
+export function isNoindexRoute(pathname) {
+  return NOINDEX_ROUTES.has(pathname) || pathname.startsWith("/admin");
+}
+
+// Product pages are addressed by name. Encoding keeps names that contain
+// "/", "#", "?" or "%" pointing at the right page.
+export function productPath(name) {
+  return `/products/${encodeURIComponent(name)}`;
+}
+
+export function productUrl(name) {
+  return `${SITE_URL}${productPath(name)}`;
+}
+
+export function newsUrl(slug) {
+  return `${SITE_URL}/news/${encodeURIComponent(slug)}`;
+}
+
+// Same filter as the public catalog: only these products are listed,
+// put in the sitemap and offered to search engines.
+export function isPubliclyListed(product) {
+  return product?.approved === true && product?.active === true;
+}
+
+// News bodies mark inline images as "[https://…]" and subheadings with a
+// leading "#"; strip both so descriptions and feeds read as plain prose.
+export function newsPlainText(content) {
+  return (content || "")
+    .replace(/\[(https?:\/\/[^\s\]]+)\]/g, "")
+    .replace(/^#+\s*/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Shortens at a word boundary so snippets don't end mid-word
+export function truncateText(text, max) {
+  const clean = (text || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 3);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace >= cut.length / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}...`;
+}
+
+// The price logged-out visitors see on the product page ("Web price"). It is
+// the only price structured data may advertise: customer pricing stays private.
+export function publicWebPrice(product) {
+  const eachPrice = Number(product?.each?.wpPrice) || 0;
+  const boxPrice = Number(product?.box?.wpPrice) || 0;
+  if (eachPrice > 0) return { price: eachPrice, unit: "Unit" };
+  if (boxPrice > 0) return { price: boxPrice, unit: "Box" };
+  return null;
+}
+
+// Serializes structured data for a <script> tag; escaping "<" stops text
+// such as "</script>" inside a description from ending the tag early.
+export function jsonLd(data) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+// For text and attribute values in the sitemaps and the RSS feed
+export function escapeXml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+export function videoEmbedUrl(news) {
+  return news.videoType === "youtube" ?
+      news.videoUrl.replace("watch?v=", "embed/")
+    : news.videoUrl;
+}
+
+function isValidDate(value) {
+  return Boolean(value) && !isNaN(new Date(value));
+}
+
 function generateJSONLD(news) {
-  const isValidDate = (value) => {
-    const date = new Date(value);
-    return value && !isNaN(date);
-  };
+  const url = newsUrl(news.slug);
+  const text = newsPlainText(news.content);
 
   const baseSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    "@id": `${url}#article`,
+    url,
     keywords: news.tags?.join(", "),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
+      "@id": url,
     },
-    headline: news.title,
-    articleBody: news.content || "",
-    image: [news.imageUrl],
+    headline: truncateText(news.title, 110),
+    articleBody: text,
+    image: news.imageUrl ? [news.imageUrl] : undefined,
     ...(isValidDate(news.createdAt) && {
       datePublished: new Date(news.createdAt).toISOString(),
     }),
@@ -23,19 +183,12 @@ function generateJSONLD(news) {
     }),
     author: {
       "@type": "Person",
-      name: news.author || "STAT Surgical Supply",
+      name: news.author || SITE_NAME,
     },
-    publisher: {
-      "@type": "Organization",
-      name: "STAT Surgical Supply",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
-        width: 600,
-        height: 60,
-      },
-    },
-    description: news.content?.substring(0, 160) || "",
+    publisher: PUBLISHER,
+    description: truncateText(text, 160),
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
   };
 
   // If the news article has a video, add VideoObject schema
@@ -49,39 +202,24 @@ function generateJSONLD(news) {
 
 // Generate VideoObject schema for news articles with videos
 function generateVideoObjectJSONLD(news) {
-  const isValidDate = (value) => {
-    const date = new Date(value);
-    return value && !isNaN(date);
-  };
+  const isEmbedded = news.videoType === "youtube" || news.videoType === "vimeo";
 
   const videoObject = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: news.title,
-    description: news.content?.substring(0, 160) || "",
+    description: truncateText(newsPlainText(news.content), 160),
     thumbnailUrl: news.imageUrl,
-    contentUrl: news.videoUrl,
-    embedUrl:
-      news.videoType === "youtube" ?
-        news.videoUrl.replace("watch?v=", "embed/")
-      : news.videoUrl,
-    uploadDate:
-      isValidDate(news.createdAt) ?
-        new Date(news.createdAt).toISOString()
-      : undefined,
-    publisher: {
-      "@type": "Organization",
-      name: "STAT Surgical Supply",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
-        width: 600,
-        height: 60,
-      },
-    },
+    // contentUrl is for the media file itself; YouTube/Vimeo only give a player
+    ...(!isEmbedded && { contentUrl: news.videoUrl }),
+    embedUrl: videoEmbedUrl(news),
+    ...(isValidDate(news.createdAt) && {
+      uploadDate: new Date(news.createdAt).toISOString(),
+    }),
+    publisher: PUBLISHER,
     author: {
       "@type": "Person",
-      name: news.author || "STAT Surgical Supply",
+      name: news.author || SITE_NAME,
     },
     videoQuality: "HD",
     genre: "Health",
@@ -90,136 +228,85 @@ function generateVideoObjectJSONLD(news) {
       "health news, medical updates, surgical supplies",
     mainEntity: {
       "@type": "NewsArticle",
-      "@id": `https://www.statsurgicalsupply.com/news/${news.slug}`,
+      "@id": `${newsUrl(news.slug)}#article`,
     },
   };
 
   // ONLY add duration if valid
-  function formatDuration(seconds) {
+  const seconds = Number(news.videoDurationSeconds);
+  if (Number.isFinite(seconds) && seconds > 0) {
     const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `PT${m}M${s}S`;
+    const s = Math.round(seconds % 60);
+    videoObject.duration = `PT${m}M${s}S`;
   }
-
-  videoObject.duration = formatDuration(news.videoDurationSeconds);
 
   return videoObject;
 }
 
 function generateProductJSONLD(product) {
-  const canonicalUrl = `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
-    product.name,
-  )}`;
+  const url = productUrl(product.name);
   const keywords =
     Array.isArray(product.keywords) ? product.keywords.join(", ") : undefined;
 
-  const eachInStock =
-    (product.each?.countInStock || 0) > 0 ||
-    (product.each?.clearanceCountInStock || 0) > 0;
-  const boxInStock =
-    (product.box?.countInStock || 0) > 0 ||
+  // Same rule as the product page: held units are not available to sell
+  const available = (unit) =>
+    Math.max(0, (unit?.countInStock || 0) - (unit?.heldStock || 0));
+  const isInStock =
+    available(product.each) > 0 ||
+    available(product.box) > 0 ||
+    (product.loose?.countInStock || 0) > 0 ||
+    (product.each?.clearanceCountInStock || 0) > 0 ||
     (product.box?.clearanceCountInStock || 0) > 0;
-  const looseInStock = (product.loose?.countInStock || 0) > 0;
-  const isInStock = eachInStock || boxInStock || looseInStock;
 
-  const toPositiveNumber = (value) => {
-    const numberValue = Number(value);
-    return Number.isFinite(numberValue) && numberValue > 0 ? numberValue : 0;
-  };
+  // Google only accepts 8, 12, 13 or 14-digit GTINs
+  const gtin = [product.gtin, product.each?.gtin, product.box?.gtin]
+    .map((value) => String(value || "").trim())
+    .find((value) => /^(\d{8}|\d{12,14})$/.test(value));
 
-  const getPriceByStockPriority = (fieldName) => {
-    const eachPrice = toPositiveNumber(product.each?.[fieldName]);
-    const boxPrice = toPositiveNumber(product.box?.[fieldName]);
-    const loosePrice = toPositiveNumber(product.loose?.[fieldName]);
-
-    if (eachInStock && eachPrice > 0) return eachPrice;
-    if (boxInStock && boxPrice > 0) return boxPrice;
-    if (looseInStock && loosePrice > 0) return loosePrice;
-
-    return eachPrice || boxPrice || loosePrice || 0;
-  };
-
-  const prioritizedWebsitePrice = getPriceByStockPriority("wpPrice");
-  const fallbackPrice = getPriceByStockPriority("customerPrice");
-  const wpPrice =
-    prioritizedWebsitePrice > 0 ? prioritizedWebsitePrice : fallbackPrice;
-
-  const priceSpec =
-    wpPrice > 0 ?
-      { price: wpPrice.toFixed(2), priceCurrency: "USD" }
-    : {
-        price: 0,
-        priceCurrency: "USD",
-        priceValidUntil: "2099-12-31",
-        description: "Call for price",
-      };
+  const webPrice = publicWebPrice(product);
 
   return {
     "@context": "https://schema.org/",
     "@type": "Product",
+    "@id": `${url}#product`,
+    url,
     ...(keywords ? { keywords } : {}),
     name: `${product.name}`,
-    image: [product.image],
+    ...(product.image && { image: [product.image] }),
     brand: {
       "@type": "Brand",
       name: product.manufacturer,
     },
-    description: product?.each?.description || product?.box?.description || "",
-    // information: product?.information || "", // NOT a valid Product property → removed
+    description:
+      product?.each?.description ||
+      product?.box?.description ||
+      product?.information ||
+      "",
     sku: product.name,
     mpn: product.name,
     productID: product.name,
-    offers: {
-      "@type": "Offer",
-      ...priceSpec,
-      itemCondition: "https://schema.org/NewCondition",
-      availability:
-        isInStock ?
-          "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      url: canonicalUrl,
-      seller: {
-        "@type": "Organization",
-        name: "STAT Surgical Supply",
-      },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        returnPolicyCategory:
-          "https://schema.org/MerchantReturnFiniteReturnWindow",
-        applicableCountry: "US",
-        merchantReturnDays: 30,
-        returnMethod: "https://schema.org/ReturnByMail",
-        refundType: "https://schema.org/FullRefund",
-        returnFees: "https://schema.org/FreeReturn",
-      },
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          currency: "USD",
-          value: "0.00",
+    ...(gtin && { gtin }),
+    // Products without a public web price are sold by quote. A $0 offer
+    // would show them as free in search results, so they get no offer.
+    ...(webPrice && {
+      offers: {
+        "@type": "Offer",
+        url,
+        price: webPrice.price.toFixed(2),
+        priceCurrency: "USD",
+        itemCondition: "https://schema.org/NewCondition",
+        availability:
+          isInStock ?
+            "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+        seller: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
         },
-        deliveryTime: {
-          "@type": "ShippingDeliveryTime",
-          handlingTime: {
-            "@type": "QuantitativeValue",
-            minValue: 1,
-            maxValue: 2,
-            unitCode: "DAY",
-          },
-          transitTime: {
-            "@type": "QuantitativeValue",
-            minValue: 2,
-            maxValue: 5,
-            unitCode: "DAY",
-          },
-        },
-        shippingDestination: {
-          "@type": "DefinedRegion",
-          addressCountry: "US",
-        },
+        hasMerchantReturnPolicy: RETURN_POLICY,
       },
-    },
+    }),
   };
 }
 
@@ -227,20 +314,18 @@ function generateMainPageJSONLD() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     inLanguage: "en-US",
-    url: "https://www.statsurgicalsupply.com",
-    name: "STAT Surgical Supply",
+    url: SITE_URL,
+    name: SITE_NAME,
     description:
       "STAT Surgical Supply provides premium surgical equipment for clinics and hospitals. Save thousands on high-quality supplies with us.",
     publisher: {
-      "@type": "Organization",
-      name: "STAT Surgical Supply",
-      url: "https://www.statsurgicalsupply.com",
+      "@id": ORGANIZATION_ID,
     },
     potentialAction: {
       "@type": "SearchAction",
-      target:
-        "https://www.statsurgicalsupply.com/products?query={search_term_string}",
+      target: `${SITE_URL}/products?query={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
@@ -248,21 +333,26 @@ function generateMainPageJSONLD() {
 
 // Organization Schema for company information
 function generateOrganizationJSONLD() {
+  const weekdayHours = {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "08:00",
+    closes: "17:00",
+  };
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://www.statsurgicalsupply.com/#organization",
-    name: "STAT Surgical Supply",
-    legalName: "STAT Surgical Supply LLC",
-    url: "https://www.statsurgicalsupply.com",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://www.statsurgicalsupply.com/images/assets/logo.png",
-      width: 600,
-      height: 60,
-    },
+    "@id": ORGANIZATION_ID,
+    name: SITE_NAME,
+    legalName: BUSINESS.legalName,
+    url: SITE_URL,
+    logo: LOGO,
+    image: DEFAULT_SHARE_IMAGE.url,
     description:
       "Leading provider of premium surgical supplies serving healthcare facilities nationwide with cost-effective solutions.",
+    email: BUSINESS.salesEmail,
+    telephone: BUSINESS.telephone,
     foundingDate: "2020",
     // Use NAICS instead (valid in Schema.org & Google)
     naics: "423450",
@@ -273,24 +363,40 @@ function generateOrganizationJSONLD() {
     },
     address: {
       "@type": "PostalAddress",
-      addressCountry: "US",
-      addressRegion: "United States",
+      ...BUSINESS.address,
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "United States",
     },
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "customer service",
+        telephone: BUSINESS.telephone,
+        email: BUSINESS.supportEmail,
         availableLanguage: ["English"],
         areaServed: "US",
+        hoursAvailable: weekdayHours,
       },
       {
         "@type": "ContactPoint",
         contactType: "sales",
+        telephone: BUSINESS.telephone,
+        email: BUSINESS.salesEmail,
         availableLanguage: ["English"],
         areaServed: "US",
+        hoursAvailable: weekdayHours,
       },
     ],
-    sameAs: ["https://www.statsurgicalsupply.com"],
+    sameAs: BUSINESS.sameAs,
+    knowsAbout: [
+      "Surgical supplies",
+      "Surgical disposables",
+      "Medical device procurement",
+      "Hospital and surgery center purchasing",
+    ],
+    hasMerchantReturnPolicy: RETURN_POLICY,
     makesOffer: {
       "@type": "Offer",
       itemOffered: {
@@ -308,31 +414,18 @@ function generateAboutPageJSONLD() {
   return {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    "@id": "https://www.statsurgicalsupply.com/about",
+    "@id": `${SITE_URL}/about`,
     name: "About STAT Surgical Supply",
     description:
       "Learn about STAT Surgical Supply's mission to provide premium surgical supplies to healthcare professionals nationwide.",
-    url: "https://www.statsurgicalsupply.com/about",
+    url: `${SITE_URL}/about`,
     mainEntity: {
-      "@id": "https://www.statsurgicalsupply.com/#organization",
+      "@id": ORGANIZATION_ID,
     },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "About Us",
-          item: "https://www.statsurgicalsupply.com/about",
-        },
-      ],
-    },
+    breadcrumb: generateBreadcrumbJSONLD([
+      { name: "Home", url: SITE_URL },
+      { name: "About Us", url: `${SITE_URL}/about` },
+    ]),
   };
 }
 
@@ -341,31 +434,18 @@ function generateContactPageJSONLD() {
   return {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    "@id": "https://www.statsurgicalsupply.com/contact",
+    "@id": `${SITE_URL}/support`,
     name: "Contact STAT Surgical Supply",
     description:
       "Get in touch with our surgical supply experts for quotes, product information, and personalized healthcare solutions.",
-    url: "https://www.statsurgicalsupply.com/contact",
+    url: `${SITE_URL}/support`,
     mainEntity: {
-      "@id": "https://www.statsurgicalsupply.com/#organization",
+      "@id": ORGANIZATION_ID,
     },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Contact",
-          item: "https://www.statsurgicalsupply.com/contact",
-        },
-      ],
-    },
+    breadcrumb: generateBreadcrumbJSONLD([
+      { name: "Home", url: SITE_URL },
+      { name: "Support", url: `${SITE_URL}/support` },
+    ]),
   };
 }
 
@@ -375,7 +455,7 @@ function generateProductsPageJSONLD(
   currentPage = 1,
   totalProducts = 0,
 ) {
-  const baseUrl = "https://www.statsurgicalsupply.com/products";
+  const baseUrl = `${SITE_URL}/products`;
   const pageUrl = currentPage > 1 ? `${baseUrl}?page=${currentPage}` : baseUrl;
 
   return {
@@ -395,28 +475,13 @@ function generateProductsPageJSONLD(
         "@type": "ListItem",
         position: (currentPage - 1) * 10 + index + 1,
         name: `${product.manufacturer} ${product.name}`,
-        url: `https://www.statsurgicalsupply.com/products/${encodeURIComponent(
-          product.name,
-        )}`,
+        url: productUrl(product.name),
       })),
     },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Products",
-          item: "https://www.statsurgicalsupply.com/products",
-        },
-      ],
-    },
+    breadcrumb: generateBreadcrumbJSONLD([
+      { name: "Home", url: SITE_URL },
+      { name: "Products", url: baseUrl },
+    ]),
   };
 }
 
@@ -425,39 +490,26 @@ function generateServicePageJSONLD(pageName, pageSlug, serviceDescription) {
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": `https://www.statsurgicalsupply.com/${pageSlug}`,
+    "@id": `${SITE_URL}/${pageSlug}`,
     name: `${pageName} - STAT Surgical Supply`,
     description: serviceDescription,
-    url: `https://www.statsurgicalsupply.com/${pageSlug}`,
+    url: `${SITE_URL}/${pageSlug}`,
     isPartOf: {
       "@type": "WebSite",
-      "@id": "https://www.statsurgicalsupply.com",
+      "@id": WEBSITE_ID,
     },
     about: {
       "@type": "Service",
       name: pageName,
       description: serviceDescription,
       provider: {
-        "@id": "https://www.statsurgicalsupply.com/#organization",
+        "@id": ORGANIZATION_ID,
       },
     },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: pageName,
-          item: `https://www.statsurgicalsupply.com/${pageSlug}`,
-        },
-      ],
-    },
+    breadcrumb: generateBreadcrumbJSONLD([
+      { name: "Home", url: SITE_URL },
+      { name: pageName, url: `${SITE_URL}/${pageSlug}` },
+    ]),
   };
 }
 
@@ -466,44 +518,34 @@ function generateNewsPageJSONLD(articles = []) {
   return {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "@id": "https://www.statsurgicalsupply.com/news",
+    "@id": `${SITE_URL}/news`,
     name: "Surgical News & Healthcare Insights",
     description:
       "Stay updated with the latest news and insights in healthcare, surgical technology.",
-    url: "https://www.statsurgicalsupply.com/news",
+    url: `${SITE_URL}/news`,
     publisher: {
-      "@id": "https://www.statsurgicalsupply.com/#organization",
+      "@id": ORGANIZATION_ID,
     },
     blogPost: articles.slice(0, 10).map((article) => ({
       "@type": "BlogPosting",
-      headline: article.title,
-      description: article.content?.substring(0, 160) || "",
-      url: `https://www.statsurgicalsupply.com/news/${article.slug}`,
+      headline: truncateText(article.title, 110),
+      description: truncateText(
+        article.excerpt || newsPlainText(article.content),
+        160,
+      ),
+      url: newsUrl(article.slug),
       datePublished: article.createdAt,
       dateModified: article.updatedAt || article.createdAt,
       author: {
         "@type": "Person",
-        name: article.author || "STAT Surgical Supply",
+        name: article.author || SITE_NAME,
       },
       image: article.imageUrl,
     })),
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: "https://www.statsurgicalsupply.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "News",
-          item: "https://www.statsurgicalsupply.com/news",
-        },
-      ],
-    },
+    breadcrumb: generateBreadcrumbJSONLD([
+      { name: "Home", url: SITE_URL },
+      { name: "News", url: `${SITE_URL}/news` },
+    ]),
   };
 }
 
@@ -521,38 +563,6 @@ function generateBreadcrumbJSONLD(breadcrumbs) {
   };
 }
 
-// Local Business Schema (if you have physical location)
-function generateLocalBusinessJSONLD() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "MedicalBusiness",
-    "@id": "https://www.statsurgicalsupply.com/#localbusiness",
-    name: "STAT Surgical Supply",
-    description:
-      "Leading supplier of surgical supplies serving healthcare facilities nationwide.",
-    url: "https://www.statsurgicalsupply.com",
-    telephone: "+1-813-252-0727",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "US",
-      addressRegion: "United States",
-    },
-    // geo removed until real coordinates are available (lat/long are required if you include geo)
-    openingHours: "Mo-Fr 09:00-17:00",
-    priceRange: "$$",
-    currenciesAccepted: "USD",
-    paymentAccepted: "Cash, Credit Card, Bank Transfer",
-    areaServed: {
-      "@type": "Country",
-      name: "United States",
-    },
-    serviceArea: {
-      "@type": "Country",
-      name: "United States",
-    },
-  };
-}
-
 export {
   generateJSONLD,
   generateVideoObjectJSONLD,
@@ -565,5 +575,4 @@ export {
   generateServicePageJSONLD,
   generateNewsPageJSONLD,
   generateBreadcrumbJSONLD,
-  generateLocalBusinessJSONLD,
 };

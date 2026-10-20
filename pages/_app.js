@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import Script from "next/script";
 import { reportWebVitals } from "../utils/reportWebVitals";
 import { ModalProvider } from "../components/context/ModalContext";
+import NoIndex from "../components/NoIndex";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -85,6 +86,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </>
           )}
 
+          {/* PayPal pages (cart, order) render only in the browser, so the
+              server HTML crawlers get is empty; keep it out of search results.
+              Layout's own robots tag replaces this one once the page loads. */}
+          {Component.usePayPal && <NoIndex />}
           {Component.usePayPal ?
             <LazyPayPalScriptProvider deferLoading={true}>
               {Component.auth ?
@@ -114,12 +119,25 @@ function Auth({ children, adminOnly }) {
     },
   });
 
-  if (status === "loading") return <div>Loading...</div>;
+  // Crawlers are never signed in, so these placeholders are all they see of
+  // a private page; keep them out of search results
+  if (status === "loading")
+    return (
+      <>
+        <NoIndex />
+        <div>Loading...</div>
+      </>
+    );
 
   if (adminOnly && !session.user?.isAdmin) {
     // similarly, non-admins go to login (or you could send to /unauthorized if you prefer)
     router.push(`/Login?redirect=${encodeURIComponent(router.asPath)}`);
-    return <div>Redirecting…</div>;
+    return (
+      <>
+        <NoIndex />
+        <div>Redirecting…</div>
+      </>
+    );
   }
 
   return children;

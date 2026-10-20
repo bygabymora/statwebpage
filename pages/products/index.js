@@ -9,6 +9,7 @@ import SearchForm from "../../components/products/SearchForm";
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import { enrichAndSortForPublic } from "../../utils/productSort";
+import { generateProductsPageJSONLD } from "../../utils/seo";
 
 const DESCRIPTION_MAX_LENGTH = 80;
 
@@ -151,7 +152,11 @@ export default function Products({ products }) {
   const breadcrumbs = [{ name: "Home", href: "/" }, { name: "Products" }];
 
   return (
-    <Layout title='Products | Stat Surgical Supply' products={products}>
+    <Layout
+      title='Products | Stat Surgical Supply'
+      description={`Shop ${products.length}+ surgical supplies and disposables from ${manufacturers.length} leading manufacturers. Original manufacturer packaging, bulk pricing, and fast nationwide shipping for hospitals and surgery centers.`}
+      schema={generateProductsPageJSONLD(products, 1, products.length)}
+    >
       <nav className='text-sm text-gray-700 mt-0 md:mt-2'>
         <div className='flex justify-between items-center my-0 md:my-4'>
           <ul className='flex ml-0 lg:ml-20 items-center space-x-2'>

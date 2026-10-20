@@ -458,3 +458,5 @@ export default function AdminProductsScreen() {
     </Layout>
   );
 }
+
+AdminProductsScreen.auth = { adminOnly: true };
