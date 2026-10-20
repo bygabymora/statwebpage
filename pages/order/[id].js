@@ -368,7 +368,7 @@ function OrderScreen() {
     if (window.innerWidth >= 400) {
       alert("Our phone number: 813-252-0727");
     } else {
-      window.location.href = "tel:8132520727";
+      window.location.href = "tel:+18132520727";
     }
   };
 
@@ -1048,7 +1048,7 @@ function OrderScreen() {
                     </a>{" "}
                     or call us at{" "}
                     <a
-                      href='tel:8132520727'
+                      href='tel:+18132520727'
                       onClick={handleCallButtonClick}
                       className='font-bold underline text-[#0e355e]'
                       target='_blank'

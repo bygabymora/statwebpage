@@ -7,6 +7,7 @@ import {
   DEFAULT_SHARE_IMAGE,
   SITE_NAME,
   SITE_URL,
+  canonicalPath,
   generateJSONLD,
   generateProductJSONLD,
   isNoindexRoute,
@@ -173,7 +174,7 @@ export default function Layout({
     url ||
     (product ? productUrl(product.name)
     : news?.slug ? newsUrl(news.slug)
-    : `${SITE_URL}${router.asPath.split(/[?#]/)[0]}`);
+    : `${SITE_URL}${canonicalPath(router.pathname, router.asPath)}`);
 
   const metaDescription =
     description ||

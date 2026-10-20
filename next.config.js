@@ -38,6 +38,22 @@ const nextConfig = {
       { source: "/rss.xml", destination: "/api/rss" },
       { source: "/llms.txt", destination: "/api/llms" },
       { source: "/llms-full.txt", destination: "/api/llms-full" },
+      // Page routes are case-sensitive, but people and crawlers lowercase
+      // URLs. Rewrite sources match any casing and only apply when no page
+      // matched, so /login, /LOGIN, etc. serve the real page.
+      { source: "/login", destination: "/Login" },
+      { source: "/register", destination: "/Register" },
+      { source: "/manufacturerform", destination: "/ManufacturerForm" },
+      { source: "/authenticatecode", destination: "/authenticateCode" },
+      { source: "/recoveraccess", destination: "/recoverAccess" },
+    ];
+  },
+
+  // Some crawlers resolve tel: links as relative paths (/tel:8132520727);
+  // the support page lists the phone numbers.
+  async redirects() {
+    return [
+      { source: "/tel\\::number", destination: "/support", permanent: true },
     ];
   },
 
@@ -48,6 +64,13 @@ const nextConfig = {
       {
         source: "/api/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+      {
+        // Chrome's private prefetch proxy only reads this media type
+        source: "/.well-known/traffic-advice",
+        headers: [
+          { key: "Content-Type", value: "application/trafficadvice+json" },
+        ],
       },
     ];
   },

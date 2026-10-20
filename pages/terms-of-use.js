@@ -9,7 +9,7 @@ export default function facs() {
     if (window.innerWidth >= 400) {
       alert("Our phone number: 813-252-0727");
     } else {
-      window.location.href = "tel:8132520727";
+      window.location.href = "tel:+18132520727";
     }
   };
   return (
@@ -838,7 +838,7 @@ export default function facs() {
           <h2 className='contact__card-title'>Phone</h2>
 
           <a
-            href='tel:8132520727'
+            href='tel:+18132520727'
             onClick={handleCallButtonClick}
             className='contact__button'
             target='_blank'

@@ -10,7 +10,7 @@ const Contact = () => {
     if (window.innerWidth >= 400) {
       alert("Our phone number: 813-252-0727");
     } else {
-      window.location.href = "tel:8132520727";
+      window.location.href = "tel:+18132520727";
     }
   };
 
@@ -57,7 +57,7 @@ const Contact = () => {
                 <h2 className='contact__card-title'>Phone</h2>
                 <h3 className='contact__card-data'>813-252-0727 </h3>
                 <a
-                  href='tel:8132520727'
+                  href='tel:+18132520727'
                   onClick={handleCallButtonClick}
                   title='Call STAT Surgical Supply - Sales Support'
                   className='contact__button'

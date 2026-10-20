@@ -83,6 +83,13 @@ export function isNoindexRoute(pathname) {
   return NOINDEX_ROUTES.has(pathname) || pathname.startsWith("/admin");
 }
 
+// Static pages are canonical at their own route, so the lowercase aliases
+// next.config rewrites to them (/login → /Login) don't index as duplicates.
+// Dynamic routes keep the requested path, minus query and hash.
+export function canonicalPath(pathname, asPath) {
+  return pathname.includes("[") ? asPath.split(/[?#]/)[0] : pathname;
+}
+
 // Product pages are addressed by name. Encoding keeps names that contain
 // "/", "#", "?" or "%" pointing at the right page.
 export function productPath(name) {

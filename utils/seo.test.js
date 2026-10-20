@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  canonicalPath,
   generateJSONLD,
   generateProductJSONLD,
   isNoindexRoute,
@@ -136,5 +137,20 @@ describe("isNoindexRoute", () => {
     expect(isNoindexRoute("/admin/products")).toBe(true);
     expect(isNoindexRoute("/products/[id]")).toBe(false);
     expect(isNoindexRoute("/")).toBe(false);
+  });
+});
+
+describe("canonicalPath", () => {
+  test("points rewritten aliases at the page's own route", () => {
+    expect(canonicalPath("/Login", "/login?redirect=%2Fcart")).toBe("/Login");
+    expect(canonicalPath("/ManufacturerForm", "/manufacturerform")).toBe(
+      "/ManufacturerForm",
+    );
+  });
+
+  test("keeps the requested path on dynamic routes", () => {
+    expect(canonicalPath("/news/[slug]", "/news/q3-update?utm=x#top")).toBe(
+      "/news/q3-update",
+    );
   });
 });
