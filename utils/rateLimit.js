@@ -4,11 +4,16 @@ import RateLimit from "../models/RateLimit";
 
 // Per-IP limits for what anyone can submit without signing in. The forms
 // stay open; each visitor (IP) just gets a limited number of attempts per
-// window. Every attempt counts, valid or not.
+// window. Every attempt counts, valid or not. Logins are limited per account
+// instead (see loginFailures).
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 
 export const RATE_LIMITS = {
+  // Per account (email), failed password logins only: office staff sharing
+  // one IP never lock each other out. A successful login or password reset
+  // clears the count.
+  loginFailures: { limit: 10, windowMs: 15 * MINUTE },
   contactUs: { limit: 5, windowMs: HOUR },
   newsletter: { limit: 5, windowMs: HOUR },
   productWaitList: { limit: 20, windowMs: HOUR },
@@ -84,6 +89,24 @@ const hashIdentifier = (identifier) =>
     .digest("hex")
     .slice(0, 32);
 
+// The counter for `identifier` under limit `name` in the current window.
+const currentWindow = (name, identifier, windowMs) => {
+  const now = Date.now();
+  const windowStart = Math.floor(now / windowMs) * windowMs;
+  const expiresAt = new Date(windowStart + windowMs);
+  return {
+    key: `${name}:${hashIdentifier(identifier)}:${windowStart}`,
+    expiresAt,
+    retryAfterSeconds: Math.max(1, Math.ceil((expiresAt - now) / 1000)),
+  };
+};
+
+// "1 minute", "12 minutes"
+export const minutesText = (seconds) => {
+  const minutes = Math.ceil(seconds / 60);
+  return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+};
+
 const countAttempt = (key, expiresAt) =>
   RateLimit.findOneAndUpdate(
     { key },
@@ -95,11 +118,11 @@ const countAttempt = (key, expiresAt) =>
 // { allowed, retryAfterSeconds }. If the counter can't be reached the
 // attempt is allowed: a database hiccup must not take the forms down.
 export async function hitRateLimit(name, identifier, { limit, windowMs }) {
-  const now = Date.now();
-  const windowStart = Math.floor(now / windowMs) * windowMs;
-  const expiresAt = new Date(windowStart + windowMs);
-  const key = `${name}:${hashIdentifier(identifier)}:${windowStart}`;
-  const retryAfterSeconds = Math.max(1, Math.ceil((expiresAt - now) / 1000));
+  const { key, expiresAt, retryAfterSeconds } = currentWindow(
+    name,
+    identifier,
+    windowMs,
+  );
 
   try {
     await db.connect(true);
@@ -119,6 +142,47 @@ export async function hitRateLimit(name, identifier, { limit, windowMs }) {
   }
 }
 
+// Whether `identifier` has already used up its attempts in the current
+// window, without counting one. Fails open, like hitRateLimit.
+export async function isRateLimited(name, identifier, { limit, windowMs }) {
+  const { key, retryAfterSeconds } = currentWindow(name, identifier, windowMs);
+  try {
+    await db.connect(true);
+    const counter = await RateLimit.findOne({ key }).lean();
+    return { limited: (counter?.count ?? 0) >= limit, retryAfterSeconds };
+  } catch (error) {
+    console.error(`[RATE_LIMIT] check failed for ${name}, allowing:`, error);
+    return { limited: false, retryAfterSeconds: 0 };
+  }
+}
+
+// Forgets `identifier`'s attempts in the current window (e.g. after a
+// successful login).
+export async function resetRateLimit(name, identifier, { windowMs }) {
+  const { key } = currentWindow(name, identifier, windowMs);
+  try {
+    await db.connect(true);
+    await RateLimit.deleteOne({ key });
+  } catch (error) {
+    console.error(`[RATE_LIMIT] reset failed for ${name}:`, error);
+  }
+}
+
+// Failed password logins, counted per account (email). Any email counts,
+// registered or not, so the limit reveals nothing about which accounts exist.
+const LOGIN_FAILURES = "login:failed";
+const accountId = (email) =>
+  String(email || "")
+    .trim()
+    .toLowerCase();
+
+export const checkLoginLock = (email) =>
+  isRateLimited(LOGIN_FAILURES, accountId(email), RATE_LIMITS.loginFailures);
+export const recordLoginFailure = (email) =>
+  hitRateLimit(LOGIN_FAILURES, accountId(email), RATE_LIMITS.loginFailures);
+export const clearLoginFailures = (email) =>
+  resetRateLimit(LOGIN_FAILURES, accountId(email), RATE_LIMITS.loginFailures);
+
 // Counts the attempt and, when it's over the limit, answers 429 and returns
 // false (the caller should stop). `identifier` defaults to the client IP.
 export async function enforceRateLimit(
@@ -135,10 +199,9 @@ export async function enforceRateLimit(
   );
   if (allowed) return true;
 
-  const minutes = Math.ceil(retryAfterSeconds / 60);
-  const message = `Too many attempts. Please try again in ${minutes} minute${
-    minutes === 1 ? "" : "s"
-  }.`;
+  const message = `Too many attempts. Please try again in ${minutesText(
+    retryAfterSeconds,
+  )}.`;
   res.setHeader("Retry-After", String(retryAfterSeconds));
   res.status(429).json({ success: false, message, error: message });
   return false;

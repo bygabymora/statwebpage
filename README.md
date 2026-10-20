@@ -748,6 +748,8 @@ Emails are built and sent on the server only. The browser calls `requestEmail(ac
 
 The public forms stay open to everyone, with a limited number of attempts per visitor (IP, or per /64 for IPv6) per hour: contact, newsletter, product wait list and product requests, manufacturer form, search log, signup, password reset (also per email address) and unsubscribe. Over the limit the API answers `429` with a `Retry-After` header and a "try again in N minutes" message that the forms show. Limits are set in `RATE_LIMITS`.
 
+Password logins are limited **per account** instead of per IP, so staff sharing an office IP never lock each other out: after 10 failed attempts within 15 minutes the account is locked (even for the right password) until the window ends. A successful login clears the count, and resetting the password unlocks the account right away. Failures count for any email, registered or not, and an inactive account is only reported after the right password, so neither reveals which accounts exist.
+
 Counters live in the `ratelimits` MongoDB collection (the `RateLimit` model): one document per form, visitor and window, holding a keyed hash of the IP (never the IP itself), and removed by a TTL index when the window ends. If the database can't be reached the attempt is allowed, so an outage never closes the forms.
 
 ### Date Utilities

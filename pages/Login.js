@@ -69,6 +69,14 @@ export default function Login() {
             warning: "Please contact support to reactivate your account.",
           });
           setIsAlertOpen(true);
+        } else if (result.error.startsWith("Too many failed login attempts")) {
+          setAlertMessage({
+            title: "Account Temporarily Locked",
+            body: result.error,
+            warning:
+              "Use “Forgot Password?” below to reset it and sign in right away.",
+          });
+          setIsAlertOpen(true);
         } else if (result.error === "Invalid email or password") {
           setAlertMessage({
             title: "Login Failed",

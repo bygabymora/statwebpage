@@ -1,6 +1,7 @@
 import db from "../../../utils/db";
 import WpUser from "../../../models/WpUser";
 import bcrypt from "bcryptjs";
+import { clearLoginFailures } from "../../../utils/rateLimit";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -38,6 +39,9 @@ export default async function handler(req, res) {
     user.password = hashedPassword;
     user.resetCode = undefined;
     await user.save();
+
+    // A new password unlocks the account right away (see loginFailures).
+    await clearLoginFailures(user.email);
 
     return res
       .status(200)

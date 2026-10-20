@@ -4,6 +4,12 @@ import GoogleProvider from "next-auth/providers/google";
 import bcryptjs from "bcryptjs";
 import db from "../../../utils/db";
 import WpUser from "../../../models/WpUser";
+import {
+  checkLoginLock,
+  clearLoginFailures,
+  minutesText,
+  recordLoginFailure,
+} from "../../../utils/rateLimit";
 
 /**
  * Maps the response from Google People API to a compact profile.
@@ -39,15 +45,38 @@ export const authOptions = {
     // === LOGIN WITH EMAIL/PASSWORD (your current flow) ===
     CredentialsProvider({
       async authorize(credentials) {
+        // Failed logins are limited per account (RATE_LIMITS.loginFailures).
+        // A locked account is refused even with the right password, until
+        // the window ends or the password is reset.
+        const lock = await checkLoginLock(credentials?.email);
+        if (lock.limited) {
+          throw new Error(
+            `Too many failed login attempts. Please try again in ${minutesText(
+              lock.retryAfterSeconds,
+            )}, or reset your password.`,
+          );
+        }
+        const failLogin = async () => {
+          await recordLoginFailure(credentials?.email);
+          throw new Error("Invalid email or password");
+        };
+
         await db.connect(true);
 
         const user = await WpUser.findOne({ email: credentials.email });
-        if (!user) throw new Error("Invalid email or password");
+        // No password on file (e.g. a Google sign-up) can't match either.
+        if (!user || !user.password || !credentials?.password) {
+          return failLogin();
+        }
+        const ok = bcryptjs.compareSync(credentials.password, user.password);
+        if (!ok) return failLogin();
+        // Checked after the password, so it can't be used to probe which
+        // accounts exist.
         if (!user.active) {
           throw new Error("Your account is inactive. Please contact support.");
         }
-        const ok = bcryptjs.compareSync(credentials.password, user.password);
-        if (!ok) throw new Error("Invalid email or password");
+
+        await clearLoginFailures(credentials.email);
 
         // What you return here becomes the 'user' in the jwt callback on first login
         return {
