@@ -69,19 +69,19 @@ export default function FaqSection() {
               className='bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden'
             >
               <button
-                className='w-full p-6 text-left hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#144e8b] focus:ring-inset'
+                className='w-full p-6 text-left hover:bg-gray-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-[#144e8b] focus:ring-inset'
                 onClick={() => toggleFaq(index)}
               >
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
-                    <div className='flex-shrink-0 w-8 h-8 bg-[#144e8b] rounded-full flex items-center justify-center mr-4'>
+                    <div className='shrink-0 w-8 h-8 bg-[#144e8b] rounded-full flex items-center justify-center mr-4'>
                       <FaQuestionCircle className='text-white text-sm' />
                     </div>
                     <h3 className='text-lg font-semibold text-[#144e8b] pr-4'>
                       {faq.question}
                     </h3>
                   </div>
-                  <div className='flex-shrink-0'>
+                  <div className='shrink-0'>
                     {openFaq === index ?
                       <FaChevronUp className='text-[#144e8b] text-xl' />
                     : <FaChevronDown className='text-[#144e8b] text-xl' />}

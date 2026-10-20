@@ -15,6 +15,15 @@ const handler = async (req, res) => {
   await db.connect(true);
 
   try {
+    // Only the customer who placed the order may reopen it.
+    const ownsOrder = await Order.exists({
+      _id: id,
+      "wpUser.userId": wpUser._id,
+    });
+    if (!ownsOrder) {
+      return res.status(404).send("Order not found");
+    }
+
     const openedOrders = await Order.find({
       "wpUser.userId": wpUser._id,
       status: "In Process",
@@ -30,7 +39,6 @@ const handler = async (req, res) => {
     if (!order) {
       return res.status(404).send("Order not found");
     }
-    console.log("wpUser", wpUser);
     const user = await WpUser.findById(wpUser._id);
     if (user) {
       user.cart = order.orderItems;
@@ -57,9 +65,17 @@ const handler = async (req, res) => {
       }
     }
 
-    return res.status(200).send({ order, user });
+    // Never send the password hash or a pending reset code to the browser.
+    const safeUser = user?.toObject() ?? null;
+    if (safeUser) {
+      delete safeUser.password;
+      delete safeUser.resetCode;
+    }
+
+    return res.status(200).send({ order, user: safeUser });
   } catch (error) {
     console.error("Error in /api/orders/[id]:", error);
+    return res.status(500).send("Error opening order");
   }
 };
 

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import Layout from "../components/main/Layout";
@@ -10,8 +11,8 @@ export default function RecoverAccess() {
   const router = useRouter();
   const { email: emailQuery, code: codeQuery } = router.query;
 
-  const [email, setEmail] = useState("");
-  const [resetCode, setResetCode] = useState("");
+  const email = emailQuery || "";
+  const resetCode = codeQuery || "";
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState({ type: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,7 +20,6 @@ export default function RecoverAccess() {
   const {
     handleSubmit,
     register,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -28,11 +28,6 @@ export default function RecoverAccess() {
       confirmPassword: "",
     },
   });
-
-  useEffect(() => {
-    if (emailQuery) setEmail(emailQuery);
-    if (codeQuery) setResetCode(codeQuery);
-  }, [emailQuery, codeQuery]);
 
   const togglePassword = () => setShowPassword((v) => !v);
 
@@ -61,8 +56,7 @@ export default function RecoverAccess() {
 
   return (
     <Layout title='Recover Access'>
-      {console.log("Reset Code:", resetCode)}
-      <div className='max-w-md mx-auto p-6 border rounded shadow mt-12'>
+      <div className='max-w-md mx-auto p-6 border rounded-sm shadow-sm mt-12'>
         <h1 className='text-2xl font-bold mb-4'>Recover Your Access</h1>
 
         <p className='mb-2 text-gray-700'>
@@ -73,9 +67,9 @@ export default function RecoverAccess() {
         {(!email || !resetCode) && (
           <p className='text-red-500 mb-4'>
             Invalid link. Please{" "}
-            <a href='/forgot-password' className='underline'>
+            <Link href='/forgot-password' className='underline'>
               request a new reset code
-            </a>
+            </Link>
             .
           </p>
         )}
@@ -84,8 +78,8 @@ export default function RecoverAccess() {
           <div
             className={
               status.type === "success"
-                ? "mb-4 p-3 bg-green-100 text-green-800 rounded"
-                : "mb-4 p-3 bg-red-100 text-red-800 rounded"
+                ? "mb-4 p-3 bg-green-100 text-green-800 rounded-sm"
+                : "mb-4 p-3 bg-red-100 text-red-800 rounded-sm"
             }
           >
             {status.message}
@@ -96,10 +90,10 @@ export default function RecoverAccess() {
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             {/* Code (read-only) */}
 
-            <label className='block font-semibold mb-1' htmlFor='code'>
+            <label className='block font-semibold' htmlFor='code'>
               Reset Code
             </label>
-            <div className='w-full px-3 py-2 border rounded bg-gray-100'>
+            <div className='w-full px-3 py-2 border rounded-sm bg-gray-100'>
               {resetCode}
             </div>
 
@@ -124,7 +118,7 @@ export default function RecoverAccess() {
                         "Must include lowercase, uppercase, number & special char",
                     },
                   })}
-                  className='w-full px-3 py-2 border rounded focus:outline-none'
+                  className='w-full px-3 py-2 border rounded-sm focus:outline-hidden'
                 />
                 <button
                   type='button'
@@ -155,10 +149,10 @@ export default function RecoverAccess() {
                   type={showPassword ? "text" : "password"}
                   {...register("confirmPassword", {
                     required: "Please confirm your password",
-                    validate: (v) =>
-                      v === watch("password") || "Passwords do not match",
+                    validate: (v, values) =>
+                      v === values.password || "Passwords do not match",
                   })}
-                  className='w-full px-3 py-2 border rounded focus:outline-none'
+                  className='w-full px-3 py-2 border rounded-sm focus:outline-hidden'
                 />
                 <button
                   type='button'

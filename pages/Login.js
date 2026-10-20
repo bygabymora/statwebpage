@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/main/Layout";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import { getError } from "../utils/error";
@@ -30,12 +30,13 @@ export default function Login() {
   const {
     handleSubmit,
     register,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm();
 
-  const emailValue = watch("email", ""); // always kept lowercased via setValueAs
+  // always kept lowercased via setValueAs
+  const emailValue = useWatch({ control, name: "email", defaultValue: "" });
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -135,7 +136,7 @@ export default function Login() {
             type='email'
             autoComplete='off'
             placeholder='your@email.com'
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             {...register("email", {
               required: "Please enter email",
               pattern: {
@@ -184,7 +185,7 @@ export default function Login() {
                     "Must include uppercase, lowercase, number & special char",
                 },
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             <button
               type='button'
@@ -209,7 +210,7 @@ export default function Login() {
         {/* Submit */}
         <div className='mb-6'>
           <button
-            className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors'
+            className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow-sm hover:bg-[#026a35] transition-colors'
             type='submit'
           >
             Log In

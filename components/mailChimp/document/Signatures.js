@@ -1,5 +1,4 @@
 const SignatureTemplate = ({ userInfo }) => {
-  console.log("userInfo", userInfo);
   const {
     name = "",
     charge = "",

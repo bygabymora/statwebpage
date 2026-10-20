@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/main/Layout";
 import CustomConfirmModal from "../components/main/CustomConfirmModal";
 
 export default function Unsubscribe() {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const { email: emailFromQuery, access } = router.query || {};
+  // Check for access parameter
+  const hasAccess = access === "allowed";
+  // null until the user types, so the email from the link fills the input
+  const [typedQuery, setQuery] = useState(null);
+  const query =
+    typedQuery ??
+    (hasAccess && typeof emailFromQuery === "string" ?
+      emailFromQuery.trim()
+    : "");
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
   const [match, setMatch] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
-
-  useEffect(() => {
-    const { email: emailFromQuery, access } = router.query || {};
-
-    // Check for access parameter
-    if (access === "allowed") {
-      setHasAccess(true);
-    } else {
-      setHasAccess(false);
-      return;
-    }
-
-    if (typeof emailFromQuery === "string") {
-      setQuery(emailFromQuery.trim());
-    }
-  }, [router.query]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -177,7 +169,7 @@ export default function Unsubscribe() {
         schema={[]}
       >
         <div className='min-h-[50vh] flex items-center justify-center px-4 py-5'>
-          <div className='card w-full max-w-2xl p-8 text-center shadow-sm'>
+          <div className='card w-full max-w-2xl p-8 text-center shadow-xs'>
             <div className='w-16 h-16 mx-auto mb-4 text-red-500'>
               <svg fill='currentColor' viewBox='0 0 24 24'>
                 <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' />
@@ -206,7 +198,7 @@ export default function Unsubscribe() {
       schema={[]}
     >
       <div className='min-h-[50vh] flex items-center justify-center px-4 py-5'>
-        <div className='card w-full max-w-2xl p-8 text-center shadow-sm'>
+        <div className='card w-full max-w-2xl p-8 text-center shadow-xs'>
           <p className='text-xs uppercase tracking-widest text-gray-500'>
             Email preferences
           </p>
@@ -218,7 +210,7 @@ export default function Unsubscribe() {
           <div className='mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
             <input
               type='text'
-              className='w-full max-w-md border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-[#0e355e] focus:ring-2 focus:ring-[#144e8b] transition-all duration-300 outline-none'
+              className='w-full max-w-md border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-[#0e355e] focus:ring-2 focus:ring-[#144e8b] transition-all duration-300 outline-hidden'
               placeholder='email@company.com'
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -229,11 +221,11 @@ export default function Unsubscribe() {
               className={`
                 relative overflow-hidden px-6 py-3 rounded-xl font-medium text-white text-sm 
                 transition-all duration-300 transform hover:scale-105 hover:shadow-lg 
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#144e8b]
+                focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-[#144e8b]
                 ${
                   !query.trim() || status === "loading" ?
                     "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-[#0e355e] to-[#144e8b] hover:from-[#144e8b] hover:to-[#0e355e] shadow-md"
+                  : "bg-linear-to-r/srgb from-[#0e355e] to-[#144e8b] hover:from-[#144e8b] hover:to-[#0e355e] shadow-md"
                 }
               `}
               onClick={handleSearch}
@@ -270,7 +262,7 @@ export default function Unsubscribe() {
           </div>
 
           {match && (
-            <div className='mt-6 border-2 border-gray-200 rounded-xl p-6 text-left bg-gradient-to-br from-white to-gray-50 shadow-sm transition-all duration-300 hover:shadow-md'>
+            <div className='mt-6 border-2 border-gray-200 rounded-xl p-6 text-left bg-linear-to-br/srgb from-white to-gray-50 shadow-xs transition-all duration-300 hover:shadow-md'>
               <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
                 <div>
                   <p className='text-sm text-gray-500'>
@@ -312,7 +304,7 @@ export default function Unsubscribe() {
                   className={`
                     relative overflow-hidden px-6 py-3 rounded-xl font-medium text-sm 
                     transition-all duration-300 transform hover:scale-105 hover:shadow-lg 
-                    focus:outline-none focus:ring-2 focus:ring-offset-2
+                    focus:outline-hidden focus:ring-2 focus:ring-offset-2
                     ${
                       (
                         match.isPurchaseExecutive ?
@@ -322,7 +314,7 @@ export default function Unsubscribe() {
                         "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : status === "loading" ?
                         "bg-gray-400 text-white cursor-not-allowed"
-                      : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md focus:ring-red-400"
+                      : "bg-linear-to-r/srgb from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md focus:ring-red-400"
                     }
                   `}
                   onClick={handleOpenConfirm}
@@ -384,7 +376,7 @@ export default function Unsubscribe() {
             </p>
           )}
 
-          {status !== "success" && (
+          {!isComplete && (
             <p className='mt-6 text-xs text-gray-500'>
               If you reached this page by mistake, you can close this window.
             </p>

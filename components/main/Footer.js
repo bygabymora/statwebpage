@@ -7,18 +7,23 @@ import facebook from "./../../public/images/assets/facebook.svg";
 import Google from "./../../public/images/assets/Google.svg";
 import Payment from "./../../public/images/assets/payments.png";
 import { AiOutlineSend } from "react-icons/ai";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useModalContext } from "../context/ModalContext";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import requestEmail, {
+  emailErrorMessage,
+} from "../../utils/alertSystem/requestEmail";
 import CustomAlertModal from "./CustomAlertModal";
 import ReCaptchaV2Checkbox from "../recaptcha/ReCaptchaV2Checkbox";
 
 export default function Footer() {
   const formRef = useRef();
   const { showStatusMessage, user } = useModalContext();
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  // null until the visitor types, so approved users get their own details
+  const [typedEmail, setEmail] = useState(null);
+  const [typedName, setName] = useState(null);
+  const email = typedEmail ?? (user?.isApproved ? user.email || "" : "");
+  const name = typedName ?? (user?.isApproved ? user.name || "" : "");
+  const [currentYear] = useState(() => new Date().getFullYear());
   const [honeypot, setHoneypot] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
@@ -30,13 +35,6 @@ export default function Footer() {
     body: "Stat Surgical Supply is not hiring at this time.",
     warning: "Please check back with us periodically for updates.",
   };
-
-  useEffect(() => {
-    if (user?.isApproved) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-    }
-  }, [user]);
 
   const sendEmail = async (e) => {
     e.preventDefault();
@@ -108,13 +106,20 @@ export default function Footer() {
       }
 
       // Proceed with email subscription
-      const contactToEmail = { name, email };
-      const emailmessage = messageManagement(
-        contactToEmail,
-        "Newsletter Subscription",
-      );
-
-      await handleSendEmails(emailmessage, contactToEmail);
+      const response = await requestEmail("Newsletter Subscription", {
+        name,
+        email,
+      });
+      if (!response.ok) {
+        showStatusMessage(
+          "error",
+          await emailErrorMessage(
+            response,
+            "An error occurred. Please try again.",
+          ),
+        );
+        return;
+      }
 
       showStatusMessage(
         "success",
@@ -134,7 +139,7 @@ export default function Footer() {
 
   return (
     <footer
-      className='relative flex flex-col items-center shadow-inner min-h-[400px] footer w-full justify-between px-4 py-8 md:min-h-[560px] lg:min-h-[480px]'
+      className='relative flex flex-col items-center shadow-inner min-h-100 footer w-full justify-between px-4 py-8 md:min-h-140 lg:min-h-120'
       style={{ height: "auto", minHeight: "400px" }}
     >
       <div className='footer-container'>
@@ -233,7 +238,7 @@ export default function Footer() {
               autoComplete='off'
               type='text'
               placeholder='Name'
-              className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b] disabled:bg-gray-100'
+              className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#144e8b] disabled:bg-gray-100'
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={!!user?.isApproved}
@@ -243,7 +248,7 @@ export default function Footer() {
               autoComplete='off'
               type='email'
               placeholder='Email'
-              className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#144e8b]'
+              className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#144e8b]'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -342,7 +347,7 @@ export default function Footer() {
       <div className='w-full'>
         <hr className='border-t border-[#788b9b] mt-4' />
         <div className='font-bold footer-copyright ml-4'>
-          &copy; {new Date().getFullYear()} STAT Surgical Supply. All rights
+          &copy; {currentYear} STAT Surgical Supply. All rights
           reserved.
         </div>
       </div>

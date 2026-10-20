@@ -1,13 +1,60 @@
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useModalContext } from "../context/ModalContext";
-import { Listbox } from "@headlessui/react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import requestEmail, {
+  emailErrorMessage,
+} from "../../utils/alertSystem/requestEmail";
+
+// Price, description and stock to show for the selected unit of measure.
+function getPurchaseDetails(product, typeOfPurchase) {
+  if (typeOfPurchase === "Box") {
+    return {
+      price: product.box?.wpPrice ?? null,
+      description: product.box?.description || "",
+      countInStock: product.box?.countInStock ?? null,
+    };
+  }
+
+  if (typeOfPurchase === "Clearance") {
+    const eachStock = product.each?.countInStock ?? 0;
+    const boxStock = product.box?.countInStock ?? 0;
+    const clearanceStockEach = product.each?.clearanceCountInStock ?? 0;
+    const clearanceStockBox = product.box?.clearanceCountInStock ?? 0;
+    const hasClearanceStock = clearanceStockEach > 0 || clearanceStockBox > 0;
+
+    // Clearance is the only stock left: use the unit that holds it.
+    if (eachStock === 0 && boxStock === 0 && hasClearanceStock) {
+      const unit = clearanceStockEach > 0 ? product.each : product.box;
+      return {
+        price: `$${unit?.wpPrice || "Call for Price"}`,
+        description: unit?.description || "No description",
+        countInStock: unit?.clearanceCountInStock,
+      };
+    }
+
+    return {
+      price: product.clearance?.price ?? null,
+      description: product.each?.description || "No description",
+      countInStock: hasClearanceStock,
+    };
+  }
+
+  return {
+    price: product.each?.wpPrice ?? null,
+    description: product.each?.description || "",
+    countInStock: product.each?.countInStock ?? null,
+  };
+}
 
 export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const [isOutOfStock, setIsOutOfStock] = useState();
@@ -15,7 +62,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
   const [isOutOfStockClearance, setIsOutOfStockClearance] = useState();
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
-    if (product.box?.countInStock > 0) {
+    if (clearanceTypeOfPurchase) {
+      return "Clearance";
+    } else if (product.box?.countInStock > 0) {
       return "Box";
     } else if (product.each?.countInStock > 0) {
       return "Each";
@@ -28,17 +77,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
     return "Each";
   });
   const { status, data: session } = useSession();
-  const [currentPrice, setCurrentPrice] = useState(
-    product.each?.wpPrice ?? null,
-  );
-  const [currentDescription, setCurrentDescription] = useState(
-    product.each?.description || "",
-  );
-  const [currentCountInStock, setCurrentCountInStock] = useState(
-    product.each?.countInStock ?? null,
-  );
   const [showModal, setShowModal] = useState(false);
-  const hasPrice = currentPrice !== null && currentPrice !== 0;
   const form = useRef();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,33 +89,14 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
     session?.user?.approved &&
     status === "authenticated";
 
-  useEffect(() => {
-    if (typeOfPurchase === "Each") {
-      setCurrentPrice(product.each?.wpPrice ?? null);
-      setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(product.each?.countInStock ?? null);
-    } else if (typeOfPurchase === "Box") {
-      setCurrentPrice(product.box?.wpPrice ?? null);
-      setCurrentDescription(product.box?.description || "");
-      setCurrentCountInStock(product.box?.countInStock ?? null);
-    } else if (typeOfPurchase === "Clearance") {
-      setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.each?.description || "No description");
-      setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0,
-      );
-    }
-  }, [typeOfPurchase, product]);
-
-  useEffect(() => {
-    if (product.countInStock === 0) {
-      setTypeOfPurchase("Box");
-      setCurrentPrice(product.box?.wpPrice ?? null);
-      setCurrentDescription(product.box?.description || "");
-      setCurrentCountInStock(product.each?.countInStock ?? null);
-    }
-  }, [product.countInStock, product.box, product.each?.countInStock]);
+  const purchaseDetails = getPurchaseDetails(product, typeOfPurchase);
+  const currentPrice = purchaseDetails.price;
+  const currentCountInStock = purchaseDetails.countInStock;
+  // Visitors who can't buy yet see the product's general description.
+  const currentDescription =
+    (!active && (product.each?.description || product.box?.description)) ||
+    purchaseDetails.description;
+  const hasPrice = currentPrice !== null && currentPrice !== 0;
 
   const availableTypes = [
     ...(product.each?.countInStock > 0 ? ["Each"] : []),
@@ -88,68 +108,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       ["Clearance"]
     : []),
   ];
-
-  useEffect(() => {
-    const eachStock = product.each?.countInStock ?? 0;
-    const boxStock = product.box?.countInStock ?? 0;
-    const clearanceStockEach = product.each?.clearanceCountInStock ?? 0;
-    const clearanceStockBox = product.box?.clearanceCountInStock ?? 0;
-
-    if (
-      eachStock === 0 &&
-      boxStock === 0 &&
-      (clearanceStockEach > 0 || clearanceStockBox > 0)
-    ) {
-      setTypeOfPurchase("Clearance");
-
-      setCurrentPrice(
-        product.each?.clearanceCountInStock > 0 ?
-          `$${product.each?.wpPrice || "Call for Price"}`
-        : `$${product.box?.wpPrice || "Call for Price"}`,
-      );
-
-      setCurrentDescription(
-        product.each?.clearanceCountInStock > 0 ?
-          product.each?.description || "No description"
-        : product.box?.description || "No description",
-      );
-
-      setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0 ?
-          product.each?.clearanceCountInStock
-        : product.box?.clearanceCountInStock,
-      );
-    }
-  }, [
-    product,
-    product.box?.clearanceCountInStock,
-    product.each?.clearanceCountInStock,
-  ]);
-
-  useEffect(() => {
-    if (typeOfPurchase === "Each") {
-      setCurrentPrice(product.each?.wpPrice ?? null);
-      setCurrentDescription(product.each?.description || "");
-      setCurrentCountInStock(product.each?.countInStock ?? null);
-    }
-  }, [typeOfPurchase, product.each]);
-
-  useEffect(() => {
-    if (clearanceTypeOfPurchase) {
-      setTypeOfPurchase("Clearance");
-      setCurrentPrice(product.clearance?.price ?? null);
-      setCurrentDescription(product.clearance?.description || "No description");
-      setCurrentCountInStock(
-        product.each?.clearanceCountInStock > 0 ||
-          product.box?.clearanceCountInStock > 0,
-      );
-    }
-  }, [
-    clearanceTypeOfPurchase,
-    product.clearance,
-    product.box?.clearanceCountInStock,
-    product.each?.clearanceCountInStock,
-  ]);
 
   const addToCartHandler = async () => {
     const exisItem = user.cart?.find(
@@ -205,7 +163,6 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
 
     setQty(1);
     const updatedUser = await fetchUserData();
-    console.log("Updated cart:", updatedUser);
     setUser((prev) => ({
       ...prev,
       cart: updatedUser.userData?.cart,
@@ -223,30 +180,28 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
       return;
     }
 
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Product Wait List",
-      null,
-      null,
-      product,
-    );
-    handleSendEmails(emailMessage, contactToEmail);
+    requestEmail("Product Wait List", {
+      ...contactToEmail,
+      productId: product._id,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          showStatusMessage(
+            "error",
+            await emailErrorMessage(
+              response,
+              "We couldn't send your request. Please try again.",
+            ),
+          );
+        }
+      })
+      .catch((error) => console.error("Error sending wait list email:", error));
 
     // Clear form fields after submission
     setName("");
     setEmail("");
     setCompanyName("");
   };
-
-  useEffect(() => {
-    if (!active) {
-      if (product.each?.description) {
-        setCurrentDescription(product.each.description);
-      } else if (product.box?.description) {
-        setCurrentDescription(product.box.description);
-      }
-    }
-  }, [active, product]);
 
   const handleMatchProduct = (productId) => {
     const matchProduct = user?.cart?.find((x) => x.productId === productId);
@@ -343,7 +298,7 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
               </div>
             )}
           {showModal && (
-            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+            <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-9999'>
               <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                 <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
                 <span className='font-bold text-[#0e355e]'>
@@ -397,54 +352,23 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                       <div className='font-bold text-base'>U o M</div>
                       <Listbox
                         value={typeOfPurchase}
-                        onChange={(value) => {
-                          setTypeOfPurchase(value);
-                          if (value === "Each" && product.each) {
-                            setCurrentPrice(product.each?.wpPrice || 0);
-                            setCurrentDescription(
-                              product.each?.description || "",
-                            );
-                            setCurrentCountInStock(
-                              product.each?.countInStock || 0,
-                            );
-                          } else if (value === "Box" && product.box) {
-                            setCurrentPrice(product.box?.wpPrice || 0);
-                            setCurrentDescription(
-                              product.box?.description || "",
-                            );
-                            setCurrentCountInStock(
-                              product.box?.countInStock || 0,
-                            );
-                          } else if (
-                            value === "Clearance" &&
-                            product.clearance
-                          ) {
-                            setCurrentPrice(product.clearance?.price || 0);
-                            setCurrentDescription(
-                              product.clearance?.description || "",
-                            );
-                            setCurrentCountInStock(
-                              product.each?.clearanceCountInStock > 0 ||
-                                product.box?.clearanceCountInStock > 0,
-                            );
-                          }
-                        }}
+                        onChange={setTypeOfPurchase}
                       >
                         <div className='relative'>
-                          <Listbox.Button
-                            className={`w-full rounded-md py-1.5 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                          <ListboxButton
+                            className={`w-full rounded-md py-1.5 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]`}
                           >
                             {typeOfPurchase || "Select"}
-                          </Listbox.Button>
+                          </ListboxButton>
                           <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                          <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                          <ListboxOptions className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-hidden text-sm'>
                             {availableTypes.map((option) => (
-                              <Listbox.Option
+                              <ListboxOption
                                 key={option}
                                 value={option}
-                                className={({ active }) =>
+                                className={({ focus }) =>
                                   `cursor-pointer select-none px-4 py-2 ${
-                                    active ?
+                                    focus ?
                                       "bg-blue-100 text-[#0e355e]"
                                     : "text-gray-900"
                                   }`
@@ -458,9 +382,9 @@ export const ProductItem = ({ product, clearanceTypeOfPurchase, index }) => {
                                     )}
                                   </span>
                                 )}
-                              </Listbox.Option>
+                              </ListboxOption>
                             ))}
-                          </Listbox.Options>
+                          </ListboxOptions>
                         </div>
                       </Listbox>
                     </div>

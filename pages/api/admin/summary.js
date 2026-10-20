@@ -26,10 +26,6 @@ const handler = async (req, res) => {
   const productsCount = await Product.countDocuments().read("primary");
   const usersCount = await WpUser.countDocuments().read("primary");
 
-  console.log(
-    `[${new Date().toISOString()}] Dashboard summary: ${ordersCount} orders, ${productsCount} products, ${usersCount} users`,
-  );
-
   const ordersPriceGroup = await Order.aggregate([
     {
       $group: {

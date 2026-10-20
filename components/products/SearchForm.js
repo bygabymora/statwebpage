@@ -1,21 +1,35 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Listbox } from "@headlessui/react";
+import React, { useRef, useState } from "react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import axios from "axios";
 import { BiMessageAdd } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
 import { getError } from "../../utils/error";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
+import requestEmail, {
+  emailErrorMessage,
+} from "../../utils/alertSystem/requestEmail";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
 
-const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
+// `searchedWord` pre-fills the Reference field; remount (via `key`) to reset it.
+const SearchForm = ({ searchedWord: initialSearchedWord = "" }) => {
   const form = useRef();
-  const [email, setEmail] = useState("");
+  const [searchedWord, setSearchedWord] = useState(initialSearchedWord);
   const [message, setMessage] = useState("");
   const [quantity, setQuantity] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [phone, setPhone] = useState("");
-  const { contact, showStatusMessage, accountOwner } = useModalContext();
+  const { contact, showStatusMessage } = useModalContext();
+  // null until the user types, so a known contact's details fill the inputs
+  const [typedName, setName] = useState(null);
+  const name =
+    typedName ??
+    [contact?.firstName, contact?.lastName].filter(Boolean).join(" ");
+  const [typedEmail, setEmail] = useState(null);
+  const email = typedEmail ?? (contact?.email || "");
   const [uom, setUom] = useState("");
   const uomOptions = ["Box", "Each"];
 
@@ -59,7 +73,8 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       return;
     }
 
-    const contactToEmail = {
+    // Signed by the visitor's account owner when they're signed in (server-side).
+    requestEmail("Product Request", {
       name,
       email,
       phone,
@@ -67,33 +82,26 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
       quantity,
       searchedWord,
       uom,
-    };
-
-    const item = {
-      searchedWord,
-      quantity,
-      manufacturer,
-    };
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Product Request",
       message,
-      null,
-      item,
-    );
-    handleSendEmails(emailMessage, contactToEmail, accountOwner);
-    showStatusMessage("success", "Request sent successfully");
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          showStatusMessage("success", "Request sent successfully");
+          return;
+        }
+        showStatusMessage(
+          "error",
+          await emailErrorMessage(
+            response,
+            "Your request was saved, but we couldn't email you a confirmation.",
+          ),
+        );
+      })
+      .catch((error) =>
+        console.error("Error sending product request email:", error),
+      );
   };
 
-  useEffect(() => {
-    if (contact) {
-      const fullName = [contact.firstName, contact.lastName]
-        .filter(Boolean)
-        .join(" ");
-      if (fullName) setName(fullName);
-      if (contact.email) setEmail(contact.email);
-    }
-  }, [contact]);
 
   //----------//
 
@@ -172,18 +180,18 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
             </label>
             <Listbox value={uom} onChange={setUom}>
               <div className='relative'>
-                <Listbox.Button className='contact__form-input w-full flex justify-between items-center pr-10'>
+                <ListboxButton className='contact__form-input w-full flex justify-between items-center pr-10'>
                   {uom || "Select an option"}
                   <ChevronUpDownIcon className='h-5 w-5 text-gray-400 absolute right-3' />
-                </Listbox.Button>
-                <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                </ListboxButton>
+                <ListboxOptions className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-hidden text-sm'>
                   {uomOptions.map((option) => (
-                    <Listbox.Option
+                    <ListboxOption
                       key={option}
                       value={option}
-                      className={({ active }) =>
+                      className={({ focus }) =>
                         `cursor-pointer select-none px-4 py-2 ${
-                          active ? "bg-blue-100 text-blue-900" : "text-gray-900"
+                          focus ? "bg-blue-100 text-blue-900" : "text-gray-900"
                         }`
                       }
                     >
@@ -195,9 +203,9 @@ const SearchForm = ({ name, searchedWord, setName, setSearchedWord }) => {
                           )}
                         </span>
                       )}
-                    </Listbox.Option>
+                    </ListboxOption>
                   ))}
-                </Listbox.Options>
+                </ListboxOptions>
               </div>
             </Listbox>
           </div>

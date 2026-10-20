@@ -1,8 +1,17 @@
 import Searched from "../../../models/Searched";
 import db from "../../../utils/db";
+import { RATE_LIMITS, enforceRateLimit } from "../../../utils/rateLimit";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    // Open to anyone (header searches and product requests), so a limited
+    // number of records per visitor (IP).
+    if (
+      !(await enforceRateLimit(req, res, "searchLog", RATE_LIMITS.searchLog))
+    ) {
+      return;
+    }
+
     try {
       await db.connect(true);
 

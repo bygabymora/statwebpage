@@ -173,7 +173,7 @@ export default function Products({ products }) {
           </ul>
           <div className='block md:hidden'>
             <button
-              className='bg-[#0e355e] px-4 py-2 rounded'
+              className='bg-[#0e355e] px-4 py-2 rounded-sm'
               onClick={() => setShowManufacturers((s) => !s)}
               aria-label='Toggle Manufacturers List'
             >
@@ -187,7 +187,7 @@ export default function Products({ products }) {
           <ul
             className={`${
               showManufacturers ? "block" : "hidden"
-            } md:block md:sticky md:top-[16rem]`}
+            } md:block md:sticky md:top-64`}
           >
             <h2
               className='block justify-center items-center text-center text-xs lg:text-lg'
@@ -243,12 +243,7 @@ export default function Products({ products }) {
                 />
               ))
             : query ?
-              <SearchForm
-                searchedWord={String(query)}
-                setSearchedWord={() => {}}
-                name=''
-                setName={() => {}}
-              />
+              <SearchForm key={String(query)} searchedWord={String(query)} />
             : <p>No products found.</p>}
           </div>
 

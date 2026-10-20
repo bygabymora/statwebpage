@@ -9,8 +9,6 @@ import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import axios from "axios";
 import CustomAlertModal from "../components/main/CustomAlertModal";
-import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { BsChevronRight } from "react-icons/bs";
 
 export default function RegisterScreen() {
@@ -102,9 +100,9 @@ export default function RegisterScreen() {
       });
 
       try {
+        // No names or emails (PII) in Google Ads events.
         window.gtag?.("event", "ads_conversion_Sign_Up_1", {
           register_attempt: true,
-          userName: firstName,
         });
       } catch {
         /* no-op */
@@ -116,17 +114,7 @@ export default function RegisterScreen() {
       });
       setIsModalOpen(true);
       setShouldRedirect(true);
-
-      const contactToEmail = {
-        name: `${firstName} ${lastName}`.trim(),
-        email: normalizedEmail,
-        companyName: companyName || "Not provided",
-        companyEinCode: companyEinCode || "Not provided",
-        registrationNumber: registrationNumber || "Not provided",
-      };
-
-      const emailmessage = messageManagement(contactToEmail, "Register");
-      handleSendEmails(emailmessage, contactToEmail);
+      // The signup API emails the registration summary itself.
 
       // Optional: reset the v2 widget
       if (typeof window !== "undefined" && window.grecaptcha) {
@@ -161,7 +149,7 @@ export default function RegisterScreen() {
       schema={[]}
     >
       {from === "google" && (
-        <div className='mx-auto max-w-md mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-sm -mt-2'>
+        <div className='mx-auto max-w-md mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-xs -mt-2'>
           We found your Google account. Please complete the missing fields to
           finish your registration.
         </div>
@@ -203,7 +191,7 @@ export default function RegisterScreen() {
             <img
               src={String(picture)}
               alt='Google avatar'
-              className='h-12 w-12 rounded-full border-2 border-[#03793d] shadow-sm'
+              className='h-12 w-12 rounded-full border-2 border-[#03793d] shadow-xs'
               referrerPolicy='no-referrer'
             />
             <span className='ml-3 text-gray-600 text-sm'>
@@ -228,7 +216,7 @@ export default function RegisterScreen() {
               {...register("firstName", {
                 required: "Please enter First Name",
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.firstName && (
               <p className='text-red-500 text-xs mt-1'>
@@ -250,7 +238,7 @@ export default function RegisterScreen() {
               autoComplete='family-name'
               placeholder='Last Name'
               {...register("lastName", { required: "Please enter Last Name" })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.lastName && (
               <p className='text-red-500 text-xs mt-1'>
@@ -280,7 +268,7 @@ export default function RegisterScreen() {
                 setValueAs: (v) =>
                   typeof v === "string" ? v.trim().toLowerCase() : v,
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.email && (
               <p className='text-red-500 text-xs mt-1'>
@@ -304,7 +292,7 @@ export default function RegisterScreen() {
               {...register("companyName", {
                 required: "Please enter company name",
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.companyName && (
               <p className='text-red-500 text-xs mt-1'>
@@ -335,7 +323,7 @@ export default function RegisterScreen() {
                 setValueAs: (v) =>
                   typeof v === "string" ? v.replace(/\D/g, "") : v,
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.companyEinCode && (
               <p className='text-red-500 text-xs mt-1'>
@@ -367,7 +355,7 @@ export default function RegisterScreen() {
                 setValueAs: (v) =>
                   typeof v === "string" ? v.replace(/\D/g, "") : v,
               })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
             />
             {errors.phoneNumber && (
               <p className='text-red-500 text-xs mt-1'>
@@ -397,7 +385,7 @@ export default function RegisterScreen() {
                       "Must contain uppercase, lowercase, number & special char",
                   },
                 })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
               />
               <button
                 type='button'
@@ -436,7 +424,7 @@ export default function RegisterScreen() {
                   validate: (value) =>
                     value === getValues("password") || "Passwords do not match",
                 })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all'
               />
               <button
                 type='button'
@@ -466,7 +454,7 @@ export default function RegisterScreen() {
               type='checkbox'
               id='terms'
               required
-              className='mt-1 mr-2 border-gray-300 rounded focus:ring-[#03793d]'
+              className='mt-1 mr-2 border-gray-300 rounded-sm focus:ring-[#03793d]'
             />
             <span>
               I understand that{" "}
@@ -481,7 +469,7 @@ export default function RegisterScreen() {
         <button
           type='submit'
           disabled={submitting}
-          className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow hover:bg-[#026a35] transition-colors disabled:opacity-70 disabled:cursor-not-allowed'
+          className='w-full py-2 bg-[#03793d] text-white font-semibold rounded-lg shadow-sm hover:bg-[#026a35] transition-colors disabled:opacity-70 disabled:cursor-not-allowed'
         >
           {submitting ? "Registering..." : "Register"}
         </button>

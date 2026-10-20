@@ -2,18 +2,15 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
 import { useSession } from "next-auth/react";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { AiOutlineCheckCircle } from "react-icons/ai";
-import { loadStripe } from "@stripe/stripe-js";
 import Stripe from "../../public/images/assets/PBS.png";
 import { AiTwotoneLock } from "react-icons/ai";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
 import { useModalContext } from "../../components/context/ModalContext";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
 import {
@@ -25,9 +22,6 @@ import {
 import TrackerStepsBarForCustomer from "../../components/orders/TrackerStepsBarForCustomer";
 import ExemptionFileUploader from "../../components/orders/ExemptionFileUploader";
 import formatDateWithMonthLetters from "../../utils/dateWithMonthInLetters";
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-);
 
 function reducer(state, action) {
   switch (action.type) {
@@ -77,14 +71,12 @@ function OrderScreen() {
   const { query } = useRouter();
   const orderId = query.id;
   const [showShippingId, setShowShippingId] = useState(null);
-  const [message] = useState("");
   const {
     showStatusMessage,
     startLoading,
     stopLoading,
     customer,
     setCustomer,
-    user,
   } = useModalContext();
   const [estimate, setEstimate] = useState({});
   const [invoice, setInvoice] = useState({});
@@ -103,7 +95,6 @@ function OrderScreen() {
       startLoading();
       dispatch({ type: "FETCH_REQUEST" });
       const { data } = await axios.get(`/api/orders/${orderId}`);
-      console.log("Order data:", data);
       setOrder(data.order);
       setEstimate(data.estimate);
       setInvoice(data.invoice);
@@ -225,76 +216,22 @@ function OrderScreen() {
     isItemTaxPending(resolveShippingTaxTreatment(stateTaxProfile));
   const taxStateLabel = stateTaxProfile?.key || order.tax?.state || "";
 
-  const sendEmail = useCallback(() => {
-    const emailName = shippingAddress?.fullName;
-    const email = shippingAddress?.email;
-    const emailPhone = shippingAddress?.phone;
-    const emailPaymentMethod = paymentMethod;
-    const emailTotalOrder = amountDue;
-    const specialNotes = shippingAddress?.notes;
-
-    if (!emailName || !email || !emailTotalOrder || !emailPaymentMethod) {
-      showStatusMessage(
-        "error",
-        "Please fill all the fields before sending the email.",
-      );
-      return;
-    }
-
-    const contactToEmail = {
-      name: emailName,
-      email: email,
-      phone: emailPhone,
-      total: emailTotalOrder,
-      paymentMethod: emailPaymentMethod,
-      shippingPreference: specialNotes,
-      items: orderItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-    };
-
-    const emailmessage = messageManagement(
-      contactToEmail,
-      "Order Confirmation",
-      message,
-    );
-
-    handleSendEmails(emailmessage, contactToEmail);
-  }, [
-    shippingAddress,
-    paymentMethod,
-    amountDue,
-    orderItems,
-    message,
-    showStatusMessage,
-  ]);
-
   const handleCheckout = async () => {
     try {
       dispatch({ type: "FETCH_REQUEST" });
-
-      const stripe = await stripePromise;
-
-      if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-        console.error("Stripe not initialized correctly:", stripe);
-        toast.error("Stripe is not available in this environment.");
-        return;
-      }
 
       const { data } = await axios.post("/api/checkout_sessions", {
         totalPrice,
         orderId,
       });
 
-      const result = await stripe.redirectToCheckout({
-        sessionId: data.id,
-      });
-
-      if (result.error) {
-        toast.error(result.error.message);
+      if (!data?.url) {
+        console.error("Stripe checkout session has no URL:", data);
+        toast.error("Stripe is not available in this environment.");
+        return;
       }
+
+      window.location.assign(data.url);
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error(getError(error));
@@ -333,7 +270,6 @@ function OrderScreen() {
         );
         dispatch({ type: "PAY_SUCCESS", payload: data });
         toast.success("Order is paid successfully");
-        sendEmail();
 
         // Mark payment as complete and show success message
         setPaymentComplete(true);
@@ -358,7 +294,6 @@ function OrderScreen() {
       );
       dispatch({ type: "PAY_SUCCESS", payload: data });
       toast.success("Order is paid successfully");
-      sendEmail();
 
       // Mark payment as complete and show success message
       setPaymentComplete(true);
@@ -422,7 +357,7 @@ function OrderScreen() {
         }
       })();
     }
-  }, [orderId, order?._id, order?.isPaid, sendEmail]);
+  }, [orderId, order?._id, order?.isPaid]);
 
   function onError(error) {
     toast.error(getError(error));
@@ -494,34 +429,24 @@ function OrderScreen() {
     if (order?.paymentMethod === "Stripe") {
       try {
         startLoading();
-        console.log("Redirecting to Stripe checkout...");
-        const stripe = await stripePromise;
-
-        if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-          toast.error("Stripe initialization failed.");
-          return;
-        }
 
         const checkoutSession = await axios.post("/api/checkout_sessions", {
           totalPrice: amountDue,
           orderId: order._id,
         });
+        const checkoutUrl = checkoutSession?.data?.url;
+        if (!checkoutUrl) {
+          toast.error("Stripe initialization failed.");
+          return;
+        }
+
         setOrder((prev) => ({
           ...prev,
           orderItems: [],
           itemsPrice: 0,
           totalPrice: 0,
         }));
-        const result = await stripe.redirectToCheckout({
-          sessionId: checkoutSession?.data?.id,
-        });
-
-        if (result.error) {
-          showStatusMessage(
-            "error",
-            result.error.message || "An error occurred with Stripe checkout.",
-          );
-        }
+        window.location.assign(checkoutUrl);
       } catch (error) {
         console.error("Error placing order:", error);
         showStatusMessage(
@@ -615,7 +540,6 @@ function OrderScreen() {
                   )
                 } p-2 rounded-lg text-xl`}
               >
-                {console.log("Payment Status:", paymentAmountStatus())}
                 {paymentAmountStatus()}
               </div>
               {stripeReadyToPay() && !order.isPaid && (
@@ -657,7 +581,6 @@ function OrderScreen() {
           customer={customer}
           setCustomer={setCustomer}
           order={order}
-          user={user}
         />
       )}
 
@@ -688,7 +611,7 @@ function OrderScreen() {
                       Supply is not responsible for product damage or failure if
                       you choose another shipping method.
                       <div className='mt-3'>
-                        <button className='underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]'>
+                        <button className='underline font-bold flex flex-row items-center text-red-700 hover:text-red-800'>
                           Products For Overnight Delivery
                         </button>
                         <ul className='list-disc ml-6 text-sm text-gray-700 mt-2'>
@@ -721,14 +644,14 @@ function OrderScreen() {
                   )}
                   {isShippingTaxable ?
                     <div className='mt-2'>
-                      <span className='inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                      <span className='inline-block rounded-sm bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
                         Shipping is taxable in {taxStateLabel} — tax pending
                         calculation
                       </span>
                     </div>
                   : showItemTaxability ?
                     <div className='mt-2'>
-                      <span className='inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                      <span className='inline-block rounded-sm bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
                         Shipping is non taxable in {taxStateLabel}
                       </span>
                     </div>
@@ -832,7 +755,7 @@ function OrderScreen() {
                       .map((item, index) => (
                         <div
                           key={item._id || `${item.productId}-${index}`}
-                          className='border rounded-lg p-4 shadow-sm'
+                          className='border rounded-lg p-4 shadow-xs'
                         >
                           <div className='flex flex-col md:flex-row md:items-center'>
                             {/* Product */}
@@ -857,10 +780,10 @@ function OrderScreen() {
                                 </div>
                                 {showItemTaxability &&
                                   (isItemTaxPending(item.taxTreatment) ?
-                                    <span className='mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                                    <span className='mt-1 inline-block rounded-sm bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
                                       Taxable in {taxStateLabel}
                                     </span>
-                                  : <span className='mt-1 inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                                  : <span className='mt-1 inline-block rounded-sm bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
                                       Non taxable
                                     </span>)}
                               </div>
@@ -952,7 +875,7 @@ function OrderScreen() {
             </div>
           </div>
           <div>
-            <div className='mt-4 sticky top-[13rem] bg-white shadow-lg p-6 rounded-lg border'>
+            <div className='mt-4 sticky top-52 bg-white shadow-lg p-6 rounded-lg border'>
               <h2 className='mb-2 text-lg font-semibold'>Order Summary</h2>
               <ul>
                 <div className='mb-2 px-3 flex justify-between'>
@@ -1014,7 +937,7 @@ function OrderScreen() {
                 </li>
                 {isTaxPending && (
                   <li>
-                    <div className='mb-2 mx-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded text-sm text-amber-800'>
+                    <div className='mb-2 mx-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-sm text-sm text-amber-800'>
                       This order is on hold while the applicable sales tax is
                       calculated. The total above does not include tax yet —
                       your invoice will show the final amount due.

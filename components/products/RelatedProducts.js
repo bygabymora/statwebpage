@@ -121,7 +121,7 @@ const RelatedProducts = ({ currentProduct, limit = 4 }) => {
       {/* Desktop Grid Layout */}
       <div className='hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
         {relatedProducts.map((product, index) => (
-          <div key={product._id} className='bg-white rounded-lg shadow-sm'>
+          <div key={product._id} className='bg-white rounded-lg shadow-xs'>
             <ProductItemPage product={product} index={index} />
           </div>
         ))}
@@ -133,7 +133,7 @@ const RelatedProducts = ({ currentProduct, limit = 4 }) => {
           {relatedProducts.map((product, index) => (
             <div
               key={product._id}
-              className='flex-shrink-0 w-64 bg-white rounded-lg shadow-sm'
+              className='shrink-0 w-64 bg-white rounded-lg shadow-xs'
             >
               <ProductItemPage product={product} index={index} />
             </div>

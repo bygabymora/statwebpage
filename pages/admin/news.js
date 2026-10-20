@@ -130,16 +130,16 @@ export default function AdminNewsScreen() {
   return (
     <Layout title='Admin News'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -166,7 +166,7 @@ export default function AdminNewsScreen() {
               <button
                 disabled={loadingCreate}
                 onClick={createHandler}
-                className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
+                className='px-4 py-2 sm:px-6 sm:py-3 bg-linear-to-r/srgb primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
               >
                 {loadingCreate ? "Creating..." : "Create News"}
               </button>
@@ -182,7 +182,7 @@ export default function AdminNewsScreen() {
           </div>
           {loadingDelete && (
             <div className='flex items-center justify-center py-6 mb-6'>
-              <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-sm'>
+              <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-xs'>
                 <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-3'></div>
                 Deleting news article...
               </div>
@@ -216,7 +216,7 @@ export default function AdminNewsScreen() {
               {newsEntries.map((news) => (
                 <div
                   key={news._id}
-                  className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
+                  className='bg-white shadow-xs sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
                 >
                   {/* Mobile Card Header */}
                   <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
@@ -231,7 +231,7 @@ export default function AdminNewsScreen() {
                         <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
                           {news.category}
                         </span>
-                        <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
+                        <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-sm'>
                           #{news._id.slice(-6)}
                         </span>
                       </div>
@@ -245,7 +245,7 @@ export default function AdminNewsScreen() {
                         {news.tags.slice(0, 3).map((tag, index) => (
                           <span
                             key={index}
-                            className='inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700'
+                            className='inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-gray-100 text-gray-700'
                           >
                             {tag}
                           </span>
@@ -263,7 +263,7 @@ export default function AdminNewsScreen() {
                   <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
                     <Link
                       href={`/admin/news/${news._id}`}
-                      className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
+                      className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white font-medium rounded-sm sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-xs sm:shadow-md hover:shadow-lg flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 text-xs sm:text-sm md:text-base'
                     >
                       <BiSolidEdit
                         size={10}
@@ -273,7 +273,7 @@ export default function AdminNewsScreen() {
                     </Link>
                     <button
                       onClick={() => deleteHandler(news._id)}
-                      className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
+                      className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-linear-to-r/srgb from-red-500 to-red-600 text-white font-medium rounded-sm sm:rounded-md md:rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-xs sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
                     >
                       <BsTrash3
                         size={8}
@@ -289,7 +289,7 @@ export default function AdminNewsScreen() {
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto custom-scrollbar'>
                 <div className='min-w-full' style={{ minWidth: "600px" }}>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
                       <div className='col-span-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         Title
@@ -338,7 +338,7 @@ export default function AdminNewsScreen() {
                             {news.tags.slice(0, 2).map((tag, index) => (
                               <span
                                 key={index}
-                                className='inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700'
+                                className='inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-gray-100 text-gray-700'
                               >
                                 {tag}
                               </span>
@@ -359,7 +359,7 @@ export default function AdminNewsScreen() {
                           <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
                             <Link
                               href={`/admin/news/${news._id}`}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
+                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center gap-1'
                               title='Edit News Article'
                             >
                               <BiSolidEdit
@@ -372,7 +372,7 @@ export default function AdminNewsScreen() {
                             </Link>
                             <button
                               onClick={() => deleteHandler(news._id)}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-gradient-to-r primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
+                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-linear-to-r/srgb primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
                               title='Delete News Article'
                             >
                               <BsTrash3

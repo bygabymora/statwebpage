@@ -14,11 +14,17 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { Listbox } from "@headlessui/react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useModalContext } from "../../components/context/ModalContext";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import requestEmail, {
+  emailErrorMessage,
+} from "../../utils/alertSystem/requestEmail";
 import { generateProductJSONLD } from "../../utils/seo";
 import {
   findManufacturerProfile,
@@ -84,10 +90,17 @@ export default function ProductScreen({ product }) {
     getAvailableStock(product.each?.countInStock, product.each?.heldStock),
   );
   const [inventoryLastUpdated, setInventoryLastUpdated] = useState(
-    product?.updatedAt || product?.createdAt || new Date().toISOString(),
+    () => product?.updatedAt || product?.createdAt || new Date().toISOString(),
   );
   const [inventoryJustUpdated, setInventoryJustUpdated] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [cursorPos, setCursorPos] = useState({
+    x: 0,
+    y: 0,
+    bgX: 0,
+    bgY: 0,
+    bgWidth: 0,
+    bgHeight: 0,
+  });
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const form = useRef();
@@ -315,15 +328,29 @@ export default function ProductScreen({ product }) {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email, emailName, emailManufacturer };
-
     if (!name || !email || !emailName || !emailManufacturer) {
       showStatusMessage("error", "Please fill all the fields");
       return;
     }
 
-    const emailMessage = messageManagement(contactToEmail, "Product Wait List");
-    handleSendEmails(emailMessage, contactToEmail);
+    // The server reads the product's name and manufacturer from its id.
+    requestEmail("Product Wait List", {
+      name,
+      email,
+      productId: product._id,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          showStatusMessage(
+            "error",
+            await emailErrorMessage(
+              response,
+              "We couldn't send your request. Please try again.",
+            ),
+          );
+        }
+      })
+      .catch((error) => console.error("Error sending wait list email:", error));
 
     setName("");
     setEmail("");
@@ -562,7 +589,7 @@ export default function ProductScreen({ product }) {
                 : <span>Inventory status: Loading...</span>}
               </div>
             </li>
-            <h4 className='font-medium text-gray-800 mt-4 mb-2'>
+            <h4 className='font-medium text-gray-800'>
               Shipping Cutoff
             </h4>
             <li>
@@ -601,7 +628,7 @@ export default function ProductScreen({ product }) {
           <h3 className='text-lg font-semibold text-[#144e8b] mb-4'>
             About {profile.name}
           </h3>
-          <div className='bg-white p-4 rounded border shadow-sm'>
+          <div className='bg-white p-4 rounded-sm border shadow-xs'>
             <div className='flex flex-col md:flex-row md:justify-between md:items-start mb-4'>
               <div className='flex-1'>
                 <h4 className='font-semibold text-gray-800 text-lg mb-2'>
@@ -700,7 +727,7 @@ export default function ProductScreen({ product }) {
         <h3 className='text-lg font-semibold text-[#144e8b] mb-4'>
           About {product.manufacturer}
         </h3>
-        <div className='bg-white p-4 rounded border shadow-sm'>
+        <div className='bg-white p-4 rounded-sm border shadow-xs'>
           <h4 className='font-semibold text-gray-800 text-lg mb-3'>
             {product.manufacturer}
           </h4>
@@ -823,10 +850,24 @@ export default function ProductScreen({ product }) {
             <div className='bg-white shadow-lg rounded-xl p-6'>
               <div
                 onMouseMove={(e) => {
-                  const rect = e.target.getBoundingClientRect();
+                  // Lens is positioned relative to the wrapper, but the zoomed
+                  // content is sampled from the (hover-scaled) image itself.
+                  const wrapperRect = e.currentTarget.getBoundingClientRect();
+                  const img = e.currentTarget.querySelector("img");
+                  if (!img) return;
+                  const imgRect = img.getBoundingClientRect();
+                  const zoom = 2;
+                  const bgWidth = imgRect.width * zoom;
+                  const bgHeight = imgRect.height * zoom;
+                  const fx = (e.clientX - imgRect.left) / imgRect.width;
+                  const fy = (e.clientY - imgRect.top) / imgRect.height;
                   setCursorPos({
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top,
+                    x: e.clientX - wrapperRect.left,
+                    y: e.clientY - wrapperRect.top,
+                    bgX: fx * bgWidth - 60,
+                    bgY: fy * bgHeight - 60,
+                    bgWidth,
+                    bgHeight,
                   });
                 }}
                 onMouseEnter={() => setIsHovered(true)}
@@ -848,7 +889,7 @@ export default function ProductScreen({ product }) {
                 />
                 {isHovered && (
                   <div
-                    className='absolute hidden md:block rounded-full border border-gray-400 bg-cover transform scale-125'
+                    className='absolute hidden md:block rounded-full border border-gray-400 bg-cover'
                     style={{
                       width: "120px",
                       height: "120px",
@@ -857,10 +898,9 @@ export default function ProductScreen({ product }) {
                       top: cursorPos.y - 60,
                       left: cursorPos.x - 60,
                       backgroundImage: `url(${product.image})`,
-                      backgroundPosition: `-${(cursorPos.x - 60) * 2}px -${
-                        (cursorPos.y - 60) * 2
-                      }px`,
-                      backgroundSize: "1000px 1000px",
+                      backgroundPosition: `${-cursorPos.bgX}px ${-cursorPos.bgY}px`,
+                      backgroundSize: `${cursorPos.bgWidth}px ${cursorPos.bgHeight}px`,
+                      backgroundRepeat: "no-repeat",
                       border: "3px solid #144e8b",
                       transform: "scale(1.5)",
                       pointerEvents: "none",
@@ -944,7 +984,7 @@ export default function ProductScreen({ product }) {
                   </div>
                 )}
                 {showModal && (
-                  <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+                  <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-9999'>
                     <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                       <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
                       <span className='font-bold text-[#0e355e]'>
@@ -1042,20 +1082,20 @@ export default function ProductScreen({ product }) {
                                       }}
                                     >
                                       <div className='relative'>
-                                        <Listbox.Button
-                                          className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                                        <ListboxButton
+                                          className={`w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]`}
                                         >
                                           {typeOfPurchase || "Select"}
-                                        </Listbox.Button>
+                                        </ListboxButton>
                                         <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                                        <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                                        <ListboxOptions className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-hidden text-sm'>
                                           {availableTypes.map((option) => (
-                                            <Listbox.Option
+                                            <ListboxOption
                                               key={option}
                                               value={option}
-                                              className={({ active }) =>
+                                              className={({ focus }) =>
                                                 `cursor-pointer select-none px-4 py-2 ${
-                                                  active ?
+                                                  focus ?
                                                     "bg-blue-100 text-[#0e355e]"
                                                   : "text-gray-900"
                                                 }`
@@ -1069,9 +1109,9 @@ export default function ProductScreen({ product }) {
                                                   )}
                                                 </span>
                                               )}
-                                            </Listbox.Option>
+                                            </ListboxOption>
                                           ))}
-                                        </Listbox.Options>
+                                        </ListboxOptions>
                                       </div>
                                     </Listbox>
                                   </div>
@@ -1119,7 +1159,6 @@ export default function ProductScreen({ product }) {
                         product.box?.countInStock > 0) &&
                         active && (
                           <div>
-                            {console.log("session", session)}
                             <div className='mb-2 flex justify-between'>
                               <div className='font-bold'>Status</div>
                               <div>

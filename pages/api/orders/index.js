@@ -118,7 +118,7 @@ export default async function handler(req, res) {
 
         // ===== replaced find+set+save with atomic findByIdAndUpdate =====
         order = await Order.findByIdAndUpdate(orderData._id, sanitizedOrder, {
-          new: true, // return the updated doc
+          returnDocument: "after", // return the updated doc (`new: true` is deprecated in Mongoose 9)
           runValidators: true, // enforce your schema rules
         });
       }

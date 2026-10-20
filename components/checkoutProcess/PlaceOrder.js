@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { loadStripe } from "@stripe/stripe-js";
 import { useModalContext } from "../context/ModalContext";
 import { getError } from "../../utils/error";
 import formatPhoneNumber from "../../utils/functions/phoneModified";
@@ -19,12 +18,7 @@ import Stripe from "../../public/images/assets/PBS.png";
 import { AiTwotoneLock } from "react-icons/ai";
 import { HiOutlineExclamationTriangle } from "react-icons/hi2";
 import { PayPalButtons } from "@paypal/react-paypal-js";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-);
+import requestEmail from "../../utils/alertSystem/requestEmail";
 
 export default function PlaceOrder({
   setActiveStep,
@@ -44,7 +38,6 @@ export default function PlaceOrder({
     startLoading,
     stopLoading,
     openConfirmModal,
-    accountOwner,
   } = useModalContext();
   const { data: session } = useSession();
   const [loading] = useState(false);
@@ -320,17 +313,16 @@ export default function PlaceOrder({
           }));
           sendConfirmationEmail();
         } else {
-          const stripe = await stripePromise;
-          if (!stripe || typeof stripe.redirectToCheckout !== "function") {
-            showStatusMessage("error", "Stripe initialization failed.");
-            return;
-          }
           const {
-            data: { id: sessionId },
+            data: { url: checkoutUrl },
           } = await axios.post("/api/checkout_sessions", {
             totalPrice: Number(order?.totalPrice || 0),
             orderId: order?._id,
           });
+          if (!checkoutUrl) {
+            showStatusMessage("error", "Stripe initialization failed.");
+            return;
+          }
 
           Cookies.remove("orderId");
           setOrder((o) => ({
@@ -341,10 +333,7 @@ export default function PlaceOrder({
           }));
           sendConfirmationEmail();
 
-          const result = await stripe.redirectToCheckout({ sessionId });
-          if (result.error) {
-            showStatusMessage("error", result.error.message);
-          }
+          window.location.assign(checkoutUrl);
         }
       } catch (err) {
         console.error("Error placing order:", err);
@@ -521,42 +510,23 @@ export default function PlaceOrder({
     console.error("PayPal error:", error);
     showStatusMessage("error", getError(error));
   }
-  const sendConfirmationEmail = async () => {
-    try {
-      const contactToEmail = {
-        name: user.firstName,
-        email: user.email,
-      };
-      const emailmessage = messageManagement(
-        contactToEmail,
-        "Order Confirmation",
-        null,
-        {
-          ...order,
-          tax: { ...(order?.tax || {}), ...taxStatus },
-        },
-        null,
-        accountOwner,
-      );
-
-      handleSendEmails(emailmessage, contactToEmail, accountOwner);
-    } catch (error) {
-      console.error("Error sending approval email:", error);
-      showStatusMessage(
-        "error",
-        "Error sending approval email. Please try again.",
-      );
-    }
+  // The server builds the confirmation from the saved order and sends it to
+  // the signed-in customer, signed by their account owner.
+  const sendConfirmationEmail = () => {
+    requestEmail("Order Confirmation", { orderId: order?._id }).catch(
+      (error) => {
+        console.error("Error sending confirmation email:", error);
+      },
+    );
   };
   return (
     <div>
+      {/* Only the order value goes to Google Ads: no names or emails (PII). */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
-      gtag('event', 'ads_conversion_Carrito_de_la_compra_1', {
-        value: ${order.totalPrice || 0},
-        userName: '${user?.name || ""}',
-        userEmail: '${user?.email || ""}',
+      window.gtag && window.gtag('event', 'ads_conversion_Carrito_de_la_compra_1', {
+        value: ${JSON.stringify(Number(order?.totalPrice) || 0)},
       });
     `,
         }}
@@ -565,12 +535,13 @@ export default function PlaceOrder({
         Confirm Your Order
       </h1>
 
-      <div className='mx-auto max-w-2xl p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
-        <p className='font-semibold text-amber-900'>
-          This order includes items taxable in {taxStatus.state}.
-        </p>
-        <p className='text-amber-800 mt-1'></p>
-      </div>
+      {isTaxPending && (
+        <div className='mx-auto max-w-2xl p-4 mb-5 bg-amber-50 border-l-4 border-amber-500 rounded-lg'>
+          <p className='font-semibold text-amber-900'>
+            This order includes items taxable in {taxStatus.state}.
+          </p>
+        </div>
+      )}
 
       {order?.orderItems?.length === 0 ?
         <div className='text-center text-gray-600 text-lg my-5'>
@@ -884,7 +855,7 @@ export default function PlaceOrder({
                     responsible for product damage or failure if you choose
                     another shipping method.
                     <div className='mt-3'>
-                      <button className='underline font-bold flex flex-row items-center text-[#b91c1c] hover:text-[#991b1b]'>
+                      <button className='underline font-bold flex flex-row items-center text-red-700 hover:text-red-800'>
                         Products For Overnight Delivery
                       </button>
                       <ul className='list-disc ml-6 text-sm text-gray-700 mt-2'>
@@ -951,10 +922,10 @@ export default function PlaceOrder({
                     {taxStatus.hasAgency &&
                       taxStatus.customerTaxable &&
                       (isItemTaxPending(taxStatus.shippingTaxTreatment) ?
-                        <span className='mt-1 inline-block w-fit rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                        <span className='mt-1 inline-block w-fit rounded-sm bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
                           Shipping is taxable in {taxStatus.state}
                         </span>
-                      : <span className='mt-1 inline-block w-fit rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                      : <span className='mt-1 inline-block w-fit rounded-sm bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
                           Shipping is non taxable in {taxStatus.state}
                         </span>)}
                     <div>{order?.shippingAddress?.notes}</div>
@@ -985,7 +956,7 @@ export default function PlaceOrder({
                     {order.orderItems?.map((item, index) => (
                       <div
                         key={item._id || `${item.productId}-${index}`}
-                        className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center'
+                        className='border rounded-lg p-4 shadow-xs flex flex-col md:flex-row md:items-center'
                       >
                         {/* Product */}
                         <div className='flex items-center space-x-4 mb-4 md:mb-0 md:flex-1'>
@@ -1014,10 +985,10 @@ export default function PlaceOrder({
                                   taxStatus.items[index]?.taxTreatment,
                                 )
                               ) ?
-                                <span className='mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
+                                <span className='mt-1 inline-block rounded-sm bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800'>
                                   Taxable in {taxStatus.state}
                                 </span>
-                              : <span className='mt-1 inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
+                              : <span className='mt-1 inline-block rounded-sm bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700'>
                                   Non taxable
                                 </span>)}
                           </div>
@@ -1082,7 +1053,7 @@ export default function PlaceOrder({
             </div>
           </div>
           <div>
-            <div className='mt-3 sticky top-[13rem] bg-white shadow-lg p-6 rounded-lg border'>
+            <div className='mt-3 sticky top-52 bg-white shadow-lg p-6 rounded-lg border'>
               <h2 className='mb-2 text-lg font-semibold'>Order Summary</h2>
               <ul className='text-gray-700'>
                 <li className='mb-2 flex justify-between text-lg'>
@@ -1193,7 +1164,7 @@ export default function PlaceOrder({
                       <hr className='p-2' />
                       {isTaxPending && !hasExemptionFileOnFile && (
                         <p>
-                          If your organization is tax-exempt,once your order is
+                          If your organization is tax-exempt, once your order is
                           confirmed, you can upload your exemption certificate
                           from the order confirmation page, and our accounting
                           team will review it and update your account.

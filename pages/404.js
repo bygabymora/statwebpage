@@ -6,7 +6,9 @@ import animationData from "../public/404-Ilustration.json";
 import { BiHome, BiSearch, BiPhone } from "react-icons/bi";
 import { FaStethoscope } from "react-icons/fa";
 
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+const Lottie = dynamic(() => import("lottie-react").then((mod) => mod.Lottie), {
+  ssr: false,
+});
 
 export default function Custom404() {
   return (
@@ -27,13 +29,14 @@ export default function Custom404() {
             <h1 className='text-6xl md:text-8xl font-bold text-[#0e355e] mb-4'>
               404
             </h1>
-            <div className='w-24 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] mx-auto mb-6'></div>
+            <div className='w-24 h-1 bg-linear-to-r/srgb from-[#0e355e] to-[#67b7dc] mx-auto mb-6'></div>
           </div>
 
           {/* Lottie Animation */}
           <div className='flex justify-center mb-8 -mt-28'>
             <Lottie
-              animationData={animationData}
+              src={animationData}
+              autoplay
               loop={true}
               style={{
                 width: 280,

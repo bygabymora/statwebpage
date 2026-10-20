@@ -169,7 +169,7 @@ export default function EmailPreview() {
               id='action'
               value={action}
               onChange={(e) => setAction(e.target.value)}
-              className='border rounded p-2'
+              className='border rounded-sm p-2'
             >
               {cases.map((c) => (
                 <option key={c} value={c}>
@@ -180,7 +180,7 @@ export default function EmailPreview() {
           </div>
         </header>
 
-        <section className='bg-white p-4 rounded shadow'>
+        <section className='bg-white p-4 rounded-sm shadow-sm'>
           <div dangerouslySetInnerHTML={{ __html: finalHtml }} />
         </section>
       </div>

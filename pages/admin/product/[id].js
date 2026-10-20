@@ -83,7 +83,7 @@ export default function AdminProductEditScreen() {
             <div className='alert-error'>{error}</div>
           ) : (
             <form
-              className='mx-auto max-w-screen-md'
+              className='mx-auto max-w-(--breakpoint-md)'
               onSubmit={handleSubmit(submitHandler)}
             >
               <h1 className='mb-4 text-xl'>
@@ -101,7 +101,7 @@ export default function AdminProductEditScreen() {
                 <textarea
                   id='information'
                   rows={4}
-                  className='w-full px-3 py-2 border rounded'
+                  className='w-full px-3 py-2 border rounded-sm'
                   {...register("information", {
                     required: "Please enter product information",
                   })}

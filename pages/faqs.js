@@ -138,7 +138,7 @@ export default function FAQs() {
               {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#0e355e] focus:outline-none focus:ring-2 focus:ring-[#0e355e] focus:ring-opacity-50 rounded'
+                  className='hover:underline text-[#0e355e] focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]/50 rounded-sm'
                   aria-label={`Go to ${breadcrumb.name} page`}
                 >
                   {breadcrumb.name}
@@ -181,20 +181,20 @@ export default function FAQs() {
           {faqData.map((item, idx) => (
             <article
               key={idx}
-              className='bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md focus-within:ring-2 focus-within:ring-[#0e355e] focus-within:ring-opacity-50'
+              className='bg-white border border-gray-200 rounded-xl shadow-xs transition-all duration-200 hover:shadow-md focus-within:ring-2 focus-within:ring-[#0e355e]/50'
               itemScope
               itemType='https://schema.org/Question'
             >
               <button
                 onClick={() => toggle(idx)}
-                className='w-full flex items-center justify-between px-6 py-5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0e355e] focus:ring-opacity-50 rounded-xl'
+                className='w-full flex items-center justify-between px-6 py-5 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-[#0e355e]/50 rounded-xl'
                 aria-expanded={openIndex === idx}
                 aria-controls={`faq-answer-${idx}`}
                 id={`faq-question-${idx}`}
               >
                 <div className='flex items-center space-x-4 text-left'>
                   <div
-                    className='p-2 bg-green-100 rounded-full flex-shrink-0'
+                    className='p-2 bg-green-100 rounded-full shrink-0'
                     aria-hidden='true'
                   >
                     <FaQuestionCircle className='text-[#07783e]' />
@@ -207,7 +207,7 @@ export default function FAQs() {
                   </h3>
                 </div>
                 <IoChevronDown
-                  className={`text-2xl text-gray-500 transform transition-transform duration-300 flex-shrink-0 ${
+                  className={`text-2xl text-gray-500 transform transition-transform duration-300 shrink-0 ${
                     openIndex === idx ? "rotate-180" : ""
                   }`}
                   aria-hidden='true'
@@ -244,7 +244,7 @@ export default function FAQs() {
           </p>
           <Link
             href='/support'
-            className='inline-block px-8 py-4 bg-[#0e355e] text-white rounded-xl hover:bg-[#07294c] transition duration-300 focus:outline-none focus:ring-2 focus:ring-[#0e355e] focus:ring-opacity-50 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105'
+            className='inline-block px-8 py-4 bg-[#0e355e] text-white rounded-xl hover:bg-[#07294c] transition duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]/50 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105'
             aria-label='Contact our surgical supply experts for personalized assistance'
           >
             Contact Our Medical Supply Experts

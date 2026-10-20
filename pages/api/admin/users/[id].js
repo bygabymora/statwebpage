@@ -28,7 +28,9 @@ const handler = async (req, res) => {
 const getHandler = async (req, res) => {
   await db.connect(true);
   try {
-    const wpUser = await WpUser.findById(req.query.id);
+    const wpUser = await WpUser.findById(req.query.id).select(
+      "-password -resetCode",
+    );
     if (!wpUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -75,13 +77,6 @@ const putHandler = async (req, res) => {
     }
 
     const { user, customer } = req.body;
-
-    // Log the update attempt for debugging
-    console.log("Updating user:", {
-      userId: req.query.id,
-      previousApproved: userInDB.approved,
-      newApproved: user.approved,
-    });
 
     let customerWarning = null;
     if (customer) {
@@ -140,13 +135,6 @@ const putHandler = async (req, res) => {
     }
 
     const savedUser = await userInDB.save();
-
-    // Log successful save for debugging
-    console.log("User saved successfully:", {
-      userId: savedUser._id,
-      approved: savedUser.approved,
-      active: savedUser.active,
-    });
 
     return res.status(200).json({
       type: customerWarning ? "warning" : "success",

@@ -30,7 +30,7 @@ const handler = async (req, res) => {
     }
 
     // 3. Fetch the WpUser record
-    const wpUser = await WpUser.findById(id).select("-password");
+    const wpUser = await WpUser.findById(id).select("-password -resetCode");
     if (!wpUser) {
       return res.status(404).json({ message: "User not found" });
     }

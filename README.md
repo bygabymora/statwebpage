@@ -17,7 +17,6 @@
 - [Authentication](#authentication)
 - [Checkout & Payment Flow](#checkout--payment-flow)
 - [Admin Dashboard](#admin-dashboard)
-- [Middleware](#middleware)
 - [State Management](#state-management)
 - [Third-Party Integrations](#third-party-integrations)
 - [Utilities](#utilities)
@@ -33,12 +32,12 @@
 | Layer             | Technology                                                             |
 | ----------------- | ---------------------------------------------------------------------- |
 | Framework         | Next.js 16 (Pages Router)                                              |
-| Language          | JavaScript / TypeScript (middleware)                                   |
-| UI                | React 18, Tailwind CSS 3, Framer Motion, React Spring                  |
+| Language          | JavaScript                                                             |
+| UI                | React 19, Tailwind CSS 4, Framer Motion, React Spring                  |
 | Component Library | Headless UI, Heroicons, React Icons                                    |
 | Database          | MongoDB via Mongoose                                                   |
 | Authentication    | NextAuth.js (Credentials + Google OAuth)                               |
-| Payments          | PayPal (`@paypal/react-paypal-js`), Stripe (`@stripe/react-stripe-js`) |
+| Payments          | PayPal (`@paypal/react-paypal-js`), Stripe Checkout (`stripe`)         |
 | Email             | Mailchimp Transactional, Nodemailer                                    |
 | Image Hosting     | Cloudinary                                                             |
 | Forms             | React Hook Form                                                        |
@@ -46,7 +45,8 @@
 | Analytics         | Google Analytics, Vercel Analytics, Vercel Speed Insights              |
 | Charts            | Chart.js + react-chartjs-2                                             |
 | Notifications     | React Toastify                                                         |
-| Testing           | Jest, Babel, node-mocks-http                                           |
+| Testing           | Vitest, node-mocks-http                                                |
+| Linting           | oxlint                                                                 |
 | Deployment        | Vercel                                                                 |
 
 ---
@@ -107,7 +107,7 @@ statwebpage/
 │   └── *.js               # Top-level pages (home, cart, login, etc.)
 │
 ├── public/                # Static assets (images, favicon, robots.txt)
-├── styles/                # Global CSS (global.css with Tailwind directives)
+├── styles/                # Global CSS (global.css with Tailwind + theme, prose.css)
 ├── utils/                 # Utility functions & helpers
 │   ├── alertSystem/       # Email & SMS notification system
 │   ├── functions/         # Shared helper functions
@@ -116,10 +116,10 @@ statwebpage/
 │   ├── seo.js             # JSON-LD schema generators
 │   └── ...                # Date formatting, sorting, etc.
 │
-├── Middleware.ts           # URL normalization & security middleware
+├── __tests__/              # Vitest tests for API routes (kept out of pages/ so they don't deploy as routes)
 ├── next.config.js          # Next.js configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-├── jest.config.js          # Jest test configuration
+├── .oxlintrc.json          # oxlint configuration
+├── vitest.config.mjs       # Vitest test configuration
 └── package.json            # Dependencies & scripts
 ```
 
@@ -129,7 +129,7 @@ statwebpage/
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 24.x (see `engines` in package.json)
 - MongoDB instance (local or Atlas)
 - Accounts for: Cloudinary, PayPal, Stripe, Google OAuth, reCAPTCHA, Mailchimp
 
@@ -156,8 +156,8 @@ npm run dev
 | `dev`   | `next dev --webpack`   | Start development server |
 | `build` | `next build --webpack` | Create production build  |
 | `start` | `next start`           | Start production server  |
-| `lint`  | `next lint`            | Run ESLint               |
-| `test`  | `jest`                 | Run test suite           |
+| `lint`  | `oxlint`               | Run oxlint               |
+| `test`  | `vitest run`           | Run test suite           |
 
 ---
 
@@ -169,11 +169,6 @@ npm run dev
 Browser Request
       │
       ▼
-┌─────────────┐
-│ Middleware.ts│  ← URL normalization, tracking param cleanup, method enforcement
-└──────┬──────┘
-       │
-       ▼
 ┌─────────────┐
 │  _app.js    │  ← Provider tree: Session → Store → Modal → PayPal → Cookie
 └──────┬──────┘
@@ -218,7 +213,6 @@ SessionProvider (NextAuth)
 /                        → Homepage (product carousel, banners, news section)
 ├── /products            → Product catalog (filterable by manufacturer)
 │   └── /products/[id]   → Individual product detail page
-├── /clearance           → Clearance items (discounted products)
 ├── /search              → Search results page
 ├── /news                → News article listing
 │   ├── /news/[slug]     → Individual news article
@@ -284,8 +278,8 @@ SessionProvider (NextAuth)
      ┌──────▼──────┐   ┌─────▼─────┐         ┌─────▼──────┐
      │  PRODUCTS   │   │   NEWS    │         │   AUTH     │
      │  /products  │   │   /news   │         │  /Login    │
-     │  /clearance │   │  /news/   │         │  /Register │
-     │  /search    │   │  [slug]   │         └─────┬──────┘
+     │  /search    │   │  /news/   │         │  /Register │
+     │             │   │  [slug]   │         └─────┬──────┘
      └──────┬──────┘   └───────────┘               │
             │                              ┌───────▼────────┐
      ┌──────▼──────┐                       │  USER AREA     │
@@ -479,7 +473,6 @@ Extended customer profile linked to QuickBooks.
 | ----------------------------- | ------ | ---------------------------------- |
 | `/api/products/[id]`          | GET    | Product details by ID              |
 | `/api/search`                 | GET    | Search products by keyword (regex) |
-| `/api/clearance`              | GET    | List clearance products            |
 | `/api/featuredProductsJSONLD` | GET    | Featured products structured data  |
 
 ### Orders (`/api/orders/`)
@@ -605,7 +598,7 @@ Products support three pricing tiers that users select before adding to cart:
 ### Payment Processors
 
 - **PayPal** — Via `@paypal/react-paypal-js`, lazy-loaded
-- **Stripe** — Via `@stripe/react-stripe-js`, checkout session API
+- **Stripe** — Hosted Checkout: `/api/checkout_sessions` creates the session and the client redirects to its `url`
 
 ---
 
@@ -645,24 +638,6 @@ Displays key business metrics via Chart.js bar charts:
 - Article CRUD with rich content
 - Video support (mp4, webm, YouTube, Vimeo)
 - Category and tag management
-
----
-
-## Middleware
-
-**File**: `Middleware.ts`
-
-The middleware runs on all routes except `/api`, `/_next/static`, `/_next/image`, and `favicon.ico`.
-
-### What It Does
-
-1. **Method enforcement** — Only allows `GET` and `HEAD` requests (returns 405 otherwise)
-2. **Encoded query fix** — Handles `%3F` (encoded `?`) in pathnames
-3. **Trailing slash normalization** — Removes trailing slashes from `/news` URLs
-4. **Tracking parameter cleanup** — Strips UTM params, `gclid`, `fbclid`, `srsltid`, `msclkid`, `_ga`, `mc_cid`, `mc_eid` from `/news` and `/products` URLs
-5. **News slug normalization** — Lowercases and cleans `/news/[slug]` paths
-6. **Product URL normalization** — Extracts numeric product ID from `/products/` paths
-7. **301 redirects** — All normalizations trigger permanent redirects
 
 ---
 
@@ -719,7 +694,7 @@ Global UI state for modals, loading indicators, and user data.
 | Service                   | Purpose                           | Package                                               |
 | ------------------------- | --------------------------------- | ----------------------------------------------------- |
 | **PayPal**                | Payment processing                | `@paypal/react-paypal-js`                             |
-| **Stripe**                | Payment processing                | `@stripe/react-stripe-js`, `stripe`                   |
+| **Stripe**                | Payment processing                | `stripe`                                              |
 | **Cloudinary**            | Image hosting & optimization      | `@cloudinary/react`, `cloudinary`                     |
 | **Google OAuth**          | Social login                      | `next-auth` (Google provider)                         |
 | **Google reCAPTCHA**      | Bot protection (v2 + v3)          | `react-google-recaptcha`, `react-google-recaptcha-v3` |
@@ -761,8 +736,19 @@ Product sorting and data enrichment logic.
 
 ### `utils/alertSystem/` — Notification System
 
-- `customers/messageManagement.js` — SMS/email messaging
-- `documentRelatedEmail/` — Transactional email builders
+Emails are built and sent on the server only. The browser calls `requestEmail(action, data)` (`requestEmail.js`), which posts to `/api/emails/send-email`; the endpoint accepts only the named emails in `emailActions.js`, and each one decides its own recipient, sender and content (escaping anything a visitor typed). Password resets, registration and unsubscribe emails are sent directly by their API routes.
+
+- `customers/messageManagement.js` — Email subjects and bodies, per email type
+- `emailActions.js` — The emails the browser may request, and who receives each
+- `documentRelatedEmail.js` — Wraps a message in the HTML template and signature
+- `sendEmailMessage.js` / `sendTransactionalEmail.js` — Send through Mailchimp (staff are BCC'd, except on password resets)
+- `requestEmail.js` — Browser helper for `/api/emails/send-email`
+
+### `utils/rateLimit.js` — Attempt Limits
+
+The public forms stay open to everyone, with a limited number of attempts per visitor (IP, or per /64 for IPv6) per hour: contact, newsletter, product wait list and product requests, manufacturer form, search log, signup, password reset (also per email address) and unsubscribe. Over the limit the API answers `429` with a `Retry-After` header and a "try again in N minutes" message that the forms show. Limits are set in `RATE_LIMITS`.
+
+Counters live in the `ratelimits` MongoDB collection (the `RateLimit` model): one document per form, visitor and window, holding a keyed hash of the IP (never the IP itself), and removed by a TTL index when the window ends. If the database can't be reached the attempt is allowed, so an outage never closes the forms.
 
 ### Date Utilities
 
@@ -784,9 +770,9 @@ Product sorting and data enrichment logic.
 
 ## Styling
 
-- **Framework**: Tailwind CSS 3 with `@tailwindcss/typography` plugin
-- **Global Styles**: `styles/global.css` (Tailwind directives + custom rules)
-- **Custom Animations**: Defined in `tailwind.config.js`
+- **Framework**: Tailwind CSS 4 (CSS-first config in `styles/global.css`); article typography (`prose`) is static CSS in `styles/prose.css`
+- **Global Styles**: `styles/global.css` (Tailwind import, `@theme` + custom rules)
+- **Custom Animations**: Defined in the `@theme` block of `styles/global.css`
   - `timer-pulse` — Pulsing scale animation
   - `banner-fade` — Fade-in animation
 - **Motion**: Framer Motion for page transitions and component animations
@@ -805,7 +791,7 @@ Product sorting and data enrichment logic.
 - News Sitemap (`/api/news-sitemap`)
 - RSS Feed (`/api/rss`)
 - `robots.txt` in `/public`
-- Canonical URL management via middleware
+- Canonical news URLs: `/news/[slug]` permanently redirects variant slugs to the canonical one
 
 ### Performance Optimizations
 
@@ -841,7 +827,6 @@ PAYPAL_CLIENT_ID=
 
 # Stripe
 STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME=
@@ -868,5 +853,5 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | `npm run dev`   | Start development server with hot reload |
 | `npm run build` | Build for production                     |
 | `npm start`     | Start production server                  |
-| `npm run lint`  | Lint code with ESLint                    |
-| `npm test`      | Run Jest tests                           |
+| `npm run lint`  | Lint code with oxlint                    |
+| `npm test`      | Run Vitest tests                         |

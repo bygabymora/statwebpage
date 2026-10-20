@@ -2,8 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BiMessageAdd } from "react-icons/bi";
 import { motion } from "framer-motion";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
+import requestEmail from "../../utils/alertSystem/requestEmail";
 import { useModalContext } from "../context/ModalContext";
 import ReCaptchaV2Checkbox from "../recaptcha/ReCaptchaV2Checkbox";
 
@@ -11,8 +10,14 @@ const ContactUs = () => {
   const form = useRef();
   const { contact, showStatusMessage } = useModalContext();
   const [message, setMessage] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // null until the visitor types (or autofills), so a signed-in contact's
+  // details fill the form
+  const [typedName, setName] = useState(null);
+  const [typedEmail, setEmail] = useState(null);
+  const name =
+    typedName ??
+    [contact?.firstName, contact?.lastName].filter(Boolean).join(" ");
+  const email = typedEmail ?? (contact?.email || "").toLowerCase();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // New: reCAPTCHA v2 token (checkbox)
@@ -150,27 +155,9 @@ const ContactUs = () => {
         return;
       }
 
-      const contactToEmail = { name: actualName, email: actualEmail };
-      const emailmessage = messageManagement(
-        contactToEmail,
-        "Contact Us",
-        actualMessage,
-      );
-
-      console.log("[ContactUs Tracker] emailmessage:", {
-        subject: emailmessage?.subject || "(EMPTY)",
-        hasP1: !!emailmessage?.p1,
-        hasP2: !!emailmessage?.p2,
-        hasP3: !!emailmessage?.p3,
-      });
-
-      if (
-        !emailmessage?.subject ||
-        !emailmessage?.p1 ||
-        !contactToEmail.email
-      ) {
+      if (!actualEmail) {
         console.error(
-          "[ContactUs Tracker] Email message is empty or recipient is missing. Aborting send.",
+          "[ContactUs Tracker] Recipient is missing. Aborting send.",
         );
         showStatusMessage(
           "error",
@@ -179,12 +166,11 @@ const ContactUs = () => {
         return;
       }
 
-      const response = await handleSendEmails(
-        emailmessage,
-        contactToEmail,
-        null,
-        "Contact Us",
-      );
+      const response = await requestEmail("Contact Us", {
+        name: actualName,
+        email: actualEmail,
+        message: actualMessage,
+      });
 
       if (response && !response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -195,7 +181,9 @@ const ContactUs = () => {
         );
         showStatusMessage(
           "error",
-          "There was a problem sending your message. Please try again.",
+          // Over the attempt limit: say when they can try again.
+          (response.status === 429 && errorData?.message) ||
+            "There was a problem sending your message. Please try again.",
         );
         return;
       }
@@ -213,19 +201,12 @@ const ContactUs = () => {
         window.grecaptcha.reset();
       }
     } catch (err) {
-      console.error("[ContactUs] handleSendEmails error:", err);
+      console.error("[ContactUs] requestEmail error:", err);
       showStatusMessage("error", "There was a problem sending your message.");
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (contact) {
-      setName(contact.name || "");
-      setEmail((contact.email || "").toLowerCase());
-    }
-  }, [contact]);
 
   // Optional: Periodic check for autofill (handles delayed autofill)
   useEffect(() => {

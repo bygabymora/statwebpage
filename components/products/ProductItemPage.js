@@ -2,11 +2,17 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { Listbox } from "@headlessui/react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import { BiCheck, BiChevronDown } from "react-icons/bi";
 import { useModalContext } from "../context/ModalContext";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
+import requestEmail, {
+  emailErrorMessage,
+} from "../../utils/alertSystem/requestEmail";
 import LCPProductImage from "./LCPProductImage";
 
 function getAvailableStock(countInStock, heldStock) {
@@ -21,7 +27,7 @@ export const ProductItemPage = ({ product, index }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const { showStatusMessage, fetchUserData, setUser, user, accountOwner } =
+  const { showStatusMessage, fetchUserData, setUser, user } =
     useModalContext();
   const [qty, setQty] = useState(1);
   const [typeOfPurchase, setTypeOfPurchase] = useState(() => {
@@ -189,7 +195,6 @@ export const ProductItemPage = ({ product, index }) => {
 
     setQty(1);
     const updatedUser = await fetchUserData();
-    console.log("Updated cart:", updatedUser);
     setUser((prev) => ({
       ...prev,
       cart: updatedUser.userData?.cart,
@@ -208,14 +213,23 @@ export const ProductItemPage = ({ product, index }) => {
       return;
     }
 
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Product Wait List",
-      null,
-      null,
-      product,
-    );
-    handleSendEmails(emailMessage, contactToEmail, accountOwner);
+    // Signed by the visitor's account owner when they're signed in (server-side).
+    requestEmail("Product Wait List", {
+      ...contactToEmail,
+      productId: product._id,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          showStatusMessage(
+            "error",
+            await emailErrorMessage(
+              response,
+              "We couldn't send your request. Please try again.",
+            ),
+          );
+        }
+      })
+      .catch((error) => console.error("Error sending wait list email:", error));
 
     // Clear form fields after submission
     setName("");
@@ -262,14 +276,14 @@ export const ProductItemPage = ({ product, index }) => {
             }`}
             className='justify-center items-center text-center flex-1'
           >
-            <div className='relative w-full aspect-[4/5] max-w-xs mx-auto'>
+            <div className='relative w-full aspect-4/5 max-w-xs mx-auto'>
               <LCPProductImage
                 src={product.image}
                 alt={`${product.manufacturer} - Model ${product.name}`}
                 title={`${product.manufacturer} ${product.name} ${
                   product.each?.description?.slice(0, 43) || ""
                 }`}
-                containerClassName='relative w-full aspect-[4/5] max-w-xs mx-auto rounded-lg shadow-lg'
+                containerClassName='relative w-full aspect-4/5 max-w-xs mx-auto rounded-lg shadow-lg'
                 className='w-full'
                 width={800}
                 height={1000}
@@ -330,7 +344,7 @@ export const ProductItemPage = ({ product, index }) => {
                 </div>
               )}
             {showModal && (
-              <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+              <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-9999'>
                 <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                   <h2 className='font-bold'>🚫 Sorry, Out of Stock 🚫</h2>
                   <span className='font-bold text-[#0e355e]'>
@@ -483,20 +497,20 @@ export const ProductItemPage = ({ product, index }) => {
                           }}
                         >
                           <div className='relative'>
-                            <Listbox.Button
-                              className={`w-full rounded-md py-1 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]`}
+                            <ListboxButton
+                              className={`w-full rounded-md py-1 pl-3 pr-6 text-base bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]`}
                             >
                               {typeOfPurchase || "Select"}
-                            </Listbox.Button>
+                            </ListboxButton>
                             <BiChevronDown className='w-4 h-4 text-[#0e355e] absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                            <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm'>
+                            <ListboxOptions className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-hidden text-sm'>
                               {availableTypes.map((option) => (
-                                <Listbox.Option
+                                <ListboxOption
                                   key={option}
                                   value={option}
-                                  className={({ active }) =>
+                                  className={({ focus }) =>
                                     `cursor-pointer select-none px-4 py-2 ${
-                                      active ?
+                                      focus ?
                                         "bg-blue-100 text-[#0e355e]"
                                       : "text-gray-900"
                                     }`
@@ -510,9 +524,9 @@ export const ProductItemPage = ({ product, index }) => {
                                       )}
                                     </span>
                                   )}
-                                </Listbox.Option>
+                                </ListboxOption>
                               ))}
-                            </Listbox.Options>
+                            </ListboxOptions>
                           </div>
                         </Listbox>
                       </div>

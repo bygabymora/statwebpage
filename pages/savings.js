@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   FaDollarSign,
-  FaTags,
   FaHandshake,
   FaShieldAlt,
   FaClock,
@@ -16,7 +15,7 @@ import Layout from "../components/main/Layout";
 import Link from "next/link";
 import { BsChevronRight } from "react-icons/bs";
 
-export default function GuaranteedSavings({ isInClearance }) {
+export default function GuaranteedSavings() {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
 
   const breadcrumbs = [
@@ -175,8 +174,8 @@ export default function GuaranteedSavings({ isInClearance }) {
             </h2>
 
             <section className='grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16'>
-              <article className='group p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
-                <div className='bg-gradient-to-r from-[#07783e] to-[#0a9447] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
+              <article className='group p-8 bg-linear-to-br/srgb from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
+                <div className='bg-linear-to-r/srgb from-[#07783e] to-[#0a9447] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
                   <FaDollarSign className='text-3xl text-white' />
                 </div>
                 <h3 className='text-xl font-bold text-[#0e355e] mb-4'>
@@ -197,8 +196,8 @@ export default function GuaranteedSavings({ isInClearance }) {
                 </div>
               </article>
 
-              <article className='group p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
-                <div className='bg-gradient-to-r from-[#0e355e] to-[#1a4971] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
+              <article className='group p-8 bg-linear-to-br/srgb from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
+                <div className='bg-linear-to-r/srgb from-[#0e355e] to-[#1a4971] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
                   <FaHandshake className='text-3xl text-white' />
                 </div>
                 <h3 className='text-xl font-bold text-[#0e355e] mb-4'>
@@ -218,8 +217,8 @@ export default function GuaranteedSavings({ isInClearance }) {
                 </div>
               </article>
 
-              <article className='group p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
-                <div className='bg-gradient-to-r from-[#07783e] to-[#0e355e] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
+              <article className='group p-8 bg-linear-to-br/srgb from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 transform transition duration-300 hover:scale-105 hover:shadow-2xl'>
+                <div className='bg-linear-to-r/srgb from-[#07783e] to-[#0e355e] w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform duration-300'>
                   <FaShieldAlt className='text-3xl text-white' />
                 </div>
                 <h3 className='text-xl font-bold text-[#0e355e] mb-4'>
@@ -241,7 +240,7 @@ export default function GuaranteedSavings({ isInClearance }) {
             </section>
 
             <section className='mt-14 grid grid-cols-1 lg:grid-cols-2 gap-10'>
-              <article className='bg-[#f4f7fb] rounded-xl p-8 shadow'>
+              <article className='bg-[#f4f7fb] rounded-xl p-8 shadow-sm'>
                 <h2 className='text-2xl font-bold text-[#0e355e] mb-3'>
                   When Guaranteed Savings Makes the Biggest Impact
                 </h2>
@@ -269,7 +268,7 @@ export default function GuaranteedSavings({ isInClearance }) {
                 </ul>
               </article>
 
-              <article className='bg-white rounded-xl p-8 shadow border border-[#e0e7ef]'>
+              <article className='bg-white rounded-xl p-8 shadow-sm border border-[#e0e7ef]'>
                 <h2 className='text-2xl font-bold text-[#0e355e] mb-3'>
                   How the Savings Model Works
                 </h2>
@@ -303,30 +302,6 @@ export default function GuaranteedSavings({ isInClearance }) {
               </article>
             </section>
 
-            {isInClearance && (
-              <section className='mt-12'>
-                <div className='p-8 bg-[#e8f5e9] border-2 border-[#07783e] rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105'>
-                  <FaTags className='text-5xl text-[#07783e]' />
-                  <h2 className='text-xl font-bold text-[#0e355e] mt-4'>
-                    Limited-Time Clearance Opportunities
-                  </h2>
-                  <p className='text-[#414b53] text-sm mt-2 text-center max-w-2xl'>
-                    Selected lots and SKUs may qualify for{" "}
-                    <strong>additional clearance discounts</strong> when dating,
-                    packaging format, or remaining quantities align with your
-                    clinical needs. These items move quickly and are available
-                    for a short time only.
-                  </p>
-                  <Link
-                    href='/clearance'
-                    className='mt-4 px-6 py-2 bg-[#07783e] text-white font-bold rounded-lg shadow-md hover:bg-[#065f2d] transition-all duration-300'
-                  >
-                    View Current Deals
-                  </Link>
-                </div>
-              </section>
-            )}
-
             {/* FAQ Section */}
             <section className='mt-16'>
               <div className='text-center mb-12'>
@@ -343,7 +318,7 @@ export default function GuaranteedSavings({ isInClearance }) {
                 {faqData.map((faq, index) => (
                   <div
                     key={index}
-                    className='bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden'
+                    className='bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden'
                   >
                     <button
                       onClick={() => toggleFAQ(index)}
@@ -354,9 +329,9 @@ export default function GuaranteedSavings({ isInClearance }) {
                         {faq.question}
                       </h3>
                       {expandedFAQ === index ? (
-                        <FaChevronUp className='text-[#07783e] flex-shrink-0' />
+                        <FaChevronUp className='text-[#07783e] shrink-0' />
                       ) : (
-                        <FaChevronDown className='text-[#07783e] flex-shrink-0' />
+                        <FaChevronDown className='text-[#07783e] shrink-0' />
                       )}
                     </button>
                     {expandedFAQ === index && (

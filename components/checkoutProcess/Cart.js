@@ -4,74 +4,72 @@ import Link from "next/link";
 import Image from "next/image";
 import { BsCartX, BsTrash3 } from "react-icons/bs";
 import axios from "axios";
-import { Listbox } from "@headlessui/react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import { BiChevronDown, BiCheck } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { useModalContext } from "../context/ModalContext";
-import { MdExpandMore, MdExpandLess } from "react-icons/md";
+import useIsClient from "../../utils/useIsClient";
+
+// What the customer can still order: stock on hand minus units held for
+// placed orders. Held stock itself is internal and never shown.
+function getAvailableStock(countInStock, heldStock) {
+  return Math.max(0, (countInStock || 0) - (heldStock || 0));
+}
 
 const Cart = ({ setActiveStep, order, setOrder }) => {
   const [stockAlert, setStockAlert] = useState(null);
   const { data: session } = useSession();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [showModal, setShowModal] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
-  const [heldStockData, setHeldStockData] = useState({});
-  const [expandedItems, setExpandedItems] = useState({});
-  const [allStockData, setAllStockData] = useState({});
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [stockData, setStockData] = useState({});
   const { setUser, fetchUserData, showStatusMessage, user } = useModalContext();
 
   useEffect(() => {
-    const fetchHeldStockData = async () => {
-      const stockData = {};
-      const allStock = {};
+    const fetchStockData = async () => {
+      const stock = {};
       for (const item of order.orderItems || []) {
         const key = `${item.productId}-${item.typeOfPurchase}`;
         try {
           const { data: product } = await axios.get(
             `/api/products/${item.productId}`,
           );
-          const heldStock =
-            item.typeOfPurchase === "Each" ? (product.each?.heldStock ?? 0)
-            : item.typeOfPurchase === "Box" ? (product.box?.heldStock ?? 0)
+          // Clearance matches the product page: no held stock is taken off it.
+          stock[key] =
+            item.typeOfPurchase === "Each" ?
+              getAvailableStock(
+                product.each?.countInStock,
+                product.each?.heldStock,
+              )
+            : item.typeOfPurchase === "Box" ?
+              getAvailableStock(
+                product.box?.countInStock,
+                product.box?.heldStock,
+              )
             : item.typeOfPurchase === "Clearance" ?
-              (product.each?.heldStock ?? 0)
+              (product.each?.clearanceCountInStock ?? 0)
             : 0;
-          stockData[key] = heldStock;
-          allStock[key] = {
-            each: product.each?.heldStock ?? 0,
-            box: product.box?.heldStock ?? 0,
-            loose: product.loose?.heldStock ?? 0,
-          };
         } catch (error) {
-          console.error("Error fetching held stock:", error);
-          stockData[key] = 0;
-          allStock[key] = { each: 0, box: 0, loose: 0 };
+          // Leave the item out so the cart doesn't show a misleading 0.
+          console.error("Error fetching stock:", error);
         }
       }
-      setHeldStockData(stockData);
-      setAllStockData(allStock);
+      setStockData(stock);
     };
 
     if (mounted && order.orderItems?.length > 0) {
-      fetchHeldStockData();
+      fetchStockData();
     }
   }, [order.orderItems, mounted]);
 
   const removeItemHandler = (item) => {
     setProductToRemove(item);
     setShowModal(true);
-  };
-
-  const toggleExpandStock = (productId, typeOfPurchase) => {
-    const key = `${productId}-${typeOfPurchase}`;
-    setExpandedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
   };
 
   const confirmRemoveItem = async () => {
@@ -208,7 +206,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                 {order.orderItems?.map((item) => (
                   <div
                     key={`${item.productId}-${item.typeOfPurchase}`}
-                    className='border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center md:space-x-4 gap-2 w-full'
+                    className='border rounded-lg p-4 shadow-xs flex flex-col md:flex-row md:items-center md:space-x-4 gap-2 w-full'
                   >
                     {/* Product */}
                     <div className='flex flex-1 items-center  space-x-4 mb-4 md:mb-0 md:flex-1'>
@@ -247,26 +245,26 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                           <span className='font-semibold mr-2 text-sm'>
                             Qty:
                           </span>
-                          <div className='relative w-[90px]'>
+                          <div className='relative w-22.5'>
                             <Listbox
                               value={item.quantity}
                               onChange={(value) =>
                                 updateCartHandler(item, value)
                               }
                             >
-                              <Listbox.Button className='w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0e355e]'>
+                              <ListboxButton className='w-full rounded-md py-1.5 pl-3 pr-6 text-sm bg-white text-left shadow-md border-2 border-[#0e355e] text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]'>
                                 {item.quantity}
-                              </Listbox.Button>
+                              </ListboxButton>
                               <BiChevronDown className='w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none' />
-                              <Listbox.Options className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none text-sm custom-scrollbar'>
+                              <ListboxOptions className='absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-hidden text-sm custom-scrollbar'>
                                 {[...Array(item.countInStock || 0).keys()].map(
                                   (x) => (
-                                    <Listbox.Option
+                                    <ListboxOption
                                       key={x + 1}
                                       value={x + 1}
-                                      className={({ active }) =>
+                                      className={({ focus }) =>
                                         `cursor-pointer select-none px-4 py-2 ${
-                                          active ?
+                                          focus ?
                                             "bg-blue-100 text-[#0e355e]"
                                           : "text-gray-900"
                                         }`
@@ -280,55 +278,29 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                                           )}
                                         </span>
                                       )}
-                                    </Listbox.Option>
+                                    </ListboxOption>
                                   ),
                                 )}
-                              </Listbox.Options>
+                              </ListboxOptions>
                             </Listbox>
                           </div>
                         </div>
 
-                        {/* Held Stock */}
-                        <div className='flex flex-1 flex-col text-sm mt-2'>
-                          <button
-                            onClick={() =>
-                              toggleExpandStock(item.productId, item.typeOfPurchase)
-                            }
-                            className='flex items-center font-semibold text-gray-700 hover:text-[#0e355e] transition'
-                          >
-                            <span className='mr-2'>Stock Levels:</span>
+                        {/* Stock */}
+                        {stockData[`${item.productId}-${item.typeOfPurchase}`] !==
+                          undefined && (
+                          <div className='flex flex-1 items-center mt-2'>
+                            <span className='font-semibold mr-1'>Stock:</span>
                             <span className='text-gray-700'>
-                              {heldStockData[`${item.productId}-${item.typeOfPurchase}`] || 0}{" "}
-                              {item.typeOfPurchase === "Box" ? "boxes" : "units"} held
+                              {
+                                stockData[
+                                  `${item.productId}-${item.typeOfPurchase}`
+                                ]
+                              }{" "}
+                              {item.typeOfPurchase === "Box" ? "boxes" : "units"}
                             </span>
-                            {expandedItems[`${item.productId}-${item.typeOfPurchase}`] ?
-                              <MdExpandLess className='ml-1 h-5 w-5' />
-                            : <MdExpandMore className='ml-1 h-5 w-5' />}
-                          </button>
-
-                          {expandedItems[`${item.productId}-${item.typeOfPurchase}`] && (
-                            <div className='mt-2 pl-4 border-l-2 border-[#0e355e] space-y-1'>
-                              <div className='flex justify-between text-gray-600'>
-                                <span>Unit (each):</span>
-                                <span className='font-semibold'>
-                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.each || 0}
-                                </span>
-                              </div>
-                              <div className='flex justify-between text-gray-600'>
-                                <span>Case (box):</span>
-                                <span className='font-semibold'>
-                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.box || 0}
-                                </span>
-                              </div>
-                              <div className='flex justify-between text-gray-600'>
-                                <span>Loose:</span>
-                                <span className='font-semibold'>
-                                  {allStockData[`${item.productId}-${item.typeOfPurchase}`]?.loose || 0}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                       {/* Price */}
                       <div className='flex-1'>
@@ -357,7 +329,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
                     <div className='flex items-center justify-end md:justify-center'>
                       <button
                         onClick={() => removeItemHandler(item)}
-                        className='p-2 hover:bg-gray-100 rounded'
+                        className='p-2 hover:bg-gray-100 rounded-sm'
                       >
                         <BsTrash3 className='h-5 w-5 text-gray-600' />
                       </button>
@@ -398,7 +370,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             </ul>
           </div>
           {showModal && (
-            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+            <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-9999'>
               <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                 <h2 className='font-bold text-lg'>Confirm Deletion</h2>
                 <p className='text-[#788b9b]'>
@@ -422,7 +394,7 @@ const Cart = ({ setActiveStep, order, setOrder }) => {
             </div>
           )}
           {stockAlert && (
-            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]'>
+            <div className='fixed inset-0 flex items-center justify-center bg-black/50 z-9999'>
               <div className='bg-white p-6 rounded-lg shadow-lg max-w-sm text-center'>
                 <h2 className='font-bold text-lg text-red-600'>Out of Stock</h2>
                 <p className='text-[#414b53] mt-2'>

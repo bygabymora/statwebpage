@@ -25,7 +25,7 @@ export default function GoogleLoginButton({ callbackUrl = "/" }) {
       type='button'
       onClick={handleGoogle}
       disabled={loading}
-      className={`mt-4 w-full flex items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none ${
+      className={`mt-4 w-full flex items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-hidden ${
         loading ? "opacity-70 cursor-not-allowed" : ""
       }`}
       aria-label='Sign in with Google'

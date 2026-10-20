@@ -1,18 +1,21 @@
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createMocks } from "node-mocks-http";
-import handler from "./search"; // The API handler
+import handler from "../../pages/api/search"; // The API handler
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import WpUser from "../../models/WpUser";
 import { getToken } from "next-auth/jwt";
 
 // Mock dependencies
-jest.mock("../../utils/db", () => ({
-  connect: jest.fn(),
-  disconnect: jest.fn(),
+vi.mock("../../utils/db", () => ({
+  default: {
+    connect: vi.fn(),
+    disconnect: vi.fn(),
+  },
 }));
-jest.mock("../../models/Product");
-jest.mock("../../models/WpUser");
-jest.mock("next-auth/jwt");
+vi.mock("../../models/Product");
+vi.mock("../../models/WpUser");
+vi.mock("next-auth/jwt");
 
 // Handler ignores ids that are not valid ObjectIds, so these must be real hex ids.
 const RESTRICTED_USER_ID = "507f1f77bcf86cd799439011";
@@ -23,7 +26,7 @@ describe("/api/search", () => {
 
   beforeEach(() => {
     // Reset mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Default mock product data
     mockProducts = [
@@ -82,12 +85,12 @@ describe("/api/search", () => {
     ];
 
     // Mock Product.find().lean() to return a copy of mockProducts
-    Product.find = jest.fn().mockReturnValue({
-      limit: jest.fn().mockReturnThis(), // Allow chaining .limit()
-      lean: jest.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))), // Return a copy
+    Product.find = vi.fn().mockReturnValue({
+      limit: vi.fn().mockReturnThis(), // Allow chaining .limit()
+      lean: vi.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))), // Return a copy
     });
-    Product.findById = jest.fn().mockReturnValue({
-      lean: jest.fn().mockImplementation((id) => {
+    Product.findById = vi.fn().mockReturnValue({
+      lean: vi.fn().mockImplementation((id) => {
         const product = mockProducts.find((p) => p._id === id);
         return Promise.resolve(product ? { ...product } : null);
       }),
@@ -97,8 +100,8 @@ describe("/api/search", () => {
   // Test Scenario 1: All products returned for restricted users
   test("should return all products for restricted users, regardless of active status", async () => {
     getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
-    WpUser.findById = jest.fn().mockReturnValue({
-      lean: jest
+    WpUser.findById = vi.fn().mockReturnValue({
+      lean: vi
         .fn()
         .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
@@ -122,16 +125,16 @@ describe("/api/search", () => {
   // Test Scenario 2: countInStock adjustment for protected products (restricted user)
   test("should adjust countInStock to 0 for protected products for restricted users", async () => {
     getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
-    WpUser.findById = jest.fn().mockReturnValue({
-      lean: jest
+    WpUser.findById = vi.fn().mockReturnValue({
+      lean: vi
         .fn()
         .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
 
     // Ensure Product.find().lean() returns products with quantities
     Product.find.mockReturnValue({
-      limit: jest.fn().mockReturnThis(),
-      lean: jest.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
     });
 
     const { req, res } = createMocks({
@@ -156,15 +159,15 @@ describe("/api/search", () => {
   // Test Scenario 3: countInStock unchanged for non-protected products (restricted user)
   test("should not change countInStock for non-protected products for restricted users", async () => {
     getToken.mockResolvedValue({ _id: RESTRICTED_USER_ID });
-    WpUser.findById = jest.fn().mockReturnValue({
-      lean: jest
+    WpUser.findById = vi.fn().mockReturnValue({
+      lean: vi
         .fn()
         .mockResolvedValue({ _id: RESTRICTED_USER_ID, restricted: true }),
     });
 
     Product.find.mockReturnValue({
-      limit: jest.fn().mockReturnThis(),
-      lean: jest.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
     });
 
     const { req, res } = createMocks({
@@ -191,15 +194,15 @@ describe("/api/search", () => {
   // Test Scenario 4: countInStock unchanged (non-restricted user)
   test("should not change countInStock for any product for non-restricted users", async () => {
     getToken.mockResolvedValue({ _id: NON_RESTRICTED_USER_ID });
-    WpUser.findById = jest.fn().mockReturnValue({
-      lean: jest
+    WpUser.findById = vi.fn().mockReturnValue({
+      lean: vi
         .fn()
         .mockResolvedValue({ _id: NON_RESTRICTED_USER_ID, restricted: false }), // Non-restricted user
     });
 
     Product.find.mockReturnValue({
-      limit: jest.fn().mockReturnThis(),
-      lean: jest.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(mockProducts.map((p) => ({ ...p }))),
     });
 
     const { req, res } = createMocks({

@@ -118,7 +118,7 @@ const TrackerStepsBarForCustomer = ({
                       showShippingId === parcel._id ? -1 : parcel._id
                     );
                   }}
-                  className='text-[var(--text-color)] text-xl flex items-center justify-center'
+                  className='text-(--text-color) text-xl flex items-center justify-center'
                 >
                   {showShippingId === parcel._id ? <FaEyeSlash /> : <FaEye />}
                 </button>

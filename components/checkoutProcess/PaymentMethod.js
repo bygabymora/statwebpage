@@ -18,6 +18,8 @@ export default function PaymentMethod({
   const [uploading, setUploading] = useState(false);
   const [newFile, setNewFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  // Read once so the expiry check is stable across re-renders.
+  const [now] = useState(() => Date.now());
 
   const taxStatus = useMemo(
     () =>
@@ -36,7 +38,7 @@ export default function PaymentMethod({
     !taxStatus.pending && taxStatus.hasAgency && !taxStatus.customerTaxable;
   const exemptionExpired =
     customer?.exemptionFileExpirationDate &&
-    new Date(customer.exemptionFileExpirationDate) < new Date();
+    new Date(customer.exemptionFileExpirationDate) < now;
   const hasExemptionFileOnFile = Boolean(
     customer?.exemptionFileId && customer?.exemptionFileName,
   );
@@ -218,7 +220,7 @@ export default function PaymentMethod({
                   <label
                     key={method}
                     htmlFor={method}
-                    className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
+                    className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-xs ${
                       selectedMethod === method ?
                         "border-[#03793d] bg-green-50 shadow-md"
                       : "border-gray-300 hover:border-gray-400"
@@ -236,7 +238,7 @@ export default function PaymentMethod({
                         }
                       />
                       <div
-                        className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
+                        className={`ml-4 w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
                           selectedMethod === method ?
                             "border-[#03793d] bg-[#03793d]"
                           : "border-gray-400"
@@ -261,7 +263,7 @@ export default function PaymentMethod({
                   !customer.defaultTerm.includes("Net. 0") && (
                     <label
                       htmlFor='PO Number'
-                      className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
+                      className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-xs ${
                         selectedMethod === "PO Number" ?
                           "border-[#03793d] bg-green-50 shadow-md"
                         : "border-gray-300 hover:border-gray-400"
@@ -279,7 +281,7 @@ export default function PaymentMethod({
                           }
                         />
                         <div
-                          className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
+                          className={`ml-4 w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
                             selectedMethod === "PO Number" ?
                               "border-[#03793d] bg-[#03793d]"
                             : "border-gray-400"
@@ -324,7 +326,7 @@ export default function PaymentMethod({
                         <input
                           id='poNumber'
                           type='text'
-                          className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                          className='w-full px-3 py-2 text-sm text-gray-700 border rounded-sm shadow-sm focus:outline-hidden focus:shadow-outline h-10'
                           value={order.poNumber || ""}
                           onChange={(e) =>
                             handleInputChange("poNumber", e.target.value)
@@ -345,7 +347,7 @@ export default function PaymentMethod({
                           <input
                             id='uploadDoc'
                             type='file'
-                            className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline h-[2.5rem]'
+                            className='w-full px-3 py-2 text-sm text-gray-700 border rounded-sm shadow-sm focus:outline-hidden focus:shadow-outline h-10'
                             onChange={handleFileChange}
                           />
                           {selectedFile ?

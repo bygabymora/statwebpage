@@ -5,35 +5,54 @@ import Layout from "../components/main/Layout";
 import { BiMessageAdd } from "react-icons/bi";
 import { toast } from "react-toastify";
 import { getError } from "../utils/error.js";
-import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
+import requestEmail, {
+  emailErrorMessage,
+} from "../utils/alertSystem/requestEmail";
 import { useModalContext } from "../components/context/ModalContext";
 
 const SearchPage = ({ query }) => {
   const form = useRef();
-  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [phone, setPhone] = useState("");
-  const [searchedWord, setSearchedWord] = useState("");
   const { contact, showStatusMessage } = useModalContext();
+
+  // null until the user types, so the search and the signed-in contact
+  // fill the request form
+  const [typedSearchedWord, setSearchedWord] = useState(null);
+  const [typedName, setName] = useState(null);
+  const [typedEmail, setEmail] = useState(null);
+  const searchedWord = typedSearchedWord ?? query;
+  const name =
+    typedName ??
+    [contact?.firstName, contact?.lastName].filter(Boolean).join(" ");
+  const email = typedEmail ?? (contact?.email || "");
+
+  // A new search starts with its own reference.
+  const [searchedQuery, setSearchedQuery] = useState(query);
+  if (query !== searchedQuery) {
+    setSearchedQuery(query);
+    setSearchedWord(null);
+  }
 
   const tab = <>&nbsp;&nbsp;</>;
 
   useEffect(() => {
+    let ignore = false;
+
     const fetchSearchResults = async () => {
-      const { data } = await axios.get(`/api/search?keyword=${query}`);
-      setProducts(data);
-      if (data.length === 0) {
-        setName(query);
-        setSearchedWord(query);
-      }
+      const { data } = await axios.get("/api/search", {
+        params: { keyword: query },
+      });
+      if (!ignore) setProducts(data);
     };
 
     fetchSearchResults();
+    return () => {
+      ignore = true;
+    };
   }, [query]);
 
   const submitHandler = async (e) => {
@@ -66,29 +85,30 @@ const SearchPage = ({ query }) => {
       return;
     }
 
-    const contactToEmail = {
+    requestEmail("Product Request", {
       name,
       email,
       phone,
       manufacturer,
       quantity,
       searchedWord,
-    };
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Product Request",
       message,
-    );
-
-    handleSendEmails(emailMessage, contactToEmail);
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          showStatusMessage(
+            "error",
+            await emailErrorMessage(
+              response,
+              "Your request was saved, but we couldn't email you a confirmation.",
+            ),
+          );
+        }
+      })
+      .catch((error) =>
+        console.error("Error sending product request email:", error),
+      );
   };
-
-  useEffect(() => {
-    if (contact) {
-      setName(contact.name);
-      setEmail(contact.email);
-    }
-  }, [contact]);
 
   //----------//
 
@@ -135,10 +155,10 @@ const SearchPage = ({ query }) => {
                   autoComplete='off'
                   type='text'
                   placeholder='Please enter the product reference'
-                  name='name'
+                  name='searchedWord'
                   className='contact__form-input'
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
+                  onChange={(e) => setSearchedWord(e.target.value)}
+                  value={searchedWord}
                   required
                 />
               </div>

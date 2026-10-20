@@ -4,7 +4,7 @@ const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-5">
       {!message.warning3 ? (
         <div
           className={`${
@@ -29,7 +29,7 @@ const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message }) => {
               onClick={(e) => {
                 e.preventDefault(), onCancel();
               }}
-              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-300"
+              className="bg-gray-600 text-white py-2 px-4 rounded-sm hover:bg-gray-300"
             >
               Cancel
             </button>
@@ -48,7 +48,7 @@ const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message }) => {
         </div>
       ) : (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5"
+          className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-5"
           onClick={(e) => e.stopPropagation()} // Prevent event bubbling for modal background
         >
           <div
@@ -66,7 +66,7 @@ const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message }) => {
                 onClick={(e) => {
                   e.preventDefault(), onCancel();
                 }}
-                className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-300"
+                className="bg-gray-600 text-white py-2 px-4 rounded-sm hover:bg-gray-300"
               >
                 No, Go Back
               </button>

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/main/Layout";
 import axios from "axios";
 import { useModalContext } from "../components/context/ModalContext";
-import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 
@@ -12,49 +10,17 @@ export default function ForgotPassword() {
   const router = useRouter();
   const { showStatusMessage, startLoading, stopLoading } = useModalContext();
 
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    const { email: emailFromQuery } = router.query;
-    if (emailFromQuery) {
-      setEmail(emailFromQuery);
-    }
-  }, [router.query]);
+  // null until the user types, so the email from the link fills the input
+  const [typedEmail, setEmail] = useState(null);
+  const email = typedEmail ?? (router.query.email || "");
 
   const handleRequestCode = async () => {
     try {
       startLoading();
-      const response = await axios.post("/api/auth/requestResetCode", {
+      // The server emails the code; it is never sent back to the browser.
+      await axios.post("/api/auth/requestResetCode", {
         email: email.trim(),
       });
-
-      console.log("Response from requestResetCode:", response.data);
-
-      const userToUpdate = response.data.user;
-      const resetCode = response.data.resetCode;
-
-      const contactToEmail = {
-        name: userToUpdate.firstName,
-        email: userToUpdate.email,
-      };
-
-      const accountOwner = {
-        name: "Sofía Gómez",
-        email: "sofi@statsurgicalsupply.com",
-        charge: "IT Assistant",
-        phone: "8132520727",
-      };
-
-      const emailmessage = messageManagement(
-        contactToEmail,
-        "Forgot Password",
-        resetCode,
-        null,
-        null,
-        accountOwner
-      );
-
-      handleSendEmails(emailmessage, contactToEmail, accountOwner);
 
       showStatusMessage(
         "success",
@@ -130,7 +96,7 @@ export default function ForgotPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder='your@email.com'
-                  className='w-full px-4 py-3 sm:py-3.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-none transition-all duration-200 bg-white'
+                  className='w-full px-4 py-3 sm:py-3.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#03793d]/40 focus:border-[#03793d] outline-hidden transition-all duration-200 bg-white'
                   autoComplete='email'
                 />
               </div>
@@ -138,7 +104,7 @@ export default function ForgotPassword() {
               <button
                 onClick={handleRequestCode}
                 disabled={!email.trim()}
-                className='w-full py-3 sm:py-3.5 px-4 bg-[#03793d] hover:bg-[#026a35] disabled:bg-gray-300 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#03793d]/40 focus:ring-offset-2'
+                className='w-full py-3 sm:py-3.5 px-4 bg-[#03793d] hover:bg-[#026a35] disabled:bg-gray-300 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-[#03793d]/40 focus:ring-offset-2'
               >
                 Send Reset Instructions
               </button>

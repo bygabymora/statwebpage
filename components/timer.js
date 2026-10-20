@@ -65,6 +65,18 @@ function getNewYorkTime() {
   };
 }
 
+/**
+ * "1 hour and 5 minutes", "40 minutes", "2 hours" — skips zero units so the
+ * copy never reads "0 hours and 40 minutes". Under a minute reads "minute".
+ */
+function formatTimeLeft({ hours, minutes }) {
+  const plural = (n, unit) => `${n} ${unit}${n === 1 ? "" : "s"}`;
+  const parts = [];
+  if (hours > 0) parts.push(plural(hours, "hour"));
+  if (minutes > 0) parts.push(plural(minutes, "minute"));
+  return parts.join(" and ") || "minute";
+}
+
 export default function ShippingCutoffTimer() {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [showTimer, setShowTimer] = useState(false);
@@ -103,13 +115,13 @@ export default function ShippingCutoffTimer() {
   if (!showTimer || !timeRemaining) return null;
 
   return (
-    <section className='w-full min-h-[220px] bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg -mt-2'>
+    <section className='w-full bg-linear-to-r/srgb from-gray-100 via-gray-50 to-gray-100 text-[#0e355e] py-6 px-4 sm:px-6 lg:px-8 shadow-lg -mt-2'>
       <div className='max-w-7xl mx-auto'>
         <div className='flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0'>
           {/* Left Side - Message */}
           <div className='flex items-center space-x-4'>
             <div className='relative'>
-              <ClockIcon className='text-3xl text-[#03793d] animate-pulse drop-shadow-sm' />
+              <ClockIcon className='text-3xl text-[#03793d] animate-pulse drop-shadow-xs' />
               <div className='absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping' />
             </div>
             <div>
@@ -128,7 +140,7 @@ export default function ShippingCutoffTimer() {
               Order within:
             </span>
             <div className='flex items-center space-x-3'>
-              <div className='animate-timer-pulse bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-30 px-4 py-2 rounded-xl text-center min-w-[60px] shadow-lg'>
+              <div className='animate-timer-pulse bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
                 <div className='text-xl font-bold text-[#0e355e]'>
                   {timeRemaining.hours.toString().padStart(2, "0")}
                 </div>
@@ -137,7 +149,7 @@ export default function ShippingCutoffTimer() {
 
               <span className='text-2xl font-bold opacity-60'>:</span>
 
-              <div className='animate-timer-pulse [animation-delay:0.5s] bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-30 px-4 py-2 rounded-xl text-center min-w-[60px] shadow-lg'>
+              <div className='animate-timer-pulse [animation-delay:0.5s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
                 <div className='text-xl font-bold text-[#0e355e]'>
                   {timeRemaining.minutes.toString().padStart(2, "0")}
                 </div>
@@ -146,7 +158,7 @@ export default function ShippingCutoffTimer() {
 
               <span className='text-2xl font-bold opacity-60'>:</span>
 
-              <div className='animate-timer-pulse [animation-delay:1s] bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-30 px-4 py-2 rounded-xl text-center min-w-[60px] shadow-lg'>
+              <div className='animate-timer-pulse [animation-delay:1s] bg-white border border-gray-100 px-4 py-2 rounded-xl text-center min-w-15 shadow-lg'>
                 <div className='text-xl font-bold text-[#0e355e]'>
                   {timeRemaining.seconds.toString().padStart(2, "0")}
                 </div>
@@ -159,8 +171,8 @@ export default function ShippingCutoffTimer() {
           <div className='flex items-center space-x-4'>
             <div className='text-center lg:text-right'>
               <p className='text-sm font-medium mb-1'>Fast &amp; Reliable</p>
-              <div className='flex items-center space-x-2 text-[#03793d]'>
-                <TruckIcon className='text-xl drop-shadow-sm' />
+              <div className='flex items-center justify-center lg:justify-end space-x-2 text-[#03793d]'>
+                <TruckIcon className='text-xl drop-shadow-xs' />
                 <span className='text-sm font-medium'>Overnight Shipping</span>
               </div>
             </div>
@@ -174,14 +186,13 @@ export default function ShippingCutoffTimer() {
         </div>
 
         {/* Bottom Message */}
-        <div className='text-center mt-4 pt-4 border-t border-white border-opacity-20'>
+        <div className='text-center mt-4 pt-4 border-t border-gray-200'>
           <p className='text-sm opacity-90'>
             <span className='font-semibold text-[#03793d]'>
               Want it by tomorrow?
             </span>{" "}
-            Complete your order within the next {timeRemaining.hours} hours and{" "}
-            {timeRemaining.minutes} minutes, then select overnight shipping at
-            checkout.
+            Complete your order within the next {formatTimeLeft(timeRemaining)},
+            then select overnight shipping at checkout.
           </p>
         </div>
       </div>

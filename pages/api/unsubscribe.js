@@ -1,7 +1,9 @@
 import Customer from "../../models/Customer";
 import db from "../../utils/db";
 import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
+import { sendEmailMessage } from "../../utils/alertSystem/sendEmailMessage";
+import { escapeHtml } from "../../utils/alertSystem/escapeHtml";
+import { RATE_LIMITS, enforceRateLimit } from "../../utils/rateLimit";
 
 const handler = async (req, res) => {
   if (req.method !== "POST") {
@@ -10,6 +12,19 @@ const handler = async (req, res) => {
   }
 
   const { action, query, customerId, purchaseExecutiveId } = req.body || {};
+
+  // Open to anyone (from email links), so a limited number of lookups and
+  // unsubscribes per visitor (IP).
+  const rateLimit =
+    action === "search" ? RATE_LIMITS.unsubscribeSearch
+    : action === "unsubscribe" ? RATE_LIMITS.unsubscribe
+    : null;
+  if (
+    rateLimit &&
+    !(await enforceRateLimit(req, res, `unsubscribe:${action}`, rateLimit))
+  ) {
+    return;
+  }
 
   try {
     await db.connect(true);
@@ -126,36 +141,33 @@ const handler = async (req, res) => {
         };
       }
 
-      // Send confirmation email to the user
-      try {
-        const customerContact = {
-          name: unsubscribedContact.name,
-          companyName: unsubscribedContact.companyName,
-          email: unsubscribedContact.email,
-          _id: customer._id,
-        };
+      // Names come from the customer record, so escape them for the HTML.
+      const customerContact = {
+        name: escapeHtml(unsubscribedContact.name),
+        companyName: escapeHtml(unsubscribedContact.companyName),
+        email: unsubscribedContact.email,
+        _id: customer._id,
+      };
 
-        // Send confirmation email to customer
-        const confirmationType =
-          isMainCustomer ? "Unsubscribe" : "Unsubscribe Purchase Executive";
+      // Each email is sent on its own, so a failed confirmation never stops
+      // the admins from hearing about the unsubscribe. Neither failure fails
+      // the unsubscribe itself.
+      try {
+        // The same confirmation fits a main customer and a purchase executive.
         const confirmationMessage = messageManagement(
           customerContact,
-          confirmationType,
+          "Unsubscribe",
           null,
           null,
           null,
           null,
         );
+        await sendEmailMessage(confirmationMessage, customerContact);
+      } catch (emailError) {
+        console.error("Failed to send unsubscribe confirmation:", emailError);
+      }
 
-        await handleSendEmails(confirmationMessage, customerContact);
-
-        // Send notification email to admins
-        const adminEmails = [
-          "sales@statsurgicalsupply.com",
-          "sofi@statsurgicalsupply.com",
-          "gaby@statsurgicalsupply.com",
-        ];
-
+      try {
         const notificationMessage = messageManagement(
           customerContact, // Use customer data for the notification content
           "Unsubscribe Notification",
@@ -165,20 +177,13 @@ const handler = async (req, res) => {
           null,
         );
 
-        // Send notification to each admin
-        for (const adminEmail of adminEmails) {
-          const adminContact = { email: adminEmail };
-          await handleSendEmails(notificationMessage, adminContact);
-        }
-
-        console.log(
-          "Unsubscribe emails sent successfully for:",
-          unsubscribedContact.email,
-          isMainCustomer ? "(Main customer)" : "(Purchase executive)",
-        );
+        // Notify the admins. Every email is also BCC'd to gaby@ and sofi@
+        // (see sendTransactionalEmail), so one send reaches all three.
+        await sendEmailMessage(notificationMessage, {
+          email: "sales@statsurgicalsupply.com",
+        });
       } catch (emailError) {
-        console.error("Failed to send unsubscribe emails:", emailError);
-        // Don't fail the unsubscribe process if email fails
+        console.error("Failed to send unsubscribe notification:", emailError);
       }
 
       return res.status(200).json({

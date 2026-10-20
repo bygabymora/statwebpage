@@ -86,22 +86,23 @@ const Header = () => {
   const handleSearch = async (query = "") => {
     const searchWord = query || searchQuery.trim();
     if (!searchWord) return;
-    try {
-      await axios.post("/api/searched", {
+    // Logging the search must never block it (e.g. when rate-limited).
+    axios
+      .post("/api/searched", {
         searchedWord: searchWord,
         manufacturer: "raw-search",
         name: "raw-search",
         email: "raw-search",
+      })
+      .catch((error) => {
+        console.error(
+          "Error logging the search:",
+          error.response?.data || error.message,
+        );
       });
-      setSearchQuery("");
-      setSuggestions([]);
-      router.push(`/products?query=${encodeURIComponent(searchWord)}`);
-    } catch (error) {
-      console.error(
-        "Error in the search:",
-        error.response?.data || error.message,
-      );
-    }
+    setSearchQuery("");
+    setSuggestions([]);
+    router.push(`/products?query=${encodeURIComponent(searchWord)}`);
   };
 
   const handleKeyDown = (e) => {
@@ -125,7 +126,7 @@ const Header = () => {
             value={searchQuery}
             onChange={handleSearchInputChange}
             onKeyDown={handleKeyDown}
-            className=' bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+            className=' bg-transparent outline-hidden text-gray-700 placeholder-gray-400 text-sm'
             placeholder='Search...'
           />
           <button
@@ -137,7 +138,7 @@ const Header = () => {
           </button>
         </div>
         {suggestions.length > 0 && (
-          <div className='suggestions-list absolute w-[90%] mt-1 overflow-auto max-h-[50vh] bg-white shadow-md bottom-full z-[9999] custom-scrollbar'>
+          <div className='suggestions-list absolute w-[90%] mt-1 overflow-auto max-h-[50vh] bg-white shadow-md bottom-full z-9999 custom-scrollbar'>
             {suggestions.map((product, index) => (
               <div
                 key={index}
@@ -150,11 +151,11 @@ const Header = () => {
           </div>
         )}
       </div>
-      <nav className='md:h-[5rem] md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
-        <div className='flex items-center min-h-[200px]'>
+      <nav className='md:h-20 md:my-5 nav text-center max-w-7xl mx-auto justify-between items-center px-4 '>
+        <div className='flex items-center min-h-50'>
           <button
             onClick={handleHomeClick}
-            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32 min-h-[200px]'
+            className='relative w-14 h-14 md:w-24 md:h-24 lg:w-30 lg:h-32 min-h-50'
           >
             <Image
               src={Logo2}
@@ -174,7 +175,7 @@ const Header = () => {
               value={searchQuery}
               onChange={handleSearchInputChange}
               onKeyDown={handleKeyDown}
-              className='w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm'
+              className='w-full bg-transparent outline-hidden text-gray-700 placeholder-gray-400 text-sm'
               placeholder='Search...'
             />
             <button
@@ -186,7 +187,7 @@ const Header = () => {
             </button>
           </div>
           {suggestions.length > 0 && (
-            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-[9999] max-h-[50vh] overflow-auto custom-scrollbar'>
+            <div className='suggestions-list absolute w-full mt-1 bg-white shadow-md top-full z-9999 max-h-[50vh] overflow-auto custom-scrollbar'>
               {suggestions.map((product, index) => (
                 <div
                   key={index}

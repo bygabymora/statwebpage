@@ -7,11 +7,13 @@ import Layout from "../components/main/Layout";
 import { Store } from "../utils/Store";
 
 export default function PaymentScreen() {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const { shippingAddress, paymentMethod } = cart;
+
+  // null until the user picks one, so the saved method stays selected
+  const [pickedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const selectedPaymentMethod = pickedPaymentMethod ?? (paymentMethod || "");
 
   const router = useRouter();
 
@@ -36,8 +38,7 @@ export default function PaymentScreen() {
     if (!shippingAddress.address) {
       router.push("/shipping");
     }
-    setSelectedPaymentMethod(paymentMethod || "");
-  }, [paymentMethod, router, shippingAddress.address]);
+  }, [router, shippingAddress.address]);
 
   return (
     <Layout title='Payment Method'>
@@ -56,7 +57,7 @@ export default function PaymentScreen() {
             <label
               key={method}
               htmlFor={method}
-              className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${
+              className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all shadow-xs ${
                 selectedPaymentMethod === method
                   ? "border-[#03793d] bg-green-50 shadow-md"
                   : "border-gray-300 hover:border-gray-400"
@@ -73,7 +74,7 @@ export default function PaymentScreen() {
                   onChange={() => setSelectedPaymentMethod(method)}
                 />
                 <div
-                  className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
+                  className={`ml-4 w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all ${
                     selectedPaymentMethod === method
                       ? "border-[#03793d] bg-[#03793d]"
                       : "border-gray-400"
@@ -92,7 +93,7 @@ export default function PaymentScreen() {
             </label>
           ))}
 
-          <div className='mt-6 flex justify-between'>
+          <div className='flex justify-between'>
             <button
               type='button'
               className='px-6 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-200 transition-all'

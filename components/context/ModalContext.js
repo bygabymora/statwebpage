@@ -14,6 +14,8 @@ import Loading from "../main/Loading";
 const ModalContext = createContext();
 export const useModalContext = () => useContext(ModalContext);
 
+const NO_CONTACT = {};
+
 export const ModalProvider = ({ children }) => {
   const { data: session } = useSession();
   const [isVisible, setIsVisible] = useState(false);
@@ -23,7 +25,7 @@ export const ModalProvider = ({ children }) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [alertAction, setAlertAction] = useState(null);
   const [modalMessage, setModalMessage] = useState({});
-  const [contact, setContact] = useState({});
+  const contact = session?.user || NO_CONTACT;
   const [confirmAction, setConfirmAction] = useState(null);
   const [hasSeenModal, setHasSeenModal] = useState(false);
   const [user, setUser] = useState({});
@@ -33,21 +35,6 @@ export const ModalProvider = ({ children }) => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [customer, setCustomer] = useState({});
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      if (session?.user) {
-        setContact(session.user);
-        const { userData, customerData, accountOwner } = await fetchUserData();
-        setUser(userData);
-        setCustomer(customerData);
-        setAccountOwner(accountOwner || null);
-        setHasSeenModal(false); // Reset the state of the modal when the session changes
-        console.log("accountOwner", accountOwner);
-      }
-    };
-    loadUserData();
-  }, [session]);
-
   const fetchUserData = async () => {
     const response = await axios.get(`/api/users/${session?.user?._id}`);
     const userData = response.data.wpUser;
@@ -55,6 +42,19 @@ export const ModalProvider = ({ children }) => {
     const accountOwner = response.data.accountOwner;
     return { userData, customerData, accountOwner };
   };
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (session?.user) {
+        const { userData, customerData, accountOwner } = await fetchUserData();
+        setUser(userData);
+        setCustomer(customerData);
+        setAccountOwner(accountOwner || null);
+        setHasSeenModal(false); // Reset the state of the modal when the session changes
+      }
+    };
+    loadUserData();
+  }, [session]);
 
   const openAlertModal = (message, action) => {
     if (!hasSeenModal) {

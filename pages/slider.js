@@ -126,7 +126,7 @@ export default function BenefitsSection() {
               </p>
               <Link
                 href={benefit.link}
-                className='inline-block mt-3 text-[#03793d] font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-[#03793d] focus:ring-opacity-50 rounded'
+                className='inline-block mt-3 text-[#03793d] font-medium hover:underline focus:outline-hidden focus:ring-2 focus:ring-[#03793d]/50 rounded-sm'
                 aria-label={benefit.ariaLabel}
                 title={`Learn more about ${benefit.title.toLowerCase()}`}
                 itemProp='url'

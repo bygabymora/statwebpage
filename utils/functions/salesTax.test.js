@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   SHIPPING_TAX_CLASSIFICATION_CODE,
   TAX_TREATMENT,
@@ -172,6 +173,17 @@ describe("determineOrderTaxStatus", () => {
 
     expect(result.pending).toBe(false);
     expect(result.hasAgency).toBe(false);
+  });
+
+  it("never flags Florida orders", () => {
+    const result = determineOrderTaxStatus({
+      orderItems: [item()],
+      shippingAddress: { state: "FL" },
+      customer: { taxable: true },
+    });
+
+    expect(result.pending).toBe(false);
+    expect(result.taxableItemCount).toBe(0);
   });
 
   it("does not flag a tax-exempt customer", () => {

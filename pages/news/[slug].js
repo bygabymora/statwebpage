@@ -80,7 +80,7 @@ export default function Newscreen({
       nodes.push(
         <div
           key={`${idx}-body-image`}
-          className={`mb-6 w-full max-w-[14rem] mx-auto sm:w-72 sm:max-w-none sm:mx-0 ${bodyImage.float === "right" ? "sm:float-right sm:ml-5" : "sm:float-left sm:mr-5"}`}
+          className={`mb-6 w-full max-w-56 mx-auto sm:w-72 sm:max-w-none sm:mx-0 ${bodyImage.float === "right" ? "sm:float-right sm:ml-5" : "sm:float-left sm:mr-5"}`}
         >
           <Image
             src={bodyImage.url}
@@ -166,7 +166,7 @@ export default function Newscreen({
       }
     >
       <div
-        className='fixed top-0 left-0 h-1 bg-gradient-to-r from-[#0e355e] to-[#67b7dc] z-50'
+        className='fixed top-0 left-0 h-1 bg-linear-to-r/srgb from-[#0e355e] to-[#67b7dc] z-50'
         style={{ width: `${scrollProgress}%` }}
       />
 

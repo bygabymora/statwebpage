@@ -3,8 +3,7 @@ import { BiMessageAdd } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "../components/main/Layout";
 import { useModalContext } from "../components/context/ModalContext";
-import handleSendEmails from "../utils/alertSystem/documentRelatedEmail";
-import { messageManagement } from "../utils/alertSystem/customers/messageManagement";
+import requestEmail, { emailErrorMessage } from "../utils/alertSystem/requestEmail";
 import { BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import ReCaptchaV2Checkbox from "../components/recaptcha/ReCaptchaV2Checkbox";
@@ -20,7 +19,6 @@ export default function ManufacturerForm() {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    const contactToEmail = { name, email, emailManufacturer, productName };
 
     if (!name || !email || !emailManufacturer || !productName) {
       showStatusMessage("error", "Please fill all the fields");
@@ -35,11 +33,32 @@ export default function ManufacturerForm() {
       return;
     }
 
-    const emailMessage = messageManagement(
-      "Product Manufacturer",
-      contactToEmail
-    );
-    handleSendEmails(emailMessage, contactToEmail);
+    requestEmail("Product Manufacturer", {
+      name,
+      email,
+      emailManufacturer,
+      productName,
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          showStatusMessage("success", "Request sent successfully");
+          return;
+        }
+        showStatusMessage(
+          "error",
+          await emailErrorMessage(
+            response,
+            "There was a problem sending your request. Please try again."
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error sending manufacturer request email:", error);
+        showStatusMessage(
+          "error",
+          "There was a problem sending your request. Please try again."
+        );
+      });
 
     setName("");
     setEmail("");
@@ -96,7 +115,7 @@ export default function ManufacturerForm() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className='w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]'
+              className='w-full p-3 border rounded-lg outline-hidden focus:ring-2 focus:ring-[#144e8b]'
             />
           </div>
           <div>
@@ -107,7 +126,7 @@ export default function ManufacturerForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className='w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]'
+              className='w-full p-3 border rounded-lg outline-hidden focus:ring-2 focus:ring-[#144e8b]'
             />
           </div>
           <div>
@@ -118,7 +137,7 @@ export default function ManufacturerForm() {
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               required
-              className='w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]'
+              className='w-full p-3 border rounded-lg outline-hidden focus:ring-2 focus:ring-[#144e8b]'
             />
           </div>
           <div>
@@ -129,10 +148,10 @@ export default function ManufacturerForm() {
               value={emailManufacturer}
               onChange={(e) => setEmailManufacturer(e.target.value)}
               required
-              className='w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-[#144e8b]'
+              className='w-full p-3 border rounded-lg outline-hidden focus:ring-2 focus:ring-[#144e8b]'
             />
           </div>
-          <div className='mb-4'>
+          <div>
             <ReCaptchaV2Checkbox
               id='recaptcha-v2-manufacturer-form'
               onChange={setCaptchaToken}

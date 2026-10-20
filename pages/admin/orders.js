@@ -211,16 +211,16 @@ export default function AdminOrderScreen() {
 
   return (
     <Layout title='Admin Orders'>
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -307,14 +307,14 @@ export default function AdminOrderScreen() {
                 return (
                   <div
                     key={order?._id}
-                    className={`bg-white shadow-sm rounded-lg p-3 border transition-all duration-200 ${
+                    className={`shadow-xs rounded-lg p-3 border transition-all duration-200 ${
                       progress.highlight ?
                         "border-l-4 border-l-amber-500 bg-amber-50/50 border-amber-100"
-                      : "border-gray-100 hover:shadow-md"
+                      : "bg-white border-gray-100 hover:shadow-md"
                     }`}
                   >
                     <div className='flex items-start gap-3 mb-3'>
-                      <div className='w-10 h-10 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white shadow-md flex-shrink-0'>
+                      <div className='w-10 h-10 bg-linear-to-br/srgb from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white shadow-md shrink-0'>
                         <FaBox className='w-4 h-4' />
                       </div>
                       <div className='min-w-0 flex-1'>
@@ -375,7 +375,7 @@ export default function AdminOrderScreen() {
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto'>
                 <div className='min-w-full' style={{ minWidth: "800px" }}>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-2 px-4 py-3 items-center text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                       <div className='col-span-2'>Order</div>
                       <div className='col-span-2'>Customer</div>
@@ -410,7 +410,7 @@ export default function AdminOrderScreen() {
                           }`}
                         >
                           <div className='col-span-2 flex items-center gap-3'>
-                            <div className='w-9 h-9 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white flex-shrink-0'>
+                            <div className='w-9 h-9 bg-linear-to-br/srgb from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white shrink-0'>
                               <FaBox className='w-4 h-4' />
                             </div>
                             <div>

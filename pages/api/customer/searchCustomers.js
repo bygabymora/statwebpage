@@ -63,7 +63,6 @@ function buildFlexibleMatchQuery(keyword) {
 export default async function handler(req, res) {
   try {
     await db.connect(true);
-    console.log("Database connected successfully");
   } catch (error) {
     console.error("Database connection failed:", error);
     return res

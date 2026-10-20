@@ -18,6 +18,17 @@ const ToastContainer = dynamic(
   { ssr: false },
 );
 
+// gtag.js expects the real `arguments` object, not an array.
+function gtag() {
+  window.dataLayer.push(arguments);
+}
+
+function initGoogleAdsTag() {
+  window.dataLayer = window.dataLayer || [];
+  gtag("js", new Date());
+  gtag("config", "AW-11333627655");
+}
+
 export default function Layout({
   children,
   title,
@@ -405,15 +416,7 @@ export default function Layout({
       <Script
         src='https://www.googletagmanager.com/gtag/js?id=AW-11333627655'
         strategy='worker'
-        onLoad={() => {
-          window.dataLayer = window.dataLayer || [];
-          function gtag() {
-            // eslint-disable-next-line no-undef
-            dataLayer.push(arguments);
-          }
-          gtag("js", new Date());
-          gtag("config", "AW-11333627655");
-        }}
+        onLoad={initGoogleAdsTag}
       />
 
       {typeof window !== "undefined" && (
@@ -422,7 +425,7 @@ export default function Layout({
       <div className='flex min-h-screen flex-col justify-between'>
         <Header />
         <main
-          className='main m-auto mt-0 md:mt-[8rem] lg:mt-[12rem] max-w-[1400px] px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
+          className='main m-auto mt-0 md:mt-32 lg:mt-48 max-w-350 px-4 pt-3 md:pt-4 lg:pt-6 min-h-[30vh] w-full'
           key={router.asPath}
         >
           {children}

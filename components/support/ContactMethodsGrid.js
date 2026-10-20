@@ -24,7 +24,7 @@ export default function ContactMethodsGrid() {
         {/* Phone Support */}
         <div className='bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 group'>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#144e8b] to-[#0e355e] rounded-full mb-4 group-hover:scale-110 transition-transform'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-linear-to-br/srgb from-[#144e8b] to-[#0e355e] rounded-full mb-4 group-hover:scale-110 transition-transform'>
               <BsTelephone className='text-2xl text-white' />
             </div>
             <h3 className='font-bold text-[#144e8b] text-lg mb-2'>
@@ -50,7 +50,7 @@ export default function ContactMethodsGrid() {
         {/* Email Support */}
         <div className='bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 group'>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#07783e] to-[#065a2f] rounded-full mb-4 group-hover:scale-110 transition-transform'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-linear-to-br/srgb from-[#07783e] to-[#065a2f] rounded-full mb-4 group-hover:scale-110 transition-transform'>
               <BsEnvelope className='text-2xl text-white' />
             </div>
             <h3 className='font-bold text-[#144e8b] text-lg mb-2'>
@@ -76,7 +76,7 @@ export default function ContactMethodsGrid() {
         {/* Visit Us */}
         <div className='bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 group'>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#dc3545] to-[#b02a37] rounded-full mb-4 group-hover:scale-110 transition-transform'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-linear-to-br/srgb from-[#dc3545] to-[#b02a37] rounded-full mb-4 group-hover:scale-110 transition-transform'>
               <BsGeoAlt className='text-2xl text-white' />
             </div>
             <h3 className='font-bold text-[#144e8b] text-lg mb-2'>
@@ -100,7 +100,7 @@ export default function ContactMethodsGrid() {
         {/* 24/7 Resources */}
         <div className='bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 group'>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#ffc107] to-[#e0a800] rounded-full mb-4 group-hover:scale-110 transition-transform'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-linear-to-br/srgb from-[#ffc107] to-[#e0a800] rounded-full mb-4 group-hover:scale-110 transition-transform'>
               <FaQuestionCircle className='text-2xl text-white' />
             </div>
             <h3 className='font-bold text-[#144e8b] text-lg mb-2'>

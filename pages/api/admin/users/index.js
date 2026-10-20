@@ -21,14 +21,10 @@ const handler = async (req, res) => {
 
   // Force fresh query with read concern for latest data
   const users = await WpUser.find({})
+    .select("-password -resetCode") // never sent to the browser
     .lean() // Better performance
     .read("primary") // Read from primary replica
     .maxTimeMS(10000); // 10 second timeout
-
-  // Debug logging to track data freshness
-  console.log(
-    `[${new Date().toISOString()}] Fetched ${users.length} users from database`,
-  );
 
   res.send(users);
 };

@@ -6,8 +6,7 @@ import Layout from "../../../components/main/Layout";
 import { getError } from "../../../utils/error";
 import CustomerLinking from "../../../components/users/CustomerLinking";
 import { useModalContext } from "../../../components/context/ModalContext";
-import { messageManagement } from "../../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../../utils/alertSystem/documentRelatedEmail";
+import requestEmail from "../../../utils/alertSystem/requestEmail";
 import { RiLoopLeftFill } from "react-icons/ri";
 
 function reducer(state, action) {
@@ -29,45 +28,58 @@ function reducer(state, action) {
   }
 }
 
+const requestUserData = async (userId) => {
+  const { data } = await axios.get(`/api/admin/users/${userId}`);
+  return data;
+};
+
 export default function AdminUserEditScreen() {
   const { showStatusMessage } = useModalContext();
   const { query } = useRouter();
   const [wpUser, setWpUser] = useState();
   const [wpCustomer, setWpCustomer] = useState();
-  const [wpAccountOwner, setWpAccountOwner] = useState();
   const userId = query.id;
   const [{ loading, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
   });
 
+  const showUserData = (data) => {
+    dispatch({ type: "FETCH_SUCCESS" });
+    setWpUser(data.wpUser);
+    setWpCustomer(data.customer);
+  };
+
+  const showFetchError = (error) => {
+    console.error("Fetch data error:", error);
+    dispatch({ type: "FETCH_FAIL", payload: getError(error) });
+  };
+
   const fetchData = async () => {
     try {
       dispatch({ type: "FETCH_REQUEST" });
-      const response = await axios.get(`/api/admin/users/${userId}`);
-      const userInDB = response.data.wpUser;
-      const customerInDB = response.data.customer;
-      const accountOwnerInDB = response.data.accountOwner;
-
-      // Add console logging to debug state synchronization issues
-      console.log("Fetched user data:", {
-        approved: userInDB?.approved,
-        active: userInDB?.active,
-        userId: userInDB?._id,
-      });
-
-      dispatch({ type: "FETCH_SUCCESS" });
-      setWpUser(userInDB);
-      setWpCustomer(customerInDB);
-      setWpAccountOwner(accountOwnerInDB);
+      showUserData(await requestUserData(userId));
     } catch (error) {
-      console.error("Fetch data error:", error);
-      dispatch({ type: "FETCH_FAIL", payload: getError(error) });
+      showFetchError(error);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    // The id is undefined until the router is ready.
+    if (!userId) return;
+    let ignore = false;
+
+    requestUserData(userId)
+      .then((data) => {
+        if (!ignore) showUserData(data);
+      })
+      .catch((error) => {
+        if (!ignore) showFetchError(error);
+      });
+
+    return () => {
+      ignore = true;
+    };
   }, [userId]);
 
   const router = useRouter();
@@ -98,23 +110,8 @@ export default function AdminUserEditScreen() {
     }
   };
 
-  const handleRefresh = async () => {
-    try {
-      dispatch({ type: "FETCH_REQUEST" });
-      const { data } = await axios.get(`/api/admin/users?t=${Date.now()}`, {
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      });
-      console.log(
-        `Manual refresh: ${data.length} users at ${new Date().toISOString()}`,
-      );
-      dispatch({ type: "FETCH_SUCCESS", payload: data });
-    } catch (err) {
-      dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-    }
-  };
+  // Reloads this user, their customer and account owner.
+  const handleRefresh = fetchData;
 
   const links = [
     { href: "/admin/dashboard", label: "Dashboard" },
@@ -125,22 +122,8 @@ export default function AdminUserEditScreen() {
   ];
 
   const handleInputChange = (field, value) => {
-    console.log("Input change:", { field, value, currentUser: wpUser?._id });
     setWpUser({ ...wpUser, [field]: value });
   };
-
-  // Add effect to monitor state inconsistencies
-  useEffect(() => {
-    if (wpUser) {
-      console.log("Current wpUser state:", {
-        _id: wpUser._id,
-        approved: wpUser.approved,
-        active: wpUser.active,
-        firstName: wpUser.firstName,
-        lastName: wpUser.lastName,
-      });
-    }
-  }, [wpUser]);
 
   const sendApprovalEmail = async () => {
     try {
@@ -149,24 +132,12 @@ export default function AdminUserEditScreen() {
         return;
       }
 
-      const contactToEmail = {
+      // Signed by the customer's account owner (looked up server-side).
+      const emailResponse = await requestEmail("Registration approved", {
+        userId: wpUser._id,
         name: wpUser.firstName || "Customer",
         email: wpUser.email,
-      };
-      const emailmessage = messageManagement(
-        contactToEmail,
-        "Registration approved",
-        null,
-        null,
-        null,
-        wpAccountOwner,
-      );
-
-      const emailResponse = await handleSendEmails(
-        emailmessage,
-        contactToEmail,
-        wpAccountOwner,
-      );
+      });
 
       if (!emailResponse?.ok) {
         const errorPayload = await emailResponse?.json?.();
@@ -209,7 +180,7 @@ export default function AdminUserEditScreen() {
         <div className='md:flex md:justify-center px-4 md:px-0'>
           <ul className='flex md:flex-col overflow-x-auto md:overflow-x-visible space-x-2 md:space-x-0 md:space-y-4 my-3 text-sm md:text-base lg:text-lg w-full md:w-auto pb-2 md:pb-0'>
             {links.map(({ href, label, isBold }) => (
-              <li key={href} className='flex-shrink-0 md:w-full'>
+              <li key={href} className='shrink-0 md:w-full'>
                 <Link
                   href={href}
                   className={`flex items-center justify-center py-2 px-3 md:px-2 bg-white rounded-2xl shadow-md hover:bg-gray-100 transition whitespace-nowrap ${
@@ -224,7 +195,7 @@ export default function AdminUserEditScreen() {
         </div>
 
         <div className='md:col-span-3 p-4 md:p-6'>
-          <div className='mb-4 sticky top-[8rem] bg-white z-10 pb-4'>
+          <div className='mb-4 sticky top-32 bg-white z-10 pb-4'>
             <h1 className='text-lg md:text-xl mb-3 md:mb-0 truncate'>
               {`Edit User ${wpUser?.firstName} ${wpUser?.lastName}`}
             </h1>
@@ -233,14 +204,14 @@ export default function AdminUserEditScreen() {
               <div className='flex flex-wrap gap-2'>
                 <button
                   disabled={loadingUpdate}
-                  className='primary-button flex-1 min-w-[80px] text-sm'
+                  className='primary-button flex-1 min-w-20 text-sm'
                   onClick={submitHandler}
                 >
                   {loadingUpdate ? "Loading" : "Update"}
                 </button>
                 <button
                   onClick={() => router.push(`/admin/users`)}
-                  className='primary-button flex-1 min-w-[80px] text-sm'
+                  className='primary-button flex-1 min-w-20 text-sm'
                 >
                   Back
                 </button>
@@ -249,7 +220,7 @@ export default function AdminUserEditScreen() {
                 <button
                   onClick={handleRefresh}
                   disabled={loading}
-                  className='flex items-center justify-center gap-2 text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded transition-colors font-medium flex-1 min-w-[100px]'
+                  className='flex items-center justify-center gap-2 text-sm bg-[#0e355e] hover:bg-[#144e8b] disabled:bg-gray-400 text-white px-3 py-2 rounded-sm transition-colors font-medium flex-1 min-w-25'
                 >
                   <RiLoopLeftFill
                     className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
@@ -262,7 +233,7 @@ export default function AdminUserEditScreen() {
                     e.preventDefault();
                     sendApprovalEmail();
                   }}
-                  className='primary-button flex-1 min-w-[120px] text-sm'
+                  className='primary-button flex-1 min-w-30 text-sm'
                 >
                   Send Approval
                 </button>
@@ -372,7 +343,7 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("firstName", e.target.value)
                   }
-                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
+                  className='w-full px-3 py-3 md:py-2 border rounded-sm text-base md:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
               <div className='mb-2'>
@@ -386,7 +357,7 @@ export default function AdminUserEditScreen() {
                   onChange={(e) =>
                     handleInputChange("lastName", e.target.value)
                   }
-                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
+                  className='w-full px-3 py-3 md:py-2 border rounded-sm text-base md:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
               <div className='mb-2 md:col-span-2'>
@@ -398,7 +369,7 @@ export default function AdminUserEditScreen() {
                   type='email'
                   value={wpUser?.email || ""}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className='w-full px-3 py-3 md:py-2 border rounded text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
+                  className='w-full px-3 py-3 md:py-2 border rounded-sm text-base md:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation'
                 />
               </div>
             </div>
@@ -412,7 +383,7 @@ export default function AdminUserEditScreen() {
           />
         </div>
       </div>
-      <div className='fixed z-[9999] bg-gray bg-opacity-50'></div>
+      <div className='fixed z-9999 bg-gray bg-opacity-50'></div>
     </Layout>
   );
 }

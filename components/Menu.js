@@ -63,29 +63,34 @@ const Menu = () => {
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
   const router = useRouter();
 
-  const fetchManufacturers = async () => {
-    try {
-      const { data } = await axios.get(`/api/products`);
-      const manufacturersSet = new Set();
-
-      data.forEach((product) => {
-        if (product.manufacturer) {
-          manufacturersSet.add(product.manufacturer.trim());
-        }
-      });
-      const manufacturersArray = [...manufacturersSet];
-      manufacturersArray.sort((a, b) => a.localeCompare(b)); // Alphabetic order
-      setManufacturers(manufacturersArray);
-    } catch (error) {
-      console.error(
-        "Error fetching manufacturers:",
-        error.response ? error.response.data : error.message,
-      );
-    }
-  };
-
   useEffect(() => {
+    let ignore = false;
+
+    const fetchManufacturers = async () => {
+      try {
+        const { data } = await axios.get(`/api/products`);
+        const manufacturersSet = new Set();
+
+        data.forEach((product) => {
+          if (product.manufacturer) {
+            manufacturersSet.add(product.manufacturer.trim());
+          }
+        });
+        const manufacturersArray = [...manufacturersSet];
+        manufacturersArray.sort((a, b) => a.localeCompare(b)); // Alphabetic order
+        if (!ignore) setManufacturers(manufacturersArray);
+      } catch (error) {
+        console.error(
+          "Error fetching manufacturers:",
+          error.response ? error.response.data : error.message,
+        );
+      }
+    };
+
     fetchManufacturers();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handleManufacturerClick = (manufacturer) => {
@@ -135,7 +140,7 @@ const Menu = () => {
   });
 
   return (
-    <nav className='bg-gray-100 shadow w-full hidden md:block'>
+    <nav className='bg-gray-100 shadow-sm w-full hidden md:block'>
       <ul className='flex justify-center space-x-6 py-1 text-[#0e355e] font-medium text-sm lg:text-base'>
         {updatedMenuItems.map((item, index) => (
           <li

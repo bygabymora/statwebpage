@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 const StatusMessage = ({ type, message, isVisible }) => {
   if (!isVisible) return null;
@@ -12,20 +11,13 @@ const StatusMessage = ({ type, message, isVisible }) => {
   return (
     <div
       className={`fixed ${bgColor} ${borderColor} ${textColor} px-1 rounded z-50
-        left-[0.5rem] top-[80%] h-[2rem] w-auto flex items-center justify-center transform -rotate-90 origin-top-left
-        overflow-visible md:top-[0] md:right-2 md:w-full md:h-[2.5rem] md:rotate-0 md:text-base`}
+        left-2 top-[80%] h-8 w-auto flex items-center justify-center transform -rotate-90 origin-top-left
+        overflow-visible md:top-0 md:right-2 md:w-full md:h-10 md:rotate-0 md:text-base`}
       role='alert'
     >
       <span className='block text-center'>{message}</span>
-      {console.log("StatusMessage", type, message)}
     </div>
   );
-};
-
-StatusMessage.propTypes = {
-  message: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  isVisible: PropTypes.bool.isRequired,
 };
 
 export default StatusMessage;

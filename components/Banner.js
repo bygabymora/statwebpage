@@ -148,7 +148,7 @@ const Banner = () => {
                 title='Shop Premium Surgical Supplies - Fast Delivery Available'
               >
                 <button
-                  className='w-full sm:w-auto bg-[#03793d] text-white px-6 py-3 rounded shadow-md hover:bg-green-700 transition-all flex items-center justify-center gap-3'
+                  className='w-full sm:w-auto bg-[#03793d] text-white px-6 py-3 rounded-sm shadow-md hover:bg-green-700 transition-all flex items-center justify-center gap-3'
                   type='button'
                   aria-label='Shop surgical supplies'
                 >
@@ -164,7 +164,7 @@ const Banner = () => {
                 title='Get Expert Consultation - Free Quotes Available'
               >
                 <button
-                  className='w-full sm:w-auto border border-[#03793d] text-[#03793d] px-6 py-3 rounded shadow-md hover:bg-[#03793d] hover:text-white transition-all flex items-center justify-center gap-3'
+                  className='w-full sm:w-auto border border-[#03793d] text-[#03793d] px-6 py-3 rounded-sm shadow-md hover:bg-[#03793d] hover:text-white transition-all flex items-center justify-center gap-3'
                   type='button'
                   aria-label='Contact our surgical supply experts'
                 >
@@ -176,7 +176,7 @@ const Banner = () => {
           </header>
 
           <figure
-            className='relative w-full max-w-[500px] aspect-[1/1] mx-auto'
+            className='relative w-full max-w-125 aspect-square mx-auto'
             role='img'
             aria-label='Showcase of premium Surgical Supplies'
           >
@@ -190,7 +190,7 @@ const Banner = () => {
               return (
                 <div
                   key={index}
-                  className='absolute inset-0 transition-opacity duration-[1500ms] ease-in-out'
+                  className='absolute inset-0 transition-opacity duration-1500 ease-in-out'
                   style={{
                     opacity: index === currentBanner ? 1 : 0,
                     pointerEvents: index === currentBanner ? "auto" : "none",

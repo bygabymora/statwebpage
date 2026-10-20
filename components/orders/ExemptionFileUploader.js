@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useModalContext } from "../context/ModalContext";
-import { messageManagement } from "../../utils/alertSystem/customers/messageManagement";
-import handleSendEmails from "../../utils/alertSystem/documentRelatedEmail";
-
-const ACCOUNTING_EMAIL = "accounting@statsurgicalsupply.com";
+import requestEmail from "../../utils/alertSystem/requestEmail";
 
 const fileToBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -17,7 +14,6 @@ const ExemptionFileUploader = ({
   customer,
   setCustomer,
   order,
-  user,
   allowReupload = false,
 }) => {
   const { showStatusMessage } = useModalContext();
@@ -32,35 +28,21 @@ const ExemptionFileUploader = ({
     setSelectedFile(e.target.files[0]);
   };
 
+  // The server emails accounting (copying the account owner) with the
+  // certificate attached; the uploader's details come from their session.
   const notifyAccounting = async (fileName, base64Content, mimeType) => {
-    const contactToEmail = { name: "Accounting", email: ACCOUNTING_EMAIL };
-    const emailMessage = messageManagement(
-      contactToEmail,
-      "Exemption File Uploaded",
-      null,
-      null,
-      {
-        companyName: customer?.companyName,
-        orderDocNumber: order?.docNumber,
-        uploadedByName:
-          [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
-          customer?.companyName,
-        uploadedByEmail: user?.email,
-        fileName,
-      },
-    );
-
-    await handleSendEmails(
-      emailMessage,
-      contactToEmail,
-      null,
-      {
+    const response = await requestEmail("Exemption File Uploaded", {
+      customerId: customer?._id,
+      orderId: order?._id,
+      attachment: {
         type: mimeType,
         name: fileName,
         content: base64Content,
       },
-      customer?.user?.email,
-    );
+    });
+    if (!response.ok) {
+      throw new Error(`Accounting email failed (${response.status})`);
+    }
   };
 
   const handleUpload = async () => {
@@ -157,7 +139,7 @@ const ExemptionFileUploader = ({
               autoComplete='off'
               type='file'
               onChange={handleFileChange}
-              className='w-full px-3 py-2 text-sm text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline h-[2.5rem]'
+              className='w-full px-3 py-2 text-sm text-gray-700 border rounded-sm shadow-sm appearance-none focus:outline-hidden focus:shadow-outline h-10'
             />
             <button
               type='button'

@@ -1,11 +1,21 @@
 import bcryptjs from "bcryptjs";
 import WpUser from "../../../models/WpUser";
 import db from "../../../utils/db";
+import { messageManagement } from "../../../utils/alertSystem/customers/messageManagement";
+import { sendEmailMessage } from "../../../utils/alertSystem/sendEmailMessage";
+import { escapeHtml } from "../../../utils/alertSystem/escapeHtml";
+import { RATE_LIMITS, enforceRateLimit } from "../../../utils/rateLimit";
 
 async function handler(req, res) {
   if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  // Open to anyone, so a limited number of attempts per visitor (IP).
+  if (!(await enforceRateLimit(req, res, "signup", RATE_LIMITS.signup))) {
     return;
   }
+
   const {
     firstName,
     lastName,
@@ -70,6 +80,20 @@ async function handler(req, res) {
   });
 
   const user = await newUser.save();
+
+  // Registration summary to the new user (staff are BCC'd). A failed email
+  // never fails the signup.
+  try {
+    const contact = {
+      name: escapeHtml(`${user.firstName} ${user.lastName}`.trim()),
+      email: user.email,
+      companyName: escapeHtml(user.companyName || "Not provided"),
+      companyEinCode: escapeHtml(user.companyEinCode || "Not provided"),
+    };
+    await sendEmailMessage(messageManagement(contact, "Register"), contact);
+  } catch (emailError) {
+    console.error("Failed to send registration email:", emailError);
+  }
 
   res.status(201).send({
     message: "Created user!",

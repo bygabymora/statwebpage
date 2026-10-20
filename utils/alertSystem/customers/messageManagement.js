@@ -400,7 +400,7 @@ export const messageManagement = (
         p2: `<div style="font-weight: light; font-size: 15px; color: #333333; ">
                I'm <strong>${accountOwner.name}</strong> and I'll be the one in charge of any request or support you may need. <br>
                Please feel free to reach out at any time. <br><br>
-               <a href="https://statsurgicalsupply.com/authenticateCode?email=${contact.email}&code=${message}" target="_blank" 
+               <a href="https://statsurgicalsupply.com/authenticateCode?email=${encodeURIComponent(contact.email)}&code=${encodeURIComponent(message)}" target="_blank"
                   style="display: inline-block; padding: 10px 20px; background-color: #144e8b; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
                  Follow the link to reset your password
                </a><br><br>   

@@ -202,7 +202,7 @@ export default function SecureBuyingSelling() {
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className='text-center bg-white rounded-lg p-4 shadow-sm border border-gray-100'
+                    className='text-center bg-white rounded-lg p-4 shadow-xs border border-gray-100'
                   >
                     <div className='text-[#07783e] text-2xl mb-2 flex justify-center'>
                       {stat.icon}
@@ -234,7 +234,7 @@ export default function SecureBuyingSelling() {
                       {feature.highlight}
                     </div>
 
-                    <div className='mb-6 p-4 bg-gradient-to-br from-[#07783e]/5 to-[#07783e]/10 rounded-full'>
+                    <div className='mb-6 p-4 bg-linear-to-br/srgb from-[#07783e]/5 to-[#07783e]/10 rounded-full'>
                       {feature.icon}
                     </div>
 
@@ -242,18 +242,18 @@ export default function SecureBuyingSelling() {
                       {feature.title}
                     </h3>
 
-                    <p className='text-[#414b53] text-base leading-relaxed flex-grow'>
+                    <p className='text-[#414b53] text-base leading-relaxed grow'>
                       {feature.description}
                     </p>
 
-                    <div className='w-full h-1 bg-gradient-to-r from-[#07783e] to-[#025e2d] rounded-full mt-6 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300'></div>
+                    <div className='w-full h-1 bg-linear-to-r/srgb from-[#07783e] to-[#025e2d] rounded-full mt-6 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300'></div>
                   </article>
                 ))}
               </div>
             </main>
 
             {/* Call to Action */}
-            <section className='text-center bg-gradient-to-r bg-gray-100 rounded-2xl p-12 text-black shadow-2xl'>
+            <section className='text-center bg-linear-to-r/srgb bg-gray-100 rounded-2xl p-12 text-black shadow-2xl'>
               <h2 className='text-3xl font-bold mb-4'>
                 Ready to Start Trading Securely?
               </h2>

@@ -43,7 +43,7 @@ export default function AboutScreen() {
               {breadcrumb.href ?
                 <Link
                   href={breadcrumb.href}
-                  className='hover:underline text-[#0e355e] focus:outline-none focus:ring-2 focus:ring-[#0e355e] focus:ring-opacity-50 rounded'
+                  className='hover:underline text-[#0e355e] focus:outline-hidden focus:ring-2 focus:ring-[#0e355e]/50 rounded-sm'
                   aria-label={`Go to ${breadcrumb.name} page`}
                 >
                   {breadcrumb.name}
@@ -81,7 +81,7 @@ export default function AboutScreen() {
             src={image}
             alt='STAT Surgical Supply team and facilities - Premium surgical equipment provider serving healthcare professionals nationwide'
             title='STAT Surgical Supply is intentionally positioned as a secondary and contingency supplier, designed to mitigate risk when primary distributors are constrained.'
-            className='w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[550px] -mt-10'
+            className='w-64 sm:w-80 md:w-96 lg:w-125 xl:w-137.5 -mt-10'
             priority
             width={550}
             height={400}
@@ -151,7 +151,7 @@ export default function AboutScreen() {
             >
               <animated.button
                 style={contentAnimation}
-                className='px-6 py-3 bg-[#0e355e] hover:bg-[#144e8b] text-white font-semibold rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-[#144e8b] focus:ring-opacity-50'
+                className='px-6 py-3 bg-[#0e355e] hover:bg-[#144e8b] text-white font-semibold rounded-full shadow-md transition duration-300 focus:outline-hidden focus:ring-2 focus:ring-[#144e8b]/50'
                 type='button'
               >
                 Explore Our Premium Products

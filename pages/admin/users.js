@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useReducer, useState } from "react";
 import Layout from "../../components/main/Layout";
 import { getError } from "../../utils/error";
+import { useModalContext } from "../../components/context/ModalContext";
 import { BiSolidEdit } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { BsTrash3 } from "react-icons/bs";
@@ -36,6 +37,9 @@ function AdminUsersScreen() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const { showStatusMessage } = useModalContext();
+  // Read once so "new user" badges are stable across re-renders.
+  const [now] = useState(() => Date.now());
 
   const [{ loading, error, users, successDelete, loadingDelete }, dispatch] =
     useReducer(reducer, {
@@ -55,9 +59,6 @@ function AdminUsersScreen() {
             Pragma: "no-cache",
           },
         });
-        console.log(
-          `Frontend received ${data.length} users at ${new Date().toISOString()}`,
-        );
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -80,9 +81,6 @@ function AdminUsersScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Manual refresh: ${data.length} users at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -101,6 +99,8 @@ function AdminUsersScreen() {
       dispatch({ type: "DELETE_SUCCESS" });
     } catch (err) {
       dispatch({ type: "DELETE_FAIL" });
+      console.error("Error deleting user:", err);
+      showStatusMessage("error", getError(err) || "Error deleting user");
     }
     setShowModal(false);
   };
@@ -109,7 +109,6 @@ function AdminUsersScreen() {
   const isNewUser = (user) => {
     if (!user.createdAt) return false;
     const userCreatedAt = new Date(user.createdAt);
-    const now = new Date();
     const hoursDiff = (now - userCreatedAt) / (1000 * 60 * 60);
     return hoursDiff <= 48;
   };
@@ -180,16 +179,16 @@ function AdminUsersScreen() {
   return (
     <Layout title='Admin Users'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='mx-auto px-2 sm:px-4 lg:px-8 xl:px-12'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -275,22 +274,22 @@ function AdminUsersScreen() {
         </div>
 
         {/* Status Legend */}
-        <div className='hidden sm:block mb-3 sm:mb-6 md:mb-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-5 border border-gray-200'>
+        <div className='hidden sm:block mb-3 sm:mb-6 md:mb-8 bg-linear-to-r/srgb from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-5 border border-gray-200'>
           <h3 className='text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2'>
             <div className='w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full'></div>
             Status Indicators
           </h3>
           <div className='grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4 text-xs sm:text-sm'>
-            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
-              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500 flex-shrink-0'></div>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-xs'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500 shrink-0'></div>
               <span className='text-gray-700 font-medium'>Admin User</span>
             </div>
-            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
-              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-purple-500 flex-shrink-0'></div>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-xs'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-purple-500 shrink-0'></div>
               <span className='text-gray-700 font-medium'>New User (48h)</span>
             </div>
-            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-sm'>
-              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-yellow-500 flex-shrink-0'></div>
+            <div className='flex items-center gap-2 sm:gap-3 bg-white rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow-xs'>
+              <div className='w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-yellow-500 shrink-0'></div>
               <span className='text-gray-700 font-medium'>Restricted</span>
             </div>
           </div>
@@ -298,7 +297,7 @@ function AdminUsersScreen() {
 
         {loadingDelete && (
           <div className='flex items-center justify-center py-6 mb-6'>
-            <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-sm'>
+            <div className='flex items-center px-4 py-3 bg-blue-50 border border-blue-200 text-[#0e355e] rounded-lg shadow-xs'>
               <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#0e355e] mr-3'></div>
               Deleting user...
             </div>
@@ -335,15 +334,15 @@ function AdminUsersScreen() {
                 return (
                   <div
                     key={user._id}
-                    className='bg-white shadow-sm sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
+                    className='bg-white shadow-xs sm:shadow-md rounded-md sm:rounded-lg md:rounded-xl p-1.5 sm:p-2 md:p-3 lg:p-5 border border-gray-100 hover:shadow-lg transition-all duration-200'
                     style={{
                       backgroundColor: statusInfo.headerBgColor || "white",
                     }}
                   >
                     {/* Mobile Card Header */}
                     <div className='flex items-start gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='flex-shrink-0 relative'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
+                      <div className='shrink-0 relative'>
+                        <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-linear-to-br/srgb from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-lg lg:text-xl shadow-md'>
                           {user.firstName?.[0]?.toUpperCase()}
                           {user.lastName?.[0]?.toUpperCase()}
                         </div>
@@ -364,11 +363,11 @@ function AdminUsersScreen() {
                           {user.email}
                         </p>
                         <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
-                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded'>
+                          <span className='text-xs text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-sm'>
                             #{user._id.slice(-6)}
                           </span>
                           {user.companyName && (
-                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 truncate max-w-[120px] sm:max-w-[150px]'>
+                            <span className='inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 truncate max-w-30 sm:max-w-37.5'>
                               {user.companyName}
                             </span>
                           )}
@@ -394,7 +393,7 @@ function AdminUsersScreen() {
 
                     {/* Customer ID Display */}
                     {user.customerId && (
-                      <div className='bg-blue-50 rounded p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 border border-blue-200'>
+                      <div className='bg-blue-50 rounded-sm p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 border border-blue-200'>
                         <div className='text-xs text-blue-600 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
                           Customer ID
                         </div>
@@ -409,7 +408,7 @@ function AdminUsersScreen() {
 
                     {/* Status Grid */}
                     <div className='grid grid-cols-2 gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4'>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                      <div className='text-center bg-gray-50 rounded-sm p-1 sm:p-1.5 md:p-2 lg:p-3'>
                         <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
                           Active
                         </div>
@@ -420,7 +419,7 @@ function AdminUsersScreen() {
                           }
                         </div>
                       </div>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                      <div className='text-center bg-gray-50 rounded-sm p-1 sm:p-1.5 md:p-2 lg:p-3'>
                         <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
                           Approved
                         </div>
@@ -431,7 +430,7 @@ function AdminUsersScreen() {
                           }
                         </div>
                       </div>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                      <div className='text-center bg-gray-50 rounded-sm p-1 sm:p-1.5 md:p-2 lg:p-3'>
                         <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
                           Admin
                         </div>
@@ -442,7 +441,7 @@ function AdminUsersScreen() {
                           }
                         </div>
                       </div>
-                      <div className='text-center bg-gray-50 rounded p-1 sm:p-1.5 md:p-2 lg:p-3'>
+                      <div className='text-center bg-gray-50 rounded-sm p-1 sm:p-1.5 md:p-2 lg:p-3'>
                         <div className='text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5 sm:mb-1'>
                           Restricted
                         </div>
@@ -459,7 +458,7 @@ function AdminUsersScreen() {
                     <div className='flex space-x-1 sm:space-x-1.5 md:space-x-2'>
                       <button
                         onClick={() => router.push(`/admin/user/${user._id}`)}
-                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r primary-button text-white font-medium rounded sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center space-x-0.5 sm:space-x-1 md:space-x-2 text-xs sm:text-sm md:text-base'
+                        className='flex-1 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-linear-to-r/srgb primary-button text-white font-medium rounded-sm sm:rounded-md md:rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-xs sm:shadow-md hover:shadow-lg flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 text-xs sm:text-sm md:text-base'
                       >
                         <BiSolidEdit
                           size={10}
@@ -471,7 +470,7 @@ function AdminUsersScreen() {
                       </button>
                       <button
                         onClick={() => confirmDelete(user._id)}
-                        className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-gradient-to-r primary-button text-white font-medium rounded sm:rounded-md md:rounded-lg transition-all duration-200 shadow-sm sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
+                        className='px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-3 bg-linear-to-r/srgb primary-button text-white font-medium rounded-sm sm:rounded-md md:rounded-lg transition-all duration-200 shadow-xs sm:shadow-md hover:shadow-lg flex items-center justify-center text-xs sm:text-sm md:text-base'
                         title='Delete User'
                       >
                         <BsTrash3
@@ -489,7 +488,7 @@ function AdminUsersScreen() {
             <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='overflow-x-auto custom-scrollbar'>
                 <div className='min-w-full' style={{ minWidth: "600px" }}>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
                       <div className='col-span-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
                         User Information
@@ -529,8 +528,8 @@ function AdminUsersScreen() {
                         >
                           <div className='col-span-3'>
                             <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
-                              <div className='flex-shrink-0 relative'>
-                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
+                              <div className='shrink-0 relative'>
+                                <div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-linear-to-br/srgb from-[#0e355e] to-[#144e8b] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-lg shadow-md'>
                                   {user.firstName?.[0]?.toUpperCase()}
                                   {user.lastName?.[0]?.toUpperCase()}
                                 </div>
@@ -627,7 +626,7 @@ function AdminUsersScreen() {
                                 onClick={() =>
                                   router.push(`/admin/user/${user._id}`)
                                 }
-                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center space-x-1'
+                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center gap-1'
                                 title='Edit User'
                               >
                                 <BiSolidEdit
@@ -640,7 +639,7 @@ function AdminUsersScreen() {
                               </button>
                               <button
                                 onClick={() => confirmDelete(user._id)}
-                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-gradient-to-r primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
+                                className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-linear-to-r/srgb primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
                                 title='Delete User'
                               >
                                 <BsTrash3
@@ -660,7 +659,7 @@ function AdminUsersScreen() {
           </>
         }
         {showModal && (
-          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-[9999] backdrop-blur-sm'>
+          <div className='fixed inset-0 flex items-center justify-center bg-black/60 z-9999 backdrop-blur-xs'>
             <div className='bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-center border border-gray-200'>
               <div className='mb-4'>
                 <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
@@ -676,13 +675,13 @@ function AdminUsersScreen() {
               </div>
               <div className='flex gap-3'>
                 <button
-                  className='flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
+                  className='flex-1 px-6 py-3 bg-linear-to-r/srgb from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
                   onClick={deleteUser}
                 >
                   Delete User
                 </button>
                 <button
-                  className='flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
+                  className='flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
                   onClick={() => setShowModal(false)}
                 >
                   Cancel

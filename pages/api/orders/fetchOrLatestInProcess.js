@@ -20,10 +20,11 @@ export default async function handler(req, res) {
     const userId = token._id;
     const { orderId } = req.query;
 
-    // 2) Load or create the “In Process” order
+    // 2) Load or create the “In Process” order (only ever one of the
+    //    caller's own orders)
     let order =
       orderId && mongoose.Types.ObjectId.isValid(orderId) ?
-        await Order.findById(orderId)
+        await Order.findOne({ _id: orderId, "wpUser.userId": userId })
       : await Order.findOne({
           "wpUser.userId": userId,
           status: "In Process",
@@ -226,8 +227,14 @@ export default async function handler(req, res) {
       })),
     };
 
-    // And then:
-    return res.status(200).json({ order: responseOrder, wpUser, warnings });
+    // Never send the password hash or a pending reset code to the browser.
+    const safeWpUser = wpUser.toObject();
+    delete safeWpUser.password;
+    delete safeWpUser.resetCode;
+
+    return res
+      .status(200)
+      .json({ order: responseOrder, wpUser: safeWpUser, warnings });
   } catch (err) {
     console.error("❌ fetchOrLatestInProcess:", err);
     return res.status(500).json({ message: "Internal Server Error" });

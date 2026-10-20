@@ -15,15 +15,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Log the session access (optional - for debugging/monitoring)
-    console.log("Session accessed at:", new Date().toISOString());
-    console.log("User:", {
-      id: token._id,
-      email: token.email,
-      name: `${token.firstName || ""} ${token.lastName || ""}`.trim(),
-      isAdmin: token.isAdmin,
-    });
-
     res.status(200).json({
       loggedIn: true,
       user: {

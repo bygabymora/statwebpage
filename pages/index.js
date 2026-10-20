@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { BiSkipNextCircle, BiSkipPreviousCircle } from "react-icons/bi";
 import Layout from "../components/main/Layout";
 import { ProductItem } from "../components/products/ProductItem";
 
@@ -16,7 +15,7 @@ function SkipPrevIcon({ className }) {
       aria-hidden='true'
     >
       <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
-      <path d='M8 7v10h2V7H8zm4 5 6 5V7l-6 5z' />
+      <path d='M16 16V8l-5 4zM9 8v8h2V8z' />
     </svg>
   );
 }
@@ -32,7 +31,7 @@ function SkipNextIcon({ className }) {
       aria-hidden='true'
     >
       <path d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z' />
-      <path d='M6 17l6-5-6-5v10zm8-10v10h2V7h-2z' />
+      <path d='m8 16 5-4-5-4zm5-4v4h2V8h-2z' />
     </svg>
   );
 }
@@ -155,13 +154,16 @@ function Carousel({ products }) {
     return () => clearInterval(iv);
   }, [isInteracting, totalSlides]);
 
-  let interactionEndTimer;
+  const interactionEndTimer = useRef(null);
   const handleInteractionStart = () => {
-    clearTimeout(interactionEndTimer);
+    clearTimeout(interactionEndTimer.current);
     setIsInteracting(true);
   };
   const handleInteractionEnd = () => {
-    interactionEndTimer = setTimeout(() => setIsInteracting(false), 3000);
+    interactionEndTimer.current = setTimeout(
+      () => setIsInteracting(false),
+      3000,
+    );
   };
 
   const prevSlide = () => setCurrentSlide((s) => Math.max(s - 1, 0));
@@ -210,13 +212,13 @@ function Carousel({ products }) {
         <button
           onClick={prevSlide}
           disabled={currentSlide === 0}
-          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50'
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded-sm disabled:opacity-50'
           aria-label={`Go to previous page of products (currently showing page ${
             currentSlide + 1
           } of ${totalSlides})`}
           title='Previous products'
         >
-          <BiSkipPreviousCircle className='text-lg' aria-hidden='true' />{" "}
+          <SkipPrevIcon className='text-lg' />{" "}
           Previous
         </button>
       </nav>
@@ -256,13 +258,13 @@ function Carousel({ products }) {
         <button
           onClick={nextSlide}
           disabled={currentSlide >= totalSlides - 1}
-          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded disabled:opacity-50'
+          className='w-full mt-3 flex items-center justify-center text-[#0e355e] rounded-sm disabled:opacity-50'
           aria-label={`Go to next page of products (currently showing page ${
             currentSlide + 1
           } of ${totalSlides})`}
           title='Next products'
         >
-          Next <BiSkipNextCircle className='text-lg' aria-hidden='true' />
+          Next <SkipNextIcon className='text-lg' />
         </button>
       </nav>
     </section>
@@ -324,7 +326,7 @@ export default function Home({ products, news = [] }) {
             }
           </section>
 
-          <div className='min-h-[534px] w-full'>
+          <div className='min-h-133.5 w-full'>
             <Contact className='mt-2' />
           </div>
         </div>

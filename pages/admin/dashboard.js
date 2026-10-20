@@ -131,7 +131,6 @@ function AdminDashboardScreen() {
             Pragma: "no-cache",
           },
         });
-        console.log(`Dashboard data refreshed at ${new Date().toISOString()}`);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -151,9 +150,6 @@ function AdminDashboardScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Dashboard manually refreshed at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -171,16 +167,16 @@ function AdminDashboardScreen() {
   return (
     <Layout title='Admin Dashboard'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -237,7 +233,7 @@ function AdminDashboardScreen() {
             {/* Stats Cards Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6 md:mb-8'>
               {/* Sales Card */}
-              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-sm sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
+              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-xs sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
                 <div className='flex items-center justify-between mb-2 sm:mb-3'>
                   <button
                     onClick={() => setActiveChart("sales")}
@@ -263,7 +259,7 @@ function AdminDashboardScreen() {
               </div>
 
               {/* Orders Card */}
-              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-sm sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
+              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-xs sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
                 <div className='flex items-center justify-between mb-2 sm:mb-3'>
                   <button
                     onClick={() => setActiveChart("orders")}
@@ -285,7 +281,7 @@ function AdminDashboardScreen() {
               </div>
 
               {/* Products Card */}
-              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-sm sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
+              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-xs sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
                 <div className='flex items-center justify-between mb-2 sm:mb-3'>
                   <button
                     onClick={() => setActiveChart("products")}
@@ -307,7 +303,7 @@ function AdminDashboardScreen() {
               </div>
 
               {/* Users Card */}
-              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-sm sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
+              <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-xs sm:shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200'>
                 <div className='flex items-center justify-between mb-2 sm:mb-3'>
                   <button
                     onClick={() => setActiveChart("users")}
@@ -329,7 +325,7 @@ function AdminDashboardScreen() {
               </div>
             </div>
             {/* Chart Section */}
-            <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-sm sm:shadow-lg border border-gray-100'>
+            <div className='bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 shadow-xs sm:shadow-lg border border-gray-100'>
               <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6'>
                 <h2 className='text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 sm:mb-0'>
                   {chartTitles[activeChart]}

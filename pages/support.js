@@ -34,9 +34,9 @@ const ContactMethodsGrid = dynamic(
             >
               <div className='text-center'>
                 <div className='w-16 h-16 bg-gray-200 rounded-full mb-4 mx-auto'></div>
-                <div className='h-4 bg-gray-200 rounded mb-2'></div>
-                <div className='h-3 bg-gray-200 rounded mb-3'></div>
-                <div className='h-3 bg-gray-200 rounded'></div>
+                <div className='h-4 bg-gray-200 rounded-sm mb-2'></div>
+                <div className='h-3 bg-gray-200 rounded-sm mb-3'></div>
+                <div className='h-3 bg-gray-200 rounded-sm'></div>
               </div>
             </div>
           ))}
@@ -57,7 +57,7 @@ const LocationMap = dynamic(() => import("../components/support/LocationMap"), {
           Located in the heart of Tampa, Florida
         </p>
       </div>
-      <div className='rounded-2xl overflow-hidden shadow-2xl border-4 border-[#144e8b] h-96 lg:h-[500px] bg-gray-100 flex items-center justify-center'>
+      <div className='rounded-2xl overflow-hidden shadow-2xl border-4 border-[#144e8b] h-96 lg:h-125 bg-gray-100 flex items-center justify-center'>
         <div className='text-gray-500'>Loading map...</div>
       </div>
     </div>
@@ -81,8 +81,8 @@ const FaqSection = dynamic(() => import("../components/FaqSection"), {
             key={i}
             className='bg-white rounded-xl shadow-lg border border-gray-100 p-6 animate-pulse'
           >
-            <div className='h-4 bg-gray-200 rounded mb-2'></div>
-            <div className='h-3 bg-gray-200 rounded w-3/4'></div>
+            <div className='h-4 bg-gray-200 rounded-sm mb-2'></div>
+            <div className='h-3 bg-gray-200 rounded-sm w-3/4'></div>
           </div>
         ))}
       </div>

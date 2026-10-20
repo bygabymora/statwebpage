@@ -1,19 +1,9 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "notebook.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.debug": true,
   "emmet.useInlineCompletions": false,
-  "eslint.run": "onType",
-  "eslint.lintTask.enable": true,
-  "eslint.quiet": false,
+  "oxc.lint.run": "onType",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "eslint.execArgv": null
+    "source.fixAll.oxc": "explicit"
+  }
 }

@@ -64,7 +64,8 @@ export default async function handler(req, res) {
       console.warn("Could not persist checkoutSessionId:", e?.message || e);
     }
 
-    return res.status(200).json({ id: session.id });
+    // Stripe.js no longer has redirectToCheckout; the client redirects to session.url.
+    return res.status(200).json({ id: session.id, url: session.url });
   } catch (error) {
     console.error("Stripe Checkout Session Error:", error);
     return res.status(error.statusCode || 500).json({ message: error.message });

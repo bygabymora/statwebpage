@@ -101,9 +101,6 @@ export default function AdminProductsScreen() {
           Pragma: "no-cache",
         },
       });
-      console.log(
-        `Manual refresh: ${data.length} products at ${new Date().toISOString()}`,
-      );
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (err) {
       dispatch({ type: "FETCH_FAIL", payload: getError(err) });
@@ -142,16 +139,16 @@ export default function AdminProductsScreen() {
   return (
     <Layout title='Admin Products'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <nav className='flex space-x-1 sm:space-x-4 py-3 overflow-x-auto'>
             {links.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -259,13 +256,13 @@ export default function AdminProductsScreen() {
                   >
                     {/* Header with Image and Title */}
                     <div className='flex items-start gap-4 mb-4'>
-                      <div className='flex-shrink-0 relative'>
+                      <div className='shrink-0 relative'>
                         <Image
                           width={80}
                           height={80}
                           src={product.image}
                           alt={product.name}
-                          className='rounded-xl object-cover shadow-sm'
+                          className='rounded-xl object-cover shadow-xs'
                           loading='lazy'
                         />
                         <div
@@ -323,7 +320,7 @@ export default function AdminProductsScreen() {
                     {/* Action Button */}
                     <Link
                       href={`/admin/product/${product._id}`}
-                      className='block w-full text-center px-4 py-3 bg-gradient-to-r bg-[#0e355e] text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg'
+                      className='block w-full text-center px-4 py-3 bg-linear-to-r/srgb bg-[#0e355e] text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg'
                     >
                       Edit Product Info
                     </Link>
@@ -336,7 +333,7 @@ export default function AdminProductsScreen() {
             <div className='hidden lg:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
               <div className='custom-scrollbar'>
                 <div className='min-w-full'>
-                  <div className='bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
+                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
                     <div className='grid grid-cols-12 gap-4 px-6 py-4 items-center'>
                       <div className='col-span-4 text-left'>
                         <div className='flex items-center gap-2'>
@@ -387,13 +384,13 @@ export default function AdminProductsScreen() {
                         >
                           <div className='col-span-4'>
                             <div className='flex items-center gap-4'>
-                              <div className='flex-shrink-0 relative'>
+                              <div className='shrink-0 relative'>
                                 <Image
                                   width={64}
                                   height={64}
                                   src={product.image}
                                   alt={product.name}
-                                  className='rounded-lg object-cover shadow-sm border border-gray-200'
+                                  className='rounded-lg object-cover shadow-xs border border-gray-200'
                                   loading='lazy'
                                 />
                                 <div

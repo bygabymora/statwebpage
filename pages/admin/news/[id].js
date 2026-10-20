@@ -223,16 +223,16 @@ export default function AdminNewsEditScreen() {
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
       {/* Nav tabs - matches /admin/news */}
-      <div className='bg-white shadow-sm border-b'>
+      <div className='bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {navLinks.map(({ href, label, isBold }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex-shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-2 py-1.5 sm:px-3 sm:py-2 lg:px-4 rounded-lg text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 whitespace-nowrap ${
                   isBold ?
-                    "bg-gradient-to-r from-[#0e355e] to-[#0e355e] text-white shadow-md"
+                    "bg-linear-to-r/srgb from-[#0e355e] to-[#0e355e] text-white shadow-md"
                   : "text-gray-600 hover:text-[#0e355e] hover:bg-blue-50"
                 }`}
               >
@@ -256,7 +256,7 @@ export default function AdminNewsEditScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        : <form className='mx-auto max-w-screen-md' onSubmit={handleSubmit}>
+        : <form className='mx-auto max-w-(--breakpoint-md)' onSubmit={handleSubmit}>
             {/* Header */}
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6'>
               <div>
@@ -271,14 +271,14 @@ export default function AdminNewsEditScreen() {
                 <button
                   type='submit'
                   disabled={loadingUpdate}
-                  className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
+                  className='px-4 py-2 sm:px-6 sm:py-3 bg-linear-to-r/srgb primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
                 >
                   {loadingUpdate ? "Saving…" : "Update"}
                 </button>
                 <button
                   type='button'
                   onClick={() => router.push("/admin/news")}
-                  className='px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-200 text-sm sm:text-base'
+                  className='px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-xs hover:bg-gray-300 transition-all duration-200 text-sm sm:text-base'
                 >
                   Back
                 </button>
@@ -296,7 +296,7 @@ export default function AdminNewsEditScreen() {
                     id='title'
                     value={newsData.title}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.title} />
                 </div>
@@ -312,7 +312,7 @@ export default function AdminNewsEditScreen() {
                     id='slug'
                     value={newsData.slug}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.slug} />
                 </div>
@@ -328,7 +328,7 @@ export default function AdminNewsEditScreen() {
                     id='category'
                     value={newsData.category}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.category} />
                 </div>
@@ -345,7 +345,7 @@ export default function AdminNewsEditScreen() {
                     id='tags'
                     value={newsData.tags}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.tags} />
                   {newsData.tags.trim() && (
@@ -377,7 +377,7 @@ export default function AdminNewsEditScreen() {
                     id='author'
                     value={newsData.author}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.author} />
                 </div>
@@ -393,7 +393,7 @@ export default function AdminNewsEditScreen() {
                 id='content'
                 value={newsData.content}
                 onChange={handleChange}
-                className='w-full px-3 py-2 border rounded h-48 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-3 py-2 border rounded-sm h-48 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               />
               <FieldError message={fieldErrors.content} />
             </Card>
@@ -414,7 +414,7 @@ export default function AdminNewsEditScreen() {
                     id='imageUrl'
                     value={newsData.imageUrl}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <FieldError message={fieldErrors.imageUrl} />
 
@@ -456,7 +456,7 @@ export default function AdminNewsEditScreen() {
                     id='embeddedImageUrl'
                     value={newsData.embeddedImageUrl}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
 
                   <label
@@ -497,7 +497,7 @@ export default function AdminNewsEditScreen() {
                     id='embeddedImageUrl2'
                     value={newsData.embeddedImageUrl2}
                     onChange={handleChange}
-                    className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
 
                   <label
@@ -545,7 +545,7 @@ export default function AdminNewsEditScreen() {
                     className='peer sr-only'
                   />
                   <span className='absolute inset-0 rounded-full bg-gray-300 peer-checked:bg-[#0e355e] transition-colors duration-200'></span>
-                  <span className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-4'></span>
+                  <span className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 peer-checked:translate-x-4'></span>
                 </span>
                 <span className='font-medium'>This news item has a video</span>
               </label>
@@ -564,7 +564,7 @@ export default function AdminNewsEditScreen() {
                       value={newsData.videoUrl}
                       onChange={handleChange}
                       placeholder='https://example.com/video.mp4'
-                      className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                      className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                     />
                     <FieldError message={fieldErrors.videoUrl} />
                   </div>
@@ -599,7 +599,7 @@ export default function AdminNewsEditScreen() {
                       id='videoType'
                       value={newsData.videoType}
                       onChange={handleChange}
-                      className='w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                      className='w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                     >
                       <option value='mp4'>MP4</option>
                       <option value='webm'>WebM</option>
@@ -630,19 +630,19 @@ export default function AdminNewsEditScreen() {
                     placeholder='Title'
                     value={link.title}
                     onChange={(e) => updateLink(idx, "title", e.target.value)}
-                    className='flex-1 px-2 py-1.5 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='flex-1 px-2 py-1.5 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <input
                     placeholder='URL'
                     value={link.url}
                     onChange={(e) => updateLink(idx, "url", e.target.value)}
-                    className='flex-1 px-2 py-1.5 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='flex-1 px-2 py-1.5 border rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   />
                   <button
                     type='button'
                     onClick={() => removeLink(idx)}
                     title='Remove source'
-                    className='px-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm flex items-center justify-center'
+                    className='px-2.5 bg-linear-to-r/srgb from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-xs flex items-center justify-center'
                   >
                     <BsTrash3 size={14} />
                   </button>
@@ -662,14 +662,14 @@ export default function AdminNewsEditScreen() {
               <button
                 type='submit'
                 disabled={loadingUpdate}
-                className='px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
+                className='px-4 py-2 sm:px-6 sm:py-3 bg-linear-to-r/srgb primary-button text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base'
               >
                 {loadingUpdate ? "Saving…" : "Update"}
               </button>
               <button
                 type='button'
                 onClick={() => router.push("/admin/news")}
-                className='px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-200 text-sm sm:text-base'
+                className='px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 font-medium rounded-lg shadow-xs hover:bg-gray-300 transition-all duration-200 text-sm sm:text-base'
               >
                 Back
               </button>

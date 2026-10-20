@@ -206,7 +206,6 @@ function OrderHistoryScreen() {
   const dueDateHandler = (order) => {
     const date = new Date(order.createdAt);
     const daysToAdd = parseInt(order.defaultTerm.split(" ")[1]);
-    console.log("daysToAdd", daysToAdd);
     date.setDate(date.getDate() + daysToAdd);
     return date;
   };
@@ -232,9 +231,9 @@ function OrderHistoryScreen() {
       if (confirmed) {
         startLoading();
         try {
-          const { user } = await axios.get(`/api/orders/${orderId}/open`);
-          if (user) {
-            setUser(user);
+          const { data } = await axios.get(`/api/orders/${orderId}/open`);
+          if (data?.user) {
+            setUser(data.user);
           }
           Cookies.set("orderId", orderId);
 
@@ -254,12 +253,11 @@ function OrderHistoryScreen() {
       <h1 className='mb-4 text-xl'>Order History</h1>
 
       <div className='overflow-x-auto mb-4'>
-        {console.log("orders", orders)}
         <div className='space-y-4'>
           {orders.map((order) => (
             <div
               key={order._id}
-              className='border rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200 bg-white'
+              className='border rounded-xl p-4 shadow-xs hover:shadow-md transition duration-200 bg-white'
             >
               {/* Universal Grid with Labels */}
               <div className='grid grid-cols-2 md:grid-cols-7 gap-y-4 gap-x-4 text-sm md:text-base items-start'>
@@ -357,7 +355,7 @@ function OrderHistoryScreen() {
                     >
                       <FaEye />
                     </button>
-                    <span className='absolute bottom-full px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity'>
+                    <span className='absolute bottom-full px-2 py-1 text-xs text-white bg-gray-800 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity'>
                       Details
                     </span>
                   </div>
@@ -369,7 +367,7 @@ function OrderHistoryScreen() {
                       >
                         <BiSolidEdit />
                       </button>
-                      <span className='absolute bottom-full  px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity'>
+                      <span className='absolute bottom-full  px-2 py-1 text-xs text-white bg-gray-800 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity'>
                         Edit
                       </span>
                     </div>
