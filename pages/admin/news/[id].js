@@ -156,13 +156,13 @@ export default function AdminNewsEditScreen() {
     dispatch({ type: "UPLOAD_REQUEST" });
     try {
       const {
-        data: { signature, timestamp },
+        data: { signature, timestamp, apiKey },
       } = await axios("/api/admin/cloudinary-sign");
       const formData = new FormData();
       formData.append("file", file);
       formData.append("signature", signature);
       formData.append("timestamp", timestamp);
-      formData.append("api_key", process.env.CLOUDINARY_API_KEY);
+      formData.append("api_key", apiKey);
       const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
       const { data } = await axios.post(uploadUrl, formData);
       dispatch({ type: "UPLOAD_SUCCESS" });
