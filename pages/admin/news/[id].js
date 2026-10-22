@@ -222,7 +222,6 @@ export default function AdminNewsEditScreen() {
 
   return (
     <Layout title={`Edit Entry ${newsId?.slice(-8).toUpperCase()}`}>
-      {/* Nav tabs - matches /admin/news */}
       <div className='bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
