@@ -26,7 +26,7 @@ const postHandler = async (req, res) => {
     category: "Sample category",
     tags: ["tag1", "tag2"],
     imageUrl:
-      "https://res.cloudinary.com/dcjahs0jp/image/upload/v1694037866/arpshiwxqjzhv7edkhuy.png",
+      "https://res.cloudinary.com/oypuau26/image/upload/v1694037866/arpshiwxqjzhv7edkhuy.png",
     videoUrl: null,
     hasVideo: false,
     videoType: null,

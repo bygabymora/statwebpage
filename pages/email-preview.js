@@ -51,7 +51,7 @@ const sampleOrder = {
       quantity: 3,
       typeOfPurchase: "each",
       image:
-        "https://res.cloudinary.com/dcjahs0jp/image/upload/v1731719158/thkiwlotmfiw2qojoqlt.png",
+        "https://res.cloudinary.com/oypuau26/image/upload/v1731719158/thkiwlotmfiw2qojoqlt.png",
       sentOverNight: false,
       quickBooksItemIdProduction: "143",
       unitPrice: 10,
@@ -64,7 +64,7 @@ const sampleOrder = {
       quantity: 3,
       typeOfPurchase: "each",
       image:
-        "https://res.cloudinary.com/dcjahs0jp/image/upload/v1731719248/ve0pfkcofktntqd7yvyi.png",
+        "https://res.cloudinary.com/oypuau26/image/upload/v1731719248/ve0pfkcofktntqd7yvyi.png",
       sentOverNight: false,
       quickBooksItemIdProduction: "141",
       unitPrice: 5,
