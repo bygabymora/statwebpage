@@ -162,7 +162,7 @@ export default function AdminNewsEditScreen() {
       formData.append("file", file);
       formData.append("signature", signature);
       formData.append("timestamp", timestamp);
-      formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+      formData.append("api_key", process.env.CLOUDINARY_API_KEY);
       const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
       const { data } = await axios.post(uploadUrl, formData);
       dispatch({ type: "UPLOAD_SUCCESS" });
@@ -256,7 +256,10 @@ export default function AdminNewsEditScreen() {
             </div>
             <div className='text-red-500 mt-1'>{error}</div>
           </div>
-        : <form className='mx-auto max-w-(--breakpoint-md)' onSubmit={handleSubmit}>
+        : <form
+            className='mx-auto max-w-(--breakpoint-md)'
+            onSubmit={handleSubmit}
+          >
             {/* Header */}
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6'>
               <div>
