@@ -130,7 +130,7 @@ export default function AdminNewsScreen() {
   return (
     <Layout title='Admin News'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-xs border-b'>
+      <div className='sticky top-0 md:top-32 lg:top-48 z-30 bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
@@ -283,110 +283,6 @@ export default function AdminNewsScreen() {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Desktop Table Layout */}
-            <div className='hidden md:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='overflow-x-auto custom-scrollbar'>
-                <div className='min-w-full' style={{ minWidth: "600px" }}>
-                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center'>
-                      <div className='col-span-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Title
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Category
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Tags
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Author
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Actions
-                      </div>
-                    </div>
-                  </div>
-                  <div className='divide-y divide-gray-200'>
-                    {newsEntries.map((news, index) => (
-                      <div
-                        key={news._id}
-                        className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-2 px-2 py-2 sm:px-3 sm:py-3 lg:px-6 lg:py-4 items-center ${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                        }`}
-                      >
-                        <div className='col-span-4'>
-                          <div className='flex items-center gap-1 sm:gap-2 lg:gap-4'>
-                            <div className='min-w-0 flex-1'>
-                              <div className='font-semibold text-gray-900 text-xs sm:text-xs lg:text-sm leading-tight mb-1 line-clamp-2'>
-                                {news.title}
-                              </div>
-                              <div className='text-xs text-gray-400 font-mono mt-1 hidden md:block'>
-                                #{news._id.slice(-6)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-gray-800'>
-                            {news.category}
-                          </span>
-                        </div>
-                        <div className='col-span-2'>
-                          <div className='flex flex-wrap gap-1'>
-                            {news.tags.slice(0, 2).map((tag, index) => (
-                              <span
-                                key={index}
-                                className='inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-gray-100 text-gray-700'
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {news.tags.length > 2 && (
-                              <span className='text-xs text-gray-500'>
-                                +{news.tags.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <div className='text-xs sm:text-xs lg:text-sm text-gray-900 truncate'>
-                            {news.author}
-                          </div>
-                        </div>
-                        <div className='col-span-2'>
-                          <div className='flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 lg:space-x-2'>
-                            <Link
-                              href={`/admin/news/${news._id}`}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md flex items-center justify-center gap-1'
-                              title='Edit News Article'
-                            >
-                              <BiSolidEdit
-                                size={12}
-                                className='sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4'
-                              />
-                              <span className='hidden md:inline text-xs'>
-                                Edit
-                              </span>
-                            </Link>
-                            <button
-                              onClick={() => deleteHandler(news._id)}
-                              className='px-1.5 py-1 sm:px-2 sm:py-1.5 lg:px-3 lg:py-2 bg-linear-to-r/srgb primary-button text-white text-xs lg:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center'
-                              title='Delete News Article'
-                            >
-                              <BsTrash3
-                                size={10}
-                                className='sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5'
-                              />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           </>
         }

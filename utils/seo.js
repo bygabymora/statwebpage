@@ -131,9 +131,19 @@ export function truncateText(text, max) {
 
 // The price logged-out visitors see on the product page ("Web price"). It is
 // the only price structured data may advertise: customer pricing stays private.
+// Picks whichever unit is actually in stock first, same as the product page's
+// default selection, so search engines don't advertise an each price for a
+// product that is currently only sellable by the box (or vice versa).
 export function publicWebPrice(product) {
   const eachPrice = Number(product?.each?.wpPrice) || 0;
   const boxPrice = Number(product?.box?.wpPrice) || 0;
+  const available = (unit) =>
+    Math.max(0, (unit?.countInStock || 0) - (unit?.heldStock || 0));
+
+  if (available(product?.box) > 0 && boxPrice > 0)
+    return { price: boxPrice, unit: "Box" };
+  if (available(product?.each) > 0 && eachPrice > 0)
+    return { price: eachPrice, unit: "Unit" };
   if (eachPrice > 0) return { price: eachPrice, unit: "Unit" };
   if (boxPrice > 0) return { price: boxPrice, unit: "Box" };
   return null;

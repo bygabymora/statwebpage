@@ -63,6 +63,14 @@ describe("generateProductJSONLD", () => {
     });
     expect(schema.offers.price).toBe("600.00");
   });
+  test("uses the box web price when only the box is in stock, even if each still has a price", () => {
+    const schema = generateProductJSONLD({
+      ...baseProduct,
+      each: { countInStock: 0, wpPrice: 120 },
+      box: { countInStock: 2, wpPrice: 600 },
+    });
+    expect(schema.offers.price).toBe("600.00");
+  });
 
   test("counts held units as unavailable", () => {
     const schema = generateProductJSONLD({

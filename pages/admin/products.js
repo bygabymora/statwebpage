@@ -139,7 +139,7 @@ export default function AdminProductsScreen() {
   return (
     <Layout title='Admin Products'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-xs border-b'>
+      <div className='sticky top-0 md:top-32 lg:top-48 z-30 bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <nav className='flex space-x-1 sm:space-x-4 py-3 overflow-x-auto'>
             {links.map(({ href, label, isBold }) => (
@@ -327,130 +327,6 @@ export default function AdminProductsScreen() {
                   </div>
                 );
               })}
-            </div>
-
-            {/* Desktop Table Layout */}
-            <div className='hidden lg:block bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200'>
-              <div className='custom-scrollbar'>
-                <div className='min-w-full'>
-                  <div className='bg-linear-to-r/srgb from-gray-50 to-gray-100 border-b border-gray-200 sticky top-0 z-10'>
-                    <div className='grid grid-cols-12 gap-4 px-6 py-4 items-center'>
-                      <div className='col-span-4 text-left'>
-                        <div className='flex items-center gap-2'>
-                          <span className='text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                            Product / Manufacturer
-                          </span>
-                          <button
-                            onClick={toggleSortDirection}
-                            className='p-1 rounded-md hover:bg-gray-200 transition-colors'
-                            title={`Sort ${
-                              sortDirection === -1 ? "Ascending" : "Descending"
-                            }`}
-                          >
-                            {sortDirection === -1 ?
-                              <BsFillArrowUpSquareFill className='text-[#0e355e]' />
-                            : <BsFillArrowDownSquareFill className='text-[#144e8b]' />
-                            }
-                          </button>
-                        </div>
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Each
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Box
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Status
-                      </div>
-                      <div className='col-span-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider'>
-                        Description
-                      </div>
-                    </div>
-                  </div>
-                  <div className='divide-y divide-gray-200'>
-                    {filteredProducts.map((product, index) => {
-                      const eachStock = product.each?.countInStock ?? 0;
-                      const boxStock = product.box?.countInStock ?? 0;
-                      const totalStock = eachStock + boxStock;
-                      const stockStatus = getStockStatus(totalStock);
-
-                      return (
-                        <div
-                          key={product._id}
-                          className={`hover:bg-gray-50 transition-colors grid grid-cols-12 gap-4 px-6 py-4 items-center ${
-                            index % 2 === 0 ? "bg-white" : "bg-gray-25"
-                          }`}
-                        >
-                          <div className='col-span-4'>
-                            <div className='flex items-center gap-4'>
-                              <div className='shrink-0 relative'>
-                                <Image
-                                  width={64}
-                                  height={64}
-                                  src={product.image}
-                                  alt={product.name}
-                                  className='rounded-lg object-cover shadow-xs border border-gray-200'
-                                  loading='lazy'
-                                />
-                                <div
-                                  className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${stockStatus.badge} border-2 border-white`}
-                                ></div>
-                              </div>
-                              <div className='min-w-0 flex-1'>
-                                <div className='font-semibold text-gray-900 text-sm leading-tight mb-1'>
-                                  {product.name}
-                                </div>
-                                <div className='text-gray-600 text-sm font-medium'>
-                                  {product.manufacturer}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm'>
-                              <div className='font-bold text-gray-900 text-lg'>
-                                ${product.each?.wpPrice ?? "N/A"}
-                              </div>
-                              <div className='text-gray-600'>
-                                Stock:{" "}
-                                <span className='font-medium'>{eachStock}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm'>
-                              <div className='font-bold text-gray-900 text-lg'>
-                                ${product.box?.wpPrice ?? "N/A"}
-                              </div>
-                              <div className='text-gray-600'>
-                                Stock:{" "}
-                                <span className='font-medium'>{boxStock}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${stockStatus.color}`}
-                            >
-                              {stockStatus.label}
-                            </div>
-                            <div className='text-xs text-gray-500 mt-1'>
-                              Total: {totalStock}
-                            </div>
-                          </div>
-                          <div className='col-span-2'>
-                            <div className='text-sm text-gray-700 line-clamp-3 leading-relaxed'>
-                              {product.information ||
-                                "No description available"}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
             </div>
           </>
         }

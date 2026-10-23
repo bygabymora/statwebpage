@@ -167,7 +167,7 @@ function AdminDashboardScreen() {
   return (
     <Layout title='Admin Dashboard'>
       {/* Enhanced Navigation */}
-      <div className='bg-white shadow-xs border-b'>
+      <div className='sticky top-0 md:top-32 lg:top-48 z-30 bg-white shadow-xs border-b'>
         <div className='max-w-7xl mx-auto px-2 sm:px-4 lg:px-8'>
           <nav className='flex space-x-1 py-2 overflow-x-auto scrollbar-hide'>
             {links.map(({ href, label, isBold }) => (
