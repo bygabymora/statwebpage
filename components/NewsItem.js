@@ -33,12 +33,12 @@ export const NewsItem = ({
 
     const p = playPromiseRef.current;
     if (p !== undefined && p !== null) {
-      // Esperar a que play() termine antes de pausar
+      // Wait for play() to finish before pausing
       p.then(() => {
         video.pause();
         video.currentTime = 0;
       }).catch(() => {
-        // play() falló o fue abortado, no hay nada que pausar
+        // play() failed or was aborted, nothing to pause
       });
       playPromiseRef.current = null;
     } else {
