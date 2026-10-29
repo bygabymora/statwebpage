@@ -9,29 +9,49 @@ export const NewsItem = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
+  const playPromiseRef = useRef(null);
 
-  const handleVideoPlay = () => {
-    if (videoRef.current && isHovered) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.volume = 0.7; // Set volume to 70%
-      videoRef.current.play().catch(console.error);
+  const safePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = 0;
+
+    const p = video.play();
+    playPromiseRef.current = p;
+
+    if (p !== undefined) {
+      p.catch((err) => {
+        if (err.name !== "AbortError") console.error(err);
+      });
     }
   };
 
-  const handleVideoLoad = () => {
-    if (isHovered) {
-      handleVideoPlay();
+  const safePause = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const p = playPromiseRef.current;
+    if (p !== undefined && p !== null) {
+      // Esperar a que play() termine antes de pausar
+      p.then(() => {
+        video.pause();
+        video.currentTime = 0;
+      }).catch(() => {
+        // play() falló o fue abortado, no hay nada que pausar
+      });
+      playPromiseRef.current = null;
+    } else {
+      video.pause();
+      video.currentTime = 0;
     }
   };
 
   useEffect(() => {
-    if (videoRef.current) {
-      if (isHovered) {
-        handleVideoPlay();
-      } else {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      }
+    if (isHovered) {
+      safePlay();
+    } else {
+      safePause();
     }
   }, [isHovered]);
 
@@ -80,9 +100,9 @@ export const NewsItem = ({
                   isHovered ? "opacity-100" : "opacity-0"
                 }`}
                 loop
+                muted
                 playsInline
                 preload='none'
-                onLoadedData={handleVideoLoad}
                 onError={(e) => console.error("Video error:", e)}
               />
             </div>
