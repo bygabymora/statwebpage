@@ -71,8 +71,12 @@ export default function News({ news }) {
       </div>
       <div className='text-center my-9 border-t border-gray-200'>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5'>
-          {news.map((newsItem) => (
-            <NewsItem news={newsItem} key={newsItem.slug} />
+          {news.map((newsItem, index) => (
+            <NewsItem
+              news={newsItem}
+              key={newsItem.slug}
+              priority={index < 3}
+            />
           ))}
         </div>
       </div>
@@ -100,9 +104,7 @@ export async function getServerSideProps() {
 
   const newsWithModifiedFields = news.map((newsItem) => {
     const excerptText =
-      newsItem.content ?
-        newsPlainText(newsItem.content).slice(0, 180)
-      : "";
+      newsItem.content ? newsPlainText(newsItem.content).slice(0, 180) : "";
 
     return {
       title: newsItem.title,

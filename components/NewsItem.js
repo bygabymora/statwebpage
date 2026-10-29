@@ -6,6 +6,7 @@ import Link from "next/link";
 export const NewsItem = ({
   news,
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  priority = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
@@ -70,6 +71,7 @@ export const NewsItem = ({
           title={news.title}
           fill
           sizes={sizes}
+          priority={priority}
           className={`object-cover transition-all duration-300 ${
             news.hasVideo && isHovered ?
               "opacity-0 scale-105"
